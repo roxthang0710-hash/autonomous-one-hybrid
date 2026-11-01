@@ -124,8 +124,18 @@ def run(db=None, now=None):
         else:
             outcome = "success"
 
+        shortlisted = selected[:MAX_SHORTLIST]
+        # Reserve one candidate slot for a genuine Threads discussion when
+        # official search scope is available, rather than crowding it out with
+        # broadly popular Google News headlines.
+        one_thread = next(
+            (x for x in selected if x["source"] == "threads_keyword_api"
+             and x["relevance_score"] >= 65), None
+        )
+        if one_thread and one_thread not in shortlisted:
+            shortlisted = shortlisted[:-1] + [one_thread]
         saved = []
-        for row in selected[:MAX_SHORTLIST]:
+        for row in shortlisted:
             inserted = db.request("POST", "/growth_signals",
                 params={"on_conflict": "fingerprint"}, payload=row,
                 prefer="resolution=ignore-duplicates,return=representation")
@@ -139,19 +149,27 @@ def run(db=None, now=None):
         }) if selected else []
         found.update({x["fingerprint"]: x["id"] for x in stored})
         existing_ideas = db.request("GET", "/growth_opportunities", params={
-            "select": "signal_id", "limit": "200",
+            "select": "signal_id,kind", "limit": "200",
             "order": "created_at.desc",
         })
         used_ids = {x["signal_id"] for x in existing_ideas}
-        fresh = next((x for x in selected if x["fingerprint"] in found
-                      and found[x["fingerprint"]] not in used_ids), None)
+        available = [x for x in shortlisted if x["fingerprint"] in found
+                     and found[x["fingerprint"]] not in used_ids]
+        reply_history = sum(x.get("kind") == "reply_suggestion"
+                            for x in existing_ideas[:15])
+        first_thread = next((x for x in available
+                             if x["source"] == "threads_keyword_api" and
+                             x["relevance_score"] >= 65), None)
+        fresh = first_thread if first_thread and reply_history < 2 else (
+            available[0] if available else None)
         drafts = 0
         if fresh:
             kind = "reply_suggestion" if fresh["source"] == "threads_keyword_api" else "trend_post"
             draft = compose(fresh, kind=kind)
             draft_text = draft["post_text"]
             quality = min(100, fresh["relevance_score"] + (
-                5 if draft["verification_needed"] else 0))
+                5 if draft["verification_needed"] else 0) +
+                (10 if kind == "reply_suggestion" else 0))
             row = {
                 "signal_id": found[fresh["fingerprint"]],
                 "kind": kind, "status": "needs_review",
