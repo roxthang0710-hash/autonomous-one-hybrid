@@ -149,8 +149,29 @@ def make_proposal(topic, sources, recent_titles=()):
     return answer
 
 
+
+def queue_owner_issue(db, issue_number, topic):
+    """Durably enqueue an owner-issued GitHub issue before checking run quotas."""
+    if not issue_number:
+        return
+    if not issue_number.isdecimal() or not topic:
+        raise ValueError("Invalid GitHub issue event")
+    db.request(
+        "POST", "/agent_events",
+        params={"on_conflict": "request_id"},
+        payload={
+            "request_id": "github-issue-" + issue_number,
+            "kind": "research_request",
+            "payload": {"topic": topic[:140]},
+        },
+        prefer="resolution=ignore-duplicates,return=representation",
+    )
+
+
 def main():
     db = Database()
+    event_topic = os.getenv("MANUAL_TOPIC", "").strip().removeprefix("agent:").strip()[:140]
+    queue_owner_issue(db, os.getenv("ISSUE_NUMBER", "").strip(), event_topic)
     max_runs = min(40, max(1, int(os.getenv("MAX_RUNS_PER_DAY", "12"))))
     if db.count_today() >= max_runs:
         print("Daily run cap reached; queued events are left intact.")
