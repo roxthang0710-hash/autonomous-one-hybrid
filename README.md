@@ -131,3 +131,13 @@ Apply `sql/v1_4_audit.sql` after the v1.3 migrations. No historical audit events
 - [Supabase Table Editor](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor) — bảng `affiliate_opportunities` và `affiliate_review_dashboard`
 
 **Bản này chỉ đề xuất nội dung, không tự đăng bài hoặc tự tạo link nhận hoa hồng.** Các chương trình, sản phẩm và điều kiện cần chủ sở hữu xác minh và duyệt trước khi kiếm tiền thật.
+
+
+## v1.6.1 — Threads Nurture (Meta API)
+
+- **Đã triển khai:** bộ hồ sơ thương hiệu nội bộ, lịch 14 ngày, 1 bài AI tạo qua Groq, hàng đợi an toàn, kết nối API xuất bản có kiểm soát, ghi nhận số liệu Meta (khi được cấp quyền).
+- **Chưa được kết nối:** tài khoản Threads thật và Meta OAuth — do đó **chưa có bài công khai**. Việc tạo hồ sơ trên Supabase không đồng nghĩa đã đăng ký tài khoản ngoài đời.
+- [Báo cáo kiểm thử và trạng thái v1.6.1](RELEASE_v1_6_THREADS.md)
+- [Hướng dẫn kích hoạt Threads đúng quyền](threads/README.md)
+- [Workflow nuôi kênh hàng ngày](.github/workflows/threads-nurture.yml)
+- [Supabase](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor): `threads_channels`, `threads_posts`, `threads_publish_attempts`, `threads_metrics`
