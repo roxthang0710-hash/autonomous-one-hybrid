@@ -25,10 +25,10 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: openai/gpt-oss-20b
       THREADS_DISCOVERY_ENABLED: ${{ secrets.THREADS_DISCOVERY_ENABLED }}
-      THREADS_DISCOVERY_ACCESS_TOKEN: ${{ secrets.THREADS_DISCOVERY_ACCESS_TOKEN }}
       THREADS_AUTO_ENGAGE_ENABLED: ${{ secrets.THREADS_AUTO_ENGAGE_ENABLED }}
-      THREADS_ENGAGE_ACCESS_TOKEN: ${{ secrets.THREADS_ENGAGE_ACCESS_TOKEN }}
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
     steps:
       - name: Verify configured research credentials
         run: |
