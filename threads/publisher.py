@@ -104,7 +104,10 @@ def do_publish(token, text):
 
 def publish_due(db):
     """Publish maximum one due, vetted original post. Never auto retry unknown state."""
-    credential = access()
+    # The token is encrypted at rest in Supabase and periodically refreshed.
+    # THREADS_ACCESS_TOKEN (a static legacy secret) is never used by production.
+    from threads.credentials import load_credentials
+    credential = load_credentials(db)
     if credential is None:
         return "waiting_for_owner_oauth_and_enable_switch"
     token, expected = credential
