@@ -1,0 +1,48 @@
+"""Discover public Threads discussions via official keyword-search API.
+
+NEVER publishes replies, likes, follows or creates personas. An explicit OAuth
+search scope and owner switch are required even to discover external posts.
+"""
+import os
+import requests
+from growth.scoring import classify
+
+API = "https://graph.threads.net/v1.0/keyword_search"
+QUERIES = ("bàn làm việc", "đi công tác", "sắp xếp góc làm việc")
+
+
+def can_search():
+    return (os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() == "true"
+            and bool(os.getenv("THREADS_DISCOVERY_ACCESS_TOKEN", "").strip()))
+
+
+def search_threads(*, query=None, fetch=requests.get):
+    if not can_search():
+        return [], "not_authorized"
+    if query is None:
+        query = QUERIES[0]
+    if query not in QUERIES:
+        return [], "disallowed_query"
+    resp = fetch(
+        API,
+        headers={"Authorization": "Bearer " + os.environ["THREADS_DISCOVERY_ACCESS_TOKEN"]},
+        params={"q": query, "search_type": "RECENT",
+                "fields": "id,text,username,permalink,timestamp", "limit": 12},
+        timeout=15,
+    )
+    resp.raise_for_status()
+    payload = resp.json()
+    items = []
+    for data in (payload.get("data") or [])[:12]:
+        if not isinstance(data, dict):
+            continue
+        text = str(data.get("text") or "")[:350]
+        post_id = str(data.get("id") or "")
+        url = str(data.get("permalink") or "")
+        if not post_id or not url.startswith("https://www.threads.") or \
+           classify(text)["state"] != "candidate":
+            continue
+        items.append({"id": post_id, "url": url,
+                      "username": str(data.get("username") or "")[:80],
+                      "title": text})
+    return items, "ok"
