@@ -12,13 +12,13 @@ API = "https://graph.threads.net/v1.0/keyword_search"
 QUERIES = ("bàn làm việc", "đi công tác", "sắp xếp góc làm việc")
 
 
-def can_search():
+def can_search(token=None):
     return (os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() == "true"
-            and bool(os.getenv("THREADS_DISCOVERY_ACCESS_TOKEN", "").strip()))
+            and bool(token or os.getenv("THREADS_DISCOVERY_ACCESS_TOKEN", "").strip()))
 
 
-def search_threads(*, query=None, fetch=requests.get):
-    if not can_search():
+def search_threads(*, query=None, fetch=requests.get, token=None):
+    if not can_search(token):
         return [], "not_authorized"
     if query is None:
         query = QUERIES[0]
@@ -26,7 +26,7 @@ def search_threads(*, query=None, fetch=requests.get):
         return [], "disallowed_query"
     resp = fetch(
         API,
-        headers={"Authorization": "Bearer " + os.environ["THREADS_DISCOVERY_ACCESS_TOKEN"]},
+        headers={"Authorization": "Bearer " + (token or os.environ["THREADS_DISCOVERY_ACCESS_TOKEN"])},
         params={"q": query, "search_type": "RECENT",
                 "fields": "id,text,username,permalink,timestamp", "limit": 12},
         timeout=15,
