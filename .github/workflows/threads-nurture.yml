@@ -1,0 +1,62 @@
+name: Autonomous One — Threads Nurture
+on:
+  schedule:
+    # 09:45 Vietnam time daily. GitHub cron is best effort.
+    - cron: '45 2 * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "plan = seed/maintain calendar; publish = publish one due post ONLY if authorized"
+        required: true
+        type: choice
+        options: [plan, publish]
+        default: plan
+
+permissions:
+  contents: read
+
+concurrency:
+  group: autonomous-one-threads-nurture
+  cancel-in-progress: false
+
+jobs:
+  nurture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+      THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+    steps:
+      - name: Require backend configuration
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$DB_SERVICE_KEY" ]; then
+            echo "Missing Supabase backend secrets" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Dependencies
+        run: pip install -r requirements.txt
+      - name: Test before any publishing action
+        run: python -m unittest discover -s tests -v
+      - name: Generate and maintain editorial calendar
+        if: github.event_name == 'schedule' || github.event.inputs.action == 'plan'
+        run: python -m threads.content
+      - name: Publish at most one due editorial post, only after OAuth
+        if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
+        run: python -m threads.publisher
+      - name: Private-safe report
+        if: always()
+        run: |
+          echo "## Threads nurture" >> "$GITHUB_STEP_SUMMARY"
+          echo "14-day editorial calendar and guarded official Meta API integration." >> "$GITHUB_STEP_SUMMARY"
+          echo "A real account, OAuth token, expected username and enabled switch are all required before any live post." >> "$GITHUB_STEP_SUMMARY"
+          echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
