@@ -17,14 +17,18 @@ EXPECTED = "dohay_dilam"
 MAX_DAILY_ATTEMPTS = 1
 
 
-def get_credentials():
+def get_credentials(db=None):
     if os.getenv("THREADS_AUTO_ENGAGE_ENABLED", "").lower() != "true":
         return None
-    token = os.getenv("THREADS_ENGAGE_ACCESS_TOKEN", "").strip()
     expected = os.getenv("THREADS_EXPECTED_USERNAME", "").strip().lstrip("@").casefold()
-    if not token or expected != EXPECTED:
+    if expected != EXPECTED:
         return None
-    return token, expected
+    if db is not None:
+        # All operations use the same Meta user grant, encrypted at rest.
+        from threads.credentials import load_credentials
+        return load_credentials(db, refresh=False)
+    # Legacy test-only entry point; production supplies db.
+    return None
 
 
 def eligible(row, now=None):
@@ -92,10 +96,12 @@ def send_reply(token, target_id, text):
 
 
 def run(db=None, now=None):
-    creds = get_credentials()
-    if not creds:
+    if os.getenv("THREADS_AUTO_ENGAGE_ENABLED", "").lower() != "true":
         return "not_authorized"
     db = db or Database()
+    creds = get_credentials(db)
+    if not creds:
+        return "not_authorized"
     now = now or datetime.now(timezone.utc)
     attempts = db.request("GET", "/growth_engagement_attempts", params={
         "select": "id",
