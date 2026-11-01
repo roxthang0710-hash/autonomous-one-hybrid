@@ -139,7 +139,7 @@ def plan_next(db, *, low_watermark=6, force=False):
     index = len(history) % len(SEEDS)
     pillar, topic = SEEDS[index]
     trend = None
-    if channel["status"] == "connected":
+    if channel.get("status") == "connected":
         from threads.trends import select_topic
         trend = select_topic(db, next_slot)
         if trend is not None:
