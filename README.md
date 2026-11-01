@@ -153,3 +153,17 @@ Tự đọc tín hiệu quan tâm từ Google Trends Việt Nam và RSS tin tứ
 - [Bản cấu trúc CSDL v1.7](sql/v1_7_growth_radar.sql)
 
 Có sẵn mã tìm cuộc trò chuyện và phản hồi hữu ích qua Threads API, nhưng **mặc định tắt**, chỉ hoạt động sau khi Meta OAuth và các quyền riêng được cấp hợp lệ. Không tạo tương tác giả, không phản hồi hàng loạt, không tự gắn liên kết Affiliate. Kết nối Metricool trong ChatGPT không tự cấp Meta Developer token cho GitHub.
+
+
+## v1.8.3 — Threads OAuth + Continuous Growth
+
+Trang OAuth chính chủ đã được triển khai tại [Kết nối Threads Autonomous One](https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth). Tài khoản chủ sở hữu cấp quyền một lần qua ứng dụng Meta Threads API; server tự đổi mã OAuth, lưu token trong Supabase Vault, kiểm tra đúng @dohay_dilam và tự gia hạn token dài hạn. Không cần sao chép token vào ChatGPT hoặc thêm secret thủ công vào GitHub Actions.
+
+Sau Meta OAuth, Agent tự tạo nội dung, thay tối đa 2 bài/tuần bằng góc viết xu hướng còn mới, đăng một bài/ngày và đối soát bài Metricool theo ID Meta thật. 15 ngày 03–17/11/2026 đã được Metricool đặt lịch độc quyền, không đăng trùng. Đọc/chủ động phản hồi tối đa 1 cuộc thảo luận liên quan/ngày chỉ khi chủ sở hữu tích chọn rõ ràng và Meta chấp thuận quyền bổ sung.
+
+- [Báo cáo phát hành v1.8.3](RELEASE_v1_8_THREADS_OAUTH.md)
+- [Hướng dẫn Meta Developer App & cấp quyền](threads/OAUTH.md)
+- [Quy trình chạy Agent sau cấp quyền](threads/README.md)
+- [Lượt smoke test OAuth thành công](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41348403916)
+
+**Giới hạn thật:** Chưa có Meta OAuth token chính chủ trong Vault trước khi người sở hữu chấp thuận, nên các chức năng đăng/phản hồi trực tiếp qua Meta hiện vẫn tắt. Shopee Affiliate chưa được duyệt nên chưa có doanh thu tiếp thị liên kết.
