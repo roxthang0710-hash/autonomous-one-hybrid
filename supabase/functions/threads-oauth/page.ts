@@ -1,0 +1,19 @@
+export const PAGE = "<!doctype html><html lang='vi'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Autonomous One — Cấp quyền Threads</title>"+
+"<style>:root{font:16px system-ui,sans-serif;background:#f1f5f2;color:#17362b}body{margin:0}main{max-width:740px;margin:24px auto;padding:32px;background:white;border:1px solid #dce8df;border-radius:18px}h1{font-size:28px}p,li{line-height:1.7}li{margin:9px 0}a{color:#176748}label{display:block;margin:16px 0 7px;font-weight:600}input{width:100%;padding:12px;font:inherit;border-radius:8px;border:1px solid #bbcfc3;box-sizing:border-box}.check{display:flex;gap:10px;align-items:start;font-weight:400}.check input{width:22px;flex-shrink:0}.note{background:#edf4ee;border-left:4px solid #48976c;padding:14px}button{background:#176748;color:white;border:0;border-radius:9px;font-size:16px;padding:14px 18px;margin:18px 0;cursor:pointer}button:disabled{opacity:.5}small{color:#567267}code{overflow-wrap:anywhere;display:block;padding:13px;background:#f1f5f1}#status{color:#9d4235;min-height:22px}.brand{font-size:12px;letter-spacing:2px;font-weight:700;color:#226e4a}</style>"+
+"</head><body><main><div class='brand'>AUTONOMOUS ONE · ĐỒ HAY ĐI LÀM</div><h1>Cấp quyền Threads một lần</h1>"+
+"<p>Đây là trang chính thức của hệ thống Autonomous One trên dự án Supabase của bạn. Tài khoản Threads cần kết nối: <strong>@dohay_dilam</strong>.</p>"+
+"<p class='note'>Bạn chỉ cần đăng nhập tài khoản quản trị Autonomous One, điền Threads App ID và App Secret từ Meta Developer rồi chấp thuận quyền trên Meta. Không gửi token, mật khẩu, mã xác minh hay App Secret trong ChatGPT. Hệ thống lưu token mã hóa trong Supabase Vault.</p>"+
+"<h2>1. Thông tin xác thực chủ sở hữu</h2><form id='connect'>"+
+"<label for='email'>Email tài khoản quản trị Autonomous One (Supabase Auth)</label><input id='email' type='email' autocomplete='username' required>"+
+"<label for='password'>Mật khẩu quản trị Autonomous One</label><input id='password' type='password' autocomplete='current-password' required>"+
+"<h2>2. Meta Threads Developer App</h2><label for='appId'>Threads App ID (chỉ chứa chữ số)</label><input id='appId' inputmode='numeric' pattern='[0-9]{8,30}' required>"+
+"<label for='appSecret'>Threads App Secret</label><input id='appSecret' type='password' autocomplete='off' minlength='16' required>"+
+"<label class='check'><input type='checkbox' id='replies'>Tôi đồng ý cho AI phản hồi tối đa một bài Threads công khai phù hợp mỗi ngày, minh bạch bằng danh tính thương hiệu và không gắn link quảng cáo. Không chọn nếu chỉ muốn tự đăng bài.</label>"+
+"<button id='submit' type='submit'>Đăng nhập và chuyển sang cấp quyền Meta</button><p id='status' role='status'></p></form>"+
+"<h2>3. Cấu hình trong Meta trước khi bấm nút</h2><ol>"+
+"<li>Mở <a href='https://developers.facebook.com/apps/' target='_blank' rel='noopener noreferrer'>Meta for Developers</a>, tạo ứng dụng và chọn <strong>Access the Threads API</strong>.</li>"+
+"<li>Trong Threads settings, thêm chính xác <strong>OAuth redirect/callback URI:</strong><code>https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth/callback</code></li>"+
+"<li>Thêm tài khoản <strong>@dohay_dilam</strong> dưới vai trò <strong>Threads Tester</strong>; trong Threads chấp nhận lời mời tại <strong>Settings → Account → Website permissions → Invites</strong>.</li>"+
+"<li>Cho phép các quyền Threads mà Meta chấp thuận. Nếu đang ở chế độ phát triển, tài khoản tester mới có thể thử nghiệm.</li>"+
+"</ol><p><small>Sau khi bạn chấp thuận, token dài hạn được giữ trong Vault. Bài trên Metricool từ 03–17/11 sẽ không bị đăng trùng. Nếu tài khoản Meta bị từ chối, Agent vẫn chưa được cấp quyền.</small></p>"+
+"</main><script src='/functions/v1/threads-oauth/client.js'></script></body></html>";
