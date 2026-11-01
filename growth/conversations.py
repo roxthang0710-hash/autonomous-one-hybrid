@@ -13,8 +13,15 @@ QUERIES = ("bàn làm việc", "đi công tác", "sắp xếp góc làm việc")
 
 
 def can_search(token=None):
-    return (os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() == "true"
-            and bool(token or os.getenv("THREADS_DISCOVERY_ACCESS_TOKEN", "").strip()))
+    # Explicit token argument comes from owner's OAuth Vault consent.
+    # A literal 'false' environment override is an emergency stop.
+    setting = os.getenv("THREADS_DISCOVERY_ENABLED", "").lower()
+    if setting == "false":
+        return False
+    if token:
+        return True
+    return setting == "true" and bool(
+        os.getenv("THREADS_DISCOVERY_ACCESS_TOKEN", "").strip())
 
 
 def search_threads(*, query=None, fetch=requests.get, token=None):
