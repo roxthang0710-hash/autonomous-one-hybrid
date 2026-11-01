@@ -16,7 +16,7 @@ SOURCES = (
     ("google_news_vn", "https://news.google.com/rss/search?q="
         + quote('("du lịch" OR "hành lý") when:3d') + "&hl=vi&gl=VN&ceid=VN:vi"),
     ("google_news_vn", "https://news.google.com/rss/search?q="
-        + quote('("công sở" OR "đi làm") when:3d') + "&hl=vi&gl=VN&ceid=VN:vi"),
+        + quote('("văn phòng" OR "năng suất làm việc") when:3d') + "&hl=vi&gl=VN&ceid=VN:vi"),
 )
 ALLOWED_DOMAINS = ("trends.google.com", "news.google.com")
 
