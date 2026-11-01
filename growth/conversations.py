@@ -4,6 +4,7 @@ NEVER publishes replies, likes, follows or creates personas. An explicit OAuth
 search scope and owner switch are required even to discover external posts.
 """
 import os
+from datetime import datetime, timedelta, timezone
 import requests
 from growth.scoring import classify
 
@@ -39,10 +40,22 @@ def search_threads(*, query=None, fetch=requests.get):
         text = str(data.get("text") or "")[:350]
         post_id = str(data.get("id") or "")
         url = str(data.get("permalink") or "")
-        if not post_id or not url.startswith("https://www.threads.") or \
-           classify(text)["state"] != "candidate":
+        if not post_id or not url.startswith(("https://www.threads.net/",
+                                             "https://www.threads.com/")):
+            continue
+        # Replies to trending discussions must be timely. Meta timestamp is
+        # ISO-8601 with a numeric offset (often +0000), or Z.
+        try:
+            raw_time = str(data.get("timestamp") or "").replace("Z", "+00:00")
+            published = datetime.fromisoformat(raw_time).astimezone(timezone.utc)
+        except (ValueError, TypeError):
+            continue
+        age = datetime.now(timezone.utc) - published
+        if not timedelta(0) <= age <= timedelta(hours=24):
+            continue
+        if classify(text, published)["state"] != "candidate":
             continue
         items.append({"id": post_id, "url": url,
                       "username": str(data.get("username") or "")[:80],
-                      "title": text})
+                      "title": text, "published_at": published})
     return items, "ok"
