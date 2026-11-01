@@ -57,6 +57,9 @@ jobs:
       - name: Publish at most one due editorial post, only after OAuth
         if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
         run: python -m threads.publisher
+      - name: Read genuine Threads post insights when authorized
+        if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
+        run: python -m threads.insights
       - name: Private-safe report
         if: always()
         run: |
