@@ -164,7 +164,10 @@ def main():
                   "review_status,commission_notes", "order": "code.asc", "limit": "20",
     })
     program = select_lead(programs, recent_runs)
-    niche = choose_niche(recent_runs)
+    suggested_niche = os.getenv("AFFILIATE_NICHE", "").strip()
+    if suggested_niche.startswith("affiliate:"):
+        suggested_niche = suggested_niche[len("affiliate:"):].strip()
+    niche = suggested_niche[:120] if len(suggested_niche) >= 5 else choose_niche(recent_runs)
     fingerprint = hashlib.sha256((program["code"] + "|" + niche + "|" +
                                   now.strftime("%G-W%V")).encode()).hexdigest()
     created = db.request("POST", "/affiliate_runs",
