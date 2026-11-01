@@ -119,19 +119,11 @@ def plan_next(db, *, low_watermark=6, force=False):
     })
     if len(history) >= 365:
         return "max_posts_reached"
-    index = len(history) % len(SEEDS)
-    pillar, topic = SEEDS[index]
-    result = generate_ai_post(pillar, topic, [r["text_content"] for r in history])
-    if any(r["text_content"] == result["post_text"] for r in history):
-        return "duplicate_generated"
-    key = hashlib.sha256((BRAND_KEY + "\n" + result["post_text"]).encode("utf-8")).hexdigest()
-    # Include Metricool's external schedule as the same account's content.
-    # New Meta-direct drafts must start AFTER the last Metricool date, so
-    # enabling OAuth can never double-post on a previously booked day.
+    # Respect all scheduled and already published Metricool slots.
     recent_slot = db.request("GET", "/threads_posts", params={
         "select": "scheduled_at",
         "channel_id": "eq." + channel["id"],
-        "status": "in.(queued,scheduled_external)",
+        "status": "in.(queued,scheduled_external,posted,publishing,uncertain)",
         "order": "scheduled_at.desc", "limit": "1",
     })
     last = (datetime.fromisoformat(recent_slot[0]["scheduled_at"].replace("Z", "+00:00"))
@@ -143,6 +135,19 @@ def plan_next(db, *, low_watermark=6, force=False):
             next_slot = (last_vn + timedelta(days=1)).replace(
                 hour=9, minute=30, second=0, microsecond=0
             )
+
+    index = len(history) % len(SEEDS)
+    pillar, topic = SEEDS[index]
+    trend = None
+    if channel["status"] == "connected":
+        from threads.trends import select_topic
+        trend = select_topic(db, next_slot)
+        if trend is not None:
+            pillar, topic = trend["pillar"], trend["topic"]
+    result = generate_ai_post(pillar, topic, [r["text_content"] for r in history])
+    if any(r["text_content"] == result["post_text"] for r in history):
+        return "duplicate_generated"
+    key = hashlib.sha256((BRAND_KEY + "\n" + result["post_text"]).encode("utf-8")).hexdigest()
     rows = db.request("POST", "/threads_posts",
                       params={"on_conflict": "content_key"},
                       payload={
@@ -152,6 +157,8 @@ def plan_next(db, *, low_watermark=6, force=False):
                           "scheduled_at": next_slot.isoformat(),
                           "status": "queued", "created_by": "agent",
                           "risk_flags": [], "content_type": "editorial",
+                          "origin_growth_opportunity_id": (
+                              trend["opportunity_id"] if trend else None),
                       },
                       prefer="resolution=ignore-duplicates,return=representation")
     return "created_one" if rows else "already_created"
