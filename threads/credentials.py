@@ -110,6 +110,71 @@ def _validate_db_row(record, expected, fernet, now):
     return token, issued, expires
 
 
+
+def _vault_credentials(db, expected, now, *, refresh=True):
+    """Read owner-authorized token from Supabase Vault, not a plaintext table.
+
+    A completed OAuth callback atomically sets the channel's authorized switch
+    and keeps token encrypted at rest. There is no manual GitHub secret step.
+    """
+    channels = db.request("GET", "/threads_channels", params={
+        "select": "username,platform_user_id,status,authorized,auto_publish_enabled",
+        "brand_key": "eq." + BRAND_KEY, "limit": "1",
+    })
+    if not channels:
+        return None
+    channel = channels[0]
+    if channel.get("status") != "connected" or not channel.get("authorized") or \
+       not channel.get("auto_publish_enabled") or \
+       channel.get("username") != expected or \
+       not channel.get("platform_user_id"):
+        return None
+    result = db.request("POST", "/rpc/threads_read_vault_token",
+                        payload={"p_brand_key": BRAND_KEY})
+    if not result:
+        return None
+    row = result[0]
+    if str(row.get("verified_username") or "") != expected or \
+       str(row.get("platform_user_id") or "") != str(channel["platform_user_id"]):
+        raise RuntimeError("Supabase Vault Meta identity mismatch")
+    token = str(row.get("access_token") or "")
+    if len(token) < 40:
+        raise RuntimeError("Invalid stored Threads token")
+    try:
+        expiry = datetime.fromisoformat(row["expires_at"].replace("Z", "+00:00"))
+    except (TypeError, ValueError, KeyError):
+        raise RuntimeError("Invalid Threads token expiration") from None
+    if expiry.tzinfo is None or now >= expiry:
+        raise RuntimeError("Threads authorization expired; reauthorize through owner portal")
+    if refresh and expiry - now < REFRESH_BEFORE:
+        # This access token is already long-lived. Meta allows refreshing
+        # valid tokens, provided they have aged enough since issue/last refresh.
+        # The endpoint may temporarily fail; if token is still valid, safely
+        # keep existing credentials until the next automatic attempt.
+        try:
+            refreshed, lifetime = _token_response(
+                "/refresh_access_token", token=token,
+                params={"grant_type": "th_refresh_token"})
+            username, user_id = verify_identity(refreshed, expected)
+            if user_id != str(row["platform_user_id"]):
+                raise RuntimeError("Meta OAuth account changed during refresh")
+            db.request("POST", "/rpc/threads_refresh_vault_token", payload={
+                "p_brand_key": BRAND_KEY,
+                "p_platform_user_id": user_id,
+                "p_new_token": refreshed,
+                "p_new_expiry": (datetime.now(timezone.utc) +
+                                 timedelta(seconds=lifetime)).isoformat(),
+            })
+            token = refreshed
+        except requests.RequestException:
+            if expiry - now < timedelta(days=1):
+                raise RuntimeError("Meta token refresh failed near expiry") from None
+        except ValueError:
+            if expiry - now < timedelta(days=1):
+                raise RuntimeError("Meta token refresh returned invalid data") from None
+    return token, expected
+
+
 def load_credentials(db, *, now=None, refresh=True):
     """Return verified token, username or None. No external action without owner switch.
 
@@ -118,13 +183,20 @@ def load_credentials(db, *, now=None, refresh=True):
       THREADS_APP_SECRET (real Threads App Secret, GitHub Secret only)
       THREADS_TOKEN_KEY (unique Fernet key, GitHub Secret only).
     """
+    now = now or datetime.now(timezone.utc)
+    # Preferred production route: verified owner portal -> encrypted Vault.
+    # No GH secrets are required after the owner has completed OAuth.
+    vaulted = _vault_credentials(db, EXPECTED, now, refresh=refresh)
+    if vaulted is not None:
+        return vaulted
+
+    # Legacy operator route remains disabled until its own explicit switch.
     if os.getenv("THREADS_PUBLISH_ENABLED", "").casefold() != "true":
         return None
     expected = _expected()
     fernet = _key()
     if not expected or not fernet:
         return None
-    now = now or datetime.now(timezone.utc)
     saved = _read(db)
     if not saved:
         initial = os.getenv("THREADS_INITIAL_SHORT_TOKEN", "").strip()
