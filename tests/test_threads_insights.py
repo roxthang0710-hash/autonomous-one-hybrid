@@ -23,14 +23,14 @@ class InsightsTests(unittest.TestCase):
 
     def test_disconnected_account_skips(self):
         db = MagicMock()
-        with patch("threads.insights.access", return_value=None):
+        with patch("threads.credentials.load_credentials", return_value=None):
             self.assertEqual(collect(db), "waiting_for_owner_oauth_and_enable_switch")
         db.request.assert_not_called()
 
     def test_no_posts_no_fabricated_insights(self):
         db = MagicMock()
         db.request.return_value = []
-        with patch("threads.insights.access", return_value=("token", "brand")), \
+        with patch("threads.credentials.load_credentials", return_value=("token", "brand")), \
              patch("threads.insights.authenticate"), \
              patch("threads.insights.get_channel", return_value={"id": "channel"}):
             self.assertEqual(collect(db), "no_published_posts")
