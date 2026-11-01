@@ -4,8 +4,8 @@ import unicodedata
 from datetime import datetime, timezone
 
 PILLARS = {
-    "work": ("van phong", "cong so", "di lam", "ban lam viec", "nang suat",
-             "lam viec", "work from home", "remote work", "nhan vien", "office",
+    "work": ("van phong", "cong so", "ban lam viec", "nang suat",
+             "work from home", "remote work", "office",
              "laptop", "ban phim", "quan ly thoi gian", "ghi chu", "hoc tap"),
     "travel": ("du lich", "cong tac", "hanh ly", "vali", "may bay", "di chuyen",
                "hanh trinh", "khach san", "travel", "trip", "backpack", "packing"),
@@ -21,6 +21,8 @@ HIGH_RISK = (
     "benh", "dich benh", "thuoc chua", "giam can", "ca cuoc", "xo so",
     "forex", "crypto", "tien ao", "tin don", "scandal", "boi nho",
     "tinh duc", "khung bo", "ton giao", "ngoai tinh",
+    "di lam viec o nuoc ngoai", "lao dong di nuoc ngoai",
+    "xuat khau lao dong", "phap ly", "tranh chap",
 )
 
 
