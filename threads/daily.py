@@ -33,6 +33,11 @@ def daily(db=None, *, publish=True, metrics=True):
         results["publisher"] = "disabled_for_manual_planning"
     if metrics:
         try:
+            from threads.reconcile import reconcile
+            results["metricool_reconciliation"] = reconcile(db)
+        except Exception as exc:
+            results["metricool_reconciliation"] = "unavailable:" + type(exc).__name__
+        try:
             results["insights"] = collect(db)
         except Exception as exc:
             results["insights"] = "unavailable:" + type(exc).__name__
