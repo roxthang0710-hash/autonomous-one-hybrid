@@ -17,6 +17,9 @@ def snapshot(db):
     drafts = db.request("GET", "/growth_opportunities", params={
         "select": "id,status,kind", "order": "created_at.desc", "limit": "100",
     })
+    attempts = db.request("GET", "/growth_engagement_attempts", params={
+        "select": "status", "order": "attempted_at.desc", "limit": "100",
+    })
     return {
         "signals_recorded_recent": len(trends),
         "drafts_saved_recent": len(drafts),
@@ -27,7 +30,8 @@ def snapshot(db):
             1 for x in drafts if x["status"] == "needs_review"
         ),
         "metricool_performance": score,
-        "posting_claim": "No posts or replies are published by Growth Radar.",
+        "confirmed_brand_replies_recent": sum(1 for x in attempts if x["status"] == "posted"),
+        "engagement_note": "Replies only occur via separate official Meta OAuth and owner enable switch.",
     }
 
 
