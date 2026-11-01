@@ -54,7 +54,8 @@ def _token_response(path, *, token, method="GET", secret=None, params=None, fetc
     return body["access_token"], lifetime
 
 
-def verify_identity(token, expected, *, read=thread_request):
+def verify_identity(token, expected, *, read=None):
+    read = read or thread_request
     profile = read("GET", "/me", token, params={"fields": "id,username"})
     username = str(profile.get("username") or "").casefold()
     user_id = str(profile.get("id") or "")
