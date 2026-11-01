@@ -26,6 +26,9 @@ jobs:
       GROQ_MODEL: openai/gpt-oss-20b
       THREADS_DISCOVERY_ENABLED: ${{ secrets.THREADS_DISCOVERY_ENABLED }}
       THREADS_DISCOVERY_ACCESS_TOKEN: ${{ secrets.THREADS_DISCOVERY_ACCESS_TOKEN }}
+      THREADS_AUTO_ENGAGE_ENABLED: ${{ secrets.THREADS_AUTO_ENGAGE_ENABLED }}
+      THREADS_ENGAGE_ACCESS_TOKEN: ${{ secrets.THREADS_ENGAGE_ACCESS_TOKEN }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
     steps:
       - name: Verify configured research credentials
         run: |
@@ -44,6 +47,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Collect public trend evidence and draft one safe growth idea
         run: python -m growth.runner
+      - name: Optional one authentic on-topic Threads reply (off until owner OAuth opt-in)
+        run: python -m growth.engage
       - name: Summarize monitoring without confidential drafts
         if: always()
         run: python -m growth.report
@@ -53,5 +58,5 @@ jobs:
           echo "## Autonomous One Growth Radar" >> "$GITHUB_STEP_SUMMARY"
           echo "Public sources are Google Trends Vietnam RSS and narrowly filtered Google News RSS." >> "$GITHUB_STEP_SUMMARY"
           echo "Threads discussion search requires additional official Meta OAuth permissions." >> "$GITHUB_STEP_SUMMARY"
-          echo "All drafts stay private in Supabase; no replies, reposts, comments or outreach are sent." >> "$GITHUB_STEP_SUMMARY"
+          echo "Reply worker remains off until separate official Meta OAuth and owner enable switch are configured; maximum one genuine reply per day." >> "$GITHUB_STEP_SUMMARY"
           echo "The number of recommended content ideas is not a revenue forecast." >> "$GITHUB_STEP_SUMMARY"
