@@ -42,6 +42,7 @@ class AffiliateRunnerTests(unittest.TestCase):
         self.assertIsNone(out["affiliate_link"])
         self.assertEqual(out["expected_spend_vnd"], 0)
         self.assertIn("hoa hồng", out["disclosure_instruction"])
+        self.assertIn("chủ sở hữu", out["distribution_guardrail"])
 
     def test_paid_campaign_rejected(self):
         data = dict(VALID, expected_spend_vnd=50000)
