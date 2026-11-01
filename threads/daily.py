@@ -21,6 +21,11 @@ def daily(db=None, *, publish=True, metrics=True):
         results["editor"] = "error:" + type(exc).__name__
     if publish:
         try:
+            from threads.refresh import refresh_next
+            results["trend_selection"] = refresh_next(db)
+        except Exception as exc:
+            results["trend_selection"] = "skipped:" + type(exc).__name__
+        try:
             results["publisher"] = publish_due(db)
         except Exception as exc:
             results["publisher"] = "stopped:" + type(exc).__name__
