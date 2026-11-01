@@ -1,57 +1,74 @@
-# Autonomous One — Hybrid Cloud Agent v1.0
+# Autonomous One — Hybrid Cloud Agent v1.2
 
-Agent nghiên cứu cơ hội kinh doanh chạy trên **GitHub Actions + Groq + Supabase**, không cần máy tính cá nhân bật thường xuyên.
+AI Agent nghiên cứu cơ hội kinh doanh chạy trên GitHub Actions, Groq và Supabase. **Đã kiểm thử thành công trên Cloud** với cả lịch kích hoạt nội bộ và sự kiện GitHub Issues.
 
-**Trạng thái:** phiên bản thử nghiệm **research & proposal only**. Agent không có quyền chi tiền, mua quảng cáo, gửi tin nhắn cho khách hàng, phát hành sản phẩm hay tự sửa code.
+**Quyền hạn hiện tại:** research / evaluate / report only. Agent **không tự chi tiền, mua quảng cáo, gửi khách hàng, phát hành sản phẩm hoặc tự sửa code**.
 
-## Hạ tầng
-- GitHub Actions: lịch 08:15, 12:15, 16:15, 20:15 (Asia/Ho_Chi_Minh, UTC+7), chạy thủ công hoặc repository_dispatch.
-- Groq: mô hình `openai/gpt-oss-20b`, tạo đề xuất theo JSON Schema.
-- Supabase: dự án `autonomous-one` (Singapore), tables `agent_events`, `agent_runs`, `agent_proposals`; RPC `claim_agent_event`.
-- Edge Function `agent-webhook`: nhận một sự kiện đã xác thực và kích hoạt GitHub; nếu dispatch không thành công, sự kiện vẫn trong queue để chu kỳ tiếp theo xử lý.
+## Trạng thái hệ thống
+- **GitHub Actions:** theo lịch 08:15 / 12:15 / 16:15 / 20:15 giờ Việt Nam (best effort), chạy thủ công và nhận sự kiện.
+- **Groq:** `openai/gpt-oss-20b`; lấy ý tưởng có cấu trúc (JSON Schema).
+- **Supabase:** project `autonomous-one`, region Singapore; bảng `agent_events`, `agent_runs`, `agent_proposals`, `agent_evaluations`, `agent_experiments`.
+- **Evaluations:** chấm mức độ đầy đủ của kế hoạch theo 5 tiêu chí, nhận diện ý tưởng tiêu đề tương tự; **không phải dự đoán xác suất kiếm tiền**.
+- **Planner:** chọn chủ đề ít nghiên cứu; tạm dừng tạo đề xuất theo lịch nếu đã có **8 đề xuất chờ duyệt** (sự kiện do chủ sở hữu tạo vẫn có thể đưa vào hàng đợi).
+- **Dashboard nội bộ:** Supabase Table Editor và GitHub Actions Run Summary; không cần xuất bản dữ liệu ra ngoài.
+- **Webhook nâng cao:** Supabase Edge Function `agent-webhook` đã triển khai nhưng cần secret riêng để sử dụng từ dịch vụ bên ngoài.
 
-## Cấu hình bắt buộc
+## Cấu hình Secrets cho GitHub
+Đã thiết lập cho repo này tại [Settings → Secrets → Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/settings/secrets/actions):
+- `SUPABASE_URL`: `https://gjdvdohylvsauphhkutw.supabase.co`
+- `DB_SERVICE_KEY`: Supabase server secret (không commit)
+- `GROQ_API_KEY`: Groq API key (không commit)
 
-Trong [GitHub Actions Secrets](https://github.com/roxthang0710-hash/autonomous-one-hybrid/settings/secrets/actions) tạo:
+Không đưa secret vào file, issue, commit hay log. Nếu thiếu secret, job bỏ qua bước gọi AI.
 
-| Secret | Giá trị |
-|---|---|
-| `SUPABASE_URL` | `https://gjdvdohylvsauphhkutw.supabase.co` |
-| `DB_SERVICE_KEY` | Supabase secret API key (chỉ ở backend) |
-| `GROQ_API_KEY` | Groq API key còn hiệu lực |
+## Sử dụng Agent ngay (không cần thêm key)
+### Cách 1 — GitHub Issue
+1. Truy cập [New issue](https://github.com/roxthang0710-hash/autonomous-one-hybrid/issues/new).
+2. **Chủ sở hữu repo** tạo issue có tiêu đề bắt đầu bằng `agent:`, ví dụ:
+   `agent: zero-cost marketing analytics tool for small hotels`.
+3. GitHub Actions tự nhận sự kiện, ghi một nhiệm vụ vào `agent_events`, thực hiện nghiên cứu và lưu đề xuất `agent_proposals` cùng điểm đánh giá `agent_evaluations`.
+4. Xem kết quả trong [Supabase Table Editor](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor). Ghi chú: ticket trên GitHub có thể hiển thị công khai nếu repo đang Public.
 
-Không thêm secret vào commit, log hoặc file `.env`. Khi chưa có đủ ba secrets, lịch chạy vẫn hoạt động nhưng bỏ qua bước gọi AI.
+Issue không do chủ sở hữu tạo hoặc thiếu tiền tố `agent:` **không được chạy job Agent**. Nếu vượt giới hạn lượt chạy, sự kiện đã được lưu và chờ chu kỳ sau.
 
-Để nhận sự kiện qua [Supabase Edge Function Secrets](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/functions), tạo:
-- `WEBHOOK_SECRET`: một chuỗi ngẫu nhiên ít nhất 32 ký tự.
-- `DB_SERVICE_KEY`: key backend tương ứng.
-- `GITHUB_DISPATCH_TOKEN`: fine-grained GitHub PAT giới hạn ở repository này, Contents: Read and write.
+### Cách 2 — Run workflow
+Vào [Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions), chọn **Autonomous One — Hybrid Agent → Run workflow**, nhập `topic` tùy ý.
+
+### Cách 3 — Tự chạy theo lịch
+Agent tự chạy bốn lần mỗi ngày cho đến khi đạt giới hạn 8 đề xuất đang chờ chủ sở hữu phê duyệt. Khi backlog đầy, workflow vẫn chạy nhưng tránh gọi Groq không cần thiết.
+
+## Theo dõi
+- [Supabase Table Editor](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor): `agent_review_dashboard`, `agent_proposals`, `agent_evaluations`, `agent_experiments`, `agent_events`, `agent_runs`.
+- [GitHub Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions): mở một run để xem các bước và Summary thống kê (không công khai nội dung kinh doanh).
+- [Các câu truy vấn báo cáo](dashboard/queries.sql) và [hướng dẫn duyệt ý tưởng](dashboard/README.md).
+- `approval_status = approved` chỉ ghi nhận việc duyệt ý tưởng; **không kích hoạt một hoạt động kinh doanh hay chi tiền**.
+
+## Webhook dành cho hệ thống ngoài (chưa cấu hình xong)
+Để gửi sự kiện từ dịch vụ khác, cấu hình trong **Supabase Edge Function Secrets**:
+- `WEBHOOK_SECRET`: chuỗi ngẫu nhiên ít nhất 32 ký tự.
+- `DB_SERVICE_KEY`: backend key có quyền truy cập Supabase.
+- `GITHUB_DISPATCH_TOKEN`: fine-grained PAT chỉ cho repo này, quyền cần thiết để dispatch event.
 - `GITHUB_REPOSITORY_NAME`: `roxthang0710-hash/autonomous-one-hybrid`.
 
-`SUPABASE_URL` do nền tảng Supabase Edge Functions cung cấp mặc định.
-
-## Chạy thử
-1. Vào [Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions), chọn **Autonomous One — Hybrid Agent** → **Run workflow**; có thể nhập chủ đề `marketing reporting pain points`.
-2. Mở Supabase Table Editor và kiểm tra `agent_runs` có trạng thái `success`, `agent_proposals` có một bản ghi với `approval_status = pending`.
-3. Chạy unit test: `python -m unittest discover -s tests -v`.
-4. Theo dõi thời gian chạy GitHub Actions và hạn mức Groq miễn phí; workflow không tự tăng phí.
-
-## Kích hoạt bằng sự kiện
-Gửi POST đến `https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/agent-webhook`.
-
-- Header `x-agent-secret`: WEBHOOK_SECRET đã cấu hình.
-- JSON body ví dụ:
+POST đến `https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/agent-webhook`, header `x-agent-secret` và body:
 
 ```json
-{"request_id":"demo-20261101-001","kind":"research_request","topic":"small business reporting automation"}
+{"request_id":"demo-20261101-001","kind":"research_request","topic":"small business automation"}
 ```
 
-Mỗi yêu cầu phải có `request_id` mới. Edge Function được triển khai với `verify_jwt=false` nhưng tự kiểm tra header bí mật. Chưa cấu hình `WEBHOOK_SECRET` sẽ trả HTTP 401.
+Webhook khi thiếu secret trả 401; không thay thế phương án GitHub Issue đã chạy thành công.
 
-## Giới hạn hiện tại
-- Chưa tự kiếm tiền, chưa có website dashboard và chưa có bộ nhớ dạng vector.
-- Nguồn nghiên cứu v1 lấy tiêu đề công khai qua Hacker News Algolia; không được coi là xác minh nhu cầu thị trường.
-- Các đề xuất chỉ để chủ sở hữu xem xét. Thay đổi `approval_status` không tự kích hoạt hành động kinh doanh.
-- GitHub Actions schedule là best-effort. Hạn mức Groq và Supabase Free có thể thay đổi.
+## Giới hạn
+- Đã kiểm thử tích hợp tạo ý tưởng và ghi vào Supabase, **chưa có cơ chế tạo doanh thu**.
+- Các điểm đánh giá là rubric máy móc và nghiên cứu dựa trên nguồn công khai, chưa chứng minh nhu cầu thị trường.
+- Dữ liệu doanh thu trong `agent_experiments` do chủ sở hữu nhập và phải có bằng chứng.
+- GitHub Actions cron có thể chạy trễ; quota Groq/Supabase/GitHub Free có giới hạn.
+- Repository hiện đang Public: khuyến nghị đổi sang Private trong GitHub Settings trước khi lưu nội dung kinh doanh nhạy cảm.
 
-**Nguyên tắc vận hành:** không tự chi tiền, không tự nâng quyền, không thực hiện hành động công khai trước khi được phê duyệt.
+## Thử nghiệm
+```bash
+pip install -r requirements.txt
+python -m unittest discover -s tests -v
+```
+
+Chỉ chạy `python agent.py` khi đã cấu hình env vars ở môi trường bảo mật.
