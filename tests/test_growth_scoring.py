@@ -31,6 +31,11 @@ class GrowthScoringTests(unittest.TestCase):
                 x = classify(topic, self.now, self.now)
                 self.assertEqual(x["state"], "rejected")
 
+    def test_generic_labor_abroad_news_is_not_workplace_lifestyle(self):
+        title = "Đi làm việc ở nước ngoài theo hợp đồng: chuyển dịch mới"
+        result = classify(title, self.now, self.now)
+        self.assertEqual(result["state"], "rejected")
+
     def test_old_headline_not_a_fresh_trend(self):
         self.assertEqual(classify("Mẹo du lịch hành lý",
                                   self.now - timedelta(days=8), self.now)["state"],
