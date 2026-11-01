@@ -121,7 +121,7 @@ def _vault_credentials(db, expected, now, *, refresh=True):
         "select": "username,platform_user_id,status,authorized,auto_publish_enabled",
         "brand_key": "eq." + BRAND_KEY, "limit": "1",
     })
-    if not channels:
+    if not isinstance(channels, list) or not channels or not isinstance(channels[0], dict):
         return None
     channel = channels[0]
     if channel.get("status") != "connected" or not channel.get("authorized") or \
