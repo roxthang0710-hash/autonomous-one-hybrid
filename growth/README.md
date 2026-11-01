@@ -22,12 +22,13 @@ Supabase:
 - `growth_review_dashboard`: view nội bộ, không cấp quyền cho anonymous hoặc authenticated
 
 ### Quy tắc tương tác có trách nhiệm
-1. Không đăng hoặc trả lời công khai từ bộ Growth Radar hiện tại. AI chỉ chuẩn bị nội dung.
+1. Theo cấu hình hiện tại, Growth Radar chỉ lưu bản nháp. Bộ phản hồi riêng chỉ được kích hoạt bằng Meta OAuth có đủ quyền và công tắc rõ ràng của chủ sở hữu; mặc định tắt.
 2. Chỉ phản hồi bài Threads thực sự liên quan; dùng tên và danh tính thương hiệu thật. Không sử dụng nhiều tài khoản để tạo sự ủng hộ giả.
 3. Không nhắn tin riêng hàng loạt, không gắn đường dẫn mua hàng vào bình luận để kéo lưu lượng, không đưa thông tin sai lệch để gây tranh cãi.
 4. Trước khi bật tự động trả lời trong tương lai, cần Meta OAuth có đúng các quyền, giới hạn lượt và bảo đảm API cho phép; không dùng phương pháp cào giao diện.
-5. Google Trends và Google News là **tín hiệu tìm kiếm/tin tức**, không phải bằng chứng chủ đề đang hot trên Threads. Chỉ có Threads keyword search hợp lệ mới xác nhận được hội thoại từ chính nền tảng.
-6. Mọi lời khẳng định về sản phẩm, giá hay xu hướng vẫn phải được xác minh; nội dung hiện tại là bản nháp nghiên cứu.
+5. Nếu sau này cho phép phản hồi, hệ thống sử dụng **một tài khoản thương hiệu thật**, tối đa 1 lần phản hồi/ngày, chỉ trên bài liên quan còn hiệu lực; ghi nhật ký để tránh phản hồi lại khi kết quả không rõ.
+6. Google Trends và Google News là **tín hiệu tìm kiếm/tin tức**, không phải bằng chứng chủ đề đang hot trên Threads. Chỉ có Threads keyword search hợp lệ mới xác nhận được hội thoại từ chính nền tảng.
+7. Mọi lời khẳng định về sản phẩm, giá hay xu hướng vẫn phải được xác minh; nội dung hiện tại là bản nháp nghiên cứu.
 
 ## Cách kiểm tra
 - [GitHub Actions — Growth Radar](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/workflows/growth-radar.yml)
@@ -39,6 +40,19 @@ Sau khi chủ sở hữu tạo Meta Developer App cho Threads và cấp phép `t
 - Lưu token trong GitHub Actions Secret `THREADS_DISCOVERY_ACCESS_TOKEN`, không đưa token vào mã nguồn hay issue
 - Đặt Secret `THREADS_DISCOVERY_ENABLED=true` để Agent chỉ **tìm kiếm**, không phản hồi
 - Kiểm tra phương án định danh, giới hạn và điều khoản Meta trước khi bật tự trả lời thật
+
+## Bộ phản hồi tự động — chưa kích hoạt
+
+Mã `growth/engage.py` đã có sẵn luồng chính thức của Meta để tạo phản hồi hữu ích, không gắn liên kết, không giả danh khách hàng. **Không hoạt động trong dự án hiện tại** vì chưa có Meta Threads OAuth token và quyền `threads_keyword_search` / `threads_content_publish` / `threads_manage_replies`. Metricool đã kết nối không mặc nhiên cấp những quyền đó cho GitHub Actions.
+
+Nếu chủ sở hữu muốn **tự nguyện** bật phản hồi tự động trong tương lai, sau khi xác minh các quyền API và kiểm tra chính sách nền tảng:
+- Secret `THREADS_DISCOVERY_ENABLED=true`
+- Secret `THREADS_DISCOVERY_ACCESS_TOKEN` là token chính thức dùng tìm kiếm
+- Secret `THREADS_ENGAGE_ACCESS_TOKEN` là token Meta đủ quyền gửi phản hồi
+- Secret `THREADS_EXPECTED_USERNAME=dohay_dilam`
+- Secret `THREADS_AUTO_ENGAGE_ENABLED=true` là công tắc đồng ý gửi phản hồi từ thương hiệu
+
+Không lưu token trong issue, file hoặc nội dung chat. Sau khi kết nối, worker xác minh tài khoản Meta `/me`, giới hạn 1 phản hồi/ngày, chỉ trả lời bài đã tìm qua API, chất lượng và liên quan cao, không bình luận kèm liên kết hay mua hàng. Nếu lỗi gửi bài không rõ kết quả, worker không thử lại tự động. Chưa kiểm thử gửi phản hồi lên nền tảng thật, chỉ kiểm thử bằng API giả lập.
 
 ## Giới hạn hiện tại
 - Metricool có kết nối chat và đang quản lý lịch xuất bản 15 bài, nhưng **Metricool API server-to-server yêu cầu gói Advanced/Custom** theo tài liệu hiện tại. Với gói Free, GitHub không tự gửi thêm nội dung sang Metricool qua API thương mại.
