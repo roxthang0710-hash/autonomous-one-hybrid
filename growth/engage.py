@@ -18,17 +18,18 @@ MAX_DAILY_ATTEMPTS = 1
 
 
 def get_credentials(db=None):
-    if os.getenv("THREADS_AUTO_ENGAGE_ENABLED", "").lower() != "true":
+    # Owner's OAuth portal checkbox is the affirmative permission switch.
+    # GitHub requires no additional secrets; explicit environment 'false'
+    # can stop engagement immediately as an emergency override.
+    if db is None or os.getenv("THREADS_AUTO_ENGAGE_ENABLED", "").lower() == "false":
         return None
-    expected = os.getenv("THREADS_EXPECTED_USERNAME", "").strip().lstrip("@").casefold()
-    if expected != EXPECTED:
+    rows = db.request("POST", "/rpc/threads_read_vault_token",
+                      payload={"p_brand_key": "do_hay_di_lam"})
+    if not rows or rows[0].get("enable_replies") is not True or \
+       rows[0].get("verified_username") != EXPECTED:
         return None
-    if db is not None:
-        # All operations use the same Meta user grant, encrypted at rest.
-        from threads.credentials import load_credentials
-        return load_credentials(db, refresh=False)
-    # Legacy test-only entry point; production supplies db.
-    return None
+    from threads.credentials import load_credentials
+    return load_credentials(db, refresh=False)
 
 
 def eligible(row, now=None):
@@ -96,8 +97,6 @@ def send_reply(token, target_id, text):
 
 
 def run(db=None, now=None):
-    if os.getenv("THREADS_AUTO_ENGAGE_ENABLED", "").lower() != "true":
-        return "not_authorized"
     db = db or Database()
     creds = get_credentials(db)
     if not creds:
