@@ -42,6 +42,16 @@ def eligible(row, now=None):
         ("https://www.threads.net/", "https://www.threads.com/", "https://threads.net/", "https://threads.com/")
     ):
         return False
+    if not row.get("target_published_at"):
+        return False
+    try:
+        original_at = datetime.fromisoformat(
+            row["target_published_at"].replace("Z", "+00:00")
+        )
+        if original_at.tzinfo is None or not timedelta(0) <= now - original_at <= timedelta(hours=24):
+            return False
+    except (ValueError, TypeError):
+        return False
     if not row.get("expires_at"):
         return False
     due = datetime.fromisoformat(row["expires_at"].replace("Z", "+00:00"))
@@ -99,7 +109,7 @@ def run(db=None, now=None):
     candidates = db.request("GET", "/growth_engagement_queue", params={
         "select": "opportunity_id,status,kind,draft_text,quality_score,"
                   "target_post_id,target_post_url,expires_at,relevance_score,"
-                  "risk_flags,source,niche,original_post_text",
+                  "risk_flags,source,niche,original_post_text,target_published_at",
         "status": "eq.needs_review", "order": "quality_score.desc", "limit": "15",
     })
     picked = next((row for row in candidates if eligible(row, now)), None)
