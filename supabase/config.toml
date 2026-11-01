@@ -1,0 +1,2 @@
+[functions.agent-webhook]
+verify_jwt = false
