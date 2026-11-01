@@ -10,6 +10,7 @@ class GrowthReportTests(unittest.TestCase):
             [],
             [{"id": "1", "relevance_score": 78}],
             [{"id": "2", "status": "needs_review", "kind": "trend_post"}],
+            [{"status": "posted"}],
         ]
         result = snapshot(db)
         self.assertEqual(result["signals_recorded_recent"], 1)
@@ -18,7 +19,8 @@ class GrowthReportTests(unittest.TestCase):
             result["metricool_performance"]["status"],
             "insufficient_observations",
         )
-        self.assertIn("No posts or replies", result["posting_claim"])
+        self.assertEqual(result["confirmed_brand_replies_recent"], 1)
+        self.assertIn("official Meta OAuth", result["engagement_note"])
 
 
 if __name__ == "__main__":
