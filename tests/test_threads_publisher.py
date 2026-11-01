@@ -82,6 +82,8 @@ class PublisherTests(unittest.TestCase):
         with patch.dict(os.environ, {"THREADS_PUBLISH_ENABLED": "true",
                                      "THREADS_ACCESS_TOKEN": "secret",
                                      "THREADS_EXPECTED_USERNAME": "my_brand"}), \
+             patch("threads.credentials.load_credentials",
+                   return_value=("token", "my_brand")), \
              patch("threads.publisher.authenticate"), \
              patch("threads.publisher.do_publish",
                    return_value=("container", "post123", "https://example.com/post")):
@@ -101,6 +103,8 @@ class PublisherTests(unittest.TestCase):
         with patch.dict(os.environ, {"THREADS_PUBLISH_ENABLED": "true",
                                      "THREADS_ACCESS_TOKEN": "secret",
                                      "THREADS_EXPECTED_USERNAME": "my_brand"}), \
+             patch("threads.credentials.load_credentials",
+                   return_value=("token", "my_brand")), \
              patch("threads.publisher.authenticate"), \
              patch("threads.publisher.do_publish", side_effect=TimeoutError()):
             with self.assertRaises(RuntimeError):
