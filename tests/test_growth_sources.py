@@ -3,6 +3,7 @@ from unittest.mock import Mock
 from growth.sources import read_rss, discover
 from growth.conversations import can_search, search_threads
 from unittest.mock import patch
+from datetime import datetime, timezone
 
 SAMPLE = b"""<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0"><channel><title>VN Trends</title>
@@ -41,6 +42,26 @@ class GrowthSourcesTests(unittest.TestCase):
             rows, outcome = search_threads(fetch=fetch)
             self.assertEqual((rows, outcome), ([], "not_authorized"))
             fetch.assert_not_called()
+
+    def test_official_threads_search_uses_fresh_public_posts_only(self):
+        timestamp = datetime.now(timezone.utc).isoformat()
+        fake = Mock()
+        fake.json.return_value = {"data": [{
+            "id": "post123", "username": "real_creator",
+            "text": "Mẹo sắp xếp bàn làm việc hữu ích cho dân công sở",
+            "permalink": "https://www.threads.com/@real_creator/post/abc",
+            "timestamp": timestamp,
+        }]}
+        fake.raise_for_status = Mock()
+        fetch = Mock(return_value=fake)
+        with patch.dict("os.environ", {
+                "THREADS_DISCOVERY_ENABLED": "true",
+                "THREADS_DISCOVERY_ACCESS_TOKEN": "example-secret"}):
+            rows, outcome = search_threads(query="bàn làm việc", fetch=fetch)
+        self.assertEqual(outcome, "ok")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["id"], "post123")
+        self.assertIsNotNone(rows[0]["published_at"])
 
     def test_threads_only_allowlisted_queries(self):
         with patch.dict("os.environ", {
