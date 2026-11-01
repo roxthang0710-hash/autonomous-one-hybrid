@@ -1,79 +1,59 @@
-# Autonomous One v1.6 — Threads Nurture & official Meta API
+# Autonomous One — Threads v1.8
 
-**Trạng thái thực tế:** đã triển khai hệ thống lập lịch/viết nội dung và thử nghiệm GitHub Actions + Supabase. **Chưa tạo tài khoản Threads thật, chưa được Meta OAuth ủy quyền, chưa đăng bài, chưa có doanh thu.** Các bước xác minh danh tính, chấp thuận điều khoản và cấp phép OAuth chỉ được thực hiện bởi người sở hữu tài khoản.
+**Thương hiệu:** Đồ Hay Đi Làm · @dohay_dilam
 
-## Thương hiệu soạn sẵn
+## Tình trạng xác minh 02/11/2026
 
-- Tên hiển thị: **Đồ Hay Đi Làm**
-- Ngách: mẹo công sở, sắp xếp không gian làm việc, đồ dùng phục vụ đi làm và công tác
-- Tiểu sử gợi ý: "Mẹo nhỏ cho dân văn phòng và những chuyến công tác gọn nhẹ. Gợi ý hữu ích, không giả vờ từng sử dụng sản phẩm."
-- Gợi ý tên người dùng, **chưa đăng ký hoặc kiểm tra có sẵn**: `dohaydilam`, `gocdohaydilam`, `dohaydilam.vn`
-- Không sử dụng tên, logo Shopee hoặc tuyên bố là tài khoản chính thức của Shopee.
-- Trong giai đoạn đầu chỉ đăng nội dung gốc hữu ích, **không có link tiếp thị**.
+- Metricool đã kết nối Threads/Instagram/Facebook và xếp 15 bài Threads vào lịch ngày **03–17/11/2026, 09:30 giờ Việt Nam**.
+- Dịch vụ Meta OAuth đã được triển khai và kiểm thử quyền truy cập công khai: https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth
+- **Chưa có Meta OAuth token thật trong Supabase Vault** vì người sở hữu chưa chấp thuận quyền trong Meta Developer App.
+- Growth Radar đã tự quét xu hướng từ RSS; các hoạt động trao đổi trực tiếp trên Threads chờ đúng quyền Meta.
+- Chưa có bài được Meta API xác nhận trong ngày 02/11; trạng thái Metricool PENDING không đồng nghĩa đã đăng.
 
-## Đã tự động hóa trên Cloud
+## Thiết lập một lần
 
-1. GitHub Actions: [Autonomous One — Threads Nurture](../.github/workflows/threads-nurture.yml), chạy **09:45 sáng hằng ngày theo giờ Việt Nam** (cron có thể trễ).
-2. [`threads/planner.py`](planner.py): lập lịch 14 bài hữu ích, đa dạng chủ đề, mỗi ngày một bài (không mua bán, không giả vờ trải nghiệm).
-3. [`threads/content.py`](content.py): tự lưu lịch vào Supabase, chặn trùng lặp, giữ hàng đợi tối thiểu 6 bài và sử dụng Groq để tạo bài tiếp theo.
-4. [`threads/publisher.py`](publisher.py): sau khi kết nối được tài khoản Threads thật, dùng **Threads API chính thức của Meta** để đăng mỗi lần tối đa 1 bài đã đạt kiểm tra; không tự đăng lại khi kết quả chưa rõ.
-5. [`threads/insights.py`](insights.py): đọc số liệu thật từ Threads API nếu tài khoản đã cấp quyền insights. Thiếu chỉ số thì không tự coi là 0.
-6. Supabase: `threads_channels`, `threads_posts`, `threads_publish_attempts`, `threads_metrics`. Các bảng có RLS, máy chủ nắm quyền ghi.
+Đọc [Hướng dẫn cấp quyền chi tiết](OAUTH.md). Trên trang kết nối chính thức, đăng nhập bằng tài khoản Supabase Auth đã được cấp quyền điều hành, sau đó nhập Threads App ID và App Secret từ ứng dụng Meta của bạn. Chỉ cung cấp quyền và xác minh trên giao diện HTTPS, **không nhập bất kỳ token/secret nào vào chat, issue hay source code**.
 
-## Cấp quyền lần đầu — không thể bỏ qua bước xác thực của nền tảng
+### Công tắc tự động hóa
 
-### 1. Tạo tài khoản chủ sở hữu
+- Việc xác nhận cấp quyền Meta cho phép AI tiếp tục tự xuất bản nội dung sau lịch Metricool; không cần bật thêm GitHub Secrets.
+- Ô chọn phản hồi trên trang OAuth **mặc định tắt**. Chỉ khi chủ sở hữu tự bật ô này và được Meta chấp thuận quyền tìm kiếm/phản hồi thì Growth Agent mới được tham gia tối đa **1 cuộc thảo luận phù hợp/ngày** bằng tài khoản thương hiệu thật.
+- Nếu tài khoản Meta chưa có quyền mở rộng thì cứ cấp quyền cơ bản trước; có thể cấp lại quyền để bổ sung sau.
 
-- Tạo tài khoản Threads chính chủ tại [Threads](https://www.threads.com/) hoặc ứng dụng Threads, theo các phương thức đăng nhập nền tảng cho phép. Nếu cần liên kết Instagram, hoàn thành liên kết.
-- Xác minh email/số điện thoại, chấp thuận điều khoản, thiết lập hồ sơ thương hiệu và chọn tên người dùng **thật sự khả dụng**.
-- Không dùng bot vượt CAPTCHA, không dùng danh tính giả, không gửi mật khẩu hay OTP cho Agent.
-- Thông tin tên người dùng hiển thị sẽ được ghi vào `threads_channels` **chỉ sau khi OAuth chứng thực**.
+## Hành vi tự động sau khi được cấp Meta OAuth
 
-### 2. Cấp quyền Threads API cho hệ thống
+GitHub Actions workflow Threads Nurture chạy lúc **09:45 sáng hằng ngày theo giờ Việt Nam** (GitHub Actions cron theo cơ chế best effort).
 
-Theo [Meta Threads API](https://www.postman.com/meta/threads/collection/dht3nzz/threads-api):
-- Tạo ứng dụng trong [Meta for Developers](https://developers.facebook.com/apps/) với **Threads use case**.
-- Tài khoản chủ sở hữu chấp thuận OAuth, bao gồm `threads_basic`, `threads_content_publish` và, nếu muốn đọc số liệu, `threads_manage_insights`.
-- Lấy Threads User Access Token theo hướng dẫn Meta và kiểm tra quyền/hạn sử dụng. Token có thể hết hạn hoặc bị thu hồi.
-- **Chỉ lưu token trong GitHub Actions Secrets**, tuyệt đối không đưa vào issue, file, log hoặc tin nhắn.
-- Cấp quyền cho đúng tài khoản sở hữu kênh; worker sẽ tự kiểm tra `GET /me?fields=id,username`.
+1. Groq tạo bản nháp ngắn tiếng Việt, không link tiếp thị và không bịa trải nghiệm.
+2. Bảo lưu nguyên vẹn 15 ngày đã đặt trong Metricool, với cơ chế loại trừ ngày trùng ở cấp cơ sở dữ liệu.
+3. Các bài do AI tạo được đặt lịch sau ngày cuối cùng đã lên lịch Metricool. Nguồn xu hướng chỉ được chọn khi còn mới và thuộc đúng lĩnh vực.
+4. Một bài cho ngày hôm sau có thể được làm mới dựa trên Growth Radar (tối đa **2 bài theo xu hướng mỗi tuần**).
+5. Nếu đến giờ, Meta OAuth đang hoạt động và mọi điều kiện đạt, hệ thống gửi tối đa **1 bài đăng gốc trong mỗi lượt chạy**, nhận mã bài từ Meta trước khi đánh dấu đã đăng.
+6. Nếu là bài Metricool, chỉ Meta API listing thực sự xác nhận bài có ID/timestamp mới được đổi trạng thái thành đã xuất bản; không tự bịa số liệu.
+7. Đọc insights thật từ Meta, không suy diễn missing views thành 0.
+8. Gia hạn Meta token dài hạn khi gần hết hạn, lưu token trong Supabase Vault; không log secret hay tự giả đăng nhập.
 
-### 3. Kích hoạt một lần trong GitHub Secrets
+## Thành phần
 
-Mở [Repository secrets](https://github.com/roxthang0710-hash/autonomous-one-hybrid/settings/secrets/actions) và tạo:
+- threads/content.py: tạo hàng đợi nội dung, lên ngày không trùng Metricool.
+- threads/trends.py và threads/refresh.py: chuyển nguồn nghiên cứu phù hợp thành bài viết kịp thời.
+- threads/daily.py: điều phối tạo bài, làm mới xu hướng, xuất bản, đối soát, đọc số liệu.
+- threads/publisher.py: 2 bước xuất bản Meta API có xác thực đúng tài khoản.
+- threads/reconcile.py: đối soát bài Metricool dựa trên bằng chứng thực tế từ Meta.
+- threads/credentials.py: sử dụng Meta OAuth token dài hạn đã lưu mã hóa tại Vault, tự gia hạn; vẫn có đường legacy thông qua GitHub Secrets nhưng không bắt buộc.
+- growth/runner.py và growth/engage.py: Radar và phản hồi hữu ích khi chủ sở hữu chấp thuận.
+- supabase/functions/threads-oauth: trang cấp quyền và callback chính thức.
+- sql/v1_8_1_threads_oauth_vault.sql: schema và RPC xác thực Vault backend-only.
 
-| Tên secret | Mô tả |
-|---|---|
-| `THREADS_ACCESS_TOKEN` | Token cấp phép chính thức, không nhập vào trò chuyện |
-| `THREADS_EXPECTED_USERNAME` | Tên người dùng Threads đã tạo, không có @ |
-| `THREADS_PUBLISH_ENABLED` | `true` chỉ khi chủ sở hữu đồng ý bắt đầu đăng tự động |
+## Điều không được thực hiện
 
-Ba secret Supabase/Groq cũ vẫn giữ nguyên. **Không có đủ cả token, username và switch thì mọi thao tác xuất bản đều bị bỏ qua.** Nếu token sai kênh, ứng dụng từ chối đăng.
+- Tạo tài khoản ảo, tự làm tăng tương tác, seeding giả khách hàng, bình luận hàng loạt hoặc cố tình kích động tranh cãi.
+- Cào giao diện Instagram/Threads nhằm né quyền API.
+- Tự động phát sinh link Shopee không được nhà cung cấp cấp phép.
+- Tự động coi kết quả mô phỏng, status PENDING hoặc bản nháp là lượt xem, đơn hàng và doanh thu thật.
 
-Khi kết nối chính xác lần đầu, server tự kích hoạt `threads_channels` và **dời toàn bộ lịch nuôi kênh sang ngày hôm sau lúc 09:30**. Không tự đăng dồn các bài cũ.
+## Nơi kiểm tra
 
-### 4. Xác nhận
-
-- [GitHub Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions): chọn workflow Threads Nurture, bấm **Run workflow → publish**. Nếu chưa tới giờ, không đăng bài.
-- Hoặc chờ lịch chạy tự động 09:45 mỗi ngày; Meta có thể áp dụng giới hạn tốc độ hoặc quyền ứng dụng.
-- Kiểm tra `threads_posts.status='posted'` + `platform_post_id`; nếu lỗi bất định `status='uncertain'`, hệ thống **không tự đăng lại** để tránh trùng nội dung.
-- Ghi nhận tương tác từ Threads API nếu được cấp scope. Không tự chế số liệu.
-
-## Shopee Affiliate — điều kiện chưa hoàn thành
-
-- Shopee hướng dẫn đăng ký tại [affiliate.shopee.vn](https://affiliate.shopee.vn/), chọn Blogger / Social Media, cung cấp kênh có thật.
-- Theo [điều khoản Shopee](https://help.shopee.vn/portal/10/article/122944), Shopee quyết định cuối cùng việc duyệt KOC; **không có bằng chứng rằng Threads được chấp thuận như kênh đăng ký riêng**.
-- Nếu Shopee chỉ chấp nhận Facebook Fanpage hoặc Instagram trong hồ sơ, xây một hồ sơ Instagram thật và liên kết cùng hệ sinh thái Threads, nhưng chưa khẳng định được duyệt.
-- Sau khi kênh đã hoạt động có nội dung thật, kiểm tra quy định Shopee hiện hành rồi mới nộp.
-- Không tự tạo link giả, không gắn link tiếp thị lên kênh chưa được Shopee duyệt, không dự báo ngày được duyệt hay doanh thu.
-
-## Trường hợp cần ngừng tự động hóa
-
-- Bị nền tảng yêu cầu xác minh, OAuth hết hạn, thay đổi quyền Meta, người dùng tắt switch: **ngừng đăng**.
-- POST đến Threads API trả lỗi hoặc timeout: trạng thái `uncertain`; **không thử lại cho đến khi đối soát**.
-- Nội dung có link thương mại, giá chưa kiểm chứng, giả trải nghiệm hoặc kêu gọi mua gấp: **từ chối đưa vào hàng đăng tự động**.
-- Nội dung chỉ mang tính hữu ích; không tự trả lời người lạ, gắn thẻ hàng loạt hoặc spam.
-
-## Lưu ý
-
-Cấu hình trong Supabase là *hồ sơ thương hiệu nội bộ*, không phải tài khoản Threads đã được đăng ký ngoài đời. Mọi lời nói rằng đã tự đăng ký hoặc đã công khai bài đều cần bằng chứng từ Meta API.
+- [Trang cấp quyền Threads](https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth)
+- [Lịch 15 bài trên Metricool](https://app.metricool.com/planner/calendar?blogId=7803567)
+- [Các lượt chạy GitHub Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions)
