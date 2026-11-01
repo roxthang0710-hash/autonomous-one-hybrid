@@ -6,7 +6,7 @@ import requests
 
 from agent import Database
 from threads.content import get_channel
-from threads.publisher import access, authenticate, thread_request
+from threads.publisher import authenticate, thread_request
 
 METRICS = ("views", "likes", "replies", "reposts", "quotes")
 
@@ -34,7 +34,8 @@ def parse_insights(payload):
 
 def collect(db, max_posts=10):
     """Requires OAuth token and official insights scope; no fake analytics."""
-    credential = access()
+    from threads.credentials import load_credentials
+    credential = load_credentials(db, refresh=False)
     if credential is None:
         return "waiting_for_owner_oauth_and_enable_switch"
     token, expected = credential
