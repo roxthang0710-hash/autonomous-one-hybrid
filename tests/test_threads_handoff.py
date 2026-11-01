@@ -18,7 +18,7 @@ class ContentHandoffTests(unittest.TestCase):
                     return [{"text_content": "Một ý tưởng cũ về văn phòng",
                              "pillar": "work", "scheduled_at":
                              "2026-11-17T02:30:00+00:00"}]
-                if params.get("status") == "in.(queued,scheduled_external)":
+                if params.get("status") == "in.(queued,scheduled_external,posted,publishing,uncertain)":
                     return [{"scheduled_at": "2026-11-17T02:30:00+00:00"}]
             if path == "/threads_posts" and method == "POST":
                 return [{"id": "new"}]
