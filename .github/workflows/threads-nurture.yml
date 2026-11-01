@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "plan = seed/maintain calendar; publish = publish one due post ONLY if authorized"
+        description: "plan = maintain drafts; publish = disabled while Metricool handles publishing"
         required: true
         type: choice
         options: [plan, publish]
@@ -54,16 +54,10 @@ jobs:
       - name: Generate and maintain editorial calendar
         if: github.event_name == 'schedule' || github.event_name == 'issues' || github.event.inputs.action == 'plan'
         run: python -m threads.content
-      - name: Publish at most one due editorial post, only after OAuth
-        if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
-        run: python -m threads.publisher
-      - name: Read genuine Threads post insights when authorized
-        if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
-        run: python -m threads.insights
       - name: Private-safe report
         if: always()
         run: |
           echo "## Threads nurture" >> "$GITHUB_STEP_SUMMARY"
           echo "14-day editorial calendar and guarded official Meta API integration." >> "$GITHUB_STEP_SUMMARY"
-          echo "A real account, OAuth token, expected username and enabled switch are all required before any live post." >> "$GITHUB_STEP_SUMMARY"
+          echo "Publishing is managed by Metricool; Github only drafts and never publishes directly." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
