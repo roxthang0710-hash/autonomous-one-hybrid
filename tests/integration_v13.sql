@@ -53,3 +53,16 @@ do $$ declare n integer; begin
 end $$;
 rollback;
 select 'passed: reviewer read, decision and column restrictions; no test data persisted' as result;
+begin;
+do $$ declare exhausted uuid; expired uuid; claimed uuid; begin
+ insert into public.agent_events(request_id,kind,status,attempts,created_at)
+ values('test-v13-'||gen_random_uuid(),'research_request','pending',3,'-infinity') returning id into exhausted;
+ insert into public.agent_events(request_id,kind,status,attempts,lease_until,created_at)
+ values('test-v13-'||gen_random_uuid(),'research_request','processing',2,now()-interval '1 minute','-infinity') returning id into expired;
+ select id into claimed from public.claim_agent_event();
+ assert claimed=expired,'Expired lease was not recovered';
+ assert (select attempts=3 and status='processing' from public.agent_events where id=expired),'Attempt counter incorrect';
+ assert (select status='failed' from public.agent_events where id=exhausted),'Exhausted pending event was reclaimed';
+end $$;
+rollback;
+select 'passed: expired-lease recovery and exhausted pending attempts' as result;
