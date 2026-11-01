@@ -65,7 +65,7 @@ jobs:
         if: steps.configuration.outputs.ready == 'true'
         run: python backfill.py
       - name: Run research-only agent
-        if: steps.configuration.outputs.ready == 'true'
+        if: steps.configuration.outputs.ready == 'true' && github.event_name != 'push'
         run: python agent.py
       - name: Write private-safe run summary
         if: steps.configuration.outputs.ready == 'true' && always()
