@@ -52,7 +52,7 @@ def build_candidates(feed_rows, threads_rows=(), now=None):
             result.append(record)
 
     for row in threads_rows:
-        judgement = classify(row["title"], now=now)
+        judgement = classify(row["title"], row.get("published_at"), now)
         if judgement["state"] != "candidate":
             continue
         record = {
@@ -61,7 +61,7 @@ def build_candidates(feed_rows, threads_rows=(), now=None):
             "title": row["title"], "source_url": row["url"],
             "source_post_id": row["id"],
             "source_username": row["username"],
-            "published_at": None,
+            "published_at": row["published_at"].isoformat(),
             "relevance_score": judgement["score"],
             "state": "candidate", "niche": judgement["niche"],
             "risk_flags": [], "notes": judgement["notes"],
