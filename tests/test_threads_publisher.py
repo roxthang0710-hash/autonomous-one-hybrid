@@ -48,9 +48,10 @@ class PublisherTests(unittest.TestCase):
                    return_value={"id": "444", "username": "my_brand"}), \
              patch("threads.publisher.get_channel", return_value=channel):
             authenticate(db, "token", "my_brand")
-        values = db.patch.call_args.args[2]
-        self.assertEqual(values["platform_user_id"], "444")
-        self.assertTrue(values["auto_publish_enabled"])
+        args = db.request.call_args
+        self.assertEqual(args.args[1], "/rpc/activate_threads_channel")
+        self.assertEqual(args.kwargs["payload"]["p_platform_user_id"], "444")
+        db.patch.assert_not_called()
 
     def test_meta_two_step_flow_not_autopublish_container(self):
         calls = []
