@@ -157,7 +157,7 @@ def main():
         return
 
     event = db.claim_event()
-    manual_topic = os.getenv("MANUAL_TOPIC", "").strip()[:140]
+    manual_topic = os.getenv("MANUAL_TOPIC", "").strip().removeprefix("agent:").strip()[:140]
     history = db.request("GET", "/agent_proposals", params={
         "select": "proposal,topic,approval_status",
         "order": "created_at.desc", "limit": "200",
