@@ -44,6 +44,9 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Collect public trend evidence and draft one safe growth idea
         run: python -m growth.runner
+      - name: Summarize monitoring without confidential drafts
+        if: always()
+        run: python -m growth.report
       - name: Public-repo-safe summary
         if: always()
         run: |
