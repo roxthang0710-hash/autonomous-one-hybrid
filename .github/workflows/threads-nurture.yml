@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "plan = maintain drafts; publish = disabled while Metricool handles publishing"
+        description: "plan = only create drafts; publish = run guarded Meta worker if owner OAuth is connected"
         required: true
         type: choice
         options: [plan, publish]
@@ -31,9 +31,11 @@ jobs:
       DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: openai/gpt-oss-20b
-      THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+      THREADS_INITIAL_SHORT_TOKEN: ${{ secrets.THREADS_INITIAL_SHORT_TOKEN }}
+      THREADS_APP_SECRET: ${{ secrets.THREADS_APP_SECRET }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
-      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+      THREADS_PUBLISH_ENABLED: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'plan' && 'false' || secrets.THREADS_PUBLISH_ENABLED }}"
       THREADS_FORCE_GENERATION: "${{ github.event_name == 'issues' && startsWith(github.event.issue.title, 'threads: ai') && 'true' || 'false' }}"
     steps:
       - name: Require backend configuration
@@ -51,13 +53,12 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test before any publishing action
         run: python -m unittest discover -s tests -v
-      - name: Generate and maintain editorial calendar
-        if: github.event_name == 'schedule' || github.event_name == 'issues' || github.event.inputs.action == 'plan'
-        run: python -m threads.content
+      - name: Generate drafts, publish only after OAuth, and collect real insights
+        run: python -m threads.daily
       - name: Private-safe report
         if: always()
         run: |
           echo "## Threads nurture" >> "$GITHUB_STEP_SUMMARY"
-          echo "14-day editorial calendar and guarded official Meta API integration." >> "$GITHUB_STEP_SUMMARY"
-          echo "Publishing is managed by Metricool; Github only drafts and never publishes directly." >> "$GITHUB_STEP_SUMMARY"
+          echo "AI maintains backlog. Meta publisher requires Fernet key, Meta app credentials and owner-granted short-lived token; long token automatically renews." >> "$GITHUB_STEP_SUMMARY"
+          echo "Metricool retains 15 booked days; Meta direct publication begins only after owner OAuth and never overlaps those dates." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
