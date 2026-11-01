@@ -141,3 +141,15 @@ Apply `sql/v1_4_audit.sql` after the v1.3 migrations. No historical audit events
 - [Hướng dẫn kích hoạt Threads đúng quyền](threads/README.md)
 - [Workflow nuôi kênh hàng ngày](.github/workflows/threads-nurture.yml)
 - [Supabase](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor): `threads_channels`, `threads_posts`, `threads_publish_attempts`, `threads_metrics`
+
+
+## v1.7.2 — Growth Radar & authentic Threads engagement
+
+Tự đọc tín hiệu quan tâm từ Google Trends Việt Nam và RSS tin tức theo ngách công sở/du lịch, phân loại nguồn, chặn tin giật gân/không liên quan, tạo bản nháp Groq và lưu Supabase để chọn nội dung phù hợp. Growth Radar chạy **09:15 và 17:15 mỗi ngày theo giờ Việt Nam** trên GitHub Actions.
+
+- [Báo cáo phát triển v1.7.2](RELEASE_v1_7_GROWTH.md)
+- [Cơ chế Radar, quyền Threads và giới hạn tương tác](growth/README.md)
+- [Workflow Growth Radar](.github/workflows/growth-radar.yml)
+- [Bản cấu trúc CSDL v1.7](sql/v1_7_growth_radar.sql)
+
+Có sẵn mã tìm cuộc trò chuyện và phản hồi hữu ích qua Threads API, nhưng **mặc định tắt**, chỉ hoạt động sau khi Meta OAuth và các quyền riêng được cấp hợp lệ. Không tạo tương tác giả, không phản hồi hàng loạt, không tự gắn liên kết Affiliate. Kết nối Metricool trong ChatGPT không tự cấp Meta Developer token cho GitHub.
