@@ -5,6 +5,7 @@ import sys
 from datetime import datetime, timezone
 from urllib.parse import quote
 import requests
+from evaluator import evaluate_proposal
 
 TIMEOUT = 20
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
@@ -105,7 +106,7 @@ def research(topic):
         return []
 
 
-def make_proposal(topic, sources):
+def make_proposal(topic, sources, recent_titles=()):
     key = require_env("GROQ_API_KEY")
     messages = [
         {"role": "system", "content": (
@@ -119,7 +120,8 @@ def make_proposal(topic, sources):
         {"role": "user", "content": json.dumps({
             "topic": topic, "source": "Hacker News Algolia public titles",
             "search_hits": sources,
-            "task": "Suggest ONE zero-cost experiment and a measurable success criterion.",
+            "recent_ideas_to_avoid_repeating": list(recent_titles)[:15],
+            "task": "Suggest ONE distinct zero-cost experiment and a measurable success criterion.",
         }, ensure_ascii=False)},
     ]
     response = requests.post(
@@ -174,16 +176,27 @@ def main():
             print("Already completed event; avoiding duplicate.")
             return
 
+    history = db.request("GET", "/agent_proposals", params={
+        "select": "proposal", "order": "created_at.desc", "limit": "30",
+    })
+    prior_titles = [
+        row.get("proposal", {}).get("title", "")
+        for row in history if isinstance(row.get("proposal"), dict)
+    ]
     run = db.insert("agent_runs", {
         "trigger_kind": kind, "event_id": event["id"] if event else None,
     })
     try:
         sources = research(topic)
-        proposal = make_proposal(topic, sources)
-        db.insert("agent_proposals", {
+        proposal = make_proposal(topic, sources, prior_titles)
+        evaluation = evaluate_proposal(proposal, sources, prior_titles)
+        saved_proposal = db.insert("agent_proposals", {
             "run_id": run["id"], "event_id": event["id"] if event else None,
             "topic": topic, "model": MODEL,
             "research_sources": sources, "proposal": proposal,
+        })
+        db.insert("agent_evaluations", {
+            "proposal_id": saved_proposal["id"], **evaluation,
         })
         if event:
             db.patch("agent_events", event["id"], {
