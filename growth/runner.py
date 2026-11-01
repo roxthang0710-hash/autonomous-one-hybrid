@@ -112,7 +112,13 @@ def run(db=None, now=None):
         threads_status = "not_authorized"
         if os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() == "true":
             try:
-                threads_rows, threads_status = search_threads(query=QUERIES[now.day % len(QUERIES)])
+                from threads.credentials import load_credentials
+                auth = load_credentials(db, refresh=False)
+                if auth:
+                    threads_rows, threads_status = search_threads(
+                        query=QUERIES[now.day % len(QUERIES)], token=auth[0])
+                else:
+                    threads_status = "not_authorized"
             except Exception:
                 threads_status = "source_unavailable"
         selected = build_candidates(public_rows, threads_rows, now=now)
