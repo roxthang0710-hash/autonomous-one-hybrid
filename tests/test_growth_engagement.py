@@ -14,6 +14,7 @@ CANDIDATE = {
     "risk_flags": [], "target_post_id": "post1",
     "target_post_url": "https://www.threads.com/@other/post/abc",
     "original_post_text": "Tư vấn sắp xếp bàn làm việc nhỏ cho dân công sở",
+    "target_published_at": (NOW - timedelta(hours=2)).isoformat(),
     "expires_at": (NOW + timedelta(hours=24)).isoformat(),
     "draft_text": (
         "Một cách hữu ích là phân loại vật dụng theo tần suất sử dụng và "
@@ -48,6 +49,11 @@ class EngagementTests(unittest.TestCase):
         self.assertFalse(eligible(dict(CANDIDATE, target_post_id=None), NOW))
         self.assertFalse(eligible(dict(CANDIDATE,
             draft_text="Theo dõi kênh để xem nhiều mẹo hữu ích!"), NOW))
+
+    def test_rejects_stale_meta_discussions(self):
+        stale = dict(CANDIDATE, target_published_at=(
+            NOW - timedelta(hours=40)).isoformat())
+        self.assertFalse(eligible(stale, NOW))
 
     def test_expired_or_tragedy_not_eligible(self):
         self.assertFalse(eligible(dict(CANDIDATE,
