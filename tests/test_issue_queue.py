@@ -24,6 +24,17 @@ class EventQueueTests(unittest.TestCase):
         queue_owner_issue(db, "", "")
         db.request.assert_not_called()
 
+    def test_duplicate_issue_does_not_enqueue_again(self):
+        db = Mock()
+        db.request.return_value = []
+        self.assertFalse(queue_owner_issue(db, "42", "marketing automation"))
+        db.request.assert_called_once()
+
+    def test_first_issue_returns_inserted(self):
+        db = Mock()
+        db.request.return_value = [{"id": "uuid"}]
+        self.assertTrue(queue_owner_issue(db, "42", "marketing automation"))
+
     def test_invalid_issue_is_rejected(self):
         with self.assertRaises(ValueError):
             queue_owner_issue(Mock(), "oops", "marketing automation")
