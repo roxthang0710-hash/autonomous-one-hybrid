@@ -110,15 +110,17 @@ def run(db=None, now=None):
         public_rows, sources = discover()
         threads_rows = []
         threads_status = "not_authorized"
-        if os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() == "true":
+        if os.getenv("THREADS_DISCOVERY_ENABLED", "").lower() != "false":
             try:
-                from threads.credentials import load_credentials
-                auth = load_credentials(db, refresh=False)
-                if auth:
-                    threads_rows, threads_status = search_threads(
-                        query=QUERIES[now.day % len(QUERIES)], token=auth[0])
-                else:
-                    threads_status = "not_authorized"
+                # Owner enabled Growth scopes in the secure Meta OAuth portal.
+                vault = db.request("POST", "/rpc/threads_read_vault_token",
+                                   payload={"p_brand_key": "do_hay_di_lam"})
+                if vault and vault[0].get("enable_replies") is True:
+                    from threads.credentials import load_credentials
+                    auth = load_credentials(db, refresh=False)
+                    if auth:
+                        threads_rows, threads_status = search_threads(
+                            query=QUERIES[now.day % len(QUERIES)], token=auth[0])
             except Exception:
                 threads_status = "source_unavailable"
         selected = build_candidates(public_rows, threads_rows, now=now)
