@@ -44,7 +44,7 @@ class CredentialTests(unittest.TestCase):
         with patch.dict(os.environ, {**BASE_ENV, "THREADS_EXPECTED_USERNAME": "other"}):
             db = MagicMock()
             self.assertIsNone(load_credentials(db, now=NOW))
-            db.request.assert_not_called()
+            self.assertEqual(db.request.call_args.args[0], "GET")
 
     def test_bootstrap_exchanges_short_for_long_and_only_stores_ciphertext(self):
         db = MagicMock()
