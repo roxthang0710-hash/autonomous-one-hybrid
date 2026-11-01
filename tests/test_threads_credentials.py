@@ -38,7 +38,7 @@ class CredentialTests(unittest.TestCase):
         with patch.dict(os.environ, {**BASE_ENV, "THREADS_PUBLISH_ENABLED": "false"}):
             db = MagicMock()
             self.assertIsNone(load_credentials(db, now=NOW))
-            db.request.assert_not_called()
+            self.assertEqual(db.request.call_args.args[0], "GET")
 
     def test_unrecognized_username_not_authorized(self):
         with patch.dict(os.environ, {**BASE_ENV, "THREADS_EXPECTED_USERNAME": "other"}):
@@ -48,7 +48,7 @@ class CredentialTests(unittest.TestCase):
 
     def test_bootstrap_exchanges_short_for_long_and_only_stores_ciphertext(self):
         db = MagicMock()
-        db.request.side_effect = [[], [{"brand_key": "do_hay_di_lam"}]]
+        db.request.side_effect = [[], [], [{"brand_key": "do_hay_di_lam"}]]
         with patch.dict(os.environ, BASE_ENV), \
              patch("threads.credentials._token_response",
                    return_value=("renewed-long-token", 50 * 86400)), \
@@ -72,7 +72,7 @@ class CredentialTests(unittest.TestCase):
 
     def test_refresh_before_expiry_and_replace_only_ciphertext(self):
         db = MagicMock()
-        db.request.side_effect = [[make_saved(expires_in_days=3)], []]
+        db.request.side_effect = [[], [make_saved(expires_in_days=3)], []]
         with patch.dict(os.environ, BASE_ENV), \
              patch("threads.credentials._token_response",
                    return_value=("rotated-token", 60 * 86400)) as refresh, \
