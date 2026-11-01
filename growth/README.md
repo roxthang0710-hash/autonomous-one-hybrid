@@ -1,3 +1,5 @@
+> **Cập nhật v1.8 (02/11/2026):** Dùng [trang OAuth mới](../threads/OAUTH.md) thay cho hướng dẫn nhập token thủ công hoặc tạo hàng loạt GitHub Secrets ở các mục cũ bên dưới. Tài khoản chủ sở hữu cấp quyền một lần tại https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth . Nếu chọn ô phản hồi và Meta thực sự cấp các quyền nâng cao, hệ thống tự đọc token mã hóa từ Vault và tối đa 1 phản hồi hữu ích/ngày. Mặc định không phản hồi cho đến khi có chấp thuận này. Lịch Metricool 15 bài không bị ảnh hưởng.
+
 # Autonomous One v1.7 — Growth Radar cho Threads
 
 ## Mục tiêu
