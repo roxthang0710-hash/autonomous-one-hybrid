@@ -1,5 +1,9 @@
 name: Autonomous One — Hybrid Agent
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/agent.yml'
   schedule:
     # UTC+7 Vietnam time: 08:15, 12:15, 16:15, 20:15
     - cron: '15 1,5,9,13 * * *'
@@ -53,6 +57,12 @@ jobs:
       - name: Run unit tests
         if: steps.configuration.outputs.ready == 'true'
         run: python -m unittest discover -s tests -v
+      - name: Evaluate historical proposals
+        if: steps.configuration.outputs.ready == 'true'
+        run: python backfill.py
       - name: Run research-only agent
         if: steps.configuration.outputs.ready == 'true'
         run: python agent.py
+      - name: Write private-safe run summary
+        if: steps.configuration.outputs.ready == 'true' && always()
+        run: python dashboard.py
