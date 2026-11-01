@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from urllib.parse import quote
 import requests
 from evaluator import evaluate_proposal
+from planner import choose_topic, should_pause_scheduled
 
 TIMEOUT = 20
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
@@ -156,14 +157,20 @@ def main():
         return
 
     event = db.claim_event()
+    manual_topic = os.getenv("MANUAL_TOPIC", "").strip()[:140]
+    history = db.request("GET", "/agent_proposals", params={
+        "select": "proposal,topic,approval_status",
+        "order": "created_at.desc", "limit": "200",
+    })
+    if not event and not manual_topic and should_pause_scheduled(history):
+        print("Scheduled research paused: pending-approval backlog is full.")
+        return
+
     topic = (event or {}).get("payload", {}).get("topic", "")
     if not isinstance(topic, str) or not topic.strip():
-        topic = (
-            os.getenv("MANUAL_TOPIC", "").strip()[:140]
-            or TOPICS[datetime.now(timezone.utc).timetuple().tm_yday % len(TOPICS)]
-        )
+        topic = manual_topic or choose_topic(history)
     topic = topic[:140]
-    kind = "event" if event else ("manual" if os.getenv("MANUAL_TOPIC") else "scheduled")
+    kind = "event" if event else ("manual" if manual_topic else "scheduled")
     if event:
         existing = db.request("GET", "/agent_proposals", params={
             "select": "id", "event_id": "eq." + event["id"], "limit": "1",
@@ -176,9 +183,6 @@ def main():
             print("Already completed event; avoiding duplicate.")
             return
 
-    history = db.request("GET", "/agent_proposals", params={
-        "select": "proposal", "order": "created_at.desc", "limit": "30",
-    })
     prior_titles = [
         row.get("proposal", {}).get("title", "")
         for row in history if isinstance(row.get("proposal"), dict)
