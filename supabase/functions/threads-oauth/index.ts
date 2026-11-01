@@ -47,10 +47,12 @@ async function meta(url:string,options:RequestInit={}) {
  return data as Record<string,unknown>;
 }
 async function handler(req:Request):Promise<Response> {
- const url=new URL(req.url),path=url.pathname;
- if(req.method==="GET"&&(path===ROOT||path===ROOT+"/"))return html(PAGE);
- if(req.method==="GET"&&path===ROOT+"/client.js")return new Response(JS,{headers:headers("application/javascript; charset=utf-8")});
- if(req.method==="POST"&&path===ROOT+"/start"){
+ const url=new URL(req.url);
+ // Supabase gateway can strip /functions/v1 before forwarding the request.
+ const path=url.pathname.replace(/^.*\/threads-oauth(?=\/|$)/,"")||"/";
+ if(req.method==="GET"&&path==="/")return html(PAGE);
+ if(req.method==="GET"&&path==="/client.js")return new Response(JS,{headers:headers("application/javascript; charset=utf-8")});
+ if(req.method==="POST"&&path==="/start"){
    const userId=await owner(req);
    if(!userId)return json({error:"Chỉ tài khoản chủ sở hữu Autonomous One mới được phép kết nối."},401);
    if(!service)return json({error:"Thiếu cấu hình máy chủ."},503);
@@ -72,7 +74,7 @@ async function handler(req:Request):Promise<Response> {
       scope:(body.enableReplies===true ? baseScopes.concat(growthScopes) : baseScopes).join(","),response_type:"code",state});
    return json({authorizeUrl:"https://threads.net/oauth/authorize?"+params.toString()});
  }
- if(req.method==="GET"&&path===ROOT+"/callback"){
+ if(req.method==="GET"&&path==="/callback"){
    if(url.searchParams.has("error"))return endPage(false,"Bạn đã hủy hoặc từ chối cấp quyền Meta.",400);
    const code=url.searchParams.get("code")||"";
    const state=url.searchParams.get("state")||"";
