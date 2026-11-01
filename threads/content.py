@@ -102,7 +102,7 @@ def generate_ai_post(pillar, topic, previous_texts=()):
     return validate_generated(result)
 
 
-def plan_next(db, *, low_watermark=6):
+def plan_next(db, *, low_watermark=6, force=False):
     """Maintain small queue without flooding Groq. Never changes posted content."""
     channel = get_channel(db)
     queued = db.request("GET", "/threads_posts", params={
@@ -110,14 +110,14 @@ def plan_next(db, *, low_watermark=6):
         "channel_id": "eq." + channel["id"], "status": "eq.queued",
         "order": "scheduled_at.desc", "limit": "40",
     })
-    if len(queued) >= low_watermark:
+    if len(queued) >= low_watermark and not force:
         return "sufficient_backlog"
     history = db.request("GET", "/threads_posts", params={
         "select": "id,text_content,pillar,scheduled_at",
         "channel_id": "eq." + channel["id"],
         "order": "created_at.desc", "limit": "50",
     })
-    if len(history) >= 60:
+    if len(history) >= 365:
         return "max_posts_reached"
     index = len(history) % len(SEEDS)
     pillar, topic = SEEDS[index]
@@ -167,7 +167,7 @@ def status(db):
 def main():
     db = Database()
     added = seed_calendar(db)
-    result = plan_next(db)
+    result = plan_next(db, force=os.getenv('THREADS_FORCE_GENERATION', '') == 'true')
     # Only nonsensitive counts in public GitHub Actions logs.
     print("Threads content calendar seeded:", added)
     print("Planning outcome:", result)
