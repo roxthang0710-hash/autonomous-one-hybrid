@@ -21,3 +21,4 @@ jobs:
         with:
           node-version: '22'
       - run: node --check dashboard/web/app.js
+      - run: node --test tests/test_calendar.cjs

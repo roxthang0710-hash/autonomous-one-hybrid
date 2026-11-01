@@ -29,7 +29,7 @@ def report(db):
         f"| Chờ chủ sở hữu duyệt | {pending} |\n"
         f"| Đã duyệt về mặt ý tưởng | {approved} |\n"
         f"| Đủ tiêu chí để xem xét (không phải dự báo lợi nhuận) | {under_review} |\n"
-        f"| Thử nghiệm có dữ liệu | {documented_experiments} |\n"
+        f"| Thử nghiệm đã lập (gồm đề xuất) | {documented_experiments} |\n"
         f"| Tín hiệu thực tế do chủ sở hữu ghi nhận | {signals} |\n"
         f"| Chu kỳ thành công (50 gần nhất) | {completed} |\n"
         f"| Chu kỳ lỗi (50 gần nhất) | {failed} |\n\n"

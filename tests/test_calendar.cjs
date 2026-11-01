@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');const {test}=require('node:test');const c=require('../products/calendar-check/checker.js');
+const valid={ngay:'2026-11-01',don_vi:'Mẫu',kenh:'Facebook',chu_de:'Bữa tối',noi_dung:'Món mới',keu_goi:'Đặt bàn',trang_thai:'da_duyet',het_han_uu_dai:''};
+test('valid row passes',()=>assert.equal(c.check([valid]).findings.length,0));
+test('invalid leap dates rejected',()=>{assert.equal(c.date('29/02/2025'),null);assert.equal(c.date('29/02/2024'),'2024-02-29');assert.equal(c.date('31/11/2026'),null);});
+test('CSV quoted comma newline and quotes',()=>{const s=c.csv([{...valid,noi_dung:'Bữa tối,\n"ấm áp"'}],c.headers);assert.equal(c.parseCSV(s)[0].noi_dung,'Bữa tối,\n"ấm áp"');});
+test('missing column rejected',()=>assert.throws(()=>c.parseCSV('ngay,kenh\nx,y')));
+test('malformed quotes rejected',()=>assert.throws(()=>c.parseCSV('"unfinished')));
+test('duplicate same unit and channel',()=>assert.equal(c.check([valid,{...valid}]).findings[0].ma,'DUPLICATE'));
+test('different branch not duplicate',()=>assert.equal(c.check([valid,{...valid,don_vi:'Khác'}]).errors,0));
+test('expiry earlier than publishing flagged',()=>assert.equal(c.check([{...valid,het_han_uu_dai:'2026-10-31'}]).findings[0].ma,'EXPIRED'));
+test('equal expiry allowed',()=>assert.equal(c.check([{...valid,het_han_uu_dai:valid.ngay}]).errors,0));
+test('formula export neutralized',()=>assert.ok(c.csv([{x:' =HYPERLINK("x")'}],['x']).includes("' =HYPERLINK")));
+test('empty CTA and unapproved are warnings',()=>assert.equal(c.check([{...valid,keu_goi:'',trang_thai:'cho_duyet'}]).warnings,2));
+test('row width mismatch rejected',()=>assert.throws(()=>c.parseCSV(c.headers.join(',')+'\na,b')));
