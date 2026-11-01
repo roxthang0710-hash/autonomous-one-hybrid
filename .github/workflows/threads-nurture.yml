@@ -3,6 +3,8 @@ on:
   schedule:
     # 09:45 Vietnam time daily. GitHub cron is best effort.
     - cron: '45 2 * * *'
+  issues:
+    types: [opened]
   workflow_dispatch:
     inputs:
       action:
@@ -21,6 +23,7 @@ concurrency:
 
 jobs:
   nurture:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'threads:'))
     runs-on: ubuntu-latest
     timeout-minutes: 9
     env:
@@ -48,7 +51,7 @@ jobs:
       - name: Test before any publishing action
         run: python -m unittest discover -s tests -v
       - name: Generate and maintain editorial calendar
-        if: github.event_name == 'schedule' || github.event.inputs.action == 'plan'
+        if: github.event_name == 'schedule' || github.event_name == 'issues' || github.event.inputs.action == 'plan'
         run: python -m threads.content
       - name: Publish at most one due editorial post, only after OAuth
         if: github.event_name == 'schedule' || github.event.inputs.action == 'publish'
