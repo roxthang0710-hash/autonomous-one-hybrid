@@ -63,12 +63,12 @@ def authenticate(db, token, expected):
     # Connection is activated ONLY with both a working account token and owner
     # switch THREADS_PUBLISH_ENABLED=true. Social account was created externally.
     if not channel["auto_publish_enabled"] or channel["status"] != "connected":
-        db.patch("threads_channels", channel["id"], {
-            "username": name,
-            "platform_user_id": uid,
-            "status": "connected",
-            "authorized": True,
-            "auto_publish_enabled": True,
+        # DB transaction starts the editorial calendar NEXT local morning.
+        # This avoids publishing stale/due posts when a brand-new account connects.
+        db.request("POST", "/rpc/activate_threads_channel", payload={
+            "p_brand_key": BRAND_KEY,
+            "p_username": name,
+            "p_platform_user_id": uid,
         })
     elif str(channel["platform_user_id"]) != uid:
         raise ValueError("Account ID unexpectedly changed")
