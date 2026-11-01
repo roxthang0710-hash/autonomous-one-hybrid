@@ -1,0 +1,37 @@
+name: Autonomous One — OAuth Endpoint Smoke Test
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'oauth:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Probe only unauthenticated public paths (never Meta credentials)
+        shell: python
+        run: |
+          import urllib.request, urllib.error
+          base = "https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth"
+          def status(url, method="GET", data=None):
+              req=urllib.request.Request(url, method=method, data=data)
+              try:
+                  with urllib.request.urlopen(req, timeout=15) as r:
+                      return r.status, r.read(20000)
+              except urllib.error.HTTPError as e:
+                  return e.code, e.read(20000)
+          code, html=status(base)
+          assert code==200, ("Portal did not respond OK",code)
+          assert b"Autonomous One" in html or b"AUTONOMOUS ONE" in html
+          code, js=status(base+"/client.js")
+          assert code==200 and b"token?grant_type=password" in js, ("JS unavailable",code)
+          code, result=status(base+"/start", "POST", b'{}')
+          assert code==401, ("UNAUTHORIZED start was not rejected",code)
+          code, result=status(base+"/callback?code=invalid&state=invalid")
+          assert code==400, ("Invalid callback was not rejected",code)
+          print("OAuth public portal OK; unauthenticated start rejected; invalid state rejected.")
