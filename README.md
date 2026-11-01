@@ -119,3 +119,15 @@ Generation now receives bounded historical problem/customer/decision context. A 
 Plans now include each proposal's actual hypothesis and success metric. The append-only `agent_review_audit` records approval changes through a database trigger; reviewer clients cannot write or delete audit rows. Worker cycles recover orphan `running` rows older than 20 minutes, above the eight-minute Actions job timeout. Simulation inputs above one billion VND are rejected to prevent overflow.
 
 Apply `sql/v1_4_audit.sql` after the v1.3 migrations. No historical audit events are invented. Automatic account provisioning was blocked by approval review; no persistent login account was created and the existing login setup remains required.
+
+
+## v1.5 — Affiliate Marketing research
+
+Đã triển khai module Affiliate Research riêng (không thay thế Agent chính), chạy nghiên cứu **thứ Ba và thứ Sáu lúc 09:30 giờ Việt Nam** hoặc từ GitHub Issue với tiêu đề `affiliate:` do chủ repo tạo. Chương trình nghiên cứu: Shopee KOC, ACCESSTRADE và TikTok Shop Affiliate.
+
+- [Hướng dẫn sử dụng & giới hạn](affiliate/README.md)
+- [Báo cáo triển khai và kiểm thử v1.5](RELEASE_v1_5_AFFILIATE.md)
+- [Workflow Affiliate Research](.github/workflows/affiliate-research.yml)
+- [Supabase Table Editor](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor) — bảng `affiliate_opportunities` và `affiliate_review_dashboard`
+
+**Bản này chỉ đề xuất nội dung, không tự đăng bài hoặc tự tạo link nhận hoa hồng.** Các chương trình, sản phẩm và điều kiện cần chủ sở hữu xác minh và duyệt trước khi kiếm tiền thật.
