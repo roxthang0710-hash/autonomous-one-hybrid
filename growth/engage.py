@@ -6,7 +6,7 @@ by the legitimate account owner. Default = disabled.
 """
 import os
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from agent import Database
 from growth.generator import validate_draft
@@ -45,7 +45,7 @@ def eligible(row, now=None):
     if not row.get("expires_at"):
         return False
     due = datetime.fromisoformat(row["expires_at"].replace("Z", "+00:00"))
-    if due.tzinfo is None or due <= now or due > now.replace(year=now.year + 1):
+    if due.tzinfo is None or due <= now or due > now + timedelta(hours=73):
         return False
     text = row.get("draft_text") or ""
     if len(text) > 380 or not 60 <= len(text):
