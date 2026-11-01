@@ -31,7 +31,7 @@ class GrowthRunnerTests(unittest.TestCase):
         self.assertEqual(rows[0]["source"], "google_news_vn")
 
     def test_sensitive_trend_not_selected(self):
-        bad = dict(FEED, title="Bầu cử và cuộc tranh cãi nóng")
+        bad = dict(FEED[0], title="Bầu cử và cuộc tranh cãi nóng")
         self.assertEqual(build_candidates([bad], now=NOW), [])
 
     def test_draft_has_no_fake_persona_or_sales_link(self):
