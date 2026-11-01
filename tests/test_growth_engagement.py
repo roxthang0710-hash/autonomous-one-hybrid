@@ -85,7 +85,8 @@ class EngagementTests(unittest.TestCase):
     def test_one_reply_per_day_before_meta_call(self):
         db = MagicMock()
         db.request.return_value = [{"id": "prior_attempt"}]
-        with patch("growth.engage.get_credentials",
+        with patch.dict("os.environ", {"THREADS_AUTO_ENGAGE_ENABLED": "true"}), \
+             patch("growth.engage.get_credentials",
                    return_value=("token", "dohay_dilam")), \
              patch("growth.engage.thread_request") as meta:
             self.assertEqual(run(db=db, now=NOW), "daily_cap")
@@ -102,7 +103,8 @@ class EngagementTests(unittest.TestCase):
                 return [{"id": "attempt1"}]
             return []
         db.request.side_effect = select
-        with patch("growth.engage.get_credentials",
+        with patch.dict("os.environ", {"THREADS_AUTO_ENGAGE_ENABLED": "true"}), \
+             patch("growth.engage.get_credentials",
                    return_value=("token", "dohay_dilam")), \
              patch("growth.engage.verify_meta_account"), \
              patch("growth.engage.thread_request",
