@@ -15,9 +15,10 @@ class PublisherTests(unittest.TestCase):
             self.assertFalse(enabled())
             self.assertIsNone(access())
             db = Mock()
-            self.assertEqual(
-                publish_due(db),
-                "waiting_for_owner_oauth_and_enable_switch")
+            with patch("threads.credentials.load_credentials", return_value=None):
+                self.assertEqual(
+                    publish_due(db),
+                    "waiting_for_owner_oauth_and_enable_switch")
             db.request.assert_not_called()
 
     def test_token_alone_does_not_enable_live_posting(self):
