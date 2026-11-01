@@ -1,0 +1,55 @@
+name: Autonomous One — Hybrid Agent
+on:
+  schedule:
+    # UTC+7 Vietnam time: 08:15, 12:15, 16:15, 20:15
+    - cron: '15 1,5,9,13 * * *'
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Optional research topic'
+        required: false
+        type: string
+  repository_dispatch:
+    types: [agent_event]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: autonomous-one-single-runner
+  cancel-in-progress: false
+
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+      MAX_RUNS_PER_DAY: '12'
+      MANUAL_TOPIC: ${{ github.event.inputs.topic }}
+    steps:
+      - name: Check required secrets
+        id: configuration
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$DB_SERVICE_KEY" ] || [ -z "$GROQ_API_KEY" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Missing required secrets. AI run skipped." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.configuration.outputs.ready == 'true'
+      - uses: actions/setup-python@v5
+        if: steps.configuration.outputs.ready == 'true'
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        if: steps.configuration.outputs.ready == 'true'
+        run: pip install -r requirements.txt
+      - name: Run research-only agent
+        if: steps.configuration.outputs.ready == 'true'
+        run: python agent.py
