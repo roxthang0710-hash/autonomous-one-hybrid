@@ -8,9 +8,8 @@ const ROOT = "/functions/v1/threads-oauth";
 const CALLBACK = SB + ROOT + "/callback";
 const API = "https://graph.threads.net";
 const EXPECTED = "dohay_dilam";
-const scopes = ["threads_basic", "threads_content_publish",
-                "threads_manage_insights", "threads_read_replies",
-                "threads_manage_replies", "threads_keyword_search"];
+const baseScopes = ["threads_basic", "threads_content_publish", "threads_manage_insights"];
+const growthScopes = ["threads_read_replies", "threads_manage_replies", "threads_keyword_search"];
 const service = SERVICE ? createClient(SB,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}}) : null;
 
 function headers(type="text/html; charset=utf-8") {
@@ -70,7 +69,7 @@ async function handler(req:Request):Promise<Response> {
    });
    if(error)return json({error:"Không lưu được phiên cấp quyền. Kiểm tra App ID và Meta settings."},500);
    const params=new URLSearchParams({client_id:appId,redirect_uri:CALLBACK,
-      scope:scopes.join(","),response_type:"code",state});
+      scope:(body.enableReplies===true ? baseScopes.concat(growthScopes) : baseScopes).join(","),response_type:"code",state});
    return json({authorizeUrl:"https://threads.net/oauth/authorize?"+params.toString()});
  }
  if(req.method==="GET"&&path===ROOT+"/callback"){
