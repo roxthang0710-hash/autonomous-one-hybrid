@@ -130,13 +130,8 @@ def run(db=None, now=None):
                 params={"on_conflict": "fingerprint"}, payload=row,
                 prefer="resolution=ignore-duplicates,return=representation")
             saved.extend(inserted)
-        old = db.request("GET", "/growth_signals", params={
-            "select": "fingerprint",
-            "fingerprint": "in.(" + ",".join(x["fingerprint"] for x in selected) + ")",
-            "limit": str(MAX_SOURCE_ROWS),
-        }) if selected else []
         found = {x["fingerprint"]: x["id"] for x in saved}
-        # Follow-up fetch for already-stored signals to handle reconnection.
+        # Resolve IDs of newly inserted or previously stored signals.
         stored = db.request("GET", "/growth_signals", params={
             "select": "id,fingerprint",
             "fingerprint": "in.(" + ",".join(x["fingerprint"] for x in selected) + ")",
