@@ -36,6 +36,7 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: openai/gpt-oss-20b
       MAX_RUNS_PER_DAY: '12'
+      ISSUE_NUMBER: ${{ github.event_name == 'issues' && github.event.issue.number || '' }}
       MANUAL_TOPIC: ${{ github.event_name == 'issues' && github.event.issue.title || github.event.inputs.topic || '' }}
     steps:
       - name: Check required secrets
