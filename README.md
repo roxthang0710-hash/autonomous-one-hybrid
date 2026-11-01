@@ -72,3 +72,42 @@ python -m unittest discover -s tests -v
 ```
 
 Chỉ chạy `python agent.py` khi đã cấu hình env vars ở môi trường bảo mật.
+
+## v1.3 — Reliability, internal plans and private web review
+
+Private dashboard: https://autonomous-one-control-thang.fairysage513.chatgpt.site
+
+- Proposal, evaluation, three internal tasks, synthetic scenario, run completion and event completion commit in one PostgreSQL transaction (`complete_agent_run`). A stale attempt cannot complete a reclaimed event. Only the service role can execute worker RPCs.
+- Failures after claiming an event release the matching attempt; expired leases recover after worker interruption. GET requests retry transient failures; writes are never automatically replayed.
+- Model output is type checked. Nonzero declared cost is rejected rather than overwritten. Error records contain exception classes, not potentially sensitive URLs. Missing Actions configuration now fails visibly.
+- Memory supplies up to 200 historical titles to generation and screening. Similar titles receive a penalty and `hold` verdict. Topic ties select the longest-idle topic. This is bounded title-based memory, not semantic deduplication.
+- Every new proposal gets internal preparation tasks. Reviewers can complete/reopen internal tasks; the `owner_review` task remains blocked. Idea approval does not execute an external action.
+- `simulator.py` computes three deterministic scenarios. Auto-saved scenarios use default assumptions (100 visitors, 5% conversion, zero hypothetical price/cost); dashboard inputs run locally without persistence. Neither creates revenue records or evidence of market demand.
+
+### Dashboard account setup (one-time)
+
+1. In the project's **Authentication → Users → Add user**, create your own email/password account. Keep the password private; do not put it in GitHub Secrets or chat.
+2. Copy its user UUID. In the Supabase SQL Editor run:
+
+   ```sql
+   insert into public.agent_reviewers(user_id)
+   values ('REPLACE_WITH_YOUR_AUTH_USER_UUID') on conflict do nothing;
+   ```
+
+3. Open the private dashboard and log in with that account. Both site privacy and Supabase RLS protect data. A newly registered account alone has no review permissions.
+
+Reviewers can read project records, update only proposal approval status, and update only eligible internal task status. They cannot edit model output, grant themselves access, call worker RPCs, or modify financial records. Browser auth tokens stay in memory and refresh while the page stays open; reloading requires login again. `dashboard/web` contains the deployable static source. The publishable browser key is intentionally public, and grants no access without RLS authorization.
+
+### Verification and operations
+
+```sh
+pip install -r requirements.txt
+python -m unittest discover -s tests -v
+node --check dashboard/web/app.js
+```
+
+Run `tests/integration_v13.sql` with project owner SQL access to test atomic rollback, replay rejection, tasks, simulation and reviewer policies. It rolls back all test mutations. Apply `sql/schema.sql`, `sql/v1_1_evaluations.sql`, `sql/v1_3_reliability.sql`, then `sql/v1_3_task_review.sql` when provisioning a fresh project; versioned upgrade scripts are applied once, not repeatedly. Run Supabase security/performance advisors after upgrades.
+
+The `Tests` workflow runs on pushes and pull requests without production secrets. The agent workflow also runs tests before research. Do not treat a passing unit suite as proof of a working provider integration: confirm a new successful `agent_runs` record plus its evaluation, tasks and simulation after deployment.
+
+Known limits: no semantic/vector memory, automated task executor, causal market validation, external outreach, or financial transactions. Decisions are current-state records; a full immutable decision audit trail is a next upgrade. Pending backlog is measured within the latest 200 proposals. Supabase login must be enrolled before authenticated browser flows can be exercised by the owner.

@@ -2,11 +2,13 @@
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from urllib.parse import quote
 import requests
 from evaluator import evaluate_proposal
-from planner import choose_topic, should_pause_scheduled
+from planner import choose_topic, should_pause_scheduled, build_tasks
+from simulator import simulate
 
 TIMEOUT = 20
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
@@ -57,12 +59,22 @@ class Database:
         headers = dict(self.headers)
         if prefer:
             headers["Prefer"] = prefer
-        response = requests.request(
-            method, self.url + path, headers=headers, params=params,
-            json=payload, timeout=TIMEOUT,
-        )
-        response.raise_for_status()
-        return response.json() if response.content else []
+        # Only reads are retried: a timed-out write might already have committed.
+        attempts = 3 if method.upper() == 'GET' else 1
+        for attempt in range(attempts):
+            try:
+                response = requests.request(
+                    method, self.url + path, headers=headers, params=params,
+                    json=payload, timeout=TIMEOUT,
+                )
+                response.raise_for_status()
+                return response.json() if response.content else []
+            except requests.RequestException as exc:
+                status = exc.response.status_code if exc.response is not None else None
+                transient = status is None or status == 429 or status >= 500
+                if not transient or attempt + 1 == attempts:
+                    raise
+                time.sleep(2 ** attempt)
 
     def claim_event(self):
         rows = self.request("POST", "/rpc/claim_agent_event", payload={})
@@ -121,7 +133,7 @@ def make_proposal(topic, sources, recent_titles=()):
         {"role": "user", "content": json.dumps({
             "topic": topic, "source": "Hacker News Algolia public titles",
             "search_hits": sources,
-            "recent_ideas_to_avoid_repeating": list(recent_titles)[:15],
+            "recent_ideas_to_avoid_repeating": list(recent_titles)[:200],
             "task": "Suggest ONE distinct zero-cost experiment and a measurable success criterion.",
         }, ensure_ascii=False)},
     ]
@@ -144,10 +156,28 @@ def make_proposal(topic, sources, recent_titles=()):
     response.raise_for_status()
     answer = json.loads(response.json()["choices"][0]["message"]["content"])
     answer["needs_owner_approval"] = True
-    answer["estimated_cost_vnd"] = 0
+    validate_proposal(answer)
     answer["confidence_percent"] = max(0, min(100, int(answer["confidence_percent"])))
     return answer
 
+
+
+def validate_proposal(answer):
+    """Reject malformed/paid model output rather than relabel it as free."""
+    if not isinstance(answer, dict) or set(answer) != set(SCHEMA['required']):
+        raise ValueError('Proposal fields do not match schema')
+    for name, spec in SCHEMA['properties'].items():
+        value = answer[name]
+        kind = spec['type']
+        valid = (kind == 'string' and isinstance(value, str) and bool(value.strip())) or (
+            kind == 'integer' and type(value) is int) or (
+            kind == 'boolean' and type(value) is bool) or (
+            kind == 'array' and isinstance(value, list) and all(isinstance(x,str) for x in value))
+        if not valid:
+            raise ValueError('Invalid proposal field: ' + name)
+    if answer['estimated_cost_vnd'] != 0:
+        raise ValueError('Paid proposal rejected; no spending authorized')
+    return answer
 
 
 def queue_owner_issue(db, issue_number, topic):
@@ -183,70 +213,74 @@ def main():
 
     event = db.claim_event()
     manual_topic = os.getenv("MANUAL_TOPIC", "").strip().removeprefix("agent:").strip()[:140]
-    history = db.request("GET", "/agent_proposals", params={
-        "select": "proposal,topic,approval_status",
-        "order": "created_at.desc", "limit": "200",
-    })
-    if not event and not manual_topic and should_pause_scheduled(history):
-        print("Scheduled research paused: pending-approval backlog is full.")
-        return
-
-    topic = (event or {}).get("payload", {}).get("topic", "")
-    if not isinstance(topic, str) or not topic.strip():
-        topic = manual_topic or choose_topic(history)
-    topic = topic[:140]
-    kind = "event" if event else ("manual" if manual_topic else "scheduled")
-    if event:
-        existing = db.request("GET", "/agent_proposals", params={
-            "select": "id", "event_id": "eq." + event["id"], "limit": "1",
+    run = None
+    try:
+        history = db.request("GET", "/agent_proposals", params={
+            "select": "proposal,topic,approval_status",
+            "order": "created_at.desc", "limit": "200",
         })
-        if existing:
-            db.patch("agent_events", event["id"], {
-                "status": "completed", "lease_until": None,
-                "finished_at": datetime.now(timezone.utc).isoformat(),
-            })
-            print("Already completed event; avoiding duplicate.")
+        if not event and not manual_topic and should_pause_scheduled(history):
+            print("Scheduled research paused: pending-approval backlog is full.")
             return
 
-    prior_titles = [
-        row.get("proposal", {}).get("title", "")
-        for row in history if isinstance(row.get("proposal"), dict)
-    ]
-    run = db.insert("agent_runs", {
-        "trigger_kind": kind, "event_id": event["id"] if event else None,
-    })
-    try:
+        topic = (event or {}).get("payload", {}).get("topic", "")
+        if not isinstance(topic, str) or not topic.strip():
+            topic = manual_topic or choose_topic(history)
+        topic = topic[:140]
+        kind = "event" if event else ("manual" if manual_topic else "scheduled")
+        if event:
+            existing = db.request("GET", "/agent_proposals", params={
+                "select": "id", "event_id": "eq." + event["id"], "limit": "1",
+            })
+            if existing:
+                db.patch("agent_events", event["id"], {
+                    "status": "completed", "lease_until": None,
+                    "finished_at": datetime.now(timezone.utc).isoformat(),
+                })
+                print("Already completed event; avoiding duplicate.")
+                return
+
+        prior_titles = [
+            row.get("proposal", {}).get("title", "")
+            for row in history if isinstance(row.get("proposal"), dict)
+        ]
+        run = db.insert("agent_runs", {
+            "trigger_kind": kind, "event_id": event["id"] if event else None,
+        })
         sources = research(topic)
         proposal = make_proposal(topic, sources, prior_titles)
         evaluation = evaluate_proposal(proposal, sources, prior_titles)
-        saved_proposal = db.insert("agent_proposals", {
-            "run_id": run["id"], "event_id": event["id"] if event else None,
-            "topic": topic, "model": MODEL,
-            "research_sources": sources, "proposal": proposal,
+        db.request('POST', '/rpc/complete_agent_run', payload={
+            'p_run_id': run['id'], 'p_event_id': event['id'] if event else None,
+            'p_attempt': event['attempts'] if event else 0,
+            'p_topic': topic, 'p_model': MODEL, 'p_sources': sources,
+            'p_proposal': proposal, 'p_evaluation': evaluation,
+            'p_tasks': build_tasks(proposal, evaluation), 'p_simulation': simulate(),
         })
-        db.insert("agent_evaluations", {
-            "proposal_id": saved_proposal["id"], **evaluation,
-        })
-        if event:
-            db.patch("agent_events", event["id"], {
-                "status": "completed", "lease_until": None,
-                "finished_at": datetime.now(timezone.utc).isoformat(),
-            })
-        db.patch("agent_runs", run["id"], {
-            "status": "success", "finished_at": datetime.now(timezone.utc).isoformat(),
-        })
-        print("Proposal saved for owner review:", proposal["title"])
+        print("Proposal saved for owner review. Run:", run["id"])
     except Exception as exc:
-        message = str(exc)[:400]
-        db.patch("agent_runs", run["id"], {
-            "status": "failed", "error_message": message,
-            "finished_at": datetime.now(timezone.utc).isoformat(),
-        })
+        # Exception messages can contain request URLs and tokens. Persist only class.
+        message = type(exc).__name__
+        if run:
+            try:
+                db.request('PATCH', '/agent_runs', params={'id': 'eq.' + run['id'], 'status': 'eq.running'}, payload={
+                    'status': 'failed', 'error_message': message,
+                    'finished_at': datetime.now(timezone.utc).isoformat(),
+                })
+            except Exception:
+                print('Could not update run status; inspect orphan runs.', file=sys.stderr)
         if event:
-            db.patch("agent_events", event["id"], {
-                "status": "pending" if event["attempts"] < 3 else "failed",
-                "lease_until": None, "last_error": message,
-            })
+            try:
+                # Compare attempt + status so a stale worker cannot reset a new lease.
+                db.request('PATCH', '/agent_events', params={
+                    'id': 'eq.' + event['id'], 'status': 'eq.processing',
+                    'attempts': 'eq.' + str(event['attempts']),
+                }, payload={
+                    'status': 'pending' if event['attempts'] < 3 else 'failed',
+                    'lease_until': None, 'last_error': message,
+                })
+            except Exception:
+                print('Could not release event; lease expiry will recover it.', file=sys.stderr)
         raise
 
 
@@ -254,5 +288,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        print("Agent run failed:", str(exc)[:300], file=sys.stderr)
+        print("Agent run failed:", type(exc).__name__, file=sys.stderr)
         sys.exit(1)

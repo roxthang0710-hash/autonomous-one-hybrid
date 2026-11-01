@@ -2,7 +2,7 @@
 from difflib import SequenceMatcher
 import re
 
-VERSION = "rubric-v1.1"
+VERSION = "rubric-v1.3"
 
 
 def _normalize(value):
@@ -49,11 +49,12 @@ def evaluate_proposal(proposal, sources, recent_titles=()):
     if normalized_title and len(normalized_title) >= 12:
         duplicate = any(
             SequenceMatcher(None, normalized_title, _normalize(old)).ratio() >= 0.84
-            for old in list(recent_titles)[:40]
+            for old in list(recent_titles)[:200]
             if old
         )
+    rubric["novelty"] = {"duplicate": duplicate, "penalty": 35 if duplicate else 0}
     score = max(0, base - (35 if duplicate else 0))
-    verdict = "review" if score >= 70 else ("revise" if score >= 40 else "hold")
+    verdict = "hold" if duplicate else ("review" if score >= 70 else ("revise" if score >= 40 else "hold"))
     findings = [
         "Điểm chỉ đánh giá mức độ hoàn chỉnh của đề xuất; không dự báo doanh thu.",
         "Dữ liệu tìm kiếm công khai chưa xác minh được nhu cầu khách hàng.",

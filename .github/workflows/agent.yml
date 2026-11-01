@@ -40,7 +40,8 @@ jobs:
         run: |
           if [ -z "$SUPABASE_URL" ] || [ -z "$DB_SERVICE_KEY" ] || [ -z "$GROQ_API_KEY" ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "Missing required secrets. AI run skipped." >> "$GITHUB_STEP_SUMMARY"
+            echo "Missing required secrets. AI run cannot start." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
