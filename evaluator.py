@@ -2,7 +2,7 @@
 from difflib import SequenceMatcher
 import re
 
-VERSION = "rubric-v1.3"
+VERSION = "rubric-v1.4"
 
 
 def _normalize(value):

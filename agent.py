@@ -9,6 +9,7 @@ import requests
 from evaluator import evaluate_proposal
 from planner import choose_topic, should_pause_scheduled, build_tasks
 from simulator import simulate
+from memory import recall, memory_context
 
 TIMEOUT = 20
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
@@ -119,7 +120,7 @@ def research(topic):
         return []
 
 
-def make_proposal(topic, sources, recent_titles=()):
+def make_proposal(topic, sources, recent_titles=(), history=()):
     key = require_env("GROQ_API_KEY")
     messages = [
         {"role": "system", "content": (
@@ -134,6 +135,7 @@ def make_proposal(topic, sources, recent_titles=()):
             "topic": topic, "source": "Hacker News Algolia public titles",
             "search_hits": sources,
             "recent_ideas_to_avoid_repeating": list(recent_titles)[:200],
+            "prior_decisions_and_problems": memory_context(history),
             "task": "Suggest ONE distinct zero-cost experiment and a measurable success criterion.",
         }, ensure_ascii=False)},
     ]
@@ -206,6 +208,7 @@ def main():
     if issue_number and not queue_owner_issue(db, issue_number, event_topic):
         print("Duplicate GitHub issue event: already queued or processed.")
         return
+    db.request("POST", "/rpc/recover_abandoned_agent_runs", payload={})
     max_runs = min(40, max(1, int(os.getenv("MAX_RUNS_PER_DAY", "12"))))
     if db.count_today() >= max_runs:
         print("Daily run cap reached; queued events are left intact.")
@@ -216,7 +219,7 @@ def main():
     run = None
     try:
         history = db.request("GET", "/agent_proposals", params={
-            "select": "proposal,topic,approval_status",
+            "select": "id,proposal,topic,approval_status",
             "order": "created_at.desc", "limit": "200",
         })
         if not event and not manual_topic and should_pause_scheduled(history):
@@ -248,8 +251,14 @@ def main():
             "trigger_kind": kind, "event_id": event["id"] if event else None,
         })
         sources = research(topic)
-        proposal = make_proposal(topic, sources, prior_titles)
+        proposal = make_proposal(topic, sources, prior_titles, history)
         evaluation = evaluate_proposal(proposal, sources, prior_titles)
+        match = recall(proposal, history)
+        evaluation['rubric']['memory'] = match
+        if match['duplicate']:
+            evaluation['verdict'] = 'hold'
+            evaluation['rubric']['novelty']['duplicate'] = True
+            evaluation['findings'].append('Trùng vấn đề hoặc tiêu đề đã nghiên cứu; xem quyết định cũ trước khi tiếp tục.')
         db.request('POST', '/rpc/complete_agent_run', payload={
             'p_run_id': run['id'], 'p_event_id': event['id'] if event else None,
             'p_attempt': event['attempts'] if event else 0,

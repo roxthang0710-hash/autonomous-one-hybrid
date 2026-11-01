@@ -8,7 +8,7 @@ def simulate(*, visitors=100, conversion_rate=0.05, price_vnd=0, unit_cost_vnd=0
     for value in (conversion_rate, price_vnd, unit_cost_vnd):
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not isfinite(value):
             raise ValueError('assumptions must be finite numbers')
-    if not 0 <= conversion_rate <= 1 or min(price_vnd, unit_cost_vnd) < 0:
+    if not 0 <= conversion_rate <= 1 or min(price_vnd, unit_cost_vnd) < 0 or max(price_vnd, unit_cost_vnd) > 1000000000:
         raise ValueError('invalid conversion or price assumptions')
     scenarios = []
     for label, multiplier in [('low', 0.5), ('base', 1), ('high', 1.5)]:

@@ -35,12 +35,14 @@ def should_pause_scheduled(history, threshold=8):
 def build_tasks(proposal, evaluation):
     """Bounded internal plan: never execute outreach or financial operations."""
     duplicate = evaluation.get('rubric', {}).get('novelty', {}).get('duplicate', False)
+    metric = str(proposal.get('success_metric') or 'Chưa có tiêu chí định lượng')[:300]
+    problem = str(proposal.get('problem_hypothesis') or 'Chưa có giả thuyết')[:300]
     return [
         {'position': 1, 'kind': 'review_evidence', 'status': 'pending',
-         'description': 'Kiểm tra nguồn và giả thuyết; nguồn công khai chưa chứng minh nhu cầu.'},
+         'description': 'Kiểm tra nguồn cho giả thuyết: ' + problem},
         {'position': 2, 'kind': 'differentiate' if duplicate else 'prepare_simulation',
          'status': 'pending', 'description': 'Làm rõ điểm mới trước khi tiếp tục.' if duplicate else
-         'Chọn giả định đầu vào cho thử nghiệm giả lập, không tiếp cận khách hàng.'},
+         'Chọn giả định để kiểm tra tiêu chí: ' + metric + '. Chỉ giả lập nội bộ.'},
         {'position': 3, 'kind': 'owner_review', 'status': 'blocked',
          'description': 'Chờ chủ sở hữu duyệt mọi hoạt động thực tế.'},
     ]

@@ -111,3 +111,11 @@ Run `tests/integration_v13.sql` with project owner SQL access to test atomic rol
 The `Tests` workflow runs on pushes and pull requests without production secrets. The agent workflow also runs tests before research. Do not treat a passing unit suite as proof of a working provider integration: confirm a new successful `agent_runs` record plus its evaluation, tasks and simulation after deployment.
 
 Known limits: no semantic/vector memory, automated task executor, causal market validation, external outreach, or financial transactions. Decisions are current-state records; a full immutable decision audit trail is a next upgrade. Pending backlog is measured within the latest 200 proposals. Supabase login must be enrolled before authenticated browser flows can be exercised by the owner.
+
+## v1.4 — Problem memory and review history
+
+Generation now receives bounded historical problem/customer/decision context. A local normalized text matcher checks both problem and customer even when the title changes; matched ideas are held and reference their prior proposal ID and decision in the evaluation rubric. This is explainable text similarity, not embeddings or a claim of semantic understanding.
+
+Plans now include each proposal's actual hypothesis and success metric. The append-only `agent_review_audit` records approval changes through a database trigger; reviewer clients cannot write or delete audit rows. Worker cycles recover orphan `running` rows older than 20 minutes, above the eight-minute Actions job timeout. Simulation inputs above one billion VND are rejected to prevent overflow.
+
+Apply `sql/v1_4_audit.sql` after the v1.3 migrations. No historical audit events are invented. Automatic account provisioning was blocked by approval review; no persistent login account was created and the existing login setup remains required.
