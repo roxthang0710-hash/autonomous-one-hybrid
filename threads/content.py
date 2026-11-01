@@ -115,7 +115,7 @@ def plan_next(db, *, low_watermark=6, force=False):
     history = db.request("GET", "/threads_posts", params={
         "select": "id,text_content,pillar,scheduled_at",
         "channel_id": "eq." + channel["id"],
-        "order": "created_at.desc", "limit": "50",
+        "order": "created_at.desc", "limit": "365",
     })
     if len(history) >= 365:
         return "max_posts_reached"
@@ -125,9 +125,17 @@ def plan_next(db, *, low_watermark=6, force=False):
     if any(r["text_content"] == result["post_text"] for r in history):
         return "duplicate_generated"
     key = hashlib.sha256((BRAND_KEY + "\n" + result["post_text"]).encode("utf-8")).hexdigest()
-    # Schedule new text AFTER the furthest queued date to prevent an unexpected burst.
-    last = max((datetime.fromisoformat(r["scheduled_at"].replace("Z", "+00:00"))
-                for r in queued), default=None)
+    # Include Metricool's external schedule as the same account's content.
+    # New Meta-direct drafts must start AFTER the last Metricool date, so
+    # enabling OAuth can never double-post on a previously booked day.
+    recent_slot = db.request("GET", "/threads_posts", params={
+        "select": "scheduled_at",
+        "channel_id": "eq." + channel["id"],
+        "status": "in.(queued,scheduled_external)",
+        "order": "scheduled_at.desc", "limit": "1",
+    })
+    last = (datetime.fromisoformat(recent_slot[0]["scheduled_at"].replace("Z", "+00:00"))
+            if recent_slot else None)
     next_slot = scheduled_start()
     if last is not None:
         last_vn = last.astimezone(VN)
@@ -155,7 +163,7 @@ def status(db):
         "select": "status", "channel_id": "eq." + channel["id"], "limit": "100",
     })
     counts = {name: sum(r["status"] == name for r in rows)
-              for name in ("queued", "publishing", "posted", "uncertain", "failed")}
+              for name in ("queued", "scheduled_external", "publishing", "posted", "uncertain", "failed")}
     return {
         "brand": channel["display_name"], "account_status": channel["status"],
         "connected": bool(channel["authorized"]),
