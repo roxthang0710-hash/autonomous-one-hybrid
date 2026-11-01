@@ -15,6 +15,8 @@ on:
         type: string
   repository_dispatch:
     types: [agent_event]
+  issues:
+    types: [opened]
 
 permissions:
   contents: read
@@ -25,6 +27,7 @@ concurrency:
 
 jobs:
   agent:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'agent:'))
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
@@ -33,7 +36,7 @@ jobs:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: openai/gpt-oss-20b
       MAX_RUNS_PER_DAY: '12'
-      MANUAL_TOPIC: ${{ github.event.inputs.topic }}
+      MANUAL_TOPIC: ${{ github.event_name == 'issues' && github.event.issue.title || github.event.inputs.topic || '' }}
     steps:
       - name: Check required secrets
         id: configuration
