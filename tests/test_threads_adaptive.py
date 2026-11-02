@@ -36,8 +36,8 @@ class AdaptiveTests(unittest.TestCase):
         self.assertEqual(qualify("Bạn nghĩ sao?",REASON)[0],0)
         self.assertEqual(qualify(TEXT+" Follow để biết thêm",REASON)[0],0)
     def test_no_data_allows_at_most_one_experiment(self):
-        with_one=POSTS+[{"id":"e","status":"posted","created_by":"agent",
-                         "scheduled_at":"2026-11-03T08:05:00+00:00",
+        with_one=POSTS[:3]+[{"id":"e","status":"posted","created_by":"agent",
+                         "scheduled_at":"2026-11-03T01:00:00+00:00",
                          "published_at":None}]
         self.assertEqual(eligibility(with_one,[],now=NOW)[0],"experimental_extra_limit")
     def test_bad_metrics_pause_not_fake_success(self):
