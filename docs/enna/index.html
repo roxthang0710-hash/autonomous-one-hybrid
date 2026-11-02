@@ -56,7 +56,7 @@
 </div><section class="card logs" id="logs"><h2 class="card-title"><span>▤ Recent Logs</span><span class="buttons"><span class="muted" id="sync-label">Chưa đồng bộ</span><button class="mini-btn" id="refresh">Làm mới ↻</button></span></h2><div class="muted">Nhật ký thực thi công khai · Không hiển thị nội dung nháp</div><div id="recent-logs"><p class="empty">Đang tải các hoạt động từ hệ thống…</p></div></section></div>
 <div class="rightcol"><div class="righttop">
 <section class="card" id="tasks"><h2 class="card-title"><span>▣ Tasks</span><span class="muted" id="task-count">—</span></h2><div class="progress"><i id="task-progress"></i></div><div class="task-line"><b>☑</b> Hoàn thành <strong id="task-completed">—</strong></div><div class="task-line"><b>▫</b> Đang chờ <strong id="task-pending">—</strong></div><div class="task-line"><b>◷</b> Chờ phê duyệt <strong id="task-blocked">—</strong></div><p class="muted">Số lượng từ các nhiệm vụ đã ghi nhận, không nhất thiết trong hôm nay.</p></section>
-<section class="card" id="status"><h2 class="card-title">◈ System Status</h2><div class="system-line"><span>AI Agent (Enna)</span><strong id="sys-agent">—</strong></div><div class="system-line"><span>Kết nối Threads</span><strong id="sys-threads">—</strong></div><div class="system-line"><span>Lượt chạy gần nhất</span><strong id="sys-run">—</strong></div><div class="system-line"><span>Dữ liệu</span><strong id="sys-data">Chờ đồng bộ</strong></div><div class="muted" style="margin-top:9px">Hoạt động theo lịch, không phải trực tuyến liên tục.</div></section>
+<section class="card" id="status"><h2 class="card-title">◈ System Status</h2><div class="system-line"><span>AI Agent (Enna)</span><strong id="sys-agent">—</strong></div><div class="system-line"><span>Kết nối Threads</span><strong id="sys-threads">—</strong></div><div class="system-line"><span>Lượt chạy gần nhất</span><strong id="sys-run">—</strong></div><div class="system-line"><span>Dữ liệu</span><strong id="sys-data">Chờ đồng bộ</strong></div><div class="system-line"><span>🧠 Chiến lược tự học</span><strong id="sys-learning">Chưa đồng bộ</strong></div><div class="system-line"><span>Lần tự đánh giá</span><strong id="sys-learning-run">—</strong></div><div class="system-line"><span>Metricool đã xác nhận đăng</span><strong id="sys-provider">—</strong></div><div class="system-line"><span>Đã đối soát Meta ID</span><strong id="sys-meta">—</strong></div><div class="muted" style="margin-top:9px">Tự đánh giá theo đợt và chỉ thay đổi chiến lược khi có số liệu thật. Hoạt ảnh minh họa không đồng nghĩa đang xử lý 24/7.</div></section>
 </div>
 <section class="card moods"><h2 class="card-title"><span>♡ Enna in Action</span><div class="buttons"><button class="mini-btn" id="motion" aria-pressed="false">Tắt hoạt ảnh</button></div></h2><div class="muted">Mỗi trạng thái có biểu cảm và cử chỉ riêng (hoạt ảnh minh họa, không phản ánh thời gian thực)</div><div class="mood-row">
 <div class="mood"><div class="mood-picture"><img src="enna-work.svg?v=4" alt="Enna mở to mắt, mỉm cười hào hứng khi tập trung gõ bàn phím"><span class="mood-symbol">✨</span></div><b>⌨ Đang làm việc</b><p>Thực hiện nhiệm vụ theo lịch</p></div>
@@ -68,13 +68,13 @@
 <script>
 (()=>{'use strict';
 const endpoint='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-public-status', $=id=>document.getElementById(id);
-const names={research:'Nghiên cứu ý tưởng',growth:'Quét tín hiệu và chủ đề'};
-const icons={research:'✏️',growth:'🔎'};
+const names={research:'Nghiên cứu ý tưởng',growth:'Quét tín hiệu và chủ đề',learning:'Tự đánh giá nội dung'};
+const icons={research:'✏️',growth:'🔎',learning:'🧠'};
 const states={working:'Đang xử lý',scheduled:'Chờ lịch làm việc',attention:'Cần kiểm tra'};
 const out=(id,text)=>$(id).textContent=String(text);
 const date=s=>s?new Date(s).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const clock=s=>s?new Date(s).toLocaleTimeString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit'}):'—';
-const normalizedStatus=status=>({completed:'Hoàn tất',success:'Thành công',running:'Đang xử lý',failed:'Gặp lỗi',blocked:'Chờ duyệt'})[status]||'Đã ghi nhận';
+const normalizedStatus=status=>({completed:'Hoàn tất',success:'Thành công',running:'Đang xử lý',failed:'Gặp lỗi',blocked:'Chờ duyệt',insufficient_evidence:'Chưa đủ dữ liệu',hold:'Giữ chiến lược',promote_story:'Ưu tiên kể chuyện',promote_practical:'Ưu tiên bài hữu ích',rollback_balanced:'Trở lại cân bằng',source_unavailable:'Chưa đọc được dữ liệu'})[status]||'Đã ghi nhận';
 let loading=false;
 function addLog(item){const row=document.createElement('div');row.className='log-row';const time=document.createElement('time');time.textContent=clock(item.at);const icon=document.createElement('span');icon.className='log-ico';icon.textContent=icons[item.kind]||'▤';const title=document.createElement('span');title.className='log-title';title.textContent=names[item.kind]||'Hoạt động';const result=document.createElement('span');result.className='log-result'+(item.status==='failed'?' warn':'');result.textContent=normalizedStatus(item.status);row.append(time,icon,title,result);return row;}
 function addActivity(item){const row=document.createElement('div');row.className='activity-line';const dot=document.createElement('span');dot.className='timeline-dot';const icon=document.createElement('div');icon.className='event-icon';icon.textContent=icons[item.kind]||'▤';const content=document.createElement('div');const b=document.createElement('strong');b.textContent=names[item.kind]||'Hoạt động';const sub=document.createElement('p');sub.textContent=normalizedStatus(item.status);const time=document.createElement('small');time.textContent=date(item.at);content.append(b,sub,time);row.append(dot,icon,content);return row;}
@@ -88,6 +88,11 @@ $('topdot').className='indicator '+(d.runtime.state==='working'?'working':connec
 out('activity-status',d.runtime.state==='working'?'Đang xử lý':connected?'Đã đồng bộ':'Cần kiểm tra');
 $('activity-status').className='status-tag'+(connected?'':' offline');
 out('sys-agent',state);out('sys-threads',connected?'Đã kết nối':'Chưa xác minh');out('sys-run',date(d.runtime.lastRunAt));out('sys-data','Đã đồng bộ');
+const fmt={balanced:'Cân bằng',story:'Ưu tiên kể chuyện',practical:'Ưu tiên mẹo hữu ích'};
+out('sys-learning',fmt[d.learning?.format]||'Chưa có chính sách');
+out('sys-learning-run',d.learning?.lastEvaluatedAt?date(d.learning.lastEvaluatedAt)+' · '+normalizedStatus(d.learning?.lastDecision):'Chưa có lượt đo thực');
+out('sys-provider',d.providerPublications?.metricoolReportedPublished??'—');
+out('sys-meta',d.providerPublications?.metaIdsConfirmed??'—');
 out('sync-label',date(d.updatedAt));
 const total=d.tasks.completed+d.tasks.pending+d.tasks.blocked;
 out('task-count',d.tasks.completed+'/'+total);out('task-completed',d.tasks.completed);out('task-pending',d.tasks.pending);out('task-blocked',d.tasks.blocked);
