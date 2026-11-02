@@ -12,20 +12,22 @@ from growth.scoring import classify
 API = "https://graph.threads.net/v1.0/keyword_search"
 CASES = (
     ("self_control", "Sống gọn hơn", "KEYWORD", "RECENT"),
+    ("self_control_simple", "làm việc", "DEFAULT", "TOP"),
     ("office_recent", "bàn làm việc", "KEYWORD", "RECENT"),
     ("office_top", "công sở", "KEYWORD", "TOP"),
     ("work_topic", "văn phòng", "TAG", "TOP"),
 )
 
 
-def inspect(token, *, fetch=requests.get, now=None, cases=CASES):
+def inspect(token, *, fetch=requests.get, now=None, cases=CASES, check_account=False):
     now = now or datetime.now(timezone.utc)
     output = []
     for name, query, mode, ranking in cases:
         try:
             resp = fetch(API,
                 headers={"Authorization": "Bearer " + token},
-                params={"q":query,"search_mode":mode,"search_type":ranking,
+                params={"q":query,**({"search_mode":mode} if mode != "DEFAULT" else {}),
+                        "search_type":ranking,
                         "fields":"id,text,username,permalink,timestamp","limit":30},
                 timeout=15)
             resp.raise_for_status()
@@ -58,6 +60,29 @@ def inspect(token, *, fetch=requests.get, now=None, cases=CASES):
             output.append({"test":name,"status":"http_error","http_code":status})
         except (requests.RequestException, ValueError, TypeError, OverflowError):
             output.append({"test":name,"status":"unavailable"})
+    account = {}
+    if check_account:
+        for name, path, params in (
+            ("profile", "/me", {"fields":"id,username"}),
+            ("owned_feed", "/me/threads", {"fields":"id,text,timestamp","limit":10}),
+        ):
+            try:
+                response = fetch("https://graph.threads.net/v1.0" + path,
+                    headers={"Authorization":"Bearer "+token},params=params,timeout=15)
+                response.raise_for_status()
+                payload=response.json()
+                if name=="profile":
+                    account[name] = {"status":"ok","id_present":bool(payload.get("id")),
+                                     "matches_brand":str(payload.get("username","")).lower()=="dohay_dilam"}
+                else:
+                    feed = payload.get("data",[])
+                    account[name]={"status":"ok","count":len(feed) if isinstance(feed,list) else None,
+                                   "known_original_visible":any(str(x.get("id"))=="18631204099006138"
+                                        for x in feed if isinstance(x,dict)) if isinstance(feed,list) else False}
+            except requests.HTTPError as err:
+                account[name]={"status":"http_error","http_code":err.response.status_code if err.response is not None else None}
+            except (ValueError,TypeError,requests.RequestException):
+                account[name]={"status":"unavailable"}
     own_probe = next((x for x in output if x["test"]=="self_control"),{})
     foreign = sum(x.get("foreign",0) for x in output)
     raw = sum(x.get("raw",0) for x in output)
@@ -72,7 +97,7 @@ def inspect(token, *, fetch=requests.get, now=None, cases=CASES):
         conclusion="empty_raw_results_cause_unconfirmed"
     else:
         conclusion="only_own_posts_outside_control"
-    return {"diagnostic_version":1,"result":conclusion,"tests":output}
+    return {"diagnostic_version":2,"result":conclusion,"account":account,"tests":output}
 
 
 def main():
@@ -85,7 +110,7 @@ def main():
     auth=load_credentials(db,refresh=False)
     if not auth:
         return {"result":"owner_oauth_unavailable"}
-    result=inspect(auth[0])
+    result=inspect(auth[0],check_account=True)
     return result
 
 
