@@ -3,7 +3,8 @@
 Read-only. Does not publish, buy, change schedules or infer profit from reach.
 The public GitHub Actions summary only receives fixed, non-sensitive labels.
 """
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from urllib.parse import urlparse
 
 from growth.optimizer import analyze
@@ -28,12 +29,23 @@ def _rows(db, table, columns, order, limit=100):
     return [r for r in value if isinstance(r, dict)]
 
 
-def decide(evidence, *, threads_connected=True, search_confirmed=False):
+def decide(evidence, *, threads_connected=True, search_confirmed=False, now=None):
     """Pure policy engine: prioritize blockers before experiments.
 
     Confidence is NEVER a guessed success probability.
     """
-    metric_rows = evidence.get("metricool", [])
+    now = now or datetime.now(timezone.utc)
+    local_day = now.astimezone(ZoneInfo("Asia/Ho_Chi_Minh")).date()
+    # Only complete, recent local days qualify as a performance baseline.
+    # Do not learn from today's partial counters or historic/stale snapshots.
+    metric_rows = []
+    for row in evidence.get("metricool", []):
+        try:
+            measured = date.fromisoformat(str(row.get("measured_on", "")))
+            if local_day - timedelta(days=30) <= measured < local_day:
+                metric_rows.append(row)
+        except (ValueError, TypeError):
+            continue
     metric = analyze(list(reversed(metric_rows)))
     affiliate_programs = evidence.get("programs", [])
     affiliate_drafts = evidence.get("affiliate_drafts", [])
@@ -133,7 +145,7 @@ def decide(evidence, *, threads_connected=True, search_confirmed=False):
     }
 
 
-def snapshot(db, *, threads_connected=True, search_confirmed=False):
+def snapshot(db, *, threads_connected=True, search_confirmed=False, now=None):
     """Reads only allowlisted columns; do not return private drafts or URLs."""
     sources = {
         "metricool": ("growth_metricool_daily",
@@ -164,7 +176,7 @@ def snapshot(db, *, threads_connected=True, search_confirmed=False):
             failed.append(name)
 
     result = decide(evidence, threads_connected=threads_connected,
-                    search_confirmed=search_confirmed)
+                    search_confirmed=search_confirmed, now=now)
     if failed:
         result["status"] = "partial_source_unavailable"
         result["unavailable_sources"] = failed
