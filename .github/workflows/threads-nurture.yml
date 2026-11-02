@@ -60,6 +60,9 @@ jobs:
       - name: Check real conversations on own Threads posts (read only)
         if: always()
         run: python -m growth.own_conversations
+      - name: Measure storytelling versus practical posts (read only)
+        if: always()
+        run: python -m growth.story_insights
       - name: Account cultivation and Shopee application readiness (read only)
         if: always()
         run: |
