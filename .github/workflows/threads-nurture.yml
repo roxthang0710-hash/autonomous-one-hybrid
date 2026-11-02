@@ -57,6 +57,9 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Generate drafts, publish only after OAuth, and collect real insights
         run: python -m threads.daily
+      - name: Check real conversations on own Threads posts (read only)
+        if: always()
+        run: python -m growth.own_conversations
       - name: Account cultivation and Shopee application readiness (read only)
         if: always()
         run: |
@@ -70,5 +73,5 @@ jobs:
           echo "## Enna Threads Nurture — real provider outcomes only" >> "$GITHUB_STEP_SUMMARY"
           echo "Publisher uses owner-approved Meta OAuth stored encrypted in Supabase Vault; token refresh is automated." >> "$GITHUB_STEP_SUMMARY"
           echo "The account cultivation snapshot distinguishes scheduled posts from verified publications. Shopee Affiliate requires separate real approval; no eligibility or earnings are implied." >> "$GITHUB_STEP_SUMMARY"
-          echo "Metricool retains 15 booked days; Meta direct publication begins only after owner OAuth and never overlaps those dates." >> "$GITHUB_STEP_SUMMARY"
+          echo "Metricool now has 26 booked posts during the 7-day sprint; Enna only confirms publication after seeing actual Meta posts." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
