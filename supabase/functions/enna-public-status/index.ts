@@ -13,13 +13,13 @@ Deno.serve(async (request: Request) => {
     const endpoints: Record<string,string> = {
       research: 'agent_runs?select=started_at,finished_at,status,trigger_kind&order=started_at.desc&limit=25',
       growth: 'growth_runs?select=started_at,finished_at,status,signal_count,shortlisted,drafts_created&order=started_at.desc&limit=25',
-      posts: 'threads_posts?select=status,scheduled_at,published_at&limit=500',
+      posts: 'threads_posts?select=id,status,scheduled_at,published_at&limit=500',
       tasks: 'agent_tasks?select=status,kind&limit=500',
       replies: 'growth_engagement_attempts?select=status,finished_at&limit=500',
       account: 'threads_channels?select=username,status,authorized,auto_publish_enabled&limit=1',
       learning: 'enna_learning_policy?select=preferred_format,applied_at,version&brand_key=eq.do_hay_di_lam&limit=1',
       learningDecisions: 'enna_learning_decisions?select=evaluated_at,decision&brand_key=eq.do_hay_di_lam&order=evaluated_at.desc&limit=8',
-      providerEvidence: 'enna_publication_evidence?select=provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=60'
+      providerEvidence: 'enna_publication_evidence?select=scheduled_post_id,provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=200'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -28,13 +28,27 @@ Deno.serve(async (request: Request) => {
     }));
     const s = Object.fromEntries(entries) as Record<string,any[]>;
     const by = (rows:any[],status:string) => rows.filter(r=>r.status===status).length;
-    const timeline = [
+    // Keep provider confirmation and Meta media-ID verification separate.
+    // A PUBLISHED Metricool post still marked scheduled_external in our DB
+    // MUST show as published without falsifying its Meta reconciliation status.
+    const metaPosted = new Set(s.posts.filter(r=>r.status==='posted').map(r=>r.id));
+    const providerPublished = s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED');
+    const providerPublishedIds = new Set(providerPublished.map(r=>r.scheduled_post_id).filter(Boolean));
+    const providerOnly = providerPublished.filter(r=>!r.scheduled_post_id || !metaPosted.has(r.scheduled_post_id));
+    const publishedTotal = metaPosted.size + providerOnly.length;
+    const awaitingExternal = s.posts.filter(r=>r.status==='scheduled_external' && !providerPublishedIds.has(r.id)).length;
+    const runTimeline = [
       ...s.research.map(r=>({at:r.started_at,kind:'research',status:r.status})),
-      ...s.growth.map(r=>({at:r.started_at,kind:'growth',status:r.status})),
-      ...s.learningDecisions.map(r=>({at:r.evaluated_at,kind:'learning',status:r.decision}))
+      ...s.growth.map(r=>({at:r.started_at,kind:'growth',status:r.status}))
+    ].filter(r=>r.at && Number.isFinite(Date.parse(r.at)))
+      .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
+    const timeline = [
+      ...runTimeline,
+      ...s.learningDecisions.map(r=>({at:r.evaluated_at,kind:'learning',status:r.decision})),
+      ...providerPublished.map(r=>({at:r.checked_at,kind:'publication',status:'provider_published'}))
     ].filter(r=>r.at && Number.isFinite(Date.parse(r.at)))
       .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,15);
-    const latest = timeline[0] || null;
+    const latest = runTimeline[0] || null;
     const connected = !!(s.account[0]?.authorized && s.account[0]?.status==='connected');
     const working = !!(latest?.status==='running' && Date.now()-Date.parse(latest.at)<15*60000 && Date.now()>=Date.parse(latest.at));
     const taskStatus = {completed:by(s.tasks,'completed'),pending:by(s.tasks,'pending'),blocked:by(s.tasks,'blocked')};
@@ -42,7 +56,10 @@ Deno.serve(async (request: Request) => {
       updatedAt: new Date().toISOString(),
       account: { username:'@dohay_dilam',connected,autoPublishEnabled:!!s.account[0]?.auto_publish_enabled },
       runtime: { state:working?'working':latest?.status==='failed'?'attention':connected?'scheduled':'attention',lastRunAt:latest?.at||null },
-      posts: {queued:by(s.posts,'queued'),scheduledExternal:by(s.posts,'scheduled_external'),posted:by(s.posts,'posted'),uncertain:by(s.posts,'uncertain'),totalInSample:s.posts.length},
+      posts: {queued:by(s.posts,'queued'),scheduledExternal:awaitingExternal,
+              published:publishedTotal, posted:metaPosted.size,
+              providerOnlyPublished:providerOnly.length,
+              uncertain:by(s.posts,'uncertain'),totalInSample:s.posts.length},
       tasks: taskStatus,
       replies: {posted:by(s.replies,'posted')+by(s.replies,'success'),attempts:s.replies.length},
       runs: {recentResearch:s.research.length,recentGrowth:s.growth.length},
@@ -53,7 +70,7 @@ Deno.serve(async (request: Request) => {
                  lastDecision:s.learningDecisions[0]?.decision||'not_evaluated',
                  lastEvaluatedAt:s.learningDecisions[0]?.evaluated_at||null},
       providerPublications: {
-        metricoolReportedPublished:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED').length,
+        metricoolReportedPublished:providerPublished.length,
         metaIdsConfirmed:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED' && !!r.meta_post_id).length
       },
       activity:timeline
