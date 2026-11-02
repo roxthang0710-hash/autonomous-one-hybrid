@@ -1,4 +1,4 @@
-name: Autonomous One — Publish OAuth Portal to GitHub Pages
+name: Enna — Publish OAuth Control Portal
 on:
   push:
     paths:
