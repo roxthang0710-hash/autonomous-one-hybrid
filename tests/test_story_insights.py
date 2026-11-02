@@ -6,7 +6,7 @@ NOW=datetime(2026,11,12,10,tzinfo=timezone.utc)
 def make_post(i,story):
     return {"id":str(i),"status":"posted","platform_post_id":"meta"+str(i),
             "published_at":(NOW-timedelta(days=2)).isoformat(),
-            "text_content":"Mẩu chuyện công sở (Tình huống giả định)" if story else "Mẹo làm việc hữu ích"}
+            "text_content":"Linh nhận tin nhắn ngoài giờ.\n\nHồ sơ công sở · Tập 1/7" if story else "Mẹo làm việc hữu ích"}
 class StoryInsightsTests(unittest.TestCase):
     def test_does_not_fake_data(self):
         s=assess([make_post(1,True)],[],now=NOW)
@@ -26,8 +26,13 @@ class StoryInsightsTests(unittest.TestCase):
         report=assess(posts,metrics,now=NOW)
         self.assertEqual(report["group_stats"]["story"]["measured_posts"],0)
         self.assertEqual(report["group_stats"]["other"]["measured_posts"],0)
-    def test_classifies_true_fiction_label(self):
-        self.assertEqual(classify_format("Tình huống giả định: chuyện công sở"),"story")
-        self.assertEqual(classify_format("Mẹo văn phòng"),"other")
+    def test_classifies_new_series_without_disclaimer(self):
+        self.assertEqual(classify_format("Một tình huống tại nơi làm việc.\n\nHồ sơ công sở · Tập 3/7"), "story")
+        self.assertEqual(classify_format("Một tình huống tại nơi làm việc.\n\nHồ sơ công sở · Tập 7/7"), "story")
+        self.assertEqual(classify_format("Mẹo văn phòng"), "other")
+        self.assertEqual(classify_format(None), "other")
+
+    def test_old_fiction_label_is_backwards_compatible(self):
+        self.assertEqual(classify_format("Tình huống giả định: chuyện công sở"), "story")
 
 if __name__=="__main__": unittest.main()
