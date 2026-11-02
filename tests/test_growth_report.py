@@ -10,7 +10,8 @@ class GrowthReportTests(unittest.TestCase):
             [],
             [{"id": "1", "relevance_score": 78}],
             [{"id": "2", "status": "needs_review", "kind": "trend_post"}],
-            [{"status": "posted"}],
+            [{"status": "posted", "attempted_at":"2026-10-30T02:15:00+00:00"}],
+            [],
         ]
         result = snapshot(db)
         self.assertEqual(result["signals_recorded_recent"], 1)
@@ -20,7 +21,10 @@ class GrowthReportTests(unittest.TestCase):
             "insufficient_observations",
         )
         self.assertEqual(result["confirmed_brand_replies_recent"], 1)
-        self.assertIn("official Meta OAuth", result["engagement_note"])
+        self.assertEqual(result["engagement_policy"]["reply_mode"], "waiting_for_meta_oauth")
+        self.assertEqual(result["engagement_policy"]["daily_maximum_vietnam"], 3)
+        self.assertEqual(result["engagement_policy"]["today_remaining_capacity"], 0)
+        self.assertIn("Meta scope", result["engagement_note"])
 
 
 if __name__ == "__main__":
