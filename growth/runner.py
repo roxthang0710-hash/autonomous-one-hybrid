@@ -131,25 +131,35 @@ def run(db=None, now=None):
                     from threads.credentials import load_credentials
                     auth = load_credentials(db, refresh=False)
                     if auth:
-                        # Three daily searches rotate narrow, relevant
-                        # topics. One midday query checks TOP; all results
-                        # still must be less than 24 hours old.
+                        # Rotate broad and niche topics with TOP and RECENT
+                        # rankings. Publishing still requires fresh, safe
+                        # and relevant discussions through official Meta API.
                         slot = (now.hour // 5)
                         base = now.timetuple().tm_yday * 3 + slot
                         statuses = []
-                        # Bounded three-query sampling to distinguish scarce
-                        # relevant posts from Meta's own-post-only review mode.
+                        # Bounded discovery plus a known self-post control query
+                        # distinguishes likely Meta review limits from empty search.
                         # Never scrape Threads HTML or bypass App Review.
-                        for offset in range(3):
+                        for offset in range(4):
                             fresh_posts, found_status = search_threads(
-                                query=QUERIES[(base + offset * 4) % len(QUERIES)],
+                                query=QUERIES[(base + offset * 5) % len(QUERIES)],
                                 token=auth[0],
-                                search_type="TOP" if slot % 3 == 1 else "RECENT",
+                                search_type="TOP" if offset % 2 else "RECENT",
                                 now=now)
                             statuses.append(found_status)
                             threads_rows.extend(fresh_posts)
                             if threads_rows:
                                 break
+                        # Control query is known to appear in the account's
+                        # own original Threads bio post. A self-only response
+                        # implies likely App Review scoping rather than
+                        # "no popular posts exist". This is READ ONLY.
+                        if not threads_rows and "own_posts_only_possible_app_review" not in statuses:
+                            canary_posts, canary_status = search_threads(
+                                query="làm việc", token=auth[0],
+                                search_type="TOP", now=now)
+                            statuses.append(canary_status)
+                            threads_rows.extend(canary_posts)
                         if threads_rows:
                             threads_status = "ok_public_posts"
                         elif "own_posts_only_possible_app_review" in statuses:
