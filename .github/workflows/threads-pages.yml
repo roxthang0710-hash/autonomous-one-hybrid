@@ -1,0 +1,37 @@
+name: Autonomous One — Publish OAuth Portal to GitHub Pages
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - '.github/workflows/threads-pages.yml'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: autonomous-one-public-oauth-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'oauth-pages:'))
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure GitHub Pages (attempt automatic enablement)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload static portal without credentials
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
