@@ -11,8 +11,25 @@ let ownerAccessToken = null;
 
 const params = new URLSearchParams(location.search);
 const outcome = params.get("status");
+const failureReason = params.get("reason");
+const FAILURE_MESSAGES = Object.freeze({
+  meta_denied: "Meta chưa chấp thuận quyền cho ứng dụng hoặc bạn đã hủy xác nhận.",
+  invalid_request: "Yêu cầu cấp quyền không hợp lệ. Hãy bắt đầu lại từ biểu mẫu.",
+  expired_session: "Phiên cấp quyền đã hết hạn hoặc mã đã được sử dụng. Hãy đăng nhập lại và cấp quyền mới.",
+  code_exchange: "Meta đã xác nhận quyền nhưng không đổi được mã thành token ngắn hạn. Hãy kiểm tra đúng Threads App ID, Threads App Secret và callback URI.",
+  long_token: "Đã nhận token ngắn hạn nhưng không đổi được token dài hạn. Hãy kiểm tra quyền ứng dụng và Threads API.",
+  account_verify: "Đã nhận token nhưng không xác minh được tài khoản Threads. Hãy kiểm tra quyền threads_basic.",
+  wrong_account: "Bạn đã cấp quyền cho tài khoản Threads khác, không phải @dohay_dilam.",
+  vault_save: "Meta đã cấp token nhưng máy chủ chưa lưu được token vào kho bảo mật. Cần kiểm tra cấu hình Supabase.",
+  unknown: "Kết nối chưa hoàn tất. Vui lòng bắt đầu một phiên cấp quyền mới.",
+});
 if (outcome === "connected") $("connected").hidden = false;
-if (outcome === "failed") $("failed").hidden = false;
+if (outcome === "failed") {
+  const box = $("failed");
+  box.hidden = false;
+  // Only render fixed client-authored messages, never untrusted URL strings.
+  box.textContent = FAILURE_MESSAGES[failureReason] || FAILURE_MESSAGES.unknown;
+}
 if (outcome) history.replaceState(null, "", RETURN_URL);
 
 function showLoginError(message) {
