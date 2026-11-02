@@ -31,7 +31,8 @@ class DiagnosticTests(unittest.TestCase):
             seen.append(k)
             r=Mock();r.json.return_value={"data":[]};return r
         inspect("fake",fetch=fetch,now=NOW)
-        self.assertEqual(len(seen),4)
+        self.assertEqual(len(seen),5)
         self.assertEqual(seen[-1]["params"]["search_mode"],"TAG")
+        self.assertNotIn("search_mode",seen[1]["params"])
         self.assertTrue(all("q" in x["params"] for x in seen))
 if __name__=="__main__": unittest.main()
