@@ -21,7 +21,7 @@ jobs:
           test -s docs/oauth/style.css
           grep -q 'meta charset="utf-8"' docs/oauth/index.html
           grep -q 'id="login-form"' docs/oauth/index.html
-          grep -q 'email_redirect_to: RETURN_URL' docs/oauth/client.js
+          grep -Fq '/otp?redirect_to=' docs/oauth/client.js
           if grep -q 'id="password"' docs/oauth/index.html; then
             echo "Legacy owner password field must not return"; exit 1
           fi
