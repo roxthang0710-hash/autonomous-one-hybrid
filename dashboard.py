@@ -23,7 +23,7 @@ def report(db):
     signals = sum(int(x["observed_signals"]) for x in rows)
     # Do not include titles, business plans or financial details in a public repo summary.
     return (
-        "## Autonomous One — Báo cáo sau chu kỳ\n\n"
+        "## Enna — Báo cáo nghiên cứu sau chu kỳ\n\n"
         "| Chỉ số | Kết quả |\n|---|---:|\n"
         f"| Đề xuất đang lưu | {len(rows)} |\n"
         f"| Chờ chủ sở hữu duyệt | {pending} |\n"
