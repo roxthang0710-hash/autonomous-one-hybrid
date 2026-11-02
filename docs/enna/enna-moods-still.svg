@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 330" role="img" aria-label="Ba trạng thái của Enna: làm việc, suy nghĩ, nghỉ ngơi"><defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#fdf5e8"/><stop offset="1" stop-color="#ecdfc6"/></linearGradient>
+ <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#d9af7f"/><stop offset="1" stop-color="#a67a50"/></linearGradient>
+ <radialGradient id="wool"><stop stop-color="#fff9e9"/><stop offset=".75" stop-color="#f6e7c8"/><stop offset="1" stop-color="#ddcba7"/></radialGradient>
+ <radialGradient id="face"><stop stop-color="#fff9e9"/><stop offset=".79" stop-color="#fff0d4"/><stop offset="1" stop-color="#e4cba2"/></radialGradient>
+ <linearGradient id="green" x1="0" x2="1" y2="1"><stop stop-color="#a0c47a"/><stop offset="1" stop-color="#5d8f60"/></linearGradient>
+ <linearGradient id="laptop" x1="0" x2="1" y2="1"><stop stop-color="#f5e7d5"/><stop offset=".65" stop-color="#d3c3ac"/><stop offset="1" stop-color="#bba88f"/></linearGradient>
+ <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#8d765b" flood-opacity=".22"/></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="12"/></filter>
+ <pattern id="cloth" width="19" height="19" patternUnits="userSpaceOnUse"><rect width="19" height="19" fill="#d7e5b9"/><path d="M0 0V19M0 0H19" stroke="#92b484" stroke-width="6" opacity=".35"/></pattern>
+ <pattern id="knit" width="15" height="14" patternUnits="userSpaceOnUse"><path d="M4 1L8 6 4 12 M11 1L7 6 11 12" stroke="#c9b38e" opacity=".33" fill="none" stroke-width="1.5"/></pattern>
+ <symbol id="sheep" viewBox="0 0 450 480">
+  <g class="s-bob">
+   <ellipse cx="221" cy="420" rx="115" ry="26" fill="#bdab84" opacity=".18"/>
+   <ellipse cx="225" cy="343" rx="124" ry="110" fill="url(#green)" stroke="#587d55" stroke-width="6"/>
+   <path d="M130 278Q214 259 313 280V386H135Z" fill="url(#cloth)" opacity=".85"/>
+   <path d="M203 280L226 309L249 280" fill="none" stroke="#fff6dd" stroke-width="9"/>
+   <ellipse cx="116" cy="363" rx="46" ry="60" fill="url(#wool)" transform="rotate(24 116 363)"/>
+   <ellipse cx="334" cy="363" rx="46" ry="60" fill="url(#wool)" transform="rotate(-24 334 363)"/>
+   <path d="M96 135Q33 108 17 160Q28 224 100 221L145 167Z" fill="url(#wool)" stroke="#dac69f" stroke-width="4"/>
+   <path d="M350 135Q416 109 434 163Q413 226 349 219L314 169Z" fill="url(#wool)" stroke="#dac69f" stroke-width="4"/>
+   <ellipse cx="69" cy="174" rx="35" ry="17" fill="#e4c4a6" opacity=".60" transform="rotate(-22 69 174)"/>
+   <ellipse cx="385" cy="174" rx="35" ry="17" fill="#e4c4a6" opacity=".60" transform="rotate(22 385 174)"/>
+   <ellipse cx="225" cy="177" rx="154" ry="143" fill="url(#wool)" stroke="#e4d5b7" stroke-width="5"/>
+   <ellipse cx="226" cy="205" rx="121" ry="112" fill="url(#face)"/>
+   <g fill="url(#wool)" stroke="#e9d8b8" stroke-width="2">
+    <circle cx="113" cy="108" r="55"/><circle cx="159" cy="68" r="59"/><circle cx="223" cy="57" r="62"/><circle cx="289" cy="73" r="56"/><circle cx="339" cy="118" r="53"/>
+    <circle cx="127" cy="133" r="44"/><circle cx="188" cy="105" r="48"/><circle cx="254" cy="101" r="48"/><circle cx="325" cy="136" r="39"/>
+   </g>
+   <g fill="#fffef4" opacity=".55"><circle cx="171" cy="54" r="21"/><circle cx="251" cy="54" r="16"/><circle cx="111" cy="113" r="13"/><circle cx="298" cy="99" r="12"/></g>
+   <g class="s-eyes"><ellipse cx="174" cy="205" rx="12" ry="16" fill="#242420"/><ellipse cx="278" cy="205" rx="12" ry="16" fill="#242420"/><circle cx="170" cy="200" r="4" fill="white"/><circle cx="274" cy="200" r="4" fill="white"/></g>
+   <ellipse cx="149" cy="242" rx="19" ry="10" fill="#efbdac" opacity=".23"/><ellipse cx="306" cy="242" rx="19" ry="10" fill="#efbdac" opacity=".23"/>
+   <path d="M212 248Q225 237 239 248Q227 262 212 248Z" fill="#c59f89"/><path d="M226 254Q214 268 204 258M226 254Q239 268 250 258" stroke="#b78b72" stroke-width="3" fill="none" stroke-linecap="round"/>
+   <path d="M176 288Q225 317 274 288" stroke="#fff6e4" stroke-width="15" fill="none" stroke-linecap="round"/>
+   <path d="M220 309L202 334L183 312Q180 296 200 296Z" fill="#986951"/><path d="M230 309L247 334L268 312Q269 296 251 296Z" fill="#986951"/><circle cx="225" cy="310" r="9" fill="#ac7958"/>
+  </g>
+ </symbol>
+</defs>
+<rect width="1200" height="330" fill="#fffaf0"/><rect width="400" height="330" fill="#f5f1de"/><rect x="800" width="400" height="330" fill="#f1efdf"/>
+<g transform="translate(45 0) scale(.74)"><use href="#sheep" width="450" height="480"/></g>
+<g class="tap"><path d="M133 218H347L372 319H105Z" fill="url(#laptop)" stroke="#c5ad89" stroke-width="5"/><ellipse cx="242" cy="265" rx="18" ry="17" fill="#f9edcb"/><path d="M237 265Q243 257 249 265" stroke="#9f8e74" fill="none"/></g>
+<g transform="translate(441 14) scale(.74)"><use href="#sheep" width="450" height="480"/></g>
+<g class="idea" transform="translate(696 41)"><path d="M0 40Q-9 6 27 2Q36-26 69-8Q102-17 111 13Q149 32 119 67Q92 90 54 78L24 95L30 75Q-1 77 0 40Z" fill="#fff8d9" stroke="#d7b878" stroke-width="6"/><path d="M54 19Q84 8 87 35Q85 50 76 54V64H62V53Q44 45 54 19Z" fill="#f1c75a"/><path d="M62 68H78" stroke="#8b7447" stroke-width="5"/></g>
+<g transform="translate(842 35) scale(.7)"><use href="#sheep" width="450" height="480"/></g>
+<g transform="translate(844 222)"><path d="M0 50Q104 0 297 33L309 99H0Z" fill="url(#cloth)" stroke="#8daa83" stroke-width="6"/><path d="M19 86Q177 69 291 86" stroke="#f7ebd8" stroke-width="8" fill="none"/></g>
+<g font-family="Nunito,system-ui,sans-serif" fill="#776956" font-weight="700"><text x="354" y="62" font-size="29">✦</text><text x="1093" y="66" font-size="36">z z z</text></g>
+</svg>
