@@ -73,7 +73,7 @@ class SafeRecoveryTests(unittest.TestCase):
         self.assertEqual(result["drafts"], 0)
         self.assertEqual(result["rejected_unsafe_drafts"], MAX_CONTENT_ATTEMPTS)
         self.assertEqual(llm.call_count, MAX_CONTENT_ATTEMPTS)
-        self.assertEqual(db.patch.call_args.kwargs["payload"]["status"], "success")
+        self.assertEqual(db.patch.call_args.args[2]["status"], "success")
         self.assertFalse(any(c.args[0]=="POST" and c.args[1]=="/growth_opportunities"
                              for c in db.request.call_args_list))
 
