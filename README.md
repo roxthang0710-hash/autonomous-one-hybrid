@@ -1,3 +1,11 @@
+## v1.9 — Threads Nurture + Growth Radar an toàn (02/11/2026)
+
+Đã xác minh **Threads @dohay_dilam kết nối qua Supabase Vault**. 15 bài Metricool từ 03–17/11/2026 được giữ nguyên; Autonomous One đã tạo và xếp hàng 2 bài tiếp theo từ 18/11. GitHub Actions tự chạy theo lịch, không đăng trùng, không coi bài chờ đăng là bài đã xuất bản.
+
+Growth Radar giờ bỏ qua bản nháp AI vi phạm bộ lọc và thử nguồn đã kiểm duyệt khác trong giới hạn, thay vì dừng toàn bộ workflow. Có kiểm tra sức khỏe tài khoản, hạn token và trạng thái chuẩn bị Shopee Affiliate (chưa được duyệt, chưa có doanh thu).
+
+**Lượt chạy xác thực:** [Threads Agent thành công](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41422313540) · [Growth Radar thành công](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41421857399) · [Báo cáo đầy đủ](RELEASE_v1_9_AUTONOMOUS_OPERATIONS.md).
+
 # Autonomous One — Hybrid Cloud Agent v1.2
 
 AI Agent nghiên cứu cơ hội kinh doanh chạy trên GitHub Actions, Groq và Supabase. **Đã kiểm thử thành công trên Cloud** với cả lịch kích hoạt nội bộ và sự kiện GitHub Issues.
