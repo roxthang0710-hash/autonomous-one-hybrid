@@ -54,11 +54,14 @@ jobs:
       - name: Summarize monitoring without confidential drafts
         if: always()
         run: python -m growth.report
+      - name: Enna operational health — no fake followers or earnings
+        if: always()
+        run: python -m enna
       - name: Public-repo-safe summary
         if: always()
         run: |
           echo "## Enna Growth Radar" >> "$GITHUB_STEP_SUMMARY"
           echo "Public sources are Google Trends Vietnam RSS and narrowly filtered Google News RSS." >> "$GITHUB_STEP_SUMMARY"
-          echo "Threads discussion search requires additional official Meta OAuth permissions." >> "$GITHUB_STEP_SUMMARY"
+          echo "Threads external-public search may require Meta App Review even after user OAuth; Enna never bypasses unavailable permissions." >> "$GITHUB_STEP_SUMMARY"
           echo "Reply worker is gated by owner Meta OAuth scopes, app access, source checks and an atomic maximum of three authentic replies per Vietnam day; it may post zero." >> "$GITHUB_STEP_SUMMARY"
           echo "The number of recommended content ideas is not a revenue forecast." >> "$GITHUB_STEP_SUMMARY"
