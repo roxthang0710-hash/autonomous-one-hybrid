@@ -39,6 +39,7 @@ jobs:
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
       THREADS_PUBLISH_ENABLED: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'plan' && 'false' || secrets.THREADS_PUBLISH_ENABLED }}"
       THREADS_ADAPTIVE_ENABLED: "true"
+      ENNA_SELF_IMPROVEMENT_ENABLED: "true"
       THREADS_FORCE_GENERATION: "${{ github.event_name == 'issues' && startsWith(github.event.issue.title, 'threads: ai') && 'true' || 'false' }}"
     steps:
       - name: Require backend configuration
@@ -64,6 +65,9 @@ jobs:
       - name: Measure storytelling versus practical posts (read only)
         if: always()
         run: python -m growth.story_insights
+      - name: Update evidence-gated editorial learning (rollback-safe)
+        if: always()
+        run: python -m growth.self_improvement
       - name: Account cultivation and Shopee application readiness (read only)
         if: always()
         run: |
@@ -78,4 +82,5 @@ jobs:
           echo "Publisher uses owner-approved Meta OAuth stored encrypted in Supabase Vault; token refresh is automated." >> "$GITHUB_STEP_SUMMARY"
           echo "The account cultivation snapshot distinguishes scheduled posts from verified publications. Shopee Affiliate requires separate real approval; no eligibility or earnings are implied." >> "$GITHUB_STEP_SUMMARY"
           echo "Metricool retains its booked calendar; adaptive Meta extras are gated by quality, a 90-minute gap, a maximum of five total posts per day, and official owner permissions." >> "$GITHUB_STEP_SUMMARY"
+          echo "Enna learning only changes an auditable editorial preference after verified Meta post metrics; never self-edits source code or claims a Topic Community post." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
