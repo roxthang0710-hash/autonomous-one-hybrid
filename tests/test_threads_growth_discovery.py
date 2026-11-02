@@ -60,6 +60,18 @@ class ConversationDiscoveryTests(unittest.TestCase):
         self.assertEqual(rows,[])
         self.assertEqual(status,"own_posts_only_possible_app_review")
 
+    def test_old_self_post_still_flags_missing_external_search_access(self):
+        # Even an old indexed post reveals Meta's own-post search scope.
+        own=dict(POST,username="dohay_dilam",
+                 timestamp=(NOW-timedelta(hours=60)).isoformat())
+        def fetch(url,**kwargs):
+            r=Mock();r.json.return_value={"data":[own]};return r
+        with patch.dict("os.environ",{"THREADS_DISCOVERY_ENABLED":"true"}):
+            rows,status=search_threads(query="làm việc",fetch=fetch,
+                                       token="fake-test",now=NOW)
+        self.assertEqual(rows,[])
+        self.assertEqual(status,"own_posts_only_possible_app_review")
+
     def test_empty_search_is_not_called_successful_public_discovery(self):
         def fetch(url,**kwargs):
             r=Mock()
