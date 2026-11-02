@@ -1,8 +1,10 @@
 name: Autonomous One — Growth Radar
 on:
   schedule:
-    # 09:15 and 17:15 Vietnam time (UTC+7); best effort.
-    - cron: '15 2,10 * * *'
+    # 09:15, 14:15, 19:15 Vietnam time (UTC+7); best effort.
+    # These are opportunities to discover ONE useful discussion per run,
+    # not a quota or permission to spam. DB caps replies at three/day.
+    - cron: '15 2,7,12 * * *'
   workflow_dispatch:
   issues:
     types: [opened]
@@ -58,5 +60,5 @@ jobs:
           echo "## Autonomous One Growth Radar" >> "$GITHUB_STEP_SUMMARY"
           echo "Public sources are Google Trends Vietnam RSS and narrowly filtered Google News RSS." >> "$GITHUB_STEP_SUMMARY"
           echo "Threads discussion search requires additional official Meta OAuth permissions." >> "$GITHUB_STEP_SUMMARY"
-          echo "Reply worker remains off until separate official Meta OAuth and owner enable switch are configured; maximum one genuine reply per day." >> "$GITHUB_STEP_SUMMARY"
+          echo "Reply worker is gated by owner Meta OAuth scopes, app access, source checks and an atomic maximum of three authentic replies per Vietnam day; it may post zero." >> "$GITHUB_STEP_SUMMARY"
           echo "The number of recommended content ideas is not a revenue forecast." >> "$GITHUB_STEP_SUMMARY"
