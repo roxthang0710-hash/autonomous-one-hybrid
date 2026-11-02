@@ -1,4 +1,4 @@
-name: Autonomous One — Growth Radar
+name: Enna — Growth Radar & Conversations
 on:
   schedule:
     # 09:15, 14:15, 19:15 Vietnam time (UTC+7); best effort.
@@ -57,7 +57,7 @@ jobs:
       - name: Public-repo-safe summary
         if: always()
         run: |
-          echo "## Autonomous One Growth Radar" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Enna Growth Radar" >> "$GITHUB_STEP_SUMMARY"
           echo "Public sources are Google Trends Vietnam RSS and narrowly filtered Google News RSS." >> "$GITHUB_STEP_SUMMARY"
           echo "Threads discussion search requires additional official Meta OAuth permissions." >> "$GITHUB_STEP_SUMMARY"
           echo "Reply worker is gated by owner Meta OAuth scopes, app access, source checks and an atomic maximum of three authentic replies per Vietnam day; it may post zero." >> "$GITHUB_STEP_SUMMARY"
