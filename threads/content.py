@@ -37,7 +37,24 @@ def get_channel(db):
 def seed_calendar(db):
     """Idempotent 14-day initial calendar, no Groq cost or platform credentials."""
     channel = get_channel(db)
-    rows = planned_seed_rows(channel["id"])
+    # Reserve every day already booked by Metricool before creating the
+    # first batch of seed posts. Otherwise the seeded queue would start
+    # tomorrow, overlap Metricool, and publish stale content weeks later.
+    external = db.request("GET", "/threads_posts", params={
+        "select": "scheduled_at", "channel_id": "eq." + channel["id"],
+        "status": "eq.scheduled_external",
+        "order": "scheduled_at.desc", "limit": "1",
+    })
+    start = scheduled_start()
+    if external:
+        reserved_until = datetime.fromisoformat(
+            external[0]["scheduled_at"].replace("Z", "+00:00")
+        ).astimezone(VN)
+        if reserved_until >= start:
+            start = (reserved_until + timedelta(days=1)).replace(
+                hour=9, minute=30, second=0, microsecond=0
+            )
+    rows = planned_seed_rows(channel["id"], start=start)
     result = db.request(
         "POST", "/threads_posts",
         params={"on_conflict": "content_key"},
