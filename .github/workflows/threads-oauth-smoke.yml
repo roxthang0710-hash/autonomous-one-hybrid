@@ -1,4 +1,4 @@
-name: Autonomous One — OAuth Endpoint Smoke Test
+name: Enna — OAuth Security Smoke Test
 on:
   workflow_dispatch:
   issues:
