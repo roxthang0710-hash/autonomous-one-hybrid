@@ -68,7 +68,8 @@ jobs:
           print("Owner email-login preflight:",status)
           assert status==204
           status,head,body=call(base+"/whoami",method="GET",headers={
-              "Origin":"https://roxthang0710-hash.github.io"
+              "Origin":"https://roxthang0710-hash.github.io",
+              "apikey":"sb_publishable_sJxwXdpQPn4FrrGZPusJmA_Xy5TI0-H"
           })
           print("Unauthenticated owner check:",status)
           assert status==401
