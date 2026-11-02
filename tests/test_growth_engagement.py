@@ -82,15 +82,28 @@ class EngagementTests(unittest.TestCase):
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[0][2]["data"]["reply_to_id"], "target")
 
-    def test_one_reply_per_day_before_meta_call(self):
+    def test_atomic_daily_claim_denied_before_any_meta_write(self):
+        # Supabase SQL RPC enforces three/day by Asia/Ho_Chi_Minh.
+        # A rejected atomic claim must not call the publishing API.
         db = MagicMock()
-        db.request.return_value = [{"id": "prior_attempt"}]
-        with patch.dict("os.environ", {"THREADS_AUTO_ENGAGE_ENABLED": "true"}), \
-             patch("growth.engage.get_credentials",
+        def req(method, path, **kwargs):
+            if path == "/growth_engagement_queue":
+                return [CANDIDATE]
+            if path in ("/growth_engagement_attempts", "/growth_opportunities"):
+                return []
+            if path == "/rpc/growth_claim_safe_reply":
+                return []
+            raise AssertionError(path)
+        db.request.side_effect=req
+        with patch("growth.engage.get_credentials",
                    return_value=("token", "dohay_dilam")), \
-             patch("growth.engage.thread_request") as meta:
-            self.assertEqual(run(db=db, now=NOW), "daily_cap")
-        meta.assert_not_called()
+             patch("growth.engage.verify_meta_account"), \
+             patch("growth.engage.thread_request",
+                   return_value={"id":"post1",
+                                 "text": CANDIDATE["original_post_text"]}), \
+             patch("growth.engage.send_reply") as publish:
+            self.assertEqual(run(db=db,now=NOW),"safety_claim_rejected")
+            publish.assert_not_called()
 
     def test_ambiguous_meta_result_is_not_retried(self):
         db = MagicMock()
@@ -99,8 +112,8 @@ class EngagementTests(unittest.TestCase):
                 return []
             if path == "/growth_engagement_queue":
                 return [CANDIDATE]
-            if path == "/growth_engagement_attempts" and method == "POST":
-                return [{"id": "attempt1"}]
+            if path == "/rpc/growth_claim_safe_reply" and method == "POST":
+                return [{"attempt_id": "attempt1"}]
             return []
         db.request.side_effect = select
         with patch.dict("os.environ", {"THREADS_AUTO_ENGAGE_ENABLED": "true"}), \
