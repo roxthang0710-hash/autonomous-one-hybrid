@@ -131,10 +131,14 @@ async function handler(req:Request):Promise<Response> {
      if(typeof short.access_token!=="string"||short.access_token.length<40)
        throw Error("Invalid short token response");
      stage="long_token";
+     // Threads' long-lived exchange requires the SHORT-LIVED USER TOKEN in
+     // the access_token query parameter. The Authorization header alone is
+     // not accepted reliably by graph.threads.net for this endpoint.
      const long=await meta(API+"/access_token?"+new URLSearchParams({
-       grant_type:"th_exchange_token",client_secret:grant.app_secret}),{
-       headers:{"Authorization":"Bearer "+short.access_token},
-     });
+       grant_type:"th_exchange_token",
+       client_secret:grant.app_secret,
+       access_token:short.access_token,
+     }));
      if(typeof long.access_token!=="string"||typeof long.expires_in!=="number")
        throw Error("Invalid long token response");
      const seconds=Number(long.expires_in);
