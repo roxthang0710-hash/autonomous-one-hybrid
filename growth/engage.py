@@ -10,11 +10,13 @@ from datetime import datetime, timedelta, timezone
 
 from agent import Database
 from growth.generator import validate_draft
+from growth.voice import suitable_reply
+from growth.scoring import normalize
 from growth.scoring import classify
 from threads.publisher import thread_request
 
 EXPECTED = "dohay_dilam"
-MAX_DAILY_ATTEMPTS = 1
+MAX_DAILY_ATTEMPTS = 3  # Atomically enforced by SQL in VN local time.
 
 
 def get_credentials(db=None):
@@ -41,7 +43,7 @@ def eligible(row, now=None):
         return False
     if row.get("risk_flags") not in ([], "[]"):
         return False
-    if (row.get("quality_score") or 0) < 85 or (row.get("relevance_score") or 0) < 65:
+    if (row.get("quality_score") or 0) < 75 or (row.get("relevance_score") or 0) < 60:
         return False
     if not row.get("target_post_id") or not str(row.get("target_post_url") or "").startswith(
         ("https://www.threads.net/", "https://www.threads.com/", "https://threads.net/", "https://threads.com/")
@@ -102,13 +104,8 @@ def run(db=None, now=None):
     if not creds:
         return "not_authorized"
     now = now or datetime.now(timezone.utc)
-    attempts = db.request("GET", "/growth_engagement_attempts", params={
-        "select": "id",
-        "attempted_at": "gte." + now.strftime("%Y-%m-%dT00:00:00+00:00"),
-        "limit": str(MAX_DAILY_ATTEMPTS),
-    })
-    if len(attempts) >= MAX_DAILY_ATTEMPTS:
-        return "daily_cap"
+    # Database RPC owns the three/day Vietnam-time cap and author cooldown.
+    # Multiple workflows cannot race to publish extra comments.
     token, expected = creds
     verify_meta_account(token, expected)
     candidates = db.request("GET", "/growth_engagement_queue", params={
@@ -124,22 +121,43 @@ def run(db=None, now=None):
     # inaccessible, changed-topic or newly-sensitive posts.
     target = thread_request("GET", "/" + picked["target_post_id"], token,
         params={"fields": "id,text,username"})
+    current_text = target.get("text") or ""
+    original_text = picked.get("original_post_text") or ""
     if str(target.get("id") or "") != str(picked["target_post_id"]) or \
-       classify(target.get("text") or "", now=now)["state"] != "candidate":
+       classify(current_text, now=now)["state"] != "candidate":
         return "target_changed_or_not_safe"
-    # Unique target and unique opportunity prevent coordinated engagement.
-    claimed = db.request("POST", "/growth_engagement_attempts",
-        params={"on_conflict": "opportunity_id"},
-        payload={"opportunity_id": picked["opportunity_id"],
-                 "target_post_id": picked["target_post_id"]},
-        prefer="resolution=ignore-duplicates,return=representation")
+    # Refuse edited/bait-and-switch public posts after drafting.
+    normalized_original = normalize(original_text)
+    if not normalized_original or not normalize(current_text).startswith(
+            normalized_original[:min(80, len(normalized_original))]):
+        return "target_changed_or_not_safe"
+    prior = db.request("GET", "/growth_engagement_attempts", params={
+        "select": "opportunity_id", "order": "attempted_at.desc", "limit": "15",
+    })
+    prior_texts = []
+    if prior:
+        ids = [str(x.get("opportunity_id") or "") for x in prior if x.get("opportunity_id")]
+        if ids:
+            previous = db.request("GET", "/growth_opportunities", params={
+                "select": "draft_text", "id": "in.(" + ",".join(ids) + ")",
+                "limit": "15",
+            })
+            prior_texts = [x["draft_text"] for x in previous
+                           if isinstance(x.get("draft_text"), str)]
+    if not suitable_reply(picked["draft_text"], current_text, prior_texts):
+        return "context_or_originality_gate_failed"
+    # Atomic service-role-only RPC verifies owner OAuth, three/day,
+    # original target and per-author cooldown. No claim = no Meta POST.
+    claimed = db.request("POST", "/rpc/growth_claim_safe_reply",
+        payload={"p_opportunity_id": picked["opportunity_id"],
+                 "p_target_post_id": picked["target_post_id"]})
     if not claimed:
-        return "already_attempted"
-    attempt = claimed[0]
+        return "safety_claim_rejected"
+    attempt_id = claimed[0]["attempt_id"]
     try:
         container, reply = send_reply(
             token, picked["target_post_id"], picked["draft_text"])
-        db.patch("growth_engagement_attempts", attempt["id"], {
+        db.patch("growth_engagement_attempts", attempt_id, {
             "status": "posted", "meta_container_id": container,
             "meta_reply_id": reply, "finished_at": datetime.now(timezone.utc).isoformat(),
         })
@@ -149,7 +167,7 @@ def run(db=None, now=None):
         return "one_useful_reply_posted"
     except Exception as exc:
         # A timed-out Meta write may have posted. Never silently repeat.
-        db.patch("growth_engagement_attempts", attempt["id"], {
+        db.patch("growth_engagement_attempts", attempt_id, {
             "status": "uncertain", "error_kind": type(exc).__name__[:60],
             "finished_at": datetime.now(timezone.utc).isoformat(),
         })
