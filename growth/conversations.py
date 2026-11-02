@@ -13,7 +13,9 @@ QUERIES = (
     "bàn làm việc", "đi công tác", "góc học tập", "laptop văn phòng",
     "deadline công sở", "phụ kiện đi làm", "sắp xếp góc làm việc",
     "đồ dùng công nghệ", "hành lý công tác", "học tập hiệu quả",
-    "dây sạc", "bàn phím",
+    "dây sạc", "bàn phím", "làm việc", "văn phòng",
+    "công sở", "đồng nghiệp", "deadline", "kỹ năng",
+    "họp hành", "học tập", "công nghệ", "đi làm",
 )
 
 
@@ -69,13 +71,17 @@ def search_threads(*, query=None, fetch=requests.get, token=None,
             published = datetime.fromisoformat(raw_time).astimezone(timezone.utc)
         except (ValueError, TypeError):
             continue
-        age = now - published
-        if not timedelta(0) <= age <= timedelta(hours=24):
-            continue
-        if str(data.get("username") or "").casefold().lstrip("@") == "dohay_dilam":
+        # Record whose posts Meta actually returned BEFORE freshness filtering.
+        # Otherwise an indexed 2-day-old self post hides App Review limits and
+        # gets incorrectly diagnosed as "no relevant public posts".
+        is_own = str(data.get("username") or "").casefold().lstrip("@") == "dohay_dilam"
+        if is_own:
             own_seen += 1
             continue
         foreign_seen += 1
+        age = now - published
+        if not timedelta(0) <= age <= timedelta(hours=24):
+            continue
         if classify(text, published, now=now)["state"] != "candidate":
             continue
         items.append({"id": post_id, "url": url,
