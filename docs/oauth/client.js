@@ -9,6 +9,54 @@ const RETURN_URL = location.origin + location.pathname;
 const $ = id => document.getElementById(id);
 let ownerAccessToken = null;
 
+// Retain an owner-verified login only within this browser tab, with a short
+// timeout. A Meta OAuth error redirects back to this tab. Never request a new
+// email merely because Meta denied/failed a code exchange.
+const OWNER_SESSION_KEY = "ao_threads_verified_owner_session_v1";
+const MAX_SESSION_AGE_MS = 25 * 60 * 1000;
+function forgetOwnerSession() {
+  ownerAccessToken = null;
+  try { sessionStorage.removeItem(OWNER_SESSION_KEY); } catch (_) {}
+}
+function cacheOwnerSession(token) {
+  ownerAccessToken = token;
+  try {
+    sessionStorage.setItem(OWNER_SESSION_KEY,
+      JSON.stringify({ accessToken: token, savedAt: Date.now() }));
+  } catch (_) {
+    // Browser may block sessionStorage; email login still works this tab
+    // until navigating to Meta.
+  }
+}
+async function recoverOwnerSession() {
+  if (outcome === "connected") {
+    forgetOwnerSession();
+    return;
+  }
+  let stored;
+  try {
+    stored = JSON.parse(sessionStorage.getItem(OWNER_SESSION_KEY) || "null");
+  } catch (_) {
+    forgetOwnerSession();
+    return;
+  }
+  if (!stored || typeof stored.accessToken !== "string" ||
+      !Number.isFinite(stored.savedAt) ||
+      stored.savedAt > Date.now() ||
+      Date.now() - stored.savedAt > MAX_SESSION_AGE_MS) {
+    forgetOwnerSession();
+    return;
+  }
+  try {
+    await verifyOwner(stored.accessToken);
+    cacheOwnerSession(stored.accessToken);
+    showMeta();
+  } catch (_) {
+    forgetOwnerSession();
+    showLoginError("Phiên quản trị đã hết hạn. Khi giới hạn gửi email được gỡ, bạn có thể yêu cầu liên kết đăng nhập mới.");
+  }
+}
+
 const params = new URLSearchParams(location.search);
 const outcome = params.get("status");
 const failureReason = params.get("reason");
@@ -72,10 +120,10 @@ async function consumeEmailMagicLink() {
   $("login-status").textContent = "Đang xác minh chủ sở hữu…";
   try {
     await verifyOwner(accessToken);
-    ownerAccessToken = accessToken;
+    cacheOwnerSession(accessToken);
     showMeta();
   } catch (err) {
-    ownerAccessToken = null;
+    forgetOwnerSession();
     showLoginError(err instanceof Error ? err.message : "Xác minh không thành công.");
   }
 }
@@ -141,7 +189,9 @@ $("connect").addEventListener("submit", async event => {
     if (!data.authorizeUrl.startsWith("https://threads.net/oauth/authorize?")) {
       throw new Error("Đường dẫn cấp quyền không đúng máy chủ Meta Threads.");
     }
-    ownerAccessToken = null;
+    // Keep the short-lived, owner-verified session in this tab until the
+    // OAuth callback succeeds. If Meta returns a failure, the owner can
+    // retry without triggering a new email send or bypassing authorization.
     status.style.color = "#176b47";
     status.textContent = "Đang chuyển sang Meta để chấp thuận quyền…";
     location.assign(data.authorizeUrl);
@@ -152,4 +202,7 @@ $("connect").addEventListener("submit", async event => {
   }
 });
 
-void consumeEmailMagicLink();
+void (async () => {
+  if (location.hash) await consumeEmailMagicLink();
+  else await recoverOwnerSession();
+})();
