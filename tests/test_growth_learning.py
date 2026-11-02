@@ -29,15 +29,15 @@ class LearningTests(unittest.TestCase):
         self.assertFalse(out["earnings_verified_as_paid"])
 
     def test_real_metrics_are_required_for_an_experiment(self):
-        rows = [{"measured_on": "2026-11-%02d" % day,
+        rows = [{"measured_on": "2026-10-%02d" % day,
                  "post_views": 100, "interactions": 10, "published_posts": 1,
-                 "followers": 1} for day in range(1, 8)]
-        state = decide({"metricool": rows}, search_confirmed=True)
+                 "followers": 1} for day in range(18, 25)]
+        state = decide({"metricool": rows}, search_confirmed=True,\n                       now=__import__("datetime").datetime(2026, 11, 2, tzinfo=__import__("datetime").timezone.utc))
         self.assertEqual(state["phase"], "evidence_learning")
         self.assertEqual(state["metric_status"], "baseline_available")
         self.assertIn("controlled_test", [x["code"] for x in state["next_actions"]])
 
-    def test_provider_failure_is_not_reported_as_real_zero(self):
+    def test_incomplete_or_stale_days_cannot_trigger_learning(self):\n        now = __import__("datetime").datetime(2026, 11, 2, tzinfo=__import__("datetime").timezone.utc)\n        rows = [{"measured_on": "2026-11-02", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7\n        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")\n        rows = [{"measured_on": "2026-01-01", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7\n        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")\n\n    def test_provider_failure_is_not_reported_as_real_zero(self):
         db = Mock()
         db.request.side_effect = RuntimeError("hidden server error")
         state = snapshot(db)
