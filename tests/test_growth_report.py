@@ -24,7 +24,7 @@ class GrowthReportTests(unittest.TestCase):
         self.assertEqual(result["engagement_policy"]["reply_mode"], "waiting_for_meta_oauth")
         self.assertEqual(result["engagement_policy"]["daily_maximum_vietnam"], 3)
         self.assertEqual(result["engagement_policy"]["today_remaining_capacity"], 0)
-        self.assertIn("Meta scope", result["engagement_note"])
+        self.assertIn("owner OAuth", result["engagement_note"])
 
 
 if __name__ == "__main__":
