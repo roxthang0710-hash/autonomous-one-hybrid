@@ -61,7 +61,15 @@ def snapshot(db):
                 max(0, MAX_DAILY_ATTEMPTS - len(today)) if authorized else 0
             ),
         },
-        "engagement_note": "Only fresh, specific, verified Threads discussions can receive original brand replies; missing Meta scope keeps the worker off.",
+        "engagement_note": (
+            "Enna has owner OAuth permission, but external public keyword search "
+            "may still require Meta App Review. Only fresh eligible Threads "
+            "discussions can receive original brand replies; zero replies is "
+            "normal when no such discussion is available."
+            if authorized else
+            "Threads commenting remains off until owner OAuth explicitly enables "
+            "it; do not attempt to publish, bypass Meta or create fake replies."
+        ),
     }
 
 
