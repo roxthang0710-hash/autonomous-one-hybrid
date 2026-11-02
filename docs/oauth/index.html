@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="referrer" content="no-referrer">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <title>Kết nối Threads | Autonomous One</title>
+  <title>Enna · Kết nối Threads | Đồ Hay Đi Làm</title>
   <link rel="stylesheet" href="./style.css">
   <script src="./client.js" defer></script>
 </head>
 <body>
 <main class="panel">
-  <p class="eyebrow">AUTONOMOUS ONE · ĐỒ HAY ĐI LÀM</p>
-  <h1>Kết nối Threads</h1>
-  <p>Cấp quyền cho AI Agent sử dụng tài khoản <strong>@dohay_dilam</strong>. Không cần tạo mật khẩu mới.</p>
+  <p class="eyebrow">ENNA · ĐỒ HAY ĐI LÀM</p>
+  <h1>Enna · Kết nối Threads</h1>
+  <p>Cấp quyền cho Enna sử dụng tài khoản <strong>@dohay_dilam</strong>. Không cần tạo mật khẩu mới.</p>
   <div id="connected" role="status" class="notice success" hidden>Đã kết nối Threads thành công và lưu quyền truy cập mã hóa trong Supabase Vault.</div>
   <div id="failed" role="alert" class="notice error" hidden>Meta chưa cấp quyền hoặc phiên đã hết hạn. Hãy kiểm tra cấu hình rồi thử lại.</div>
-  <div class="notice">Đăng nhập qua liên kết dùng một lần gửi đến email <strong>đã được cấp quyền quản trị Autonomous One</strong>. Tài khoản Google đăng nhập bảng điều khiển Supabase không tự động có quyền này. Hãy kiểm tra địa chỉ website trước khi nhập App Secret; không chia sẻ liên kết đăng nhập, mã bí mật hoặc token qua chat.</div>
+  <div class="notice">Đăng nhập qua liên kết dùng một lần gửi đến email <strong>đã được cấp quyền quản trị Enna</strong>. Tài khoản Google đăng nhập bảng điều khiển Supabase không tự động có quyền này. Hãy kiểm tra địa chỉ website trước khi nhập App Secret; không chia sẻ liên kết đăng nhập, mã bí mật hoặc token qua chat.</div>
   <section id="login-section">
     <div id="github-login" hidden>
       <h2>Đăng nhập bằng GitHub — không cần email OTP</h2>
@@ -35,7 +35,7 @@
     </details>
     <form id="login-form" autocomplete="on">
       <h2>Đăng nhập bằng email (phương án dự phòng)</h2>
-      <label for="email">Email được cấp quyền quản trị Autonomous One</label>
+      <label for="email">Email được cấp quyền quản trị Enna</label>
       <input id="email" type="email" autocomplete="username" required>
       <button id="send-link" type="submit">Gửi liên kết đăng nhập vào email</button>
       <p id="login-status" role="status" aria-live="polite"></p>
@@ -44,7 +44,7 @@
     </form>
   </section>
   <section id="meta-section" hidden>
-    <div class="notice success">Đã xác minh quyền quản trị Autonomous One. Bây giờ bạn có thể cấp quyền Meta.</div>
+    <div class="notice success">Đã xác minh quyền quản trị Enna. Bây giờ bạn có thể cấp quyền Meta.</div>
     <form id="connect" autocomplete="off">
       <h2>2. Meta Threads Developer App</h2>
       <label for="appId">Threads App ID</label>
@@ -58,7 +58,7 @@
         không spam, không bình luận lặp lại vào cùng người, không gắn liên kết tiếp thị, không lập tài khoản giả.
         <strong>Meta có thể yêu cầu App Review/Advanced Access cho tìm kiếm các bài đăng công khai.</strong>
       </div>
-      <label class="checkbox"><input id="replies" type="checkbox"> <span><strong>Tôi cho phép Autonomous One tự tìm và bình luận bằng @dohay_dilam</strong> trong phạm vi Meta cấp các quyền <code>threads_keyword_search</code>, <code>threads_manage_replies</code>, <code>threads_read_replies</code>, tối đa 3 bình luận/ngày. Khi chưa đủ quyền, chức năng sẽ không hoạt động.</span></label>
+      <label class="checkbox"><input id="replies" type="checkbox"> <span><strong>Tôi cho phép Enna tự tìm và bình luận bằng @dohay_dilam</strong> trong phạm vi Meta cấp các quyền <code>threads_keyword_search</code>, <code>threads_manage_replies</code>, <code>threads_read_replies</code>, tối đa 3 bình luận/ngày. Khi chưa đủ quyền, chức năng sẽ không hoạt động.</span></label>
       <button id="submit" type="submit">Cấp quyền tại Meta</button>
       <p id="status" role="status" aria-live="polite"></p>
     </form>
