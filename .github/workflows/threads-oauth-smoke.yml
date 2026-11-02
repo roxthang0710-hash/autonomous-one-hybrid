@@ -39,6 +39,17 @@ jobs:
           grep -q 'code_exchange:' docs/oauth/client.js
           grep -q 'vault_save:' docs/oauth/client.js
           grep -Fq 'API+"/oauth/access_token?"+exchangeParams' supabase/functions/threads-oauth/index.ts
+          # Regression guard: official GET /access_token needs the short-lived
+          # user token as a query parameter, not just a Bearer header.
+          python - <<'PY'
+          from pathlib import Path
+          src = Path("supabase/functions/threads-oauth/index.ts").read_text()
+          block = src.split('const long=await meta(API+"/access_token?"', 1)[1].split("));", 1)[0]
+          assert 'grant_type:"th_exchange_token"' in block
+          assert 'client_secret:grant.app_secret' in block
+          assert 'access_token:short.access_token' in block
+          print("PASS: Threads long-lived token exchange has grant, app secret and short token.")
+          PY
           grep -q 'method:"POST"' supabase/functions/threads-oauth/index.ts
           if grep -Fq 'body:new URLSearchParams({client_id' supabase/functions/threads-oauth/index.ts; then
             echo "Unexpected old Meta OAuth form-body exchange"; exit 1
