@@ -135,10 +135,29 @@ def run(db=None, now=None):
                         # topics. One midday query checks TOP; all results
                         # still must be less than 24 hours old.
                         slot = (now.hour // 5)
-                        threads_rows, threads_status = search_threads(
-                            query=QUERIES[(now.timetuple().tm_yday * 3 + slot) % len(QUERIES)],
-                            token=auth[0],
-                            search_type="TOP" if slot % 3 == 1 else "RECENT")
+                        base = now.timetuple().tm_yday * 3 + slot
+                        statuses = []
+                        # Bounded three-query sampling to distinguish scarce
+                        # relevant posts from Meta's own-post-only review mode.
+                        # Never scrape Threads HTML or bypass App Review.
+                        for offset in range(3):
+                            fresh_posts, found_status = search_threads(
+                                query=QUERIES[(base + offset * 4) % len(QUERIES)],
+                                token=auth[0],
+                                search_type="TOP" if slot % 3 == 1 else "RECENT",
+                                now=now)
+                            statuses.append(found_status)
+                            threads_rows.extend(fresh_posts)
+                            if threads_rows:
+                                break
+                        if threads_rows:
+                            threads_status = "ok_public_posts"
+                        elif "own_posts_only_possible_app_review" in statuses:
+                            threads_status = "own_posts_only_possible_app_review"
+                        elif all(x == "empty_keyword_results" for x in statuses):
+                            threads_status = "empty_keyword_results"
+                        else:
+                            threads_status = "no_relevant_recent_public_posts"
             except Exception:
                 threads_status = "source_unavailable"
         selected = build_candidates(public_rows, threads_rows, now=now)
