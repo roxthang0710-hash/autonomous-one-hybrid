@@ -26,6 +26,13 @@ jobs:
             echo "Legacy owner password field must not return"; exit 1
           fi
           node --check docs/oauth/client.js
+          grep -q 'code_exchange:' docs/oauth/client.js
+          grep -q 'vault_save:' docs/oauth/client.js
+          grep -Fq 'API+"/oauth/access_token?"+exchangeParams' supabase/functions/threads-oauth/index.ts
+          grep -q 'method:"POST"' supabase/functions/threads-oauth/index.ts
+          if grep -Fq 'body:new URLSearchParams({client_id' supabase/functions/threads-oauth/index.ts; then
+            echo "Unexpected old Meta OAuth form-body exchange"; exit 1
+          fi
       - name: Verify new API only serves safe redirects and authenticated JSON
         shell: python
         run: |
