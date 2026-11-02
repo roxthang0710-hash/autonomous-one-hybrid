@@ -86,17 +86,21 @@ def generate_ai_post(pillar, topic, previous_texts=()):
         "pillar": pillar, "topic": topic,
         "recent_posts_to_avoid_repeating": list(previous_texts)[:12],
         "task": (
-            "Viết một bài Threads bằng tiếng Việt thuần Việt, 90–320 ký tự, "
-            "tự nhiên, trẻ trung, dí dỏm đúng ngữ cảnh; có thể dùng tối đa "
-            "một từ lóng thông dụng nếu thật sự hợp, không lố hoặc cố bắt trend. "
-            "Ưu tiên một mẹo nhỏ CỤ THỂ hoặc một câu hỏi dễ trả lời "
-            "về văn phòng, học tập, sắp xếp đồ và đời sống đi làm. "
-            "Không giới thiệu bản thân là Enna trong bài đăng; "
-            "tài khoản công khai là Đồ Hay Đi Làm. "
-            "Không nhận là đã mua, thử hay dùng sản phẩm. "
-            "Không kêu gọi mua hàng, không liên kết, không quảng cáo. "
-            "Tránh nội dung giật gân, khẳng định số liệu không có nguồn, "
-            "câu hỏi gây xung đột hoặc lặp nội dung."
+            "Viết một bài Threads tiếng Việt thuần Việt, 140–440 ký tự, "
+            "có giọng người thật: câu gọn, ví dụ rõ, hơi dí dỏm, tránh công thức "
+            "câu hỏi hàng loạt và sáo ngữ. Chọn một trong hai định dạng PHÙ HỢP "
+            "với chủ đề: (1) mẹo làm việc nhỏ, cụ thể, dùng được ngay; "
+            "(2) mẩu chuyện công sở sáng tác với nhân vật rõ vai trò như thực tập "
+            "sinh mới, nhân viên thiết kế, trưởng nhóm; có lời thoại và hai góc nhìn "
+            "đều có lý, không kích động tranh cãi thù địch. "
+            "Nếu kể chuyện, cho biết đây là tuyến kể chuyện trong văn phong, "
+            "không giả vờ người viết trực tiếp chứng kiến sự việc có thật. "
+            "Không cần dòng chú thích ngoặc cuối bài. Có thể kết tự nhiên bằng "
+            "câu hỏi gợi mở nếu hợp, không cố ép tương tác. "
+            "Không giới thiệu bản thân là Enna, thương hiệu là Đồ Hay Đi Làm. "
+            "Không bịa trải nghiệm mua, dùng, hay thử sản phẩm; "
+            "không kêu gọi follow, tag bạn bè, mua hàng, không chèn liên kết. "
+            "Không đưa số liệu hay chuyện thời sự thiếu nguồn, tránh lặp nội dung."
         ),
     }
     response = requests.post(
