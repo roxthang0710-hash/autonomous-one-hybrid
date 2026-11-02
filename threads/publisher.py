@@ -141,7 +141,7 @@ def publish_due(db):
     })
     try:
         topic_tag = post.get("topic_tag_planned") or TOPIC_BY_PILLAR.get(post.get("pillar"))
-        if topic_tag not in TOPIC_BY_PILLAR.values():
+        if topic_tag is not None and topic_tag not in TOPIC_BY_PILLAR.values():
             raise ValueError("Unknown planned native Threads topic")
         container_id, remote_id, link = do_publish(
             token, post["text_content"], topic_tag=topic_tag)
