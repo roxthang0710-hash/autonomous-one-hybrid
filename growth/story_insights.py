@@ -6,10 +6,20 @@ remain missing, not zero. Uses only our own verified Meta post IDs and metrics.
 import json
 from datetime import datetime, timedelta, timezone
 from statistics import median
+import re
 from agent import Database
 
 def classify_format(text):
-    return "story" if isinstance(text,str) and "Tình huống giả định" in text else "other"
+    if not isinstance(text, str):
+        return "other"
+    # Detect the clearly named fictional office-story series without forcing
+    # an unnatural parenthetical disclaimer into each social caption.
+    # Retain the historical label for old published posts.
+    is_series = bool(re.search(
+        r"(?m)^\s*Hồ sơ công sở\s*[·•-]\s*Tập\s*\d+/\d+\s*$",
+        text,
+    ))
+    return "story" if is_series or "Tình huống giả định" in text else "other"
 
 def assess(rows, metrics, *, now=None):
     now = now or datetime.now(timezone.utc)
