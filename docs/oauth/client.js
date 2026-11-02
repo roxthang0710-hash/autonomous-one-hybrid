@@ -49,7 +49,8 @@ async function recoverOwnerSession() {
   }
   try {
     await verifyOwner(stored.accessToken);
-    cacheOwnerSession(stored.accessToken);
+    // Preserve the original timestamp; reloading cannot extend the limit.
+    ownerAccessToken = stored.accessToken;
     showMeta();
   } catch (_) {
     forgetOwnerSession();
