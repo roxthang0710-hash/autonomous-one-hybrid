@@ -83,7 +83,6 @@ def inspect(token, *, fetch=requests.get, now=None, cases=CASES, check_account=F
                 account[name]={"status":"http_error","http_code":err.response.status_code if err.response is not None else None}
             except (ValueError,TypeError,requests.RequestException):
                 account[name]={"status":"unavailable"}
-    own_probe = next((x for x in output if x["test"]=="self_control"),{})
     foreign = sum(x.get("foreign",0) for x in output)
     raw = sum(x.get("raw",0) for x in output)
     eligible = sum(x.get("eligible",0) for x in output)
@@ -91,7 +90,7 @@ def inspect(token, *, fetch=requests.get, now=None, cases=CASES, check_account=F
         conclusion="api_error_review_permissions"
     elif foreign:
         conclusion="external_posts_present" if eligible else "external_posts_filtered"
-    elif own_probe.get("own",0)>0:
+    elif any(x.get("own",0)>0 for x in output):
         conclusion="own_only_possible_app_review"
     elif raw==0:
         conclusion="empty_raw_results_cause_unconfirmed"
