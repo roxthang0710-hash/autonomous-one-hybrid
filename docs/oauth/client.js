@@ -71,11 +71,11 @@ $("login-form").addEventListener("submit", async event => {
   try {
     const email = $("email").value.trim().toLowerCase();
     // Never create unauthorized users; only existing reviewer email works.
-    const response = await fetch(AUTH_ROOT + "/otp", {
+    const response = await fetch(AUTH_ROOT + "/otp?redirect_to=" + encodeURIComponent(RETURN_URL), {
       method: "POST", mode: "cors", cache: "no-store", credentials: "omit",
       headers: { apikey: PUBLISHABLE_KEY, "Content-Type": "application/json" },
       body: JSON.stringify({
-        email, create_user: false, email_redirect_to: RETURN_URL
+        email, create_user: false
       })
     });
     if (response.status === 429) {
