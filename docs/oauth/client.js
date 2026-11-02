@@ -177,7 +177,8 @@ $("login-form").addEventListener("submit", async event => {
       })
     });
     if (response.status === 429) {
-      throw new Error("Supabase giới hạn số lần gửi email. Vui lòng thử lại sau.");
+      $("github-setup").hidden = false;
+      throw new Error("Giới hạn email 429: SMTP mặc định chỉ gửi 2 email/giờ cho toàn dự án. Không bấm gửi liên tục. Bạn có thể thiết lập GitHub OAuth ở mục trên để đăng nhập không cần email.");
     }
     if (!response.ok) {
       throw new Error("Không gửi được liên kết. Hãy kiểm tra email quản trị hoặc cài đặt xác thực của Supabase.");
