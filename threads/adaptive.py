@@ -132,6 +132,7 @@ def eligibility(rows, observations, *, now=None):
 
 
 def plan(db, *, now=None, enabled=None, generator=generate_ai_post):
+    provided_now = now is not None
     now = now or datetime.now(timezone.utc)
     if enabled is None:
         enabled = os.getenv("THREADS_ADAPTIVE_ENABLED", "").lower() == "true"
@@ -172,7 +173,7 @@ def plan(db, *, now=None, enabled=None, generator=generate_ai_post):
     except (ValueError, KeyError, TypeError):
         return "generation_rejected"
     # Check live feed a second time: generation may have taken a minute.
-    current = datetime.now(timezone.utc) if now is None else now
+    current = now if provided_now else datetime.now(timezone.utc)
     if eligibility(_day_rows(db,channel["id"],current.astimezone(VN).date()),
                    observations,now=current)[0] != "eligible":
         return "calendar_changed_before_commit"
