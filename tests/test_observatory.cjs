@@ -1,0 +1,12 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const {derive,nextSchedule}=require('../dashboard/web/state.js');
+const now=Date.parse('2026-11-02T10:00:00Z');const base={account:{status:'active',expires_at:'2026-12-01T00:00:00Z'},runs:[{status:'success',started_at:'2026-11-02T09:00:00Z',discovery:'empty_keyword_results'}]};
+test('logged out is never working',()=>assert.equal(derive(null,now).key,'offline'));
+test('empty discovery is waiting, not successful engagement',()=>assert.equal(derive(base,now).key,'waiting'));
+test('recent open run animates work',()=>assert.equal(derive({...base,runs:[{status:'running',started_at:'2026-11-02T09:59:00Z'}]},now).key,'working'));
+test('old open run is not falsely active',()=>assert.equal(derive({...base,runs:[{status:'running',started_at:'2026-11-02T08:00:00Z'}]},now).key,'attention'));
+test('expired OAuth is attention',()=>assert.equal(derive({...base,account:{status:'active',expires_at:'2026-10-01T00:00:00Z'}},now).key,'attention'));
+test('no runs is unknown attention',()=>assert.equal(derive({...base,runs:[]},now).key,'attention'));
+test('failed run is attention',()=>assert.equal(derive({...base,runs:[{status:'failed',started_at:'2026-11-02T09:00:00Z'}]},now).key,'attention'));
+test('future timestamp cannot imply working',()=>assert.equal(derive({...base,runs:[{status:'running',started_at:'2027-01-01T00:00:00Z'}]},now).key,'attention'));
+test('completed API call means ready not working',()=>assert.equal(derive({...base,runs:[{status:'success',started_at:'2026-11-02T09:00:00Z',discovery:'ok'}]},now).key,'ready'));
+test('next schedule is future ordered and rolls over days',()=>{const slots=nextSchedule(new Date('2026-11-02T13:00:00Z'));assert.equal(slots.length,3);assert.equal(slots[0].at,'2026-11-03T02:15:00.000Z');assert(slots.every(x=>Date.parse(x.at)>Date.parse('2026-11-02T13:00:00Z')));});
