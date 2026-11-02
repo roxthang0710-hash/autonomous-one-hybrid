@@ -18,8 +18,23 @@
   <div id="failed" role="alert" class="notice error" hidden>Meta chưa cấp quyền hoặc phiên đã hết hạn. Hãy kiểm tra cấu hình rồi thử lại.</div>
   <div class="notice">Đăng nhập qua liên kết dùng một lần gửi đến email <strong>đã được cấp quyền quản trị Autonomous One</strong>. Tài khoản Google đăng nhập bảng điều khiển Supabase không tự động có quyền này. Hãy kiểm tra địa chỉ website trước khi nhập App Secret; không chia sẻ liên kết đăng nhập, mã bí mật hoặc token qua chat.</div>
   <section id="login-section">
+    <div id="github-login" hidden>
+      <h2>Đăng nhập bằng GitHub — không cần email OTP</h2>
+      <p>Sử dụng tài khoản GitHub đang quản lý kho Autonomous One. Máy chủ vẫn kiểm tra quyền quản trị Supabase Auth, không cấp quyền chỉ vì đăng nhập GitHub.</p>
+      <button id="github-login-button" type="button">Tiếp tục với GitHub</button>
+      <p id="github-status" role="status" class="muted"></p>
+    </div>
+    <details id="github-setup" hidden>
+      <summary>Thiết lập GitHub OAuth lần đầu để không cần gửi email</summary>
+      <p>Dự án chưa bật GitHub OAuth. Chủ sở hữu có thể cấu hình một lần tại <a href="https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/auth/providers" rel="noopener noreferrer" target="_blank">Supabase → Authentication → Sign In / Providers → GitHub</a>.</p>
+      <p>Tại <a href="https://github.com/settings/developers" rel="noopener noreferrer" target="_blank">GitHub → Developer settings → OAuth Apps → New OAuth App</a>, đăng ký ứng dụng với:</p>
+      <p>Homepage URL: <code>https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/</code></p>
+      <p>Authorization callback URL: <code>https://gjdvdohylvsauphhkutw.supabase.co/auth/v1/callback</code></p>
+      <p>Lấy Client ID và Client Secret từ GitHub và điền trực tiếp vào mục GitHub Provider của Supabase, sau đó bật provider. <strong>Không gửi Client Secret trong cuộc trò chuyện.</strong></p>
+      <p>Đăng nhập GitHub phải sử dụng email đã xác minh trùng tài khoản Supabase Auth quản trị, để Supabase liên kết an toàn với người dùng đã có. Nếu không cùng tài khoản, quyền quản trị vẫn bị chặn.</p>
+    </details>
     <form id="login-form" autocomplete="on">
-      <h2>1. Đăng nhập không cần mật khẩu</h2>
+      <h2>Đăng nhập bằng email (phương án dự phòng)</h2>
       <label for="email">Email được cấp quyền quản trị Autonomous One</label>
       <input id="email" type="email" autocomplete="username" required>
       <button id="send-link" type="submit">Gửi liên kết đăng nhập vào email</button>
