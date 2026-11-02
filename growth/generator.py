@@ -6,6 +6,7 @@ import re
 import requests
 from agent import require_env
 from threads.planner import check_post
+from growth.voice import VOICE_RULES, suitable_reply
 
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 SCHEMA = {
@@ -52,7 +53,8 @@ def compose(signal, *, kind="trend_post", prior_texts=()):
             "title": signal["title"], "url": signal["source_url"],
             "source": signal["source"], "niche": signal["niche"],
         },
-        "kind": kind, "recent_brand_posts": list(prior_texts)[:10],
+        "kind": kind, "recent_brand_posts": list(prior_texts)[:12],
+        "brand_voice": VOICE_RULES,
         "instruction": (
             "Viết tiếng Việt tự nhiên cho tài khoản thương hiệu Đồ Hay Đi Làm. "
             "Từ tiêu đề nguồn chỉ suy ra CHỦ ĐỀ, KHÔNG khẳng định sự kiện là thật "
@@ -63,6 +65,11 @@ def compose(signal, *, kind="trend_post", prior_texts=()):
             "tiếp thị hoặc gợi ý mua hàng. "
             "Nếu đang phản hồi bài Threads, đề xuất ý kiến thật sự liên quan "
             "và có ích, không quảng bá kênh. "
+            "Nếu là 'reply_suggestion', đây là bài BÌNH LUẬN thật, không phải "
+            "status tự đăng: liên hệ ít nhất 2 chi tiết trong bài gốc, "
+            "không lặp lại toàn bộ câu chữ, không chế thêm tình tiết. "
+            "Cách nói như bạn bè trò chuyện nhưng vẫn là thương hiệu minh bạch. "
+            "Không gượng ép lời mời trả lời hay mua hàng. "
             "Đề xuất cần kiểm tra lại bối cảnh trước khi xuất bản."
         ),
     }
@@ -94,4 +101,8 @@ def compose(signal, *, kind="trend_post", prior_texts=()):
         raise RuntimeError("GroqRateLimit")
     resp.raise_for_status()
     data = json.loads(resp.json()["choices"][0]["message"]["content"])
-    return validate_draft(data, kind=kind)
+    checked = validate_draft(data, kind=kind)
+    if kind == "reply_suggestion" and not suitable_reply(
+            checked["post_text"], signal["title"], prior_texts):
+        raise ValueError("Context-free, spammy or repetitive brand reply")
+    return checked
