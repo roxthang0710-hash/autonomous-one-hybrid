@@ -146,7 +146,7 @@ def run(db=None, now=None):
         # broadly popular Google News headlines.
         one_thread = next(
             (x for x in selected if x["source"] == "threads_keyword_api"
-             and x["relevance_score"] >= 65), None
+             and x["relevance_score"] >= 60), None
         )
         if one_thread and one_thread not in shortlisted:
             shortlisted = shortlisted[:-1] + [one_thread]
@@ -165,7 +165,7 @@ def run(db=None, now=None):
         }) if selected else []
         found.update({x["fingerprint"]: x["id"] for x in stored})
         existing_ideas = db.request("GET", "/growth_opportunities", params={
-            "select": "signal_id,kind", "limit": "200",
+            "select": "signal_id,kind,created_at", "limit": "200",
             "order": "created_at.desc",
         })
         used_ids = {x["signal_id"] for x in existing_ideas}
@@ -175,12 +175,13 @@ def run(db=None, now=None):
         # replies can reach a safe maximum of three in a day. These are
         # opportunities, not instructions to force three comments.
         weekly_editorial = sum(
-            x.get("kind") == "trend_post" for x in existing_ideas
+            x.get("kind") == "trend_post" and
+            (datetime.fromisoformat(x["created_at"].replace("Z", "+00:00")) >= week
+             if x.get("created_at") else False)
+            for x in existing_ideas
         )
         # Deduplicated per target; safety RPC imposes the actual daily limit
         # at publishing time.
-        reply_history = sum(x.get("kind") == "reply_suggestion"
-                            for x in existing_ideas[:15])
         first_thread = next((x for x in available
                              if x["source"] == "threads_keyword_api" and
                              x["relevance_score"] >= 60), None)
