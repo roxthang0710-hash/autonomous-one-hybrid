@@ -1,3 +1,13 @@
+> **Cập nhật khắc phục giao diện 02/11/2026:** Supabase Edge Functions trên tên miền mặc định không phục vụ HTML mà đổi thành văn bản thuần. Chúng tôi đã chuyển **giao diện bảo mật** sang **GitHub Pages** và giữ **Supabase Edge** xử lý API/callback. 
+> 
+> **Trang mới (chỉ dùng sau khi GitHub Pages được kích hoạt):** https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/
+>
+> **Thao tác quản trị một lần:** Mở https://github.com/roxthang0710-hash/autonomous-one-hybrid/settings/pages → Build and deployment → **Source: GitHub Actions**. Workflow \`.github/workflows/threads-pages.yml\` sẽ triển khai giao diện. Sau đó mở trang mới, không đăng nhập vào địa chỉ Supabase Edge cũ.
+>
+> **Callback URL Meta vẫn GIỮ NGUYÊN:** \`https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth/callback\`. Phản hồi callback được chuyển về GitHub Pages mà không để lộ mã ủy quyền. Kiểm thử API đã đạt 303 redirect, 204 preflight CORS đúng nguồn, 403 nguồn lạ, 401 khi chưa đăng nhập.
+>
+> **Kiểm thử:** https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41402063495 (API đã đạt); GitHub Pages cần chủ sở hữu bật tính năng vì workflow tạo site tự động bị GitHub từ chối \`Resource not accessible by integration\`.
+
 # Kết nối Threads API cho Autonomous One — một lần cấp quyền
 
 **Trạng thái tính đến 02/11/2026:** Trang OAuth đã triển khai tại
