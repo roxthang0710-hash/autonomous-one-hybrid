@@ -26,6 +26,11 @@ jobs:
             echo "Legacy owner password field must not return"; exit 1
           fi
           node --check docs/oauth/client.js
+          grep -Fq 'id="github-login-button"' docs/oauth/index.html
+          grep -Fq 'id="github-setup"' docs/oauth/index.html
+          grep -Fq 'cfg.external?.github === true' docs/oauth/client.js
+          grep -Fq 'provider: "github"' docs/oauth/client.js
+          grep -Fq 'await verifyOwner(accessToken)' docs/oauth/client.js
           grep -Fq 'MAX_SESSION_AGE_MS = 25 * 60 * 1000' docs/oauth/client.js
           grep -Fq 'sessionStorage.setItem(OWNER_SESSION_KEY' docs/oauth/client.js
           grep -Fq 'await verifyOwner(stored.accessToken)' docs/oauth/client.js
