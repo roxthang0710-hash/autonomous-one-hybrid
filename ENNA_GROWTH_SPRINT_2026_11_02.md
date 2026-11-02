@@ -37,3 +37,38 @@ Official Threads keyword search returned `empty_keyword_results` on multiple gro
 - `growth/runner.py` and `growth/engage.py`: current research / genuine reply workflow.
 - `.github/workflows/growth-radar.yml`: 09:15, 14:15, 19:15 VN best-effort research schedule.
 - `ENNA_EVIDENCE_LOOP.md`: evidence and revenue truthfulness policy.
+
+## 02/11 evening audit — V2: 26 posts and official-API diagnosis
+
+The owner requested a Threads-native growth plan instead of 1–2 generic posts/day.
+
+### Content schedule — now saved in Metricool
+- **26 scheduled Threads posts** across 03–09/11: 4, 4, 3, 4, 4, 4, 3 per day (confirmed by getScheduledPosts).
+- The initial 7 morning posts remain reworked; 3 evening posts from V1 remain; 16 additional original posts were scheduled with distinct times 12:20, 17:40/18:30, 21:30/22:00 as applicable.
+- Each is `PENDING`, `autoPublish=true`. *Scheduled does not mean published.* No affiliate links, follow trades, invented experience or misleading sales claims.
+- Editorial families: office humor, useful work-tech tips, study/work-life learning, organizing desks, travel bag habits, and open-ended peer discussion. Prefer a useful point even if no one replies.
+- Trial frequency 3–4/day is an **experiment**, not an official Meta algorithm guarantee. Meta guidance reports correlation between more posts and impressions; it does not promise outcomes or necessarily recommend four daily posts.
+- Keep same-account organic comments capped at 3/day, only on qualified fresh posts under official rights. Never substitute scripted seeding/fake accounts or paid engagement.
+
+### Native Topic tags — verified limitation
+- Meta's official Threads API supports `topic_tag` as a separate field, not merely a literal hashtag in text.
+- A live Metricool create-post test supplied `threadsData.topicTag`; Metricool accepted the scheduled text but stripped the `topicTag` field from its response. **Do not claim** Metricool's 26 posts have native Topics attached. Some posts contain one topical hashtag in text, which is not verified as a native Topic tag.
+- `threads/publisher.py` now adds an allowlisted native `topic_tag` (Công sở / Du lịch / Góc làm việc / Đời sống đi làm) to future *direct Meta posts*, only when they are already due and independently authorized. This does not migrate, duplicate or alter existing Metricool scheduled content.
+- For profile Topic settings, the existing tools do not provide a verified edit endpoint; do not claim they were updated.
+
+### Official search diagnosis on 02/11 — evidence, not guesswork
+- Workflow `.github/workflows/threads-search-diagnostic.yml` ran **GET-only** with the existing owner-granted OAuth token, safe counters only; no content/tokens were logged.
+- Verified GET `/me` correct brand account and GET `/me/threads` returned one owned post.
+- Official `/keyword_search?q=làm việc` returned one **owned** post. Queries for `bàn làm việc` (RECENT), `công sở` (TOP), `văn phòng` (TAG, TOP), and a narrow own-post phrase returned zero raw posts. No foreign posts were returned by these checks.
+- This strongly suggests **scope-limited Meta search or App Review access**, not missing real public conversations. It is not proof of review outcome: only the Meta App Dashboard/official permission review status can confirm the cause.
+- The old `growth/conversations.py` counted self posts only *after* dropping posts older than 24 hours, which could incorrectly label scope-limited results as absent; fixed. `growth/runner.py` now rotates broader TOP/RECENT queries and uses a bounded own-post control when no external post appears.
+- Relevant official search and post docs: https://www.postman.com/meta/threads/documentation/dht3nzz/threads-api and Meta's Topics official update: https://about.fb.com/news/2025/03/new-threads-features-more-personalized-experience-you-control/
+- Automated external replies remain **0 confirmed** as of diagnostic. Zero search results are not evidence that viral conversations are absent. The direct search API does not expose reliable public like/view rankings to this app.
+
+### Learning loop & decision triggers
+- Daily Metricool follower count from `THEV01`, change `THEV03`, published posts `THEV02`, interactions `THEV05`, views `THEV06`, post-level fields when available.
+- Segment posts by work humor, practical how-to, study, gadget/desk, leisure conversation, travel; compare actual views and substantive replies *per post*, not only raw frequency.
+- After 48–72 h: if verified data show one topic consistently performs better and samples are meaningful, prioritize it in **future unpublished slots**. Never retroactively assign native Topic tags or modify old posts.
+- If repeated posts have negligible reactions or users complain about volume, decrease to 2–3/day; if interactions stay healthy and people follow, keep 3–4/day; no guessed follower growth.
+- One existing ChatGPT KPI automation was updated to track 26 scheduled posts and the App Review blocker; it does not self-deploy code or silently change your Metricool plan.
+- No monetization until audience/engagement evidence and legitimate affiliate approval are present.
