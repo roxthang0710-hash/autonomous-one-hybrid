@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 
 from agent import Database
 from growth.report import snapshot as growth_snapshot
+from growth.learning import snapshot as learning_snapshot
 from threads.readiness import snapshot as threads_snapshot
 
 AGENT_NAME = "Enna"
@@ -59,6 +60,16 @@ def health(db=None, *, now=None):
     if discovery in UNKNOWN_SEARCH:
         findings.append("public_threads_discovery_not_confirmed")
 
+    # A separate, bounded, read-only learning loop ranks evidence-based work.
+    # No AI text, access tokens or unreviewed affiliate proposals enter logs.
+    learning = learning_snapshot(
+        db,
+        threads_connected=threads.get("status") == "connected",
+        search_confirmed=discovery == "ok_public_posts",
+    )
+    if learning["status"] != "ok":
+        findings.append("learning_evidence_source_unavailable")
+
     posting = threads.get("threads_posts", {})
     policy = growth.get("engagement_policy", {})
     result = {
@@ -97,6 +108,7 @@ def health(db=None, *, now=None):
             ),
             "revenue_verified": False,
         },
+        "learning": learning,
         "findings": sorted(set(findings)),
         "as_of_vietnam": now.astimezone(VN).isoformat(timespec="minutes"),
     }
@@ -106,6 +118,7 @@ def health(db=None, *, now=None):
 def summary(report):
     """GitHub Markdown summary; content and secrets never enter this report."""
     t, g, c = report["threads"], report["growth"], report["comments"]
+    learning = report.get("learning", {})
     lines = [
         "## Enna — Nhật ký vận hành",
         "",
@@ -126,6 +139,25 @@ def summary(report):
         " Quyền OAuth không đồng nghĩa Meta đã duyệt App Review."
         " Chưa có bằng chứng về doanh thu affiliate.",
     ]
+    # Only fixed labels and aggregate counts are printed to public workflow
+    # summaries. No private sources, draft copy or affiliate links.
+    if learning:
+        commission = learning.get("commission_provider_evidenced_vnd")
+        lines.extend([
+            "", "### Enna — Ưu tiên học hỏi và thương mại hóa",
+            "",
+            f"- Giai đoạn: {learning.get('phase', 'unknown')}",
+            f"- Dữ liệu hiệu quả: {learning.get('metric_status', 'unknown')}",
+            f"- Chương trình Affiliate hoạt động đã xác minh: {learning.get('affiliate_active_programs', 0)}",
+            "- Hoa hồng có chứng từ từ nhà cung cấp: " +
+            (str(commission) + " VND (không phải tiền đã nhận)" if commission is not None
+             else "Chưa có dữ liệu xác minh"),
+            "- Đã nhận tiền thực tế: chưa có cơ chế đối soát thanh toán tự động.",
+            "", "Việc nên làm tiếp theo:",
+        ])
+        for index, action in enumerate(learning.get("next_actions", []), 1):
+            lines.append(f"{index}. {action['label']}" +
+                         (" (cần chủ sở hữu)" if action["owner_required"] else ""))
     if report["findings"]:
         lines.extend(["", "Vấn đề cần theo dõi: " + ", ".join(report["findings"])])
     return "\n".join(lines) + "\n"
