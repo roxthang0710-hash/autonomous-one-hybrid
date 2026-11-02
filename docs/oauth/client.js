@@ -1,6 +1,7 @@
 "use strict";
-// Passwordless owner authorization. Auth JWT is held in memory only,
-// never copied to GitHub, localStorage, a URL query, or Supabase tables.
+// Passwordless owner authorization. JWT is held in memory and, for up to
+// 25 minutes, in sessionStorage of this browser tab to avoid OTP resend after
+// a Meta OAuth redirect. It is never placed in a query URL, GitHub or database.
 const SUPABASE = "https://gjdvdohylvsauphhkutw.supabase.co";
 const PUBLISHABLE_KEY = "sb_publishable_sJxwXdpQPn4FrrGZPusJmA_Xy5TI0-H";
 const API_ROOT = SUPABASE + "/functions/v1/threads-oauth";
