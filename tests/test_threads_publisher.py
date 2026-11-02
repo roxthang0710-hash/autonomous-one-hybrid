@@ -73,6 +73,24 @@ class PublisherTests(unittest.TestCase):
         self.assertEqual(calls[1][1], "/me/threads_publish")
         self.assertNotIn("auto_publish_text", calls[0][2]["data"])
 
+    def test_native_topic_tag_only_for_allowlisted_direct_posts(self):
+        calls = []
+        def fake(method,path,token,**kwargs):
+            calls.append((method,path,kwargs))
+            if path == "/me/threads":
+                return {"id":"container"}
+            if path == "/me/threads_publish":
+                return {"id":"post"}
+            return {"id":"post","permalink":"https://www.threads.com/@dohay_dilam/post/abc"}
+        with patch("threads.publisher.thread_request",side_effect=fake):
+            do_publish("token","Một góc bàn làm việc nhỏ vẫn có thể rất gọn. "
+                       "Hãy thử giữ đồ hay dùng trong tầm với.",topic_tag="Góc làm việc")
+            self.assertEqual(calls[0][2]["data"]["topic_tag"],"Góc làm việc")
+            with self.assertRaises(ValueError):
+                do_publish("token","Một góc bàn làm việc nhỏ vẫn có thể rất gọn. "
+                           "Hãy thử giữ đồ hay dùng trong tầm với.",topic_tag="Tin nóng")
+        self.assertEqual(sum(call[1]=="/me/threads" for call in calls),1)
+
     def test_one_claim_max_per_worker_cycle(self):
         db = Mock()
         item = {"id": "post", "content_type": "editorial",
