@@ -16,6 +16,15 @@ from threads.planner import check_post
 API = "https://graph.threads.net/v1.0"
 TIMEOUT = 20
 
+# Meta native topic_tag is not a hashtag embedded in text.
+# Only directly published Enna posts use it; Metricool has a separate queue.
+TOPIC_BY_PILLAR = {
+    "work": "Công sở",
+    "travel": "Du lịch",
+    "organize": "Góc làm việc",
+    "conversation": "Đời sống đi làm",
+}
+
 
 def enabled():
     return os.getenv("THREADS_PUBLISH_ENABLED", "").lower() == "true"
@@ -75,13 +84,17 @@ def authenticate(db, token, expected):
     return channel
 
 
-def do_publish(token, text):
+def do_publish(token, text, topic_tag=None):
     """Use official two-step text flow; returned id is the published post id."""
     if check_post(text):
         raise ValueError("Text failed publishing safety gate")
+    data = {"media_type": "TEXT", "text": text}
+    if topic_tag is not None:
+        if topic_tag not in TOPIC_BY_PILLAR.values():
+            raise ValueError("Unknown native topic tag")
+        data["topic_tag"] = topic_tag
     container = thread_request(
-        "POST", "/me/threads", token,
-        data={"media_type": "TEXT", "text": text},
+        "POST", "/me/threads", token, data=data,
     )
     container_id = str(container.get("id") or "")
     if not container_id:
@@ -127,7 +140,9 @@ def publish_due(db):
         "post_id": post["id"], "operation": "publish_text", "outcome": "started",
     })
     try:
-        container_id, remote_id, link = do_publish(token, post["text_content"])
+        topic_tag = TOPIC_BY_PILLAR.get(post.get("pillar"))
+        container_id, remote_id, link = do_publish(
+            token, post["text_content"], topic_tag=topic_tag)
         db.patch("threads_posts", post["id"], {
             "status": "posted", "platform_post_id": remote_id,
             "permalink": link or None,
