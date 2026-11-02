@@ -110,6 +110,11 @@ class PublisherTests(unittest.TestCase):
         claim = [x for x in db.request.call_args_list
                  if "/rpc/claim_threads_post" in str(x)]
         self.assertEqual(len(claim), 1)
+        self.assertTrue(any(
+            call.args[0] == "threads_posts"
+            and call.args[2].get("topic_tag_requested") in ("Công sở",None)
+            for call in db.patch.call_args_list
+        ))
         db.insert.assert_called_once()
 
     def test_network_timeout_marks_uncertain_never_requeued(self):
