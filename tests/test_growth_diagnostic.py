@@ -15,6 +15,15 @@ class DiagnosticTests(unittest.TestCase):
         data=inspect("fake",fetch=fetch,now=NOW)
         self.assertEqual(data["result"],"own_only_possible_app_review")
         self.assertTrue(all(t["foreign"]==0 for t in data["tests"]))
+    def test_own_only_when_second_control_finds_it(self):
+        def fetch(*args,**kwargs):
+            r=Mock()
+            q=kwargs["params"]["q"]
+            r.json.return_value={"data":[SELF] if q=="làm việc" else []}
+            return r
+        self.assertEqual(inspect("fake",fetch=fetch,now=NOW)["result"],
+                         "own_only_possible_app_review")
+
     def test_confirm_actual_external(self):
         def fetch(*a,**k):
             r=Mock();r.json.return_value={"data":[OTHER]};return r
