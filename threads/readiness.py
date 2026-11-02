@@ -55,11 +55,13 @@ def snapshot(db=None, *, now=None):
     expiry = _date(vault_rows[0]["expires_at"]) if vault_rows else None
     vault_valid = bool(vault_rows and vault_rows[0].get("status") == "active"
                        and expiry and expiry > now)
-    posted_days = {
-        local.date() for p in posts if p.get("status") == "posted"
-        if (local := _date(p.get("scheduled_at"))) is not None
-        for local in [local.astimezone(VN)]
-    }
+    posted_days = set()
+    for p in posts:
+        if p.get("status") != "posted":
+            continue
+        when = _date(p.get("published_at") or p.get("scheduled_at"))
+        if when is not None:
+            posted_days.add(when.astimezone(VN).date())
     future_by_day = {}
     for p in posts:
         if p.get("status") not in ("queued", "scheduled_external"):
