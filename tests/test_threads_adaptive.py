@@ -35,6 +35,19 @@ class AdaptiveTests(unittest.TestCase):
         self.assertEqual(qualify(TEXT,REASON,[TEXT])[1],"too_similar_to_previous")
         self.assertEqual(qualify("Bạn nghĩ sao?",REASON)[0],0)
         self.assertEqual(qualify(TEXT+" Follow để biết thêm",REASON)[0],0)
+    def test_concise_humor_without_forced_question(self):
+        caption = ("Bàn làm việc gọn quá. Đến khi cần lấy cây bút, "
+                   "cả phòng phải họp khẩn để tìm. 🫠")
+        score, reason = qualify(caption, REASON)
+        self.assertGreaterEqual(score, 80)
+        self.assertEqual(reason, "qualified")
+
+    def test_reject_generic_last_line_even_when_it_has_details(self):
+        caption = ("Bàn làm việc gọn thật, đến lúc tìm cây bút cả phòng phải "
+                   "họp khẩn. Bạn nghĩ sao?")
+        self.assertEqual(qualify(caption, REASON)[1],
+                         "formulaic_engagement_bait")
+
     def test_no_data_allows_at_most_one_experiment(self):
         with_one=POSTS[:3]+[{"id":"e","status":"posted","created_by":"agent",
                          "scheduled_at":"2026-11-03T01:00:00+00:00",
