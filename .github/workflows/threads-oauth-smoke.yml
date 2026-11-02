@@ -88,7 +88,7 @@ jobs:
           assert status==401 and "application/json" in head.get("Content-Type","")
           status,head,body=call(base+"/callback?code=invalid&state=invalid")
           print("Invalid callback:",status)
-          assert status==303 and head.get("Location")==page+"?status=failed"
+          assert status==303 and head.get("Location")==page+"?status=failed&reason=invalid_request"
           print("PASS: Edge OAuth API is JSON-only, CORS restricted and safe to redirect.")
       - name: Check GitHub Pages publishing status without treating 404 as a successful UI
         shell: python
