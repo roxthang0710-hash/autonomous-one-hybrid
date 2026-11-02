@@ -47,7 +47,8 @@ class AdaptiveTests(unittest.TestCase):
         db=MagicMock()
         db.request.side_effect=[POSTS,[],[{"text_content":"Mẹo công sở: chọn 3 việc trước khi bắt đầu."}],POSTS,[{"id":"new"}]]
         generated={"post_text":TEXT,"pillar":"work","why_useful":REASON}
-        with patch("threads.adaptive.get_channel",return_value=CH):
+        with patch("threads.adaptive.get_channel",return_value=CH), \
+             patch.dict("os.environ", {"ENNA_SELF_IMPROVEMENT_ENABLED": "false"}):
             result=plan(db,now=NOW,enabled=True,generator=lambda *a:generated)
         self.assertEqual(result,"adaptive_queued")
         post=db.request.call_args.kwargs["payload"]
