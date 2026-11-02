@@ -83,3 +83,18 @@ jobs:
             print("NOT YET LIVE: owner must enable Settings > Pages > deploy from main /docs.")
           else:
             print("NEEDS REVIEW: GitHub Pages unexpected status/content.")
+
+      - name: Diagnose public Supabase login providers (no secrets)
+        shell: python
+        run: |
+          import json,urllib.request,urllib.error
+          url="https://gjdvdohylvsauphhkutw.supabase.co/auth/v1/settings"
+          try:
+            with urllib.request.urlopen(url,timeout=15) as r:
+              doc=json.load(r)
+              print("Auth settings response:",r.status)
+              print("Email login enabled:",doc.get("external",{}).get("email"))
+              print("Google provider enabled:",doc.get("external",{}).get("google"))
+              print("Other external providers have been omitted.")
+          except urllib.error.HTTPError as e:
+            print("Auth settings HTTP",e.code)
