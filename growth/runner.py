@@ -18,6 +18,7 @@ from growth.sources import discover
 MAX_SOURCE_ROWS = 14
 MAX_SHORTLIST = 5
 MAX_DRAFTS_WEEK = 5
+MAX_CONTENT_ATTEMPTS = 3  # Invalid AI text is rejected, not a job failure.
 
 
 def key_for(now, run_id=""):
@@ -171,29 +172,48 @@ def run(db=None, now=None):
         fresh = first_thread if first_thread and reply_history < 2 else (
             available[0] if available else None)
         drafts = 0
+        rejected_drafts = 0
+        # A single Groq response can fail editorial safety checks. Reject
+        # that result, try a different *verified source* (bounded), and keep
+        # the entire scheduled research job healthy. Network, auth or DB
+        # failures still surface so operators can notice real outages.
         if fresh:
-            kind = "reply_suggestion" if fresh["source"] == "threads_keyword_api" else "trend_post"
-            draft = compose(fresh, kind=kind)
-            draft_text = draft["post_text"]
-            quality = min(100, fresh["relevance_score"] + (
-                5 if draft["verification_needed"] else 0) +
-                (10 if kind == "reply_suggestion" else 0))
-            row = {
-                "signal_id": found[fresh["fingerprint"]],
-                "kind": kind, "status": "needs_review",
-                "draft_text": draft_text,
-                "hook": draft["hook"][:250],
-                "relevance_reason": draft["relevance_reason"][:700],
-                "why_safe": draft["why_safe"][:700],
-                "quality_score": quality,
-                "target_post_url": fresh.get("source_url") if kind == "reply_suggestion" else None,
-                "target_post_id": fresh.get("source_post_id") if kind == "reply_suggestion" else None,
-                "expires_at": (now + timedelta(hours=72)).isoformat(),
-            }
-            created = db.request("POST", "/growth_opportunities",
-                params={"on_conflict": "signal_id,kind"}, payload=row,
-                prefer="resolution=ignore-duplicates,return=representation")
-            drafts = len(created)
+            alternatives = [fresh] + [
+                x for x in available if x["fingerprint"] != fresh["fingerprint"]
+            ]
+            for candidate in alternatives[:MAX_CONTENT_ATTEMPTS]:
+                kind = ("reply_suggestion"
+                        if candidate["source"] == "threads_keyword_api"
+                        and reply_history < 2 else "trend_post")
+                try:
+                    draft = compose(candidate, kind=kind)
+                except ValueError:
+                    # No unsafe text is saved to Supabase or printed in logs.
+                    rejected_drafts += 1
+                    continue
+                quality = min(100, candidate["relevance_score"] + (
+                    5 if draft["verification_needed"] else 0) +
+                    (10 if kind == "reply_suggestion" else 0))
+                row = {
+                    "signal_id": found[candidate["fingerprint"]],
+                    "kind": kind, "status": "needs_review",
+                    "draft_text": draft["post_text"],
+                    "hook": draft["hook"][:250],
+                    "relevance_reason": draft["relevance_reason"][:700],
+                    "why_safe": draft["why_safe"][:700],
+                    "quality_score": quality,
+                    "target_post_url": (candidate.get("source_url")
+                                        if kind == "reply_suggestion" else None),
+                    "target_post_id": (candidate.get("source_post_id")
+                                       if kind == "reply_suggestion" else None),
+                    "expires_at": (now + timedelta(hours=72)).isoformat(),
+                }
+                created = db.request("POST", "/growth_opportunities",
+                    params={"on_conflict": "signal_id,kind"}, payload=row,
+                    prefer="resolution=ignore-duplicates,return=representation")
+                drafts = len(created)
+                # At most one draft per run, even if concurrent upsert inserted it.
+                break
 
         db.patch("growth_runs", run_id, {
             "status": outcome, "signal_count": len(public_rows) + len(threads_rows),
@@ -201,11 +221,13 @@ def run(db=None, now=None):
             "source_summary": {
                 "rss_sources": sources, "threads": threads_status,
                 "original_drafts_only": True,
+                "rejected_unsafe_drafts": rejected_drafts,
             },
             "finished_at": datetime.now(timezone.utc).isoformat(),
         })
         return {"status": outcome, "signals": len(public_rows) + len(threads_rows),
                 "shortlisted": len(selected), "drafts": drafts,
+                "rejected_unsafe_drafts": rejected_drafts,
                 "threads_discovery": threads_status}
     except Exception as exc:
         db.patch("growth_runs", run_id, {
