@@ -1,4 +1,4 @@
-"""Autonomous One: cloud-scheduled research-and-propose MVP. No purchases or public actions."""
+"""Enna: cloud-scheduled research-and-propose worker. No purchases or unauthorized public actions."""
 import json
 import os
 import sys
@@ -297,5 +297,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as exc:
-        print("Agent run failed:", type(exc).__name__, file=sys.stderr)
+        print("Enna research run failed:", type(exc).__name__, file=sys.stderr)
         sys.exit(1)
