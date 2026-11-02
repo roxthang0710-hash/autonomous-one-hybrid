@@ -17,7 +17,8 @@ from growth.sources import discover
 
 MAX_SOURCE_ROWS = 14
 MAX_SHORTLIST = 5
-MAX_DRAFTS_WEEK = 5
+MAX_DRAFTS_WEEK = 21  # up to three genuine opportunities/day; never a quota
+MAX_EDITORIAL_DRAFTS_WEEK = 5
 MAX_CONTENT_ATTEMPTS = 3  # Invalid AI text is rejected, not a job failure.
 
 
@@ -103,7 +104,7 @@ def run(db=None, now=None):
         if len(recent) >= MAX_DRAFTS_WEEK:
             db.patch("growth_runs", run_id, {
                 "status": "no_relevant_signals",
-                "source_summary": {"cap": "five_drafts_per_rolling_week"},
+                "source_summary": {"cap": "twenty_one_drafts_per_rolling_week"},
                 "finished_at": datetime.now(timezone.utc).isoformat(),
             })
             return "weekly_cap"
@@ -120,8 +121,14 @@ def run(db=None, now=None):
                     from threads.credentials import load_credentials
                     auth = load_credentials(db, refresh=False)
                     if auth:
+                        # Three daily searches rotate narrow, relevant
+                        # topics. One midday query checks TOP; all results
+                        # still must be less than 24 hours old.
+                        slot = (now.hour // 5)
                         threads_rows, threads_status = search_threads(
-                            query=QUERIES[now.day % len(QUERIES)], token=auth[0])
+                            query=QUERIES[(now.timetuple().tm_yday * 3 + slot) % len(QUERIES)],
+                            token=auth[0],
+                            search_type="TOP" if slot % 3 == 1 else "RECENT")
             except Exception:
                 threads_status = "source_unavailable"
         selected = build_candidates(public_rows, threads_rows, now=now)
@@ -164,13 +171,25 @@ def run(db=None, now=None):
         used_ids = {x["signal_id"] for x in existing_ideas}
         available = [x for x in shortlisted if x["fingerprint"] in found
                      and found[x["fingerprint"]] not in used_ids]
+        # Editorial drafts remain capped while specific, genuinely useful
+        # replies can reach a safe maximum of three in a day. These are
+        # opportunities, not instructions to force three comments.
+        weekly_editorial = sum(
+            x.get("kind") == "trend_post" for x in existing_ideas
+        )
+        # Deduplicated per target; safety RPC imposes the actual daily limit
+        # at publishing time.
         reply_history = sum(x.get("kind") == "reply_suggestion"
                             for x in existing_ideas[:15])
         first_thread = next((x for x in available
                              if x["source"] == "threads_keyword_api" and
-                             x["relevance_score"] >= 65), None)
-        fresh = first_thread if first_thread and reply_history < 2 else (
-            available[0] if available else None)
+                             x["relevance_score"] >= 60), None)
+        # Prefer a real, fresh Threads conversation; do not turn brand
+        # growth into 21 generic news-reaction drafts each week.
+        fresh = first_thread or (
+            next((x for x in available
+                  if x["source"] != "threads_keyword_api"), None)
+            if weekly_editorial < MAX_EDITORIAL_DRAFTS_WEEK else None)
         drafts = 0
         rejected_drafts = 0
         # A single Groq response can fail editorial safety checks. Reject
@@ -179,14 +198,25 @@ def run(db=None, now=None):
         # failures still surface so operators can notice real outages.
         if fresh:
             alternatives = [fresh] + [
-                x for x in available if x["fingerprint"] != fresh["fingerprint"]
+                x for x in available
+                if x["fingerprint"] != fresh["fingerprint"] and
+                (x["source"] == "threads_keyword_api" or
+                 weekly_editorial < MAX_EDITORIAL_DRAFTS_WEEK)
             ]
             for candidate in alternatives[:MAX_CONTENT_ATTEMPTS]:
                 kind = ("reply_suggestion"
                         if candidate["source"] == "threads_keyword_api"
-                        and reply_history < 2 else "trend_post")
+                        else "trend_post")
                 try:
-                    draft = compose(candidate, kind=kind)
+                    prior_rows = db.request("GET", "/growth_opportunities", params={
+                        "select": "draft_text",
+                        "order": "created_at.desc", "limit": "12",
+                    })
+                    prior_texts = [
+                        r["draft_text"] for r in prior_rows
+                        if isinstance(r.get("draft_text"), str)
+                    ]
+                    draft = compose(candidate, kind=kind, prior_texts=prior_texts)
                 except ValueError:
                     # No unsafe text is saved to Supabase or printed in logs.
                     rejected_drafts += 1
