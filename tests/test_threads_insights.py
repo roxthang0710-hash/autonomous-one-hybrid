@@ -21,6 +21,31 @@ class InsightsTests(unittest.TestCase):
         self.assertEqual(x, {"likes": 2})
         self.assertNotIn("views", x)
 
+    def test_meta_total_value_is_a_real_measurement(self):
+        payload={"data":[
+            {"name":"views","total_value":{"value":18}},
+            {"name":"replies","values":[{"value":0}]},
+        ]}
+        self.assertEqual(parse_insights(payload),{"views":18,"replies":0})
+
+    def test_partial_real_metrics_are_saved_without_guessing_zeros(self):
+        db=MagicMock()
+        db.request.return_value=[{"id":"one","platform_post_id":"meta123"}]
+        with patch("threads.credentials.load_credentials",return_value=("token","dohay_dilam")), \
+             patch("threads.insights.authenticate"), \
+             patch("threads.insights.get_channel",return_value={"id":"brand"}), \
+             patch("threads.insights.thread_request",return_value={"data":[
+                 {"name":"views","values":[{"value":78}]},
+                 {"name":"likes","total_value":{"value":5}},
+             ]}):
+            self.assertEqual(collect(db),"snapshots_saved:1")
+        row=db.insert.call_args.args[1]
+        self.assertEqual(row["post_id"],"one")
+        self.assertEqual(row["views"],78)
+        self.assertEqual(row["likes"],5)
+        self.assertNotIn("replies",row)
+        self.assertNotIn("quotes",row)
+
     def test_disconnected_account_skips(self):
         db = MagicMock()
         with patch("threads.credentials.load_credentials", return_value=None):
