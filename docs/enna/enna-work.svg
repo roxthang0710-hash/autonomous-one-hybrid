@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 330" role="img" aria-labelledby="title desc"><title id="title">Enna đang làm việc vui vẻ</title><desc id="desc">Bé cừu mắt mở sáng, tập trung và mỉm cười khi gõ bàn phím</desc><style>
+.focus-eyes{transform-box:fill-box;transform-origin:center;animation:focusBlink 6.5s infinite}
+.thought-eye{animation:lookUp 3s ease-in-out infinite}
+.thinking-paw{animation:tapChin 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom left}
+.worker-hand{animation:keyboardTap .55s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+.worker-hand.right{animation-delay:.28s}
+.thought-bubble{animation:floatIdea 3.8s ease-in-out infinite}
+.sleep-group{animation:sleepBreathe 4.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center bottom}
+.star{animation:twinkle 2.8s ease-in-out infinite}
+@keyframes focusBlink{0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.09)}}
+@keyframes lookUp{0%,40%,100%{transform:translate(0,0)}50%,80%{transform:translate(2px,-5px)}}
+@keyframes tapChin{0%,45%,100%{transform:rotate(0)}55%,80%{transform:rotate(-8deg)}}
+@keyframes keyboardTap{to{transform:translateY(9px)}}
+@keyframes floatIdea{50%{transform:translateY(-10px)}}
+@keyframes sleepBreathe{50%{transform:scale(1.014) translateY(2px)}}
+@keyframes twinkle{50%{opacity:.3;transform:scale(.8)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style><defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#fdf5e8"/><stop offset="1" stop-color="#ecdfc6"/></linearGradient>
+ <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#d9af7f"/><stop offset="1" stop-color="#a67a50"/></linearGradient>
+ <radialGradient id="wool"><stop stop-color="#fff9e9"/><stop offset=".75" stop-color="#f6e7c8"/><stop offset="1" stop-color="#ddcba7"/></radialGradient>
+ <radialGradient id="face"><stop stop-color="#fff9e9"/><stop offset=".79" stop-color="#fff0d4"/><stop offset="1" stop-color="#e4cba2"/></radialGradient>
+ <linearGradient id="green" x1="0" x2="1" y2="1"><stop stop-color="#a0c47a"/><stop offset="1" stop-color="#5d8f60"/></linearGradient>
+ <linearGradient id="laptop" x1="0" x2="1" y2="1"><stop stop-color="#f5e7d5"/><stop offset=".65" stop-color="#d3c3ac"/><stop offset="1" stop-color="#bba88f"/></linearGradient>
+ <filter id="shadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#8d765b" flood-opacity=".22"/></filter>
+ <filter id="soft"><feGaussianBlur stdDeviation="12"/></filter>
+ <pattern id="cloth" width="19" height="19" patternUnits="userSpaceOnUse"><rect width="19" height="19" fill="#d7e5b9"/><path d="M0 0V19M0 0H19" stroke="#92b484" stroke-width="6" opacity=".35"/></pattern>
+ <pattern id="knit" width="15" height="14" patternUnits="userSpaceOnUse"><path d="M4 1L8 6 4 12 M11 1L7 6 11 12" stroke="#c9b38e" opacity=".33" fill="none" stroke-width="1.5"/></pattern>
+ <symbol id="sheep" viewBox="0 0 450 480">
+  <g class="s-bob">
+   <ellipse cx="221" cy="420" rx="115" ry="26" fill="#bdab84" opacity=".18"/>
+   <ellipse cx="225" cy="343" rx="124" ry="110" fill="url(#green)" stroke="#587d55" stroke-width="6"/>
+   <path d="M130 278Q214 259 313 280V386H135Z" fill="url(#cloth)" opacity=".85"/>
+   <path d="M203 280L226 309L249 280" fill="none" stroke="#fff6dd" stroke-width="9"/>
+   <ellipse cx="116" cy="363" rx="46" ry="60" fill="url(#wool)" transform="rotate(24 116 363)"/>
+   <ellipse cx="334" cy="363" rx="46" ry="60" fill="url(#wool)" transform="rotate(-24 334 363)"/>
+   <path d="M96 135Q33 108 17 160Q28 224 100 221L145 167Z" fill="url(#wool)" stroke="#dac69f" stroke-width="4"/>
+   <path d="M350 135Q416 109 434 163Q413 226 349 219L314 169Z" fill="url(#wool)" stroke="#dac69f" stroke-width="4"/>
+   <ellipse cx="69" cy="174" rx="35" ry="17" fill="#e4c4a6" opacity=".60" transform="rotate(-22 69 174)"/>
+   <ellipse cx="385" cy="174" rx="35" ry="17" fill="#e4c4a6" opacity=".60" transform="rotate(22 385 174)"/>
+   <ellipse cx="225" cy="177" rx="154" ry="143" fill="url(#wool)" stroke="#e4d5b7" stroke-width="5"/>
+   <ellipse cx="226" cy="205" rx="121" ry="112" fill="url(#face)"/>
+   <g fill="url(#wool)" stroke="#e9d8b8" stroke-width="2">
+    <circle cx="113" cy="108" r="55"/><circle cx="159" cy="68" r="59"/><circle cx="223" cy="57" r="62"/><circle cx="289" cy="73" r="56"/><circle cx="339" cy="118" r="53"/>
+    <circle cx="127" cy="133" r="44"/><circle cx="188" cy="105" r="48"/><circle cx="254" cy="101" r="48"/><circle cx="325" cy="136" r="39"/>
+   </g>
+   <g fill="#fffef4" opacity=".55"><circle cx="171" cy="54" r="21"/><circle cx="251" cy="54" r="16"/><circle cx="111" cy="113" r="13"/><circle cx="298" cy="99" r="12"/></g>
+   <path d="M176 288Q225 317 274 288" stroke="#fff6e4" stroke-width="15" fill="none" stroke-linecap="round"/>
+   <path d="M220 309L202 334L183 312Q180 296 200 296Z" fill="#986951"/><path d="M230 309L247 334L268 312Q269 296 251 296Z" fill="#986951"/><circle cx="225" cy="310" r="9" fill="#ac7958"/>
+  </g>
+ </symbol>
+</defs><rect width="400" height="330" fill="#f8f2e4"/>
+<circle cx="205" cy="149" r="119" fill="#fff7e6" opacity=".34"/>
+<g transform="translate(25 2) scale(.78)"><use href="#sheep" width="450" height="480"/><g class="expression">
+<path d="M150 179Q169 165 192 178M261 178Q283 165 301 179" fill="none" stroke="#b9a081" stroke-width="6" stroke-linecap="round"/>
+<g class="focus-eyes"><ellipse cx="174" cy="210" rx="15" ry="19" fill="#302921"/><ellipse cx="277" cy="210" rx="15" ry="19" fill="#302921"/><ellipse cx="169" cy="203" rx="5" ry="6" fill="#fffdf8"/><ellipse cx="272" cy="203" rx="5" ry="6" fill="#fffdf8"/></g>
+<ellipse cx="142" cy="245" rx="23" ry="12" fill="#efb0a1" opacity=".38"/><ellipse cx="310" cy="245" rx="23" ry="12" fill="#efb0a1" opacity=".38"/>
+<path d="M211 245Q224 238 238 245Q227 260 211 245Z" fill="#c79d86"/>
+<path d="M205 263Q224 288 250 262Q227 294 205 263Z" fill="#8e554b" stroke="#a87869" stroke-width="3"/>
+<path d="M215 277Q229 269 242 275" stroke="#f1c3b4" stroke-width="5" fill="none" stroke-linecap="round"/></g></g>
+<g filter="url(#shadow)"><path d="M122 219H323L347 312H96Z" fill="url(#laptop)" stroke="#baa68e" stroke-width="5"/><rect x="184" y="252" width="64" height="11" rx="6" fill="#e8d5b8"/></g>
+<g class="worker-hand"><ellipse cx="143" cy="290" rx="24" ry="16" fill="url(#face)" stroke="#e9d5b7" stroke-width="3"/></g>
+<g class="worker-hand right"><ellipse cx="296" cy="290" rx="24" ry="16" fill="url(#face)" stroke="#e9d5b7" stroke-width="3"/></g>
+<path d="M91 180L80 164M106 174L104 151M127 166L136 152" stroke="#e7bc68" stroke-width="6" stroke-linecap="round"/>
+<g class="star" fill="#e5bd59"><path d="M339 91L346 107L360 114L346 121L339 136L333 121L318 114L333 107Z"/><circle cx="374" cy="152" r="5"/></g></svg>
