@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Kết nối Threads | Autonomous One</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./client.js" defer></script>
+</head>
+<body>
+<main class="panel">
+  <p class="eyebrow">AUTONOMOUS ONE · ĐỒ HAY ĐI LÀM</p>
+  <h1>Kết nối Threads</h1>
+  <p>Đăng nhập tài khoản quản trị Autonomous One và cấp quyền cho <strong>@dohay_dilam</strong> qua trang ủy quyền chính thức của Meta.</p>
+  <div id="connected" role="status" class="notice success" hidden>Đã xác nhận tài khoản Threads và lưu quyền truy cập mã hóa trên Supabase Vault. Bạn có thể đóng trang này.</div>
+  <div id="failed" role="alert" class="notice error" hidden>Meta chưa cấp quyền hoặc phiên cấp quyền đã hết hạn. Hãy kiểm tra cài đặt ứng dụng và thử lại.</div>
+  <div class="notice">Đây là giao diện công khai trên GitHub Pages của kho mã <strong>Autonomous One</strong>. Mật khẩu và App Secret chỉ được gửi bằng HTTPS tới Supabase, không lưu trong trình duyệt. Đừng gửi mã OTP, App Secret hoặc token vào cuộc trò chuyện.</div>
+  <form id="connect" autocomplete="off">
+    <h2>1. Xác thực chủ sở hữu</h2>
+    <label for="email">Email quản trị Autonomous One (Supabase Auth)</label>
+    <input id="email" type="email" autocomplete="username" required>
+    <label for="password">Mật khẩu quản trị Autonomous One</label>
+    <input id="password" type="password" autocomplete="current-password" required>
+    <h2>2. Ứng dụng Meta Threads API</h2>
+    <label for="appId">Threads App ID</label>
+    <input id="appId" inputmode="numeric" pattern="[0-9]{8,30}" required>
+    <label for="appSecret">Threads App Secret</label>
+    <input id="appSecret" type="password" minlength="16" maxlength="400" required autocomplete="new-password">
+    <label class="checkbox"><input id="replies" type="checkbox"> Tôi đồng ý cho Agent phản hồi tối đa một cuộc thảo luận phù hợp mỗi ngày bằng danh tính thương hiệu, không kèm quảng cáo hoặc liên kết tiếp thị. Nếu chưa có quyền Meta mở rộng, để ô này trống.</label>
+    <button type="submit" id="submit">Xác thực và cấp quyền tại Meta</button>
+    <p id="status" role="status" aria-live="polite"></p>
+  </form>
+  <h2>3. Kiểm tra cài đặt Meta</h2>
+  <ol>
+    <li>Trong <a href="https://developers.facebook.com/apps/" rel="noopener noreferrer" target="_blank">Meta for Developers</a>, mở ứng dụng có Threads API.</li>
+    <li>Thêm callback URL sau vào Threads OAuth Redirect URI: <code>https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/threads-oauth/callback</code></li>
+    <li>Tài khoản <strong>@dohay_dilam</strong> cần có vai trò Threads Tester đã chấp thuận lời mời.</li>
+    <li>Khi chuyển sang Meta, đăng nhập đúng tài khoản @dohay_dilam và chấp thuận các quyền phù hợp.</li>
+  </ol>
+  <p class="muted">Lịch 15 bài trên Metricool vẫn được giữ nguyên. Autonomous One chỉ đăng qua Meta sau khi có quyền hợp lệ.</p>
+</main>
+</body>
+</html>
