@@ -1,10 +1,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.57.0";
-import { PAGE } from "./page.ts";
-import { JS } from "./client.ts";
 
 const SB = Deno.env.get("SUPABASE_URL") || "https://gjdvdohylvsauphhkutw.supabase.co";
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const ROOT = "/functions/v1/threads-oauth";
+const FRONTEND = "https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/";
+const ALLOWED_ORIGIN = "https://roxthang0710-hash.github.io";
 const CALLBACK = SB + ROOT + "/callback";
 const API = "https://graph.threads.net";
 const EXPECTED = "dohay_dilam";
@@ -12,19 +12,30 @@ const baseScopes = ["threads_basic", "threads_content_publish", "threads_manage_
 const growthScopes = ["threads_read_replies", "threads_manage_replies", "threads_keyword_search"];
 const service = SERVICE ? createClient(SB,SERVICE,{auth:{persistSession:false,autoRefreshToken:false}}) : null;
 
-function headers(type="text/html; charset=utf-8") {
- return {"Content-Type":type,"Cache-Control":"no-store, max-age=0",
- "Referrer-Policy":"no-referrer","X-Content-Type-Options":"nosniff",
- "X-Frame-Options":"DENY","Strict-Transport-Security":"max-age=31536000",
- "Content-Security-Policy":"default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' "+SB+"; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"};
+function headers(type="application/json; charset=utf-8") {
+ return {
+ "Content-Type": type,
+ "Cache-Control": "no-store, max-age=0",
+ "Referrer-Policy": "no-referrer",
+ "X-Content-Type-Options": "nosniff",
+ "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+ "Access-Control-Allow-Methods": "POST, OPTIONS",
+ "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info",
+ "Vary": "Origin"
+ };
 }
-const json = (data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:headers("application/json; charset=utf-8")});
-const html = (data:string,status=200)=>new Response(data,{status,headers:headers()});
-const endPage = (success:boolean,detail:string,status=200)=>html(
- "<!doctype html><html lang='vi'><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Kết nối Threads</title>"+
- "<style>body{font:17px system-ui;background:#eef4f0;color:#183528}main{max-width:630px;background:white;padding:40px;margin:7vh auto;border-radius:15px}a{color:#176943}</style>"+
- "<main><h1>"+(success?"Đã kết nối Threads thành công":"Chưa kết nối được Threads")+"</h1><p>"+detail+"</p>"+
- "<p><a href='"+ROOT+"'>Trở lại trang kết nối</a></p></main></html>",status);
+const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{
+  status, headers:headers()
+});
+function redirect(outcome?: "connected"|"failed") {
+ const location = FRONTEND + (outcome ? "?status="+outcome : "");
+ return new Response(null,{status:303,headers:{
+  "Location":location,"Cache-Control":"no-store","Referrer-Policy":"no-referrer",
+  "X-Content-Type-Options":"nosniff"
+ }});
+}
+const endPage=(success:boolean,_detail:string,_status=200)=>
+  redirect(success ? "connected" : "failed");
 async function digest(value:string) {
  const b=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)));
  return [...b].map(x=>x.toString(16).padStart(2,"0")).join("");
@@ -50,9 +61,17 @@ async function handler(req:Request):Promise<Response> {
  const url=new URL(req.url);
  // Supabase gateway can strip /functions/v1 before forwarding the request.
  const path=url.pathname.replace(/^.*\/threads-oauth(?=\/|$)/,"")||"/";
- if(req.method==="GET"&&path==="/")return html(PAGE);
- if(req.method==="GET"&&path==="/client.js")return new Response(JS,{headers:headers("application/javascript; charset=utf-8")});
+ if(req.method==="OPTIONS"&&path==="/start"){
+   if(req.headers.get("Origin")!==ALLOWED_ORIGIN)
+     return json({error:"Origin not allowed"},403);
+   return new Response(null,{status:204,headers:headers()});
+ }
+ if(req.method==="GET"&&path==="/")return redirect();
+ if(req.method==="GET"&&path==="/client.js")return redirect();
  if(req.method==="POST"&&path==="/start"){
+   const origin=req.headers.get("Origin");
+   if(origin&&origin!==ALLOWED_ORIGIN)
+     return json({error:"Origin not allowed"},403);
    const userId=await owner(req);
    if(!userId)return json({error:"Chỉ tài khoản chủ sở hữu Autonomous One mới được phép kết nối."},401);
    if(!service)return json({error:"Thiếu cấu hình máy chủ."},503);
