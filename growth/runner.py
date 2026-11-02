@@ -72,7 +72,17 @@ def build_candidates(feed_rows, threads_rows=(), now=None):
             seen.add(record["fingerprint"])
             result.append(record)
 
-    return sorted(result, key=lambda x: x["relevance_score"], reverse=True)[:MAX_SOURCE_ROWS]
+    ordered = sorted(result, key=lambda x: x["relevance_score"], reverse=True)
+    # A broadly popular Google News title must not hide every genuine,
+    # fresh Threads discussion from the candidate set. Reserve ONE slot
+    # when official Meta keyword search has relevant results.
+    shortlist = ordered[:MAX_SOURCE_ROWS]
+    official = next((x for x in ordered
+                     if x["source"] == "threads_keyword_api"
+                     and x["relevance_score"] >= 60), None)
+    if official and official not in shortlist:
+        shortlist = shortlist[:-1] + [official]
+    return shortlist
 
 
 def choose_for_draft(candidates, existing_fingerprints):
