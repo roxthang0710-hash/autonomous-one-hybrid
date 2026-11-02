@@ -47,6 +47,32 @@ class ConversationDiscoveryTests(unittest.TestCase):
                 query="bàn làm việc",fetch=fetch,token="mock-token",now=NOW)
         self.assertEqual([r["id"] for r in rows],["999123"])
 
+    def test_self_only_results_flag_app_review_risk(self):
+        def fetch(url,**kwargs):
+            r=Mock()
+            r.json.return_value={"data":[dict(POST,username="dohay_dilam")]}
+            r.raise_for_status.return_value=None
+            return r
+        with patch.dict("os.environ",{"THREADS_DISCOVERY_ENABLED":"true"}):
+            rows,status=search_threads(
+                query="bàn làm việc",fetch=fetch,token="fake-test",
+                now=NOW)
+        self.assertEqual(rows,[])
+        self.assertEqual(status,"own_posts_only_possible_app_review")
+
+    def test_empty_search_is_not_called_successful_public_discovery(self):
+        def fetch(url,**kwargs):
+            r=Mock()
+            r.json.return_value={"data":[]}
+            r.raise_for_status.return_value=None
+            return r
+        with patch.dict("os.environ",{"THREADS_DISCOVERY_ENABLED":"true"}):
+            rows,status=search_threads(
+                query="bàn làm việc",fetch=fetch,token="fake-test",
+                now=NOW)
+        self.assertEqual(rows,[])
+        self.assertEqual(status,"empty_keyword_results")
+
     def test_threads_source_not_hidden_by_fourteen_google_titles(self):
         rss=[{
             "title": "Laptop văn phòng và bàn làm việc, 10 cách sắp xếp",
