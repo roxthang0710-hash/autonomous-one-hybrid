@@ -130,6 +130,37 @@ async function consumeEmailMagicLink() {
   }
 }
 
+async function initializeGitHubSignIn() {
+  const setup = $("github-setup"), login = $("github-login");
+  try {
+    // Only public provider availability; never return keys or user data.
+    const r = await fetch(AUTH_ROOT + "/settings", {
+      method: "GET", credentials: "omit", cache: "no-store",
+      headers: { apikey: PUBLISHABLE_KEY }
+    });
+    if (!r.ok) throw new Error("auth_settings_unavailable");
+    const cfg = await r.json();
+    if (cfg.external?.github === true) {
+      login.hidden = false;
+      setup.hidden = true;
+    } else {
+      setup.hidden = false;
+      login.hidden = true;
+    }
+  } catch (_) {
+    // Don't offer an unverified OAuth button; email login still works.
+    setup.hidden = false;
+    login.hidden = true;
+  }
+}
+$("github-login-button").addEventListener("click", () => {
+  // The browser is redirected to Supabase Auth, then to GitHub and back.
+  // OAuth accounts must still pass the same reviewer ownership check.
+  const destination = AUTH_ROOT + "/authorize?" +
+    new URLSearchParams({ provider: "github", redirect_to: RETURN_URL });
+  location.assign(destination);
+});
+
 $("login-form").addEventListener("submit", async event => {
   event.preventDefault();
   const button = $("send-link");
@@ -207,4 +238,5 @@ $("connect").addEventListener("submit", async event => {
 void (async () => {
   if (location.hash) await consumeEmailMagicLink();
   else await recoverOwnerSession();
+  await initializeGitHubSignIn();
 })();
