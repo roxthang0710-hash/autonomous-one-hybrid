@@ -164,6 +164,28 @@ def plan(db, *, now=None, enabled=None, generator=generate_ai_post):
     # Different angles per evaluation; never a fabricated live-news claim.
     idx = (now.astimezone(VN).date().toordinal() + now.hour // 3) % len(SEEDS)
     pillar, topic = SEEDS[idx]
+
+    # Learn only from provider-verified post metrics. A missing/invalid policy
+    # must never block the safe "balanced" fallback or silently change safety caps.
+    format_pref = "balanced"
+    if os.getenv("ENNA_SELF_IMPROVEMENT_ENABLED", "").lower() == "true":
+        try:
+            policy = db.request("GET", "/enna_learning_policy", params={
+                "select":"preferred_format", "brand_key":"eq.do_hay_di_lam",
+                "limit":"1"})
+            if isinstance(policy,list) and policy and policy[0].get(
+                "preferred_format") in ("balanced","story","practical"):
+                format_pref = policy[0]["preferred_format"]
+        except Exception:
+            pass
+    if format_pref == "story":
+        pillar = "conversation"
+        topic = ("Chuyện công sở sáng tác: nhân vật như thực tập sinh mới, "
+                 "lời thoại tự nhiên, nút thắt và hai góc nhìn; "
+                 "không nhận là trải nghiệm thật. Bối cảnh: " + topic)
+    elif format_pref == "practical":
+        topic = ("Một mẹo cụ thể, có ích ngay cho nhân viên văn phòng; "
+                 "không viết thành chuyện drama. Bối cảnh: " + topic)
     try:
         candidate = generator(pillar, topic, previous)
         score, quality = qualify(candidate.get("post_text"),
