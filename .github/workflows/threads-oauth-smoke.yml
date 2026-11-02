@@ -20,6 +20,12 @@ jobs:
           test -s docs/oauth/client.js
           test -s docs/oauth/style.css
           grep -q 'meta charset="utf-8"' docs/oauth/index.html
+          grep -q 'id="login-form"' docs/oauth/index.html
+          grep -q 'email_redirect_to: RETURN_URL' docs/oauth/client.js
+          if grep -q 'id="password"' docs/oauth/index.html; then
+            echo "Legacy owner password field must not return"; exit 1
+          fi
+          node --check docs/oauth/client.js
       - name: Verify new API only serves safe redirects and authenticated JSON
         shell: python
         run: |
@@ -54,6 +60,18 @@ jobs:
           })
           print("Other-origin CORS preflight:",status)
           assert status==403
+          status,head,body=call(base+"/whoami",method="OPTIONS",headers={
+              "Origin":"https://roxthang0710-hash.github.io",
+              "Access-Control-Request-Method":"GET",
+              "Access-Control-Request-Headers":"authorization,apikey"
+          })
+          print("Owner email-login preflight:",status)
+          assert status==204
+          status,head,body=call(base+"/whoami",method="GET",headers={
+              "Origin":"https://roxthang0710-hash.github.io"
+          })
+          print("Unauthenticated owner check:",status)
+          assert status==401
           status,head,body=call(base+"/start",method="POST",data=b'{}',headers={
               "Origin":"https://roxthang0710-hash.github.io",
               "Content-Type":"application/json"
@@ -77,8 +95,8 @@ jobs:
           except urllib.error.HTTPError as error:
             status=error.code;ct=error.headers.get("Content-Type","");body=b""
           print("GitHub Pages:",status,"MIME:",ct)
-          if status==200 and "text/html" in ct and b"@dohay_dilam" in body:
-            print("LIVE: static HTML portal is accessible to the owner.")
+          if status==200 and "text/html" in ct and b"@dohay_dilam" in body and b'id="login-form"' in body and b'id="password"' not in body:
+            print("LIVE: passwordless static HTML portal is accessible to the owner.")
           elif status==404:
             print("NOT YET LIVE: owner must enable Settings > Pages > deploy from main /docs.")
           else:
