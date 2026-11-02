@@ -50,7 +50,10 @@ def search_threads(*, query=None, fetch=requests.get, token=None,
     resp.raise_for_status()
     payload = resp.json()
     items = []
-    for data in (payload.get("data") or [])[:12]:
+    own_seen = 0
+    foreign_seen = 0
+    raw_items = (payload.get("data") or [])[:12]
+    for data in raw_items:
         if not isinstance(data, dict):
             continue
         text = str(data.get("text") or "")[:350]
@@ -70,10 +73,20 @@ def search_threads(*, query=None, fetch=requests.get, token=None,
         if not timedelta(0) <= age <= timedelta(hours=24):
             continue
         if str(data.get("username") or "").casefold().lstrip("@") == "dohay_dilam":
+            own_seen += 1
             continue
+        foreign_seen += 1
         if classify(text, published, now=now)["state"] != "candidate":
             continue
         items.append({"id": post_id, "url": url,
                       "username": str(data.get("username") or "")[:80],
                       "title": text, "published_at": published})
+    # OAuth may authorize the keyword scope while App Review still limits
+    # search to the account's own posts. Do not call that public discovery.
+    if own_seen and not foreign_seen:
+        return items, "own_posts_only_possible_app_review"
+    if not raw_items:
+        return items, "empty_keyword_results"
+    if not items:
+        return items, "no_relevant_recent_public_posts"
     return items, "ok"
