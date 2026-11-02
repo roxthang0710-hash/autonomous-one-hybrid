@@ -86,26 +86,37 @@ def generate_ai_post(pillar, topic, previous_texts=()):
         "pillar": pillar, "topic": topic,
         "recent_posts_to_avoid_repeating": list(previous_texts)[:12],
         "task": (
-            "Viết một bài Threads tiếng Việt thuần Việt, 125–440 ký tự, "
-            "có giọng người thật: câu gọn, ví dụ rõ, đôi lúc hài hước hơi vô tri; "
-            "đừng ép mọi bài thành bài học đạo lý hoặc câu hỏi tương tác. "
-            "Chọn định dạng hợp chủ đề: (1) mẹo làm việc nhỏ, cụ thể; "
-            "(2) mẩu chuyện công sở sáng tác với nhân vật có vai trò, lời thoại "
-            "tự nhiên, đôi khi có hai góc nhìn; "
-            "(3) một cảnh hài công sở ngắn, tình huống trái khoáy, câu kết bất ngờ "
-            "để người đọc mỉm cười, không nhất thiết có câu hỏi; "
-            "(4) góc cú đêm: người làm ca muộn hoặc những suy nghĩ lẩm cẩm "
-            "sau giờ làm, không cổ súy làm việc kiệt sức hay thiếu ngủ. "
-            "Nếu chưa có tệp ảnh thực tế, không được viết như đang có ảnh đính kèm. "
-            "Không kích động tranh cãi thù địch. "
-            "Nếu kể chuyện, cho biết đây là tuyến kể chuyện trong văn phong, "
-            "không giả vờ người viết trực tiếp chứng kiến sự việc có thật. "
-            "Không cần dòng chú thích ngoặc cuối bài. Có thể kết tự nhiên bằng "
-            "câu hỏi gợi mở nếu hợp, không cố ép tương tác. "
-            "Không giới thiệu bản thân là Enna, thương hiệu là Đồ Hay Đi Làm. "
-            "Không bịa trải nghiệm mua, dùng, hay thử sản phẩm; "
-            "không kêu gọi follow, tag bạn bè, mua hàng, không chèn liên kết. "
-            "Không đưa số liệu hay chuyện thời sự thiếu nguồn, tránh lặp nội dung."
+            "Viết 1 bài Threads tiếng Việt tự nhiên như một người thật đang "
+            "kể chuyện cho đồng nghiệp thân, không phải thương hiệu đang làm "
+            "nội dung theo công thức. Mỗi bài chỉ chọn MỘT ý, 70–420 ký tự "
+            "(có thể dài hơn tối đa 500 nếu tình huống thực sự cần). "
+            "Đảo nhịp tự nhiên: có bài đúng 2 câu, có bài 5–7 dòng. "
+            "Đừng mở bằng mốc giờ mỗi lần; đừng ép nhân vật phải có tên; "
+            "đừng luôn giải thích bối cảnh, rút bài học, rồi hỏi 'Bạn nghĩ sao?'. "
+            "Ưu tiên chi tiết rất đời: cái seen, tệp tên kỳ quặc, "
+            "ghế chất áo, họp lẹ 15 phút nhưng quá một tiếng. "
+            "Cho phép lời nói lửng, câu ngắn, một chút vô tri, tự trào, "
+            "mỉa vui tình huống chứ không mỉa người thật. "
+            "Định dạng thay đổi tùy ý: (1) một câu quan sát gây cười; "
+            "(2) một mẩu hội thoại; (3) chuyện công sở sáng tác có vai trò rõ "
+            "nếu cần; (4) mẹo nhỏ hữu ích không lên lớp; "
+            "(5) chuyện cú đêm cảm thông, không cổ súy thiếu ngủ. "
+            "Không nhất thiết có emoji, câu hỏi, lời khuyên, tiêu đề, "
+            "hashtag, hoặc dòng tên series ở cuối. Đừng kết bài bằng "
+            "'Đôi khi...', 'Hóa ra...', 'Điều quan trọng là...', "
+            "'Theo bạn...', 'Còn bạn thì sao?' nếu không thực sự cần. "
+            "Không được kể chuyện tưởng tượng như bằng chứng người viết "
+            "trực tiếp chứng kiến; không mạo danh công ty/người thật. "
+            "Không đưa số liệu thiếu nguồn, trải nghiệm mua/dùng giả, "
+            "link, quảng cáo, CTA follow, tag bạn bè hay tranh cãi độc hại. "
+            "Đặc biệt tránh âm điệu sáng tác AI quá tròn trịa. "
+            "Bài phải đủ tự nhiên để một người đọc thành tiếng mà không ngượng. "
+            "Ví dụ về NHỊP ĐIỆU (không sao chép nội dung): "
+            "'Sếp: họp 5 phút nha. Đồng hồ: chắc chưa? 😭'; "
+            "'Góc làm việc rất gọn. Cây bút thì đang mất tích.' "
+            "Trả về post_text và giải thích ngắn why_useful về "
+            "một điểm thú vị cụ thể, không viết phần giải thích vào caption."
+
         ),
     }
     response = requests.post(
@@ -114,7 +125,7 @@ def generate_ai_post(pillar, topic, previous_texts=()):
         json={
             "model": MODEL, "response_format": {"type": "json_schema",
                 "json_schema": {"name": "threads_organic_post", "strict": True, "schema": SCHEMA}},
-            "temperature": 0.5, "reasoning_effort": "low",
+            "temperature": 0.78, "reasoning_effort": "low",
             "max_completion_tokens": 900,
             "messages": [
                 {"role": "system", "content": (
