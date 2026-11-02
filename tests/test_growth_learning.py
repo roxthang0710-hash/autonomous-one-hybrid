@@ -1,5 +1,6 @@
 """Evidence-first Enna decisions: guard against invented commercial success."""
 import unittest
+from datetime import datetime, timezone
 from unittest.mock import Mock
 from growth.learning import decide, snapshot
 
@@ -32,12 +33,20 @@ class LearningTests(unittest.TestCase):
         rows = [{"measured_on": "2026-10-%02d" % day,
                  "post_views": 100, "interactions": 10, "published_posts": 1,
                  "followers": 1} for day in range(18, 25)]
-        state = decide({"metricool": rows}, search_confirmed=True,\n                       now=__import__("datetime").datetime(2026, 11, 2, tzinfo=__import__("datetime").timezone.utc))
+        state = decide({"metricool": rows}, search_confirmed=True,
+                       now=datetime(2026, 11, 2, tzinfo=timezone.utc))
         self.assertEqual(state["phase"], "evidence_learning")
         self.assertEqual(state["metric_status"], "baseline_available")
         self.assertIn("controlled_test", [x["code"] for x in state["next_actions"]])
 
-    def test_incomplete_or_stale_days_cannot_trigger_learning(self):\n        now = __import__("datetime").datetime(2026, 11, 2, tzinfo=__import__("datetime").timezone.utc)\n        rows = [{"measured_on": "2026-11-02", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7\n        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")\n        rows = [{"measured_on": "2026-01-01", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7\n        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")\n\n    def test_provider_failure_is_not_reported_as_real_zero(self):
+    def test_incomplete_or_stale_days_cannot_trigger_learning(self):
+        now = datetime(2026, 11, 2, tzinfo=timezone.utc)
+        rows = [{"measured_on": "2026-11-02", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7
+        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")
+        rows = [{"measured_on": "2026-01-01", "post_views": 200, "interactions": 4, "published_posts": 2}] * 7
+        self.assertEqual(decide({"metricool": rows}, now=now)["phase"], "evidence_collection")
+
+    def test_provider_failure_is_not_reported_as_real_zero(self):
         db = Mock()
         db.request.side_effect = RuntimeError("hidden server error")
         state = snapshot(db)
