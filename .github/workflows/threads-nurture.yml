@@ -1,4 +1,4 @@
-name: Autonomous One — Threads Nurture
+name: Enna — Threads Content & Publishing
 on:
   schedule:
     # 09:45 Vietnam time daily. GitHub cron is best effort.
@@ -62,7 +62,7 @@ jobs:
       - name: Private-safe report
         if: always()
         run: |
-          echo "## Threads nurture" >> "$GITHUB_STEP_SUMMARY"
+          echo "## Enna Threads Nurture" >> "$GITHUB_STEP_SUMMARY"
           echo "Publisher uses owner-approved Meta OAuth stored encrypted in Supabase Vault; token refresh is automated." >> "$GITHUB_STEP_SUMMARY"
           echo "The account cultivation snapshot distinguishes scheduled posts from verified publications. Shopee Affiliate requires separate real approval; no eligibility or earnings are implied." >> "$GITHUB_STEP_SUMMARY"
           echo "Metricool retains 15 booked days; Meta direct publication begins only after owner OAuth and never overlaps those dates." >> "$GITHUB_STEP_SUMMARY"
