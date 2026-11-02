@@ -127,6 +127,7 @@ jobs:
               print("Auth settings response:",r.status)
               print("Email login enabled:",doc.get("external",{}).get("email"))
               print("Google provider enabled:",doc.get("external",{}).get("google"))
+              print("GitHub provider enabled:",doc.get("external",{}).get("github"))
               print("Other external providers have been omitted.")
           except urllib.error.HTTPError as e:
             print("Auth settings HTTP",e.code)
