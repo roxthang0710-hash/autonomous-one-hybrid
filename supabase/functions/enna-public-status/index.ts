@@ -13,7 +13,7 @@ Deno.serve(async (request: Request) => {
     const endpoints: Record<string,string> = {
       research: 'agent_runs?select=started_at,finished_at,status,trigger_kind&order=started_at.desc&limit=25',
       growth: 'growth_runs?select=started_at,finished_at,status,signal_count,shortlisted,drafts_created&order=started_at.desc&limit=25',
-      posts: 'threads_posts?select=id,status,scheduled_at,published_at&limit=500',
+      posts: 'threads_posts?select=id,status,scheduled_at,published_at,topic_tag_planned,topic_tag_requested&limit=500',
       tasks: 'agent_tasks?select=status,kind&limit=500',
       replies: 'growth_engagement_attempts?select=status,finished_at&limit=500',
       account: 'threads_channels?select=username,status,authorized,auto_publish_enabled&limit=1',
@@ -72,6 +72,11 @@ Deno.serve(async (request: Request) => {
       providerPublications: {
         metricoolReportedPublished:providerPublished.length,
         metaIdsConfirmed:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED' && !!r.meta_post_id).length
+      },
+      topics: {
+        nativeQueued:s.posts.filter(r=>r.status==='queued' && !!r.topic_tag_planned).length,
+        nativeRequestedOnPublished:s.posts.filter(r=>r.status==='posted' && !!r.topic_tag_requested).length,
+        communityPostsConfirmed:0
       },
       activity:timeline
     });
