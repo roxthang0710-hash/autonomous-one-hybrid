@@ -1,8 +1,24 @@
+# Enna — AI Agent vận hành Đồ Hay Đi Làm
+
+**Tên chính thức:** Enna · **Nền tảng kế thừa:** Autonomous One Hybrid · **Tài khoản Threads:** `@dohay_dilam`.
+
+Enna đã được triển khai vào các workflow GitHub Actions, giao diện OAuth, báo cáo nghiên cứu và hệ thống theo dõi vận hành. **Không đổi đường dẫn kho GitHub/Supabase hay Callback Meta** để giữ an toàn cho kết nối đã cấp quyền. Tên Enna là tên AI Agent; thương hiệu công khai trên Threads vẫn là **Đồ Hay Đi Làm**.
+
+**Hoạt động thực tế:** Giữ nguyên 15 bài Metricool 03–17/11/2026; các bài AI được xếp sau ngày 17/11, không tính bài đặt lịch là đã xuất bản. Enna tự kiểm tra sức khỏe quyền Meta, lịch, bộ lọc và kết quả nghiên cứu. Bộ xuất bản kiểm tra lúc 09:45, 12:45, 18:45 giờ Việt Nam (best effort, chống đăng trùng). Growth Radar quét lúc 09:15, 14:15, 19:15, bình luận có giới hạn trên 3/ngày, không bắt buộc đạt chỉ tiêu. Token OAuth được lưu tại Supabase Vault.
+
+**Giới hạn phải trung thực:** Người sở hữu đã cấp quyền tự tương tác (`enable_replies=true`), nhưng **Meta keyword search chưa trả bài công khai đủ điều kiện**; OAuth không thay thế App Review. Enna không tạo bình luận giả, không cào Threads, không tự báo có tăng trưởng/doanh thu khi không có bằng chứng. Shopee Affiliate vẫn cần duyệt nhà phát hành riêng.
+
+**Cải tiến vận hành:** `enna.py` kiểm tra dữ liệu thật và xuất báo cáo không chứa bí mật; `threads/content.py` dùng phong cách trẻ trung, dí dỏm và từ chối bài gần trùng; `threads/insights.py` ghi nhận các chỉ số Meta được trả về, để trống chỉ số thiếu thay vì tự ghi 0. Các script cũ giữ nguyên tên kỹ thuật để tránh làm hỏng workflow.
+
+[Trang điều khiển Enna](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/) · [GitHub Actions](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions) · [Báo cáo phát hành Enna](RELEASE_v2_1_ENNA.md).
+
+---
+
 ## v2.0 — Bình luận Threads có cá tính, tự động nhưng không spam (02/11/2026)
 
 Đã triển khai mã và Supabase RPC để Autonomous One tham gia hội thoại bằng **@dohay_dilam** với giọng trẻ trung, hài hước, slang vừa phải. Chỉ tìm qua Meta Threads API chính thức, chỉ phản hồi bài mới và liên quan, tối đa **3 lượt/ngày giờ Việt Nam** (không ép đủ), tránh bài/tác giả lặp, không seeding giả.
 
-**Đang chờ chủ kênh cấp quyền Meta bổ sung**: `threads_keyword_search`, `threads_manage_replies`, `threads_read_replies`. Cờ `enable_replies=false`, nên chưa có bình luận công khai nào được Agent đăng. [Hướng dẫn duy nhất để cấp quyền + App Review](RELEASE_v2_0_THREADS_CONVERSATIONS.md) · [Trang cấp Meta OAuth an toàn](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/).
+**Cập nhật 02/11/2026:** Chủ kênh đã cấp lại OAuth và `enable_replies=true`; tuy nhiên quyền tìm bài công khai vẫn chưa xác minh được qua Meta App Review. Vì vậy Enna chưa tạo bình luận công khai. [Hướng dẫn duy nhất để cấp quyền + App Review](RELEASE_v2_0_THREADS_CONVERSATIONS.md) · [Trang cấp Meta OAuth an toàn](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/).
 
 ## v1.9 — Threads Nurture + Growth Radar an toàn (02/11/2026)
 
