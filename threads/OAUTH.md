@@ -1,3 +1,9 @@
+> **Cập nhật 02/11/2026 — không còn yêu cầu mật khẩu quản trị:** Supabase Auth dự án này bật đăng nhập email nhưng **chưa bật Google provider**. Trang GitHub Pages đã thay form nhập mật khẩu bằng **liên kết đăng nhập một lần gửi đến email** đã có trong `Authentication → Users`; backend kiểm tra danh sách `agent_reviewers` trước khi cho cấp Meta OAuth. Không tự tạo thêm người dùng. Mã JWT từ email link nằm trong bộ nhớ trình duyệt và được xóa khỏi URL ngay khi xác thực. Sau khi mở email link và được xác minh, form nhập Threads App ID/Secret mới xuất hiện.
+>
+> **Cấu hình URL bắt buộc một lần:** tại [Supabase Authentication → URL Configuration](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/auth/url-configuration), thêm `https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/` vào **Redirect URLs → Add URL**, và nhấn Save. Đây là URL đăng nhập email, **khác** Callback URL trong Meta Developers; không thay đổi Meta callback cũ.
+>
+> [Mở giao diện đăng nhập không mật khẩu](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/).
+
 > **Cập nhật khắc phục giao diện 02/11/2026:** Supabase Edge Functions trên tên miền mặc định không phục vụ HTML mà đổi thành văn bản thuần. Chúng tôi đã chuyển **giao diện bảo mật** sang **GitHub Pages** và giữ **Supabase Edge** xử lý API/callback. 
 > 
 > **Trang mới (chỉ dùng sau khi GitHub Pages được kích hoạt):** https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/
