@@ -169,16 +169,40 @@ def plan_next(db, *, low_watermark=6, force=False):
         trend = select_topic(db, next_slot)
         if trend is not None:
             pillar, topic = trend["pillar"], trend["topic"]
-    result = generate_ai_post(pillar, topic, [r["text_content"] for r in history])
-    if any(r["text_content"] == result["post_text"] for r in history):
-        return "duplicate_generated"
-    # A slightly rephrased copy of last week's post is not a new idea.
-    # Normalize Vietnamese accents for a conservative similarity check.
-    normalized_new = normalize(result["post_text"])
-    if any(SequenceMatcher(None, normalized_new,
-                           normalize(r["text_content"])).ratio() >= 0.84
-           for r in history[:60] if r.get("text_content")):
-        return "near_duplicate_generated"
+
+    history_texts = [r["text_content"] for r in history if r.get("text_content")]
+    normalized_history = [normalize(x) for x in history_texts[:60]]
+    # A rejected Groq draft should not stall the calendar indefinitely.
+    # Try at most two DIFFERENT evergreen editorial angles after the first
+    # idea fails. Never reuse a trend's source ID for an unrelated fallback.
+    angles = [(pillar, topic, trend)]
+    for offset in (5, 9):
+        fallback_pillar, fallback_topic = SEEDS[(index + offset) % len(SEEDS)]
+        if (fallback_pillar, fallback_topic) not in [
+                (p, t) for p, t, _ in angles]:
+            angles.append((fallback_pillar, fallback_topic, None))
+
+    result = None
+    original_failure = "duplicate_generated"
+    chosen_trend = None
+    for current_pillar, current_topic, current_trend in angles[:3]:
+        try:
+            candidate = generate_ai_post(current_pillar, current_topic, history_texts)
+        except ValueError:
+            original_failure = "unsafe_or_invalid_generated"
+            continue
+        if candidate["post_text"] in history_texts:
+            original_failure = "duplicate_generated"
+            continue
+        normalized_new = normalize(candidate["post_text"])
+        if any(SequenceMatcher(None, normalized_new, previous).ratio() >= 0.84
+               for previous in normalized_history if previous):
+            original_failure = "near_duplicate_generated"
+            continue
+        result, chosen_trend = candidate, current_trend
+        break
+    if result is None:
+        return original_failure
     key = hashlib.sha256((BRAND_KEY + "\n" + result["post_text"]).encode("utf-8")).hexdigest()
     rows = db.request("POST", "/threads_posts",
                       params={"on_conflict": "content_key"},
@@ -190,7 +214,7 @@ def plan_next(db, *, low_watermark=6, force=False):
                           "status": "queued", "created_by": "agent",
                           "risk_flags": [], "content_type": "editorial",
                           "origin_growth_opportunity_id": (
-                              trend["opportunity_id"] if trend else None),
+                              chosen_trend["opportunity_id"] if chosen_trend else None),
                       },
                       prefer="resolution=ignore-duplicates,return=representation")
     return "created_one" if rows else "already_created"
