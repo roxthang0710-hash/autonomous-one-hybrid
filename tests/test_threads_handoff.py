@@ -42,5 +42,34 @@ class ContentHandoffTests(unittest.TestCase):
                          "2026-11-18T09:30:00+07:00")
 
 
+    def test_enna_blocks_near_duplicate_daily_draft(self):
+        db=MagicMock()
+        original = (
+            "Bàn làm việc nhỏ vẫn có thể gọn hơn nếu bạn sắp xếp dây sạc "
+            "và phụ kiện theo tần suất sử dụng mỗi ngày."
+        )
+        duplicate = original.replace("vẫn có thể gọn hơn", "có thể gọn hơn")
+        def req(method,path,*,params=None,payload=None,prefer=None):
+            if method=="GET" and path=="/threads_posts":
+                if params.get("status")=="eq.queued":
+                    return []
+                if params.get("order")=="created_at.desc":
+                    return [{"id":"past","text_content":original,
+                             "pillar":"organize","scheduled_at":"2026-11-17T02:30:00+00:00"}]
+                return []
+            if method=="POST":
+                raise AssertionError("Near-duplicate should never be saved")
+            return []
+        db.request.side_effect=req
+        result={"pillar":"organize","post_text":duplicate,
+                "why_useful":"Mẹo sắp xếp góc bàn"}
+        with patch("threads.content.get_channel",return_value={
+                 "id":"brand","status":"paused"}), \
+             patch("threads.content.generate_ai_post",return_value=result), \
+             patch("threads.content.scheduled_start",
+                   return_value=datetime(2026,11,18,9,30,tzinfo=VN)):
+            self.assertEqual(plan_next(db),"near_duplicate_generated")
+
+
 if __name__ == "__main__":
     unittest.main()
