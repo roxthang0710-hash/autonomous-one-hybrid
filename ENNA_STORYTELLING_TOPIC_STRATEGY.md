@@ -32,13 +32,14 @@ Mỗi bài đã được Meta/Metricool cho lịch ở trạng thái PENDING; **
 2. **Nút thắt**: chỉ 2–4 câu gọn, một người bất đồng, có tình tiết đảo chiều.
 3. **Hai quan điểm đều có lý**: không bêu xấu ngành nghề, giới, tuổi, cá nhân hoặc công ty có thật.
 4. **Câu hỏi cuối mở**: khuyến khích kể trải nghiệm, không ép chỉ chọn A/B, không bảo tag bạn bè hay follow để nhận phần 2.
-5. **Minh bạch**: ghi `(Tình huống giả định)` — không dùng “mình vừa gặp”, “bạn mình kể” cho sự việc AI bịa ra.
+5. **Tự nhiên nhưng không nhận vơ chuyện có thật**: đây là tuyến truyện sáng tác **Hồ sơ công sở · Tập X/7**, có nhân vật với vai trò cụ thể và lời thoại đời thường. Không cần lặp chú thích `(Tình huống giả định)` trong từng bài; không khẳng định đó là vụ việc có thật, không nói “mình vừa gặp”, “bạn mình kể”, hoặc mượn danh người/công ty có thật. Nếu người đọc hỏi về nguồn, trả lời rõ đây là chuyện sáng tác.
+6. **Giữ giọng nói con người**: tránh một khuôn câu hỏi đóng ở mọi bài; ưu tiên lời nói thường ngày, một chi tiết đời thực hợp lý, và góc nhìn mang tính tranh luận nhưng không kích động phẫn nộ.
 
 Kiểm tra việc đa dạng hoá với mẹo hữu ích và lời khuyên cụ thể; tránh một feed chỉ có tranh cãi. Không công kích nhân vật thật, thổi phồng tổn thương, câu kéo giận dữ, hay tự tạo bình luận.
 
 ## Đo lường sau đăng
 
-Hệ thống `growth/story_insights.py` đọc duy nhất bài `status=posted` + Meta ID có thật, lấy snapshot `threads_metrics` mới nhất và chỉ dùng bài đã đủ 24 giờ với lượt xem, phản hồi hợp lệ. Phân nhóm story vs non-story bằng nhãn `(Tình huống giả định)`. Báo cáo số bài đo được, trung vị lượt xem và phản hồi trên mỗi 1.000 lượt xem, chỉ xếp hạng khi **mỗi nhóm có ít nhất 3 bài được đo**.
+Hệ thống `growth/story_insights.py` đọc duy nhất bài `status=posted` + Meta ID có thật, lấy snapshot `threads_metrics` mới nhất và chỉ dùng bài đã đủ 24 giờ với lượt xem, phản hồi hợp lệ. Phân nhóm story vs non-story bằng dấu nhận diện chuỗi `Hồ sơ công sở · Tập X/7` (giữ hỗ trợ nhãn cũ cho bài lịch sử). Báo cáo số bài đo được, trung vị lượt xem và phản hồi trên mỗi 1.000 lượt xem, chỉ xếp hạng khi **mỗi nhóm có ít nhất 3 bài được đo**.
 
 Đây là **tương quan nội dung với tương tác**, không suy luận nhân quả follower. Chưa đủ dữ liệu thì trả `insufficient_evidence`. Quy trình đã được gắn vào GitHub Actions `threads-nurture.yml`. KPI 1.000 follower trước 09/11 vẫn là mục tiêu thử thách, không phải kết quả dự báo.
 
@@ -49,3 +50,10 @@ Hệ thống `growth/story_insights.py` đọc duy nhất bài `status=posted` +
 - Meta creator insights: https://about.fb.com/news/2024/10/find-your-community-with-new-threads-educational-insights/
 - Meta Threads API: https://www.postman.com/meta/threads/documentation/dht3nzz/threads-api
 - Metricool limitations: https://help.metricool.com/api-limitations-per-social-network-n7zlr
+
+## Vòng chỉnh sửa giọng văn ngày 02/11
+
+- Đã thay nội dung của cả 7 khung storytelling trên Metricool bằng câu chuyện có nhân vật định danh theo vai trò (Linh, Thu, Huy, Ngọc, Tân, Vy, Mai/Quân) và lời thoại trực tiếp, tự nhiên.
+- Đã bỏ mọi dòng ngoặc chú thích sau bài; giữ định danh rõ là một chuỗi kể chuyện sáng tác, không gán cho công ty/cá nhân thật.
+- Vẫn giữ đúng UUID lịch, trạng thái PENDING và autoPublish; đã đồng bộ 7 bản nội dung mới sang Supabase.
+- Bộ đo `growth/story_insights.py` chuyển sang nhận diện bằng tên chuỗi để thống kê không bị mất, kèm kiểm thử tương thích ngược.
