@@ -24,10 +24,8 @@ jobs:
     timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
-      - name: Configure GitHub Pages (attempt automatic enablement)
+      - name: Configure already-enabled GitHub Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Upload static portal without credentials
         uses: actions/upload-pages-artifact@v3
         with:
