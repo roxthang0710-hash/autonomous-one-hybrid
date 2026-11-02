@@ -27,7 +27,7 @@ class ThreadsActivationSqlTests(unittest.TestCase):
     def test_preserves_metricool_external_calendar_separation(self):
         self.assertIn("p.status='scheduled_external'", self.sql)
         self.assertIn("target_day := greatest(target_day", self.sql)
-        self.assertIn("timezone 'asia/ho_chi_minh'", self.sql)
+        self.assertIn("at time zone 'asia/ho_chi_minh'", self.sql)
 
     def test_only_service_role_can_activate_account(self):
         self.assertIn("revoke all on function public.activate_threads_channel", self.sql)
