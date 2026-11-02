@@ -1,33 +1,115 @@
 "use strict";
+// Passwordless owner authorization. Auth JWT is held in memory only,
+// never copied to GitHub, localStorage, a URL query, or Supabase tables.
 const SUPABASE = "https://gjdvdohylvsauphhkutw.supabase.co";
 const PUBLISHABLE_KEY = "sb_publishable_sJxwXdpQPn4FrrGZPusJmA_Xy5TI0-H";
-const API = SUPABASE + "/functions/v1/threads-oauth/start";
+const API_ROOT = SUPABASE + "/functions/v1/threads-oauth";
+const AUTH_ROOT = SUPABASE + "/auth/v1";
+const RETURN_URL = location.origin + location.pathname;
+const $ = id => document.getElementById(id);
+let ownerAccessToken = null;
+
 const params = new URLSearchParams(location.search);
 const outcome = params.get("status");
-if (outcome === "connected") document.querySelector("#connected").hidden = false;
-if (outcome === "failed") document.querySelector("#failed").hidden = false;
-if (outcome) history.replaceState(null, "", location.pathname);
-const $ = id => document.getElementById(id);
+if (outcome === "connected") $("connected").hidden = false;
+if (outcome === "failed") $("failed").hidden = false;
+if (outcome) history.replaceState(null, "", RETURN_URL);
+
+function showLoginError(message) {
+  $("login-status").textContent = message;
+  $("login-status").style.color = "#ab4135";
+}
+function showMeta() {
+  $("login-section").hidden = true;
+  $("meta-section").hidden = false;
+}
+async function verifyOwner(token) {
+  const response = await fetch(API_ROOT + "/whoami", {
+    method: "GET", credentials: "omit", cache: "no-store", mode: "cors",
+    headers: { Authorization: "Bearer " + token, apikey: PUBLISHABLE_KEY }
+  });
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new Error("Email này chưa có quyền quản trị Autonomous One. Vui lòng sử dụng đúng tài khoản đã được cấp quyền.");
+    }
+    throw new Error("Không kiểm tra được quyền quản trị. Hãy thử lại sau.");
+  }
+  const data = await response.json();
+  if (data.authorized !== true) throw new Error("Không đủ quyền quản trị.");
+}
+
+// Supabase Email Magic Link implicit flow returns access_token in the URL
+// fragment. Immediately scrub it from address bar/history before network use.
+async function consumeEmailMagicLink() {
+  if (!location.hash) return;
+  const hash = new URLSearchParams(location.hash.slice(1));
+  const accessToken = hash.get("access_token");
+  const type = hash.get("token_type");
+  const error = hash.get("error");
+  history.replaceState(null, "", RETURN_URL);
+  if (error) {
+    showLoginError("Liên kết xác thực đã hết hạn hoặc không hợp lệ. Hãy gửi lại một liên kết mới.");
+    return;
+  }
+  if (!accessToken || type?.toLowerCase() !== "bearer") return;
+  $("login-status").textContent = "Đang xác minh chủ sở hữu…";
+  try {
+    await verifyOwner(accessToken);
+    ownerAccessToken = accessToken;
+    showMeta();
+  } catch (err) {
+    ownerAccessToken = null;
+    showLoginError(err instanceof Error ? err.message : "Xác minh không thành công.");
+  }
+}
+
+$("login-form").addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = $("send-link");
+  button.disabled = true;
+  $("login-status").textContent = "Đang gửi liên kết đăng nhập…";
+  try {
+    const email = $("email").value.trim().toLowerCase();
+    // Never create unauthorized users; only existing reviewer email works.
+    const response = await fetch(AUTH_ROOT + "/otp", {
+      method: "POST", mode: "cors", cache: "no-store", credentials: "omit",
+      headers: { apikey: PUBLISHABLE_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email, create_user: false, email_redirect_to: RETURN_URL
+      })
+    });
+    if (response.status === 429) {
+      throw new Error("Supabase giới hạn số lần gửi email. Vui lòng thử lại sau.");
+    }
+    if (!response.ok) {
+      throw new Error("Không gửi được liên kết. Hãy kiểm tra email quản trị hoặc cài đặt xác thực của Supabase.");
+    }
+    $("login-status").style.color = "#176b47";
+    $("login-status").textContent =
+      "Đã yêu cầu liên kết đăng nhập. Kiểm tra hộp thư và Thư rác của email đã được cấp quyền, sau đó bấm liên kết do Supabase gửi. Đừng chia sẻ liên kết này.";
+  } catch (err) {
+    showLoginError(err instanceof Error ? err.message : "Có lỗi khi gửi email.");
+  } finally {
+    button.disabled = false;
+  }
+});
+
 $("connect").addEventListener("submit", async event => {
   event.preventDefault();
   const button = $("submit"), status = $("status");
+  if (!ownerAccessToken) {
+    status.textContent = "Phiên đăng nhập không có hiệu lực. Hãy mở liên kết email mới.";
+    return;
+  }
   button.disabled = true;
-  status.textContent = "Đang xác thực quyền quản trị…";
+  status.textContent = "Đang xác thực quyền và tạo phiên cấp phép Meta…";
   try {
-    const email = $("email").value.trim();
-    const password = $("password").value;
-    const login = await fetch(SUPABASE + "/auth/v1/token?grant_type=password", {
+    const response = await fetch(API_ROOT + "/start", {
       method: "POST", mode: "cors", cache: "no-store", credentials: "omit",
-      headers: { "apikey": PUBLISHABLE_KEY, "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-    $("password").value = "";
-    if (!login.ok) throw new Error("Không thể đăng nhập Supabase Auth. Kiểm tra tài khoản quản trị Autonomous One.");
-    const session = await login.json();
-    const response = await fetch(API, {
-      method: "POST", mode: "cors", cache: "no-store", credentials: "omit",
-      headers: { "Authorization": "Bearer " + session.access_token,
-                 "apikey": PUBLISHABLE_KEY, "Content-Type": "application/json" },
+      headers: {
+        Authorization: "Bearer " + ownerAccessToken,
+        apikey: PUBLISHABLE_KEY, "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         appId: $("appId").value.trim(),
         appSecret: $("appSecret").value,
@@ -35,18 +117,22 @@ $("connect").addEventListener("submit", async event => {
       })
     });
     $("appSecret").value = "";
-    const result = await response.json();
-    if (!response.ok || typeof result.authorizeUrl !== "string")
-      throw new Error(result.error || "Không tạo được phiên cấp quyền Meta.");
-    if (!result.authorizeUrl.startsWith("https://threads.net/oauth/authorize?"))
-      throw new Error("Địa chỉ chuyển hướng Meta không hợp lệ.");
+    const data = await response.json();
+    if (!response.ok || typeof data.authorizeUrl !== "string") {
+      throw new Error(data.error || "Chưa thể khởi tạo cấp quyền Threads.");
+    }
+    if (!data.authorizeUrl.startsWith("https://threads.net/oauth/authorize?")) {
+      throw new Error("Đường dẫn cấp quyền không đúng máy chủ Meta Threads.");
+    }
+    ownerAccessToken = null;
     status.style.color = "#176b47";
-    status.textContent = "Đã xác thực; chuyển đến Meta để chấp thuận quyền…";
-    location.assign(result.authorizeUrl);
-  } catch (error) {
-    $("password").value = "";
+    status.textContent = "Đang chuyển sang Meta để chấp thuận quyền…";
+    location.assign(data.authorizeUrl);
+  } catch (err) {
     $("appSecret").value = "";
-    status.textContent = error instanceof Error ? error.message : "Đã xảy ra lỗi kết nối.";
+    status.textContent = err instanceof Error ? err.message : "Kết nối chưa thành công.";
     button.disabled = false;
   }
 });
+
+void consumeEmailMagicLink();
