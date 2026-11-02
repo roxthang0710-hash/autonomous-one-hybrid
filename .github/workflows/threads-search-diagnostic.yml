@@ -1,0 +1,35 @@
+name: Enna — Official Threads Search Diagnostic
+on:
+  push:
+    paths:
+      - 'growth/diagnostic.py'
+      - 'tests/test_growth_diagnostic.py'
+      - '.github/workflows/threads-search-diagnostic.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -m unittest tests.test_growth_diagnostic || python -m unittest discover -s tests -p test_growth_diagnostic.py -v
+      - name: Probe official Meta endpoint with no writes
+        run: python -m growth.diagnostic
+      - name: Explain limits
+        if: always()
+        run: |
+          echo "### Threads search diagnostics (official API only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "The job prints only response counts and failure categories, never tokens, posts or user details." >> "$GITHUB_STEP_SUMMARY"
+          echo "Empty results cannot establish a lack of viral threads. API review scope and filtering are distinct." >> "$GITHUB_STEP_SUMMARY"
