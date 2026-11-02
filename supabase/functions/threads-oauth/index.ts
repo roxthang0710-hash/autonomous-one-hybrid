@@ -19,7 +19,7 @@ function headers(type="application/json; charset=utf-8") {
  "Referrer-Policy": "no-referrer",
  "X-Content-Type-Options": "nosniff",
  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
- "Access-Control-Allow-Methods": "POST, OPTIONS",
+ "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
  "Access-Control-Allow-Headers": "authorization,apikey,content-type,x-client-info",
  "Vary": "Origin"
  };
@@ -61,10 +61,18 @@ async function handler(req:Request):Promise<Response> {
  const url=new URL(req.url);
  // Supabase gateway can strip /functions/v1 before forwarding the request.
  const path=url.pathname.replace(/^.*\/threads-oauth(?=\/|$)/,"")||"/";
- if(req.method==="OPTIONS"&&path==="/start"){
+ if(req.method==="OPTIONS"&&(path==="/start"||path==="/whoami")){
    if(req.headers.get("Origin")!==ALLOWED_ORIGIN)
      return json({error:"Origin not allowed"},403);
    return new Response(null,{status:204,headers:headers()});
+ }
+ if(req.method==="GET"&&path==="/whoami"){
+   const origin=req.headers.get("Origin");
+   if(origin&&origin!==ALLOWED_ORIGIN)
+     return json({error:"Origin not allowed"},403);
+   const userId=await owner(req);
+   if(!userId)return json({authorized:false},401);
+   return json({authorized:true});
  }
  if(req.method==="GET"&&path==="/")return redirect();
  if(req.method==="GET"&&path==="/client.js")return redirect();
