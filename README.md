@@ -1,3 +1,9 @@
+## v2.0 — Bình luận Threads có cá tính, tự động nhưng không spam (02/11/2026)
+
+Đã triển khai mã và Supabase RPC để Autonomous One tham gia hội thoại bằng **@dohay_dilam** với giọng trẻ trung, hài hước, slang vừa phải. Chỉ tìm qua Meta Threads API chính thức, chỉ phản hồi bài mới và liên quan, tối đa **3 lượt/ngày giờ Việt Nam** (không ép đủ), tránh bài/tác giả lặp, không seeding giả.
+
+**Đang chờ chủ kênh cấp quyền Meta bổ sung**: `threads_keyword_search`, `threads_manage_replies`, `threads_read_replies`. Cờ `enable_replies=false`, nên chưa có bình luận công khai nào được Agent đăng. [Hướng dẫn duy nhất để cấp quyền + App Review](RELEASE_v2_0_THREADS_CONVERSATIONS.md) · [Trang cấp Meta OAuth an toàn](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/).
+
 ## v1.9 — Threads Nurture + Growth Radar an toàn (02/11/2026)
 
 Đã xác minh **Threads @dohay_dilam kết nối qua Supabase Vault**. 15 bài Metricool từ 03–17/11/2026 được giữ nguyên; Autonomous One đã tạo và xếp hàng 2 bài tiếp theo từ 18/11. GitHub Actions tự chạy theo lịch, không đăng trùng, không coi bài chờ đăng là bài đã xuất bản.
