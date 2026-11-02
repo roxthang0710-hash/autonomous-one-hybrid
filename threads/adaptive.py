@@ -55,23 +55,33 @@ def qualify(text, reason, previous=()):
     if any(SequenceMatcher(None, candidate, old).ratio() >= .75
            for old in recent[:65] if old):
         return 0, "too_similar_to_previous"
-    # A specific scene, a grounded tip, or a useful interpersonal dilemma
-    # can qualify. Generic "Bạn nghĩ sao?" alone cannot.
-    specific = (any(ch.isdigit() for ch in t[:160]) or
-                any(w in t.casefold() for w in
-                    ("thử ", "nếu ", "trưởng nhóm", "đồng nghiệp",
-                     "thực tập", "báo cáo", "sếp ", "cuộc họp", "bàn làm việc")))
-    if not specific:
+    # Short, specific observations can work better than long, templated prose.
+    # No points solely for a question mark, emoji or line break: those bonuses
+    # previously taught the model to produce the same scripted cadence.
+    grounded = (any(ch.isdigit() for ch in t[:180]) or
+                any(w in t.casefold() for w in (
+                    "trưởng nhóm", "đồng nghiệp", "thực tập", "báo cáo",
+                    "sếp ", "cuộc họp", "bàn làm việc", "ghế", "bút",
+                    "màn hình", "tin nhắn", "tệp", "đồng hồ", "não",
+                    "đi làm", "cà phê", "dây sạc", "laptop")))
+    if not grounded:
         return 0, "not_specific_enough"
-    if len(t) < 125 or len(t) > 490:
+    if len(t) < 70 or len(t) > 490:
         return 0, "not_substantial_or_too_long"
-    # Hard necessities above; remaining points reward pacing and humanity.
-    score = 65
-    if "?" in t: score += 10
-    if "\n" in t: score += 10
-    if any(c in t for c in ("“", "”", ":", "😅", "🫠")): score += 5
-    if len(t) >= 200: score += 5
-    if len(reason.strip()) >= 45: score += 5
+    # Reject generic interaction bait regardless of punctuation.
+    if t.casefold().strip(" !?.").endswith((
+        "bạn nghĩ sao", "còn bạn thì sao", "theo bạn thì sao"
+    )):
+        return 0, "formulaic_engagement_bait"
+    score = 70 + 10  # a grounded micro-scene or specific useful detail
+    if len(t) >= 180:
+        score += 5
+    if any(w in t.casefold() for w in (
+        "ủa", "thế là", "mất tích", "chắc chưa", "hết hồn",
+        "không hiểu sao", "lỡ", "đang bận")):
+        score += 5
+    if len(reason.strip()) >= 45:
+        score += 5
     return min(100, score), "qualified" if score >= QUALITY_THRESHOLD else "low_editorial_quality"
 
 
