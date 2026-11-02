@@ -71,5 +71,43 @@ class ContentHandoffTests(unittest.TestCase):
             self.assertEqual(plan_next(db),"near_duplicate_generated")
 
 
+    def test_enna_recovers_from_a_near_duplicate_using_new_topic(self):
+        db=MagicMock()
+        previous=("Mẹo sắp xếp dây sạc laptop nhỏ trong góc bàn làm việc "
+                  "để không bị rối mỗi ngày.")
+        fresh=("Nếu mới bắt đầu công việc, thử chia ba nhiệm vụ quan trọng "
+               "nhất buổi sáng theo thời gian và độ ưu tiên, bạn thấy sao?")
+        def request(method,path,*,params=None,payload=None,prefer=None):
+            if method=="GET" and path=="/threads_posts":
+                if params.get("status")=="eq.queued":
+                    return []
+                if params.get("order")=="created_at.desc":
+                    return [{"text_content":previous,"pillar":"organize",
+                             "scheduled_at":"2026-11-17T02:30:00+00:00"}]
+                if params.get("status")=="in.(queued,scheduled_external,posted,publishing,uncertain)":
+                    return [{"scheduled_at":"2026-11-17T02:30:00+00:00"}]
+            if method=="POST":
+                return [{"id":"fresh-post"}]
+            return []
+        db.request.side_effect=request
+        dup={"pillar":"organize","post_text":previous,
+             "why_useful":"Câu cũ, cần bỏ qua"}
+        alternate={"pillar":"work","post_text":fresh,
+                   "why_useful":"Gợi ý mới có ích"}
+        with patch("threads.content.get_channel",return_value={
+                 "id":"brand","status":"paused"}), \
+             patch("threads.content.generate_ai_post",
+                   side_effect=[dup,alternate]) as model, \
+             patch("threads.content.scheduled_start",
+                   return_value=datetime(2026,11,18,9,30,tzinfo=VN)):
+            outcome=plan_next(db)
+        self.assertEqual(outcome,"created_one")
+        self.assertEqual(model.call_count,2)
+        writes=[c for c in db.request.call_args_list if c.args[0]=="POST"]
+        self.assertEqual(len(writes),1)
+        self.assertEqual(writes[0].kwargs["payload"]["text_content"],fresh)
+        self.assertIsNone(writes[0].kwargs["payload"]["origin_growth_opportunity_id"])
+
+
 if __name__ == "__main__":
     unittest.main()
