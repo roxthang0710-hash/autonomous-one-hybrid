@@ -1,3 +1,18 @@
+## Tránh giới hạn gửi email mặc định Supabase (02/11/2026)
+
+Nhật ký Auth của dự án xác nhận lỗi `429 / over_email_send_rate_limit`. Dịch vụ SMTP mặc định của Supabase hiện giới hạn **2 email/giờ cho toàn dự án**, không phải 2 email riêng cho mỗi lần thử. Google OAuth và GitHub OAuth của **Supabase Auth** đều chưa được bật (khác với đăng nhập Google vào Supabase Dashboard).
+
+**Giải pháp bền vững không cần email:** giao diện đã hỗ trợ nút **Tiếp tục với GitHub** ngay khi nhà cung cấp GitHub OAuth được bật. Nếu chưa bật, trang hiển thị hướng dẫn thiết lập.
+
+1. Vào [GitHub Developer Settings → OAuth Apps](https://github.com/settings/developers) → New OAuth App. Application name: `Autonomous One Admin`. Homepage URL: `https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/`. Authorization callback URL: `https://gjdvdohylvsauphhkutw.supabase.co/auth/v1/callback`.
+2. Vào [Supabase Authentication → Sign In / Providers](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/auth/providers), mở GitHub, bật **Enable GitHub provider** và nhập Client ID, Client Secret vừa tạo trực tiếp trong giao diện Supabase. Không gửi Client Secret vào ChatGPT.
+3. Tải lại [trang kết nối Threads](https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/). Nút GitHub sẽ hiển thị khi provider thực sự bật. Đăng nhập bằng **chính tài khoản GitHub chủ dự án**, có email xác minh trùng tài khoản Supabase Auth quản trị.
+4. Backend `/whoami` vẫn kiểm tra bản ghi `agent_reviewers`. Nếu tài khoản GitHub dùng email khác, Supabase có thể không liên kết vào user hiện tại và đăng nhập không được cấp quyền. **Không tự động cấp thêm vai trò quản trị**. Khi đó cần kiểm tra danh tính Github được xác minh trước khi liên kết đúng tài khoản quản trị.
+
+Phương án thay thế dài hạn là SMTP riêng trong [Supabase → Authentication → SMTP Settings](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/auth/smtp), có thể sử dụng dịch vụ email của bạn. **Không tắt Confirm Email** hoặc thay đổi giới hạn để vượt bảo vệ tài khoản.
+
+Sau bất kỳ cách đăng nhập nào, người dùng phải chấp thuận Meta OAuth cho @dohay_dilam; không sử dụng App ID/Secret để bỏ qua bước đó.
+
 > **Khắc phục lỗi localhost:3000 / otp_expired (02/11/2026):** Ngoài Redirect URLs, bắt buộc đổi **Authentication → URL Configuration → Site URL** từ `http://localhost:3000` thành `https://roxthang0710-hash.github.io/autonomous-one-hybrid/oauth/`, bấm **Save changes**. Nhật ký Supabase cho thấy liên kết đầu tiên đã đăng nhập thành công nhưng đưa về localhost, các lần mở lại gây lỗi mã một lần không tồn tại. Sau khi sửa Site URL, hãy yêu cầu email mới và bấm **một lần** vào liên kết mới nhất. Không gửi các URL chứa token cho người khác.
 
 > **Cập nhật 02/11/2026 — không còn yêu cầu mật khẩu quản trị:** Supabase Auth dự án này bật đăng nhập email nhưng **chưa bật Google provider**. Trang GitHub Pages đã thay form nhập mật khẩu bằng **liên kết đăng nhập một lần gửi đến email** đã có trong `Authentication → Users`; backend kiểm tra danh sách `agent_reviewers` trước khi cho cấp Meta OAuth. Không tự tạo thêm người dùng. Mã JWT từ email link nằm trong bộ nhớ trình duyệt và được xóa khỏi URL ngay khi xác thực. Sau khi mở email link và được xác minh, form nhập Threads App ID/Secret mới xuất hiện.
