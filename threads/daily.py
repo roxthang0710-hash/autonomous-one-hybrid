@@ -21,6 +21,12 @@ def daily(db=None, *, publish=True, metrics=True):
         results["editor"] = "error:" + type(exc).__name__
     if publish:
         try:
+            from threads.adaptive import plan as adaptive_plan
+            results["adaptive_editorial"] = adaptive_plan(db)
+        except Exception as exc:
+            # Adaptive failures must not prevent safe pre-approved posts.
+            results["adaptive_editorial"] = "skipped:" + type(exc).__name__
+        try:
             from threads.refresh import refresh_next
             results["trend_selection"] = refresh_next(db)
         except Exception as exc:
