@@ -33,3 +33,13 @@ Tên Agent: **Enna** · Thương hiệu Threads: **Đồ Hay Đi Làm** / `@doha
 - [Meta App Review](https://developers.facebook.com/apps/)
 
 **Nguyên tắc:** Enna hoạt động liên tục trong giới hạn quyền đã cấp; không tự vượt hạn mức, không gây tương tác giả, không chi tiền, không che giấu lỗi hoặc đặt tên khác cho người dùng Threads.
+
+## Xác minh vận hành thực tế sau triển khai — 17:48 giờ Việt Nam, 02/11/2026
+
+- [Enna Threads run 41431199562](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41431199562) **SUCCESS**: bộ biên tập đã phát hiện `near_duplicate_generated` và không đưa bài trùng vào lịch. Báo cáo Enna được tạo thành công, OAuth hợp lệ.
+- Từ kết quả đó, Enna đã được nâng cấp cơ chế thử tối đa **hai góc nội dung khác** sau khi AI trả bài gần trùng hoặc không an toàn. Bounded retry không gửi lại các bài đã đăng; không gắn nhầm nguồn trend vào bài fallback.
+- [Enna Threads run 41431701964](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41431701964) **SUCCESS** sau sửa: `editor=created_one`, hàng đợi **4 bài Enna** (trước đó 3); `scheduled_external=15` từ Metricool, `posted=0`, `publisher=no_due_post`. Dữ liệu đúng hạn và không đăng sớm.
+- [Enna Growth run 41431269105](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41431269105) **SUCCESS**: `threads_discovery=empty_keyword_results`, `Growth engagement=no_eligible_replies`, không tạo bình luận giả. Meta App Review vẫn cần kiểm tra.
+- [Enna CI 41431643097](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41431643097) **SUCCESS**, bao gồm dữ liệu insight từng phần, phát hiện bài trùng và kiểm tra an toàn người dùng. Không nên hiểu PASS unit test là đã kiếm tiền hoặc Meta App Review được phê duyệt.
+
+**Kết luận:** Enna đã hoạt động thực tế dưới tên mới, tự sửa được tình huống bài gần trùng và tự ghi sức khỏe hệ thống. Chưa có bình luận công khai, chưa có bài AI nào đến hạn xuất bản, chưa có bằng chứng doanh thu Affiliate.
