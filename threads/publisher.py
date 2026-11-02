@@ -22,7 +22,7 @@ TOPIC_BY_PILLAR = {
     "work": "Công sở",
     "travel": "Du lịch",
     "organize": "Góc làm việc",
-    "conversation": "Đời sống đi làm",
+    "conversation": "Công sở",
 }
 
 
@@ -145,6 +145,7 @@ def publish_due(db):
             token, post["text_content"], topic_tag=topic_tag)
         db.patch("threads_posts", post["id"], {
             "status": "posted", "platform_post_id": remote_id,
+            "topic_tag_requested": topic_tag,
             "permalink": link or None,
             "published_at": __import__("datetime").datetime.now(
                 __import__("datetime").timezone.utc).isoformat(),
