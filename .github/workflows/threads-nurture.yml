@@ -1,10 +1,10 @@
 name: Enna — Threads Content & Publishing
 on:
   schedule:
-    # 09:45, 12:45, 18:45 Vietnam time: second/third cycles are
-    # catch-up checks after delayed Actions runs. SQL post-claim prevents
-    # duplicate publishing; ambiguous writes are never auto-retried.
-    - cron: '45 2,5,11 * * *'
+    # Evaluation checkpoints every ~2h between 09:05 and 21:05 VN.
+    # A checkpoint is NOT a publishing quota: quality, evidence, time gaps,
+    # account OAuth and the atomic SQL gate can all decide to SKIP.
+    - cron: '5 2,4,6,8,10,12,14 * * *'
   issues:
     types: [opened]
   workflow_dispatch:
@@ -38,6 +38,7 @@ jobs:
       THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
       THREADS_PUBLISH_ENABLED: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'plan' && 'false' || secrets.THREADS_PUBLISH_ENABLED }}"
+      THREADS_ADAPTIVE_ENABLED: "true"
       THREADS_FORCE_GENERATION: "${{ github.event_name == 'issues' && startsWith(github.event.issue.title, 'threads: ai') && 'true' || 'false' }}"
     steps:
       - name: Require backend configuration
@@ -76,5 +77,5 @@ jobs:
           echo "## Enna Threads Nurture — real provider outcomes only" >> "$GITHUB_STEP_SUMMARY"
           echo "Publisher uses owner-approved Meta OAuth stored encrypted in Supabase Vault; token refresh is automated." >> "$GITHUB_STEP_SUMMARY"
           echo "The account cultivation snapshot distinguishes scheduled posts from verified publications. Shopee Affiliate requires separate real approval; no eligibility or earnings are implied." >> "$GITHUB_STEP_SUMMARY"
-          echo "Metricool now has 26 booked posts during the 7-day sprint; Enna only confirms publication after seeing actual Meta posts." >> "$GITHUB_STEP_SUMMARY"
+          echo "Metricool retains its booked calendar; adaptive Meta extras are gated by quality, a 90-minute gap, a maximum of five total posts per day, and official owner permissions." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
