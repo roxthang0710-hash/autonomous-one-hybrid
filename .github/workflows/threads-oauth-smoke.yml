@@ -26,6 +26,11 @@ jobs:
             echo "Legacy owner password field must not return"; exit 1
           fi
           node --check docs/oauth/client.js
+          grep -Fq 'MAX_SESSION_AGE_MS = 25 * 60 * 1000' docs/oauth/client.js
+          grep -Fq 'sessionStorage.setItem(OWNER_SESSION_KEY' docs/oauth/client.js
+          grep -Fq 'await verifyOwner(stored.accessToken)' docs/oauth/client.js
+          grep -Fq 'if (outcome === "connected")' docs/oauth/client.js
+          grep -Fq 'forgetOwnerSession();' docs/oauth/client.js
           grep -q 'code_exchange:' docs/oauth/client.js
           grep -q 'vault_save:' docs/oauth/client.js
           grep -Fq 'API+"/oauth/access_token?"+exchangeParams' supabase/functions/threads-oauth/index.ts
