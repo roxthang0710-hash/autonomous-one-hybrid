@@ -26,6 +26,10 @@ def parse_insights(payload):
         values = item.get("values", [])
         val = (values[0].get("value") if isinstance(values, list)
                and values and isinstance(values[0], dict) else None)
+        # Some Meta insights return a single total_value instead of values.
+        # Accept only provider-reported nonnegative integers; never 0-fill.
+        if val is None and isinstance(item.get("total_value"), dict):
+            val = item["total_value"].get("value")
         # API may omit experimental metrics. Never invent missing values.
         if type(val) is int and val >= 0:
             result[key] = val
@@ -61,10 +65,9 @@ def collect(db, max_posts=10):
             row = {"post_id": post["id"],
                    "collected_at": datetime.now(timezone.utc).isoformat(),
                    **observed}
-            # Unreturned metrics cannot be represented as 0 without misleading
-            # consumers. For now require full coverage before storing snapshot.
-            if set(observed) != set(METRICS):
-                continue
+            # Store partial provider observations: NULL means "not returned",
+            # not a fabricated zero. Supabase v2.1 accepts nullable metrics.
+            # SQL still enforces all reported counts are nonnegative.
             db.insert("threads_metrics", row)
             written += 1
         except (requests.RequestException, ValueError):
