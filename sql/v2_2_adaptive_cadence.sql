@@ -22,6 +22,12 @@ begin
       or not c.auto_publish_enabled or c.platform_user_id is null
       or c.username is null then return; end if;
 
+  -- One claim decision per brand per transaction, even if multiple
+  -- workflow invocations overlap across platforms.
+  if not pg_try_advisory_xact_lock(hashtext('enna_claim:' || p_brand_key)) then
+    return;
+  end if;
+
   vn_now := now() at time zone 'Asia/Ho_Chi_Minh';
   local_day := vn_now::date;
   -- No overnight surprise posts, but not a mandated fixed publication time.
