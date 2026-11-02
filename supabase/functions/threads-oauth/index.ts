@@ -27,15 +27,20 @@ function headers(type="application/json; charset=utf-8") {
 const json=(data:unknown,status=200)=>new Response(JSON.stringify(data),{
   status, headers:headers()
 });
-function redirect(outcome?: "connected"|"failed") {
- const location = FRONTEND + (outcome ? "?status="+outcome : "");
+type SafeFailure = "meta_denied"|"invalid_request"|"expired_session"|"code_exchange"|
+  "long_token"|"account_verify"|"wrong_account"|"vault_save"|"unknown";
+function redirect(outcome?: "connected"|"failed", failure?:SafeFailure) {
+ const destination = new URL(FRONTEND);
+ if (outcome) destination.searchParams.set("status",outcome);
+ // Only server-generated constant stage names, never tokens/codes/secrets.
+ if (outcome==="failed"&&failure) destination.searchParams.set("reason",failure);
  return new Response(null,{status:303,headers:{
-  "Location":location,"Cache-Control":"no-store","Referrer-Policy":"no-referrer",
-  "X-Content-Type-Options":"nosniff"
+  "Location":destination.toString(),"Cache-Control":"no-store",
+  "Referrer-Policy":"no-referrer","X-Content-Type-Options":"nosniff"
  }});
 }
 const endPage=(success:boolean,_detail:string,_status=200)=>
-  redirect(success ? "connected" : "failed");
+  redirect(success ? "connected" : "failed", success ? undefined : "invalid_request");
 async function digest(value:string) {
  const b=new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(value)));
  return [...b].map(x=>x.toString(16).padStart(2,"0")).join("");
@@ -102,35 +107,45 @@ async function handler(req:Request):Promise<Response> {
    return json({authorizeUrl:"https://threads.net/oauth/authorize?"+params.toString()});
  }
  if(req.method==="GET"&&path==="/callback"){
-   if(url.searchParams.has("error"))return endPage(false,"Bạn đã hủy hoặc từ chối cấp quyền Meta.",400);
+   if(url.searchParams.has("error"))return redirect("failed","meta_denied");
    const code=url.searchParams.get("code")||"";
    const state=url.searchParams.get("state")||"";
    if(!/^[a-f0-9]{64}$/.test(state)||code.length<10||code.length>3000||!service)
       return endPage(false,"Thiếu mã, phiên không hợp lệ hoặc máy chủ chưa cấu hình.",400);
    const {data,error}=await service.rpc("threads_claim_oauth",{p_state_hash:await digest(state)});
    const grant=data?.[0];
-   if(error||!grant)return endPage(false,"Phiên đã hết hạn hoặc được sử dụng. Hãy bắt đầu lại.",400);
+   if(error||!grant)return redirect("failed","expired_session");
+   let stage:SafeFailure="code_exchange";
    try{
-     const short=await meta(API+"/oauth/access_token",{
+     // Follow Meta's official Threads Postman API: POST /oauth/access_token
+     // with required parameters in the QUERY STRING, NOT form-encoded body.
+     // Do not log the URL: it includes the short-lived one-time code.
+     const exchangeParams=new URLSearchParams({
+       client_id:grant.app_id,client_secret:grant.app_secret,
+       grant_type:"authorization_code",code,redirect_uri:grant.redirect_uri
+     });
+     const short=await meta(API+"/oauth/access_token?"+exchangeParams,{
        method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
-       body:new URLSearchParams({client_id:grant.app_id,client_secret:grant.app_secret,
-         grant_type:"authorization_code",code,redirect_uri:grant.redirect_uri}),
+       body:"",
      });
      if(typeof short.access_token!=="string"||short.access_token.length<40)
-       throw Error("Missing short Meta token");
+       throw Error("Invalid short token response");
+     stage="long_token";
      const long=await meta(API+"/access_token?"+new URLSearchParams({
        grant_type:"th_exchange_token",client_secret:grant.app_secret}),{
        headers:{"Authorization":"Bearer "+short.access_token},
      });
      if(typeof long.access_token!=="string"||typeof long.expires_in!=="number")
-       throw Error("Missing long Meta token");
+       throw Error("Invalid long token response");
      const seconds=Number(long.expires_in);
-     if(seconds<86400||seconds>70*86400)throw Error("Bad Meta token lifetime");
+     if(seconds<86400||seconds>70*86400)throw Error("Invalid long token lifetime");
+     stage="account_verify";
      const profile=await meta(API+"/v1.0/me?fields=id,username",{
        headers:{"Authorization":"Bearer "+long.access_token},
      });
      if(String(profile.username||"").toLowerCase()!==EXPECTED||!profile.id)
-       return endPage(false,"Meta đang đăng nhập tài khoản khác @dohay_dilam. Không có quyền nào được kích hoạt.",422);
+       return redirect("failed","wrong_account");
+     stage="vault_save";
      const {error:e}=await service.rpc("threads_finish_oauth",{
        p_owner_user_id:grant.owner_user_id,p_app_id:grant.app_id,
        p_app_secret_ref:grant.app_secret_ref,p_access_token:long.access_token,
@@ -138,11 +153,13 @@ async function handler(req:Request):Promise<Response> {
        p_expires_at:new Date(Date.now()+seconds*1000).toISOString(),
        p_enable_replies:grant.enable_replies===true,
      });
-     if(e)throw Error("Vault save rejected");
-     return endPage(true,"Đã xác nhận @dohay_dilam và lưu token an toàn trong Supabase Vault. Lịch đăng trực tiếp của Agent sẽ chỉ bắt đầu sau giai đoạn Metricool.");
+     if(e)throw Error("Token vault save failed");
+     return redirect("connected");
    }catch{
-     // Never print or reflect authorization code, token or app secret.
-     return endPage(false,"Meta chưa xác thực được hoặc quyền ứng dụng chưa đầy đủ. Kiểm tra Threads App ID, Secret, quyền Tester và Redirect URL rồi thử lại.",422);
+     // An allowlisted failure STAGE only. Never log or reflect Meta response
+     // bodies, OAuth code, access tokens, app secret or user identities.
+     console.error("Threads OAuth callback failed at stage:",stage);
+     return redirect("failed",stage);
    }
  }
  return json({error:"Not found"},404);
