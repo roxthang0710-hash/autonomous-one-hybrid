@@ -49,3 +49,9 @@ Autonomous One dùng **chính danh tính thương hiệu thật** để tìm h�
 - [GitHub Actions — Growth Radar](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/workflows/growth-radar.yml)
 - [Supabase — Database](https://supabase.com/dashboard/project/gjdvdohylvsauphhkutw/editor) xem `growth_signals`, `growth_opportunities`, `growth_engagement_attempts`, `threads_vault_credentials.enable_replies` (không mở giá trị token).
 - [Meta Threads API — Postman chính thức](https://www.postman.com/meta/threads/collection/dht3nzz/threads-api).
+
+## Kiểm tra vận hành sau triển khai — thực tế
+
+- [GitHub Growth Radar run 41426614045](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41426614045) **SUCCESS**: đọc 72 tín hiệu công khai, 14 tín hiệu qua sàng lọc, lưu 1 đề xuất không thương mại (tổng 4 đề xuất); truy cập tìm kiếm cuộc thảo luận `threads_discovery=not_authorized`, worker `Growth engagement: not_authorized`; **0 lượt cố gắng bình luận, 0 bài được bình luận tự động**.
+- [GitHub Tests run 41426545111](https://github.com/roxthang0710-hash/autonomous-one-hybrid/actions/runs/41426545111) **SUCCESS**; bộ test xác thực dữ liệu, SQL claim, nội dung tương tác. SQL live smoke cũng khẳng định không có dữ liệu thử nào còn lại.
+- Kho OAuth Meta hiện có **chưa được cấp lại quyền tương tác**. Khả năng đăng bài lịch Threads riêng vẫn đang hoạt động và không ảnh hưởng 15 bài đã giao Metricool.
