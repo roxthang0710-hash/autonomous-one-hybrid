@@ -83,7 +83,7 @@ class SafeRecoveryTests(unittest.TestCase):
              patch("growth.runner.compose", side_effect=RuntimeError("GroqRateLimit")):
             with self.assertRaises(RuntimeError):
                 run(db=db, now=NOW)
-        self.assertEqual(db.patch.call_args.kwargs["payload"]["status"], "failed")
+        self.assertEqual(db.patch.call_args.args[2]["status"], "failed")
 
 
 if __name__ == "__main__":
