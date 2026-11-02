@@ -16,7 +16,10 @@ Deno.serve(async (request: Request) => {
       posts: 'threads_posts?select=status,scheduled_at,published_at&limit=500',
       tasks: 'agent_tasks?select=status,kind&limit=500',
       replies: 'growth_engagement_attempts?select=status,finished_at&limit=500',
-      account: 'threads_channels?select=username,status,authorized,auto_publish_enabled&limit=1'
+      account: 'threads_channels?select=username,status,authorized,auto_publish_enabled&limit=1',
+      learning: 'enna_learning_policy?select=preferred_format,applied_at,version&brand_key=eq.do_hay_di_lam&limit=1',
+      learningDecisions: 'enna_learning_decisions?select=evaluated_at,decision&brand_key=eq.do_hay_di_lam&order=evaluated_at.desc&limit=8',
+      providerEvidence: 'enna_publication_evidence?select=provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=60'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -27,11 +30,12 @@ Deno.serve(async (request: Request) => {
     const by = (rows:any[],status:string) => rows.filter(r=>r.status===status).length;
     const timeline = [
       ...s.research.map(r=>({at:r.started_at,kind:'research',status:r.status})),
-      ...s.growth.map(r=>({at:r.started_at,kind:'growth',status:r.status}))
+      ...s.growth.map(r=>({at:r.started_at,kind:'growth',status:r.status})),
+      ...s.learningDecisions.map(r=>({at:r.evaluated_at,kind:'learning',status:r.decision}))
     ].filter(r=>r.at && Number.isFinite(Date.parse(r.at)))
       .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,15);
     const latest = timeline[0] || null;
-    const connected = !!(s.account[0]?.authorized && s.account[0]?.status==='active');
+    const connected = !!(s.account[0]?.authorized && s.account[0]?.status==='connected');
     const working = !!(latest?.status==='running' && Date.now()-Date.parse(latest.at)<15*60000 && Date.now()>=Date.parse(latest.at));
     const taskStatus = {completed:by(s.tasks,'completed'),pending:by(s.tasks,'pending'),blocked:by(s.tasks,'blocked')};
     return reply({
@@ -42,6 +46,16 @@ Deno.serve(async (request: Request) => {
       tasks: taskStatus,
       replies: {posted:by(s.replies,'posted')+by(s.replies,'success'),attempts:s.replies.length},
       runs: {recentResearch:s.research.length,recentGrowth:s.growth.length},
+      learning: {format:['balanced','story','practical'].includes(s.learning[0]?.preferred_format)
+                      ? s.learning[0].preferred_format : 'unknown',
+                 version:Number(s.learning[0]?.version)||null,
+                 updatedAt:s.learning[0]?.applied_at||null,
+                 lastDecision:s.learningDecisions[0]?.decision||'not_evaluated',
+                 lastEvaluatedAt:s.learningDecisions[0]?.evaluated_at||null},
+      providerPublications: {
+        metricoolReportedPublished:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED').length,
+        metaIdsConfirmed:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED' && !!r.meta_post_id).length
+      },
       activity:timeline
     });
   } catch (_error) {
