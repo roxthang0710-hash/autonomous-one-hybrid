@@ -50,6 +50,9 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Research and store one affiliate draft
         run: python -m affiliate.runner
+      - name: Enna next-best-action report (read only, evidence-first)
+        if: always()
+        run: python -m enna
       - name: Summarize results without publishing private ideas
         if: always()
         run: |
