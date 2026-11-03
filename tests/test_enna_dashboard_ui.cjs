@@ -16,7 +16,9 @@ test("only real backend events are labeled activity, and refresh is periodic",()
   assert.match(html,/setInterval\(loadEvents,15000\)/);
   assert.match(html,/mode=events/);
   assert.match(html,/codeLabels=/);
-  assert.match(html,/Lượt tự động gần nhất/);
+  assert.match(html,/Tự chạy theo lịch gần nhất/);
+  assert.match(html,/kiểm thử thủ công/);
+  assert.match(edge,/trigger_kind/);
   assert.match(edge,/enna_activity_events\?select=occurred_at,kind,status,code/);
   assert.match(edge,/Cache-Control':'no-store/);
   assert.doesNotMatch(edge,/select=\*/);
