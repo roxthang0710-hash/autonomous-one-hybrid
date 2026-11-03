@@ -21,8 +21,9 @@ import requests
 
 from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
-from growth.generator import compose
-from growth.scoring import classify, normalize
+from growth.companion_editor import compose_selected
+from growth.companion_fit import assess_selected
+from growth.scoring import normalize
 from growth.voice import suitable_reply
 from threads.publisher import thread_request
 
@@ -80,10 +81,11 @@ def decode_issue_body(body):
         raise ValueError("invalid_selected_text_encoding") from None
     if not 50 <= len(text) <= MAX_EXCERPT:
         raise ValueError("selected_post_excerpt_length_invalid")
-    # Only relevant, benign public text can become a reply target.
-    verdict = classify(text)
-    if verdict["state"] != "candidate" or verdict["risk_flags"]:
-        raise ValueError("not_relevant_or_safe_for_brand")
+    # The post is owner-selected. Broad context is welcome; keywords are
+    # optional. Maintain independent privacy/safety checks.
+    verdict = assess_selected(text)
+    if verdict["state"] != "candidate":
+        raise ValueError("unsafe_or_insufficient_selected_context")
     return target, text, verdict
 
 
@@ -100,7 +102,7 @@ def verified_meta_target(info, target, selected, *, now=None):
     if not permalink or ("/post/" + target["shortcode"]) not in permalink:
         return False
     official = str(info.get("text") or "")
-    if not 50 <= len(official) <= 2500 or classify(official)["state"] != "candidate":
+    if not 30 <= len(official) <= 2500 or assess_selected(official[:1800])["state"] != "candidate":
         return False
     words = {x for x in normalize(selected).split() if len(x) > 2}
     actual = set(normalize(official).split())
@@ -120,13 +122,13 @@ def verified_meta_target(info, target, selected, *, now=None):
 def can_send(text, selected, *, target):
     if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
         return False
-    return suitable_reply(text, selected) and not any(
+    return suitable_reply(text, selected, require_niche=False) and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
             "mua ngay", "giam gia"))
 
 
-def process(event, *, db=None, read=thread_request, create=compose,
+def process(event, *, db=None, read=thread_request, create=compose_selected,
             credentials=get_credentials, publish=send_reply, now=None):
     """Return an honest public-issue summary, never a claimed post without Meta ID."""
     now = now or datetime.now(timezone.utc)
@@ -159,19 +161,25 @@ def process(event, *, db=None, read=thread_request, create=compose,
     # AI generation happens only for this owner-selected post; no automated
     # discovery or scraping. Inputs are explicitly untrusted context.
     try:
-        reply = create({
+        proposed = create({
             "title": selected,
             "source_url": target["url"],
             "source": "owner_selected_public_threads_post",
             "niche": verdict["niche"],
-        }, kind="reply_suggestion", prior_texts=())["post_text"].strip()
+        }, kind="reply_suggestion", prior_texts=())
+        if proposed.get("should_reply") is False:
+            return {"state":"not_worth_interjecting",
+                    "content_angle":str(proposed.get("content_angle") or "")[:220]}
+        reply = proposed["post_text"].strip()
+        content_angle = str(proposed.get("content_angle") or "")[:220]
     except (ValueError, KeyError, TypeError, requests.RequestException):
         return {"state":"no_safe_draft"}
     if not can_send(reply, selected, target=target):
         return {"state":"no_safe_draft"}
 
     fallback = {"state":"draft_only_meta_cannot_verify_target",
-                "draft":reply, "source_url":target["url"]}
+                "draft":reply, "source_url":target["url"],
+                "content_angle":content_angle}
     try:
         info = read("GET", "/" + target["candidate_id"], token,
             params={"fields":"id,username,text,timestamp,permalink"})
@@ -202,7 +210,7 @@ def process(event, *, db=None, read=thread_request, create=compose,
             "finished_at":datetime.now(timezone.utc).isoformat(),
         })
         return {"state":"posted_confirmed","source_url":target["url"],
-                "reply_id":str(remote_id)}
+                "reply_id":str(remote_id),"content_angle":content_angle}
     except Exception as exc:
         db.patch("enna_companion_attempts",attempt_id,{
             "status":"uncertain","error_kind":type(exc).__name__[:60],
@@ -213,20 +221,25 @@ def process(event, *, db=None, read=thread_request, create=compose,
 
 
 def safe_comment(result):
-    """Owner receives a status. No credentials or raw Meta/API errors."""
+    """Owner sees accurate outcome and an optional *original* content angle."""
     state=result.get("state","unknown")
+    angle=str(result.get("content_angle") or "").strip()[:220]
+    angle_note=("\\n\\nGóc nội dung riêng Enna có thể phát triển: "+angle) if angle else ""
     if state=="posted_confirmed":
         return ("✅ Enna đã nhận xác nhận phản hồi từ Meta. "
                 "Mã phản hồi: `"+str(result.get("reply_id",""))+"`. "
-                "Hãy kiểm tra dưới bài viết đã chọn.")
+                "Hãy kiểm tra dưới bài viết đã chọn."+angle_note)
     if state=="draft_only_meta_cannot_verify_target":
         return ("🟠 Enna đã soạn bình luận nhưng Meta chưa cho phép xác minh "
-                "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\n\n"
-                "Bản nháp để bạn xem và tự đăng nếu phù hợp:\n\n> "+
-                str(result.get("draft","")).replace("\n","\n> "))
+                "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\\n\\n"
+                "Bản nháp để bạn xem và tự đăng nếu phù hợp:\\n\\n> "+
+                str(result.get("draft","")).replace("\\n","\\n> ")+angle_note)
+    if state=="not_worth_interjecting":
+        return ("Enna đã phân tích bài bạn chọn nhưng không thấy cách "
+                "bình luận tự nhiên có ích. **Không đăng bình luận.**"+angle_note)
     if state=="duplicate_or_daily_limit":
         return ("Enna không đăng: đã đạt giới hạn tương tác hoặc bài này đã "
-                "được xử lý trước đó. Không tự thử lại.")
+                "được xử lý trước đó. Không tự thử lại."+angle_note)
     if state=="uncertain_do_not_retry":
         return ("⚠️ Meta không trả về kết quả chắc chắn. Có thể bình luận đã "
                 "được đăng. Enna sẽ **không gửi lại**; cần kiểm tra bài gốc.")
