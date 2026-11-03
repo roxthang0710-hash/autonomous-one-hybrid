@@ -266,6 +266,20 @@ def main():
     issue=event.get("issue") or {}
     if issue.get("number") and result.get("state") not in ("not_project_owner","not_enna_issue"):
         comment_on_issue(issue["number"],safe_comment(result))
+        # A real workflow event; do not treat a draft as a published reply.
+        from growth.activity_log import emit
+        run_id=os.environ.get("GITHUB_RUN_ID","")
+        code=({"posted_confirmed":"companion_reply_posted",
+               "draft_only_meta_cannot_verify_target":"companion_draft_only",
+               "rejected_selection":"companion_rejected",
+               "no_safe_draft":"companion_rejected"}).get(result.get("state"),"companion_checked")
+        if run_id.isdecimal():
+            try:
+                emit(Database(),"growth",
+                     "success" if code=="companion_reply_posted" else "skipped",
+                     code,run_id=run_id)
+            except Exception:
+                pass
     print("Enna selected-post outcome:", result.get("state"))
 
 
