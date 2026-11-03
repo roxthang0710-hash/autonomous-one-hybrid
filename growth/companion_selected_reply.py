@@ -291,6 +291,38 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         str(comment.get("body") or "").strip()=="/enna draft"
         and str((comment.get("user") or {}).get("login") or "")==owner
     )
+    def context_approved(candidate):
+        # Hard safety checks remain mandatory even if an independent
+        # semantic judge accepts a natural paraphrase.
+        if can_send(candidate, selected, target=target):
+            return True
+        return (can_send(candidate, selected, target=target,
+                         semantic_override=True)
+                and semantic_judge(selected, candidate))
+
+    def choose_alternatives(earlier=()):
+        generator=(option_generator if option_generator is not None
+                   else compose_selected_options if create is compose_selected
+                   else None)
+        if generator is None:
+            return None
+        try:
+            options=generator({
+                "title":selected,"niche":verdict["niche"],
+                "source_url":target["url"]},earlier=tuple(earlier))
+            if not isinstance(options,list):
+                return None
+            for option in options[:3]:
+                if not isinstance(option,dict):
+                    continue
+                candidate=str(option.get("post_text") or "").strip()
+                if candidate and context_approved(candidate):
+                    return (candidate,str(option.get("content_angle") or "")[:220])
+        except (requests.RequestException,ValueError,KeyError,TypeError):
+            pass
+        return None
+
+    preapproved=False
     # AI generation happens only for this owner-selected post; no automated
     # discovery or scraping. Inputs are explicitly untrusted context.
     try:
@@ -311,18 +343,15 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
     except requests.RequestException:
         return {"state":"ai_service_unavailable","provider_reason":"transport_error"}
     except (ValueError, KeyError, TypeError):
-        return {"state":"ai_draft_invalid_or_unavailable"}
-    def context_approved(candidate):
-        # The old exact-phrase gate is high precision but rejects natural
-        # paraphrases. A separate conservative semantic judge can approve
-        # those cases ONLY after all non-contextual safety gates pass.
-        if can_send(candidate, selected, target=target):
-            return True
-        return (can_send(candidate, selected, target=target,
-                         semantic_override=True)
-                and semantic_judge(selected, candidate))
-
-    if not context_approved(reply):
+        # Broken JSON, truncated model content or missing structured fields
+        # must not abort the whole owner-requested task. One diversified
+        # three-way alternative generation is attempted WITHOUT publishing.
+        recovered=choose_alternatives(())
+        if recovered is None:
+            return {"state":"ai_draft_invalid_or_unavailable"}
+        reply,content_angle=recovered
+        preapproved=True
+    if not preapproved and not context_approved(reply):
         # First try one targeted revision, then generate three DIFFERENT
         # grounded alternatives and independently review each. No Threads
         # write happens while exploring candidates.
@@ -353,28 +382,10 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         except (requests.RequestException, ValueError, KeyError, TypeError):
             pass
         if not accepted:
-            # Unit-test-injected writer defaults to NO extra Groq calls;
-            # actual autonomous workflow supplies its own 3-way generation.
-            generate_options=(option_generator if option_generator is not None
-                              else compose_selected_options if create is compose_selected
-                              else None)
-            if generate_options is not None:
-                try:
-                    options=generate_options({
-                        "title":selected,"niche":verdict["niche"],
-                        "source_url":target["url"]},
-                        earlier=tuple(attempts))
-                    for option in options[:3]:
-                        if not isinstance(option,dict):
-                            continue
-                        candidate=str(option.get("post_text") or "").strip()
-                        if candidate and context_approved(candidate):
-                            reply=candidate
-                            content_angle=str(option.get("content_angle") or content_angle)[:220]
-                            accepted=True
-                            break
-                except (requests.RequestException,ValueError,KeyError,TypeError):
-                    pass
+            recovered=choose_alternatives(attempts)
+            if recovered is not None:
+                reply,content_angle=recovered
+                accepted=True
         if not accepted:
             return {"state":"ai_reply_not_contextual_enough",
                     "content_angle":content_angle}
