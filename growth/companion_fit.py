@@ -42,6 +42,16 @@ ANGLE_SIGNALS = {
 }
 
 
+def user_is_frustrated(text):
+    """An advisory emotional cue, never a required niche/topic keyword."""
+    terms=normalize(text)
+    return any(phrase in terms for phrase in (
+        "ghet", "buc minh", "kho chiu", "phien", "uc che", "met",
+        "khong chiu", "dien tiet", "tuc", "cam phien", "lam on",
+        "gia on", "than phien", "bon chen", "vo duyen"
+    ))
+
+
 def assess_selected(text):
     if not isinstance(text, str):
         return {"state": "rejected", "reason": "missing_text"}
