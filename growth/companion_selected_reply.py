@@ -21,7 +21,7 @@ import requests
 
 from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
-from growth.companion_editor import compose_selected
+from growth.companion_editor import compose_selected, EnnaModelServiceError
 from growth.companion_fit import assess_selected
 from growth.selected_direct_reply import (
     ConfirmedMetaRejection, MetaStageError, direct_reply, target_read_limited,
@@ -202,6 +202,13 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
 
     db = db or Database()
 
+    # The owner can request a safe, draft-only diagnosis using /enna draft.
+    # This NEVER calls Meta, claims a posting attempt, or sends a reply.
+    comment=event.get("comment") or {}
+    draft_only=(
+        str(comment.get("body") or "").strip()=="/enna draft"
+        and str((comment.get("user") or {}).get("login") or "")==owner
+    )
     # AI generation happens only for this owner-selected post; no automated
     # discovery or scraping. Inputs are explicitly untrusted context.
     try:
@@ -216,8 +223,11 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                     "content_angle":str(proposed.get("content_angle") or "")[:220]}
         reply = proposed["post_text"].strip()
         content_angle = str(proposed.get("content_angle") or "")[:220]
+    except EnnaModelServiceError as exc:
+        return {"state":"ai_service_unavailable",
+                "provider_reason":exc.safe_reason}
     except requests.RequestException:
-        return {"state":"ai_service_unavailable"}
+        return {"state":"ai_service_unavailable","provider_reason":"transport_error"}
     except (ValueError, KeyError, TypeError):
         return {"state":"ai_draft_invalid_or_unavailable"}
     if not can_send(reply, selected, target=target):
@@ -244,6 +254,9 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
             return {"state":"ai_reply_not_contextual_enough",
                     "content_angle":content_angle}
 
+    if draft_only:
+        return {"state":"draft_prepared_only","draft":reply,
+                "source_url":target["url"],"content_angle":content_angle}
     fallback = {"state":"draft_only_meta_cannot_verify_target",
                 "draft":reply, "source_url":target["url"],
                 "content_angle":content_angle}
@@ -353,6 +366,11 @@ def safe_comment(result):
                 "quyền OAuth để đăng. **Chưa có bình luận nào được đăng.**"
                 "\n\nBản nháp để bạn tự sử dụng nếu phù hợp:\n\n> "
                 +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
+    if state=="draft_prepared_only":
+        return ("📝 Enna đã kiểm thử tạo bình luận theo lệnh chủ tài khoản. "
+                "**Không có bình luận tự động nào được đăng.**"
+                "\n\nBản nháp để bạn xem và tự đăng nếu phù hợp:\n\n> "
+                +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="draft_only_meta_cannot_verify_target":
         return ("🟠 Enna đã soạn bình luận nhưng Meta chưa cho phép xác minh "
                 "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\n\n"
@@ -369,9 +387,22 @@ def safe_comment(result):
                 "\n\nBản nháp nếu bạn muốn dùng thủ công:\n\n> "
                 +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="ai_service_unavailable":
-        return ("Enna đã nhận bài nhưng dịch vụ tạo nội dung chưa phản hồi "
-                "thành công. **Không có bình luận nào được đăng.** "
-                "Vui lòng gửi một bài khác khi dịch vụ hoạt động lại.")
+        reason=str(result.get("provider_reason") or "unknown")
+        public={"provider_rate_limited_429":"Groq đang giới hạn tần suất (HTTP 429)",
+                "provider_auth_or_access_401":"Groq từ chối khóa API (HTTP 401)",
+                "provider_auth_or_access_403":"Groq từ chối quyền truy cập (HTTP 403)",
+                "network_timeout":"Kết nối đến Groq hết thời gian",
+                "network_error":"Không kết nối được Groq",
+                "transport_error":"Lỗi kết nối Groq",
+                "provider_http_400":"Groq từ chối định dạng yêu cầu (HTTP 400)",
+                "provider_http_500":"Groq gặp lỗi máy chủ (HTTP 500)",
+                "provider_http_502":"Groq gặp lỗi máy chủ (HTTP 502)",
+                "provider_http_503":"Groq gặp lỗi máy chủ (HTTP 503)",
+                "provider_http_504":"Groq gặp lỗi máy chủ (HTTP 504)"}
+        return ("Enna đã nhận bài nhưng chưa tạo được bản nháp: "
+                +public.get(reason,"lỗi dịch vụ AI ("+
+                re.sub(r"[^a-z0-9_]", "",reason)[:40]+")")
+                +". **Chưa có bình luận nào được đăng.**")
     if state=="ai_draft_invalid_or_unavailable":
         return ("Enna đã nhận bài nhưng bản nháp AI không đạt kiểm tra "
                 "định dạng hoặc không có cấu hình mô hình khả dụng. "
@@ -432,6 +463,7 @@ def main():
                "rejected_selection":"companion_rejected",
                "no_safe_draft":"companion_rejected",
                "ai_service_unavailable":"companion_rejected",
+               "draft_prepared_only":"companion_draft_only",
                "meta_rejected_direct_reply":"companion_draft_only",
                "ai_draft_invalid_or_unavailable":"companion_rejected",
                "ai_reply_not_contextual_enough":"companion_rejected"}).get(result.get("state"),"companion_checked")
