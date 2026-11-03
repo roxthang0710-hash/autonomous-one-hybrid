@@ -23,6 +23,11 @@ test("only real backend events are labeled activity, and refresh is periodic",()
   assert.match(html,/sys-autonomous/);
   assert.match(edge,/followerKpi/);
   assert.match(edge,/metaPosted.size/);
+  assert.match(edge,/enna_multichannel_posts/);
+  assert.match(edge,/facebookUpcoming/);
+  assert.match(edge,/instagramUpcoming/);
+  assert.match(html,/sys-facebook/);
+  assert.match(html,/sys-instagram/);
   assert.match(edge,/enna_activity_events\?select=occurred_at,kind,status,code/);
   assert.match(edge,/Cache-Control':'no-store/);
   assert.doesNotMatch(edge,/select=\*/);
