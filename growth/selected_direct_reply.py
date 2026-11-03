@@ -19,6 +19,15 @@ class ConfirmedMetaRejection(Exception):
         super().__init__("meta_create_rejected_" + str(self.http_status))
 
 
+class MetaStageError(Exception):
+    """An ambiguous official Meta API error with a safe stage/status label."""
+
+    def __init__(self, stage, http_status):
+        self.stage = stage if stage in ("create", "publish") else "unknown"
+        self.http_status = int(http_status) if http_status else 0
+        super().__init__("meta_" + self.stage + "_http_" + str(self.http_status))
+
+
 def status_code(exc):
     response = getattr(exc, "response", None)
     return getattr(response, "status_code", None)
@@ -52,13 +61,17 @@ def direct_reply(token, target_id, text, *, request=thread_request):
         status = status_code(exc)
         if status in (400, 401, 403, 404, 429):
             raise ConfirmedMetaRejection(status) from None
-        raise
+        raise MetaStageError("create",status) from None
     container_id = str(created.get("id") or "")
     if not container_id:
         raise RuntimeError("meta_container_missing")
     # A create container may have succeeded. Never retry after this point.
-    published = request("POST", "/me/threads_publish", token,
-                        data={"creation_id": container_id})
+    try:
+        published = request("POST", "/me/threads_publish", token,
+                            data={"creation_id": container_id})
+    except requests.HTTPError as exc:
+        # A container may have been accepted already: never retry silently.
+        raise MetaStageError("publish",status_code(exc)) from None
     reply_id = str(published.get("id") or "")
     if not reply_id:
         raise RuntimeError("meta_publish_unconfirmed")
