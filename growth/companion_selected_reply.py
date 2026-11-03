@@ -143,6 +143,13 @@ def verified_meta_target(info, target, selected, *, now=None):
 def can_send(text, selected, *, target):
     if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
         return False
+    normalized = normalize(text)
+    # Reject generic filler that only summarizes the viral post rather than
+    # contributing a distinctive observation. One draft revision is permitted.
+    if any(phrase in normalized for phrase in (
+        "that la mot khoanh khac", "dung la mot cau chuyen",
+        "mot khoanh khac doi thuong ngot ngao")):
+        return False
     return suitable_reply(text, selected, require_niche=False) and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
