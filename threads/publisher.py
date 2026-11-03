@@ -5,6 +5,7 @@ No login scraping, OTP automation, mock profiles, affiliate links or group spam.
 """
 import json
 import os
+import re
 
 import requests
 
@@ -84,11 +85,22 @@ def authenticate(db, token, expected):
     return channel
 
 
-def do_publish(token, text, topic_tag=None):
-    """Use official two-step text flow; returned id is the published post id."""
+def do_publish(token, text, topic_tag=None, *, image_url=None, alt_text=None):
+    """Use official Meta two-step flow for text or OWN original PNG image."""
     if check_post(text):
         raise ValueError("Text failed publishing safety gate")
     data = {"media_type": "TEXT", "text": text}
+    if image_url is not None:
+        if (not isinstance(image_url, str) or
+            not re.fullmatch(
+                r"https://gjdvdohylvsauphhkutw[.]supabase[.]co/storage/v1/object/public/enna-original-media/meme/original-[a-z0-9_-]+[.]png",
+                image_url) or
+            not isinstance(alt_text, str) or not 12 <= len(alt_text) <= 180):
+            raise ValueError("Only own verified meme PNG assets are publishable")
+        data.update({"media_type": "IMAGE", "image_url": image_url,
+                     "alt_text": alt_text})
+    elif alt_text is not None:
+        raise ValueError("Alt text without an original image is invalid")
     if topic_tag is not None:
         if topic_tag not in TOPIC_BY_PILLAR.values():
             raise ValueError("Unknown native topic tag")
@@ -135,7 +147,24 @@ def publish_due(db):
     if post["content_type"] != "editorial" or check_post(post["text_content"]):
         db.patch("threads_posts", post["id"], {"status": "blocked"})
         return "post_blocked_by_policy"
-
+    media = post.get("media_url")
+    if media:
+        if not post.get("media_idea_id"):
+            db.patch("threads_posts", post["id"], {"status": "blocked"})
+            return "unverified_media_not_publishable"
+        provenance = db.request("GET", "/enna_media_ideas", params={
+            "select": "id,source_url,rights_status,source_provider,status,media_type",
+            "id": "eq." + str(post["media_idea_id"]), "limit": "1",
+        })
+        if not isinstance(provenance, list) or not provenance or not (
+            provenance[0].get("source_url") == media
+            and provenance[0].get("rights_status") == "original"
+            and provenance[0].get("source_provider") == "original"
+            and provenance[0].get("media_type") == "original_meme"
+            and provenance[0].get("status") in ("ready", "used")
+        ):
+            db.patch("threads_posts", post["id"], {"status": "blocked"})
+            return "unverified_media_not_publishable"
     attempt = db.insert("threads_publish_attempts", {
         "post_id": post["id"], "operation": "publish_text", "outcome": "started",
     })
@@ -144,7 +173,8 @@ def publish_due(db):
         if topic_tag is not None and topic_tag not in TOPIC_BY_PILLAR.values():
             raise ValueError("Unknown planned native Threads topic")
         container_id, remote_id, link = do_publish(
-            token, post["text_content"], topic_tag=topic_tag)
+            token, post["text_content"], topic_tag=topic_tag,
+            image_url=media, alt_text=post.get("media_alt_text"))
         db.patch("threads_posts", post["id"], {
             "status": "posted", "platform_post_id": remote_id,
             "topic_tag_requested": topic_tag,
