@@ -157,6 +157,33 @@ class SelectionTests(unittest.TestCase):
         self.assertNotIn("2,8K",clean)
         self.assertNotIn("6 giờ",clean)
 
+    def test_usable_draft_survives_missing_meta_oauth(self):
+        post = MagicMock()
+        graph = MagicMock()
+        db = MagicMock()
+        result = process(issue(), db=db,
+            credentials=lambda d:None, read=graph, publish=post,
+            create=lambda *a,**k:{
+                "should_reply":True, "post_text":ANSWER,
+                "content_angle":"Làm bảng chung mà không loạn trạng thái"})
+        self.assertEqual(result["state"],"draft_only_meta_not_authorized")
+        self.assertEqual(result["draft"],ANSWER)
+        graph.assert_not_called()
+        post.assert_not_called()
+        db.request.assert_not_called()
+
+    def test_selected_family_story_has_real_context_not_office_keywords(self):
+        from growth.companion_fit import assess_selected
+        story = ("Chú ruột nhận ra cháu mệt nên lặng lẽ nấu cháo, "
+                 "để trước cửa phòng rồi đi. Tối đó cháu mở YouTube "
+                 "và thấy lịch sử tìm kiếm cách nấu cháo không bị khét. "
+                 "Một chuyện nhỏ nhưng làm cả nhà xúc động.")
+        reply = ("Chú để tô cháo trước cửa đã ấm lòng rồi, mà lịch sử "
+                 "tìm kiếm cách nấu cháo không bị khét còn dễ thương hơn. "
+                 "Quan tâm đôi khi lặng lẽ vậy đó.")
+        self.assertEqual(assess_selected(story)["state"],"candidate")
+        self.assertTrue(can_send(reply,story,target=parse_threads_url(URL)))
+
     @patch("growth.companion_selected_reply.verify_meta_account")
     def test_invalid_ai_draft_is_diagnosed_without_touching_meta(self,_):
         event=issue()
