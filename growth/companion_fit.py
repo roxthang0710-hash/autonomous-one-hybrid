@@ -51,7 +51,10 @@ def assess_selected(text):
     folded = normalize(body)
     if len(folded.split()) < 7:
         return {"state": "rejected", "reason": "too_little_readable_context"}
-    if any(re.search(p, body, re.IGNORECASE) for p in PRIVATE_PATTERNS):
+    if (any(re.search(p, body, re.IGNORECASE) for p in PRIVATE_PATTERNS)
+        or any(token in folded for token in (
+            "mat khau", "ma otp", "can cuoc", "cmnd", "so tai khoan",
+            "thong tin khach hang", "dia chi nha", "so dien thoai"))):
         return {"state": "rejected", "reason": "possible_sensitive_or_link"}
     if any(term in folded for term in HIGH_RISK):
         return {"state": "rejected", "reason": "sensitive_or_controversial"}
