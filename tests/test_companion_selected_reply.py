@@ -379,6 +379,10 @@ class SelectionTests(unittest.TestCase):
                   "ghế liên tục thì đúng là khó ngủ nổi. Mong mọi người "
                   "tôn trọng giờ nghỉ của nhau chút.")
         self.assertFalse(can_send(unrelated,selected,target=parse_threads_url(URL)))
+        off_target=("Đúng là lúc cần một chút yên, nhưng bạn có thể "
+                    "nhắc nhẹ nhàng rồi thử nghỉ ngơi vài phút, "
+                    "nghe nhạc và tiếp tục làm việc.")
+        self.assertFalse(can_send(off_target,selected,target=parse_threads_url(URL)))
         self.assertTrue(can_send(grounded,selected,target=parse_threads_url(URL)))
 
     def test_generic_promotional_comment_rejected(self):
