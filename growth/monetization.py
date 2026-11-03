@@ -4,6 +4,7 @@ Use private Supabase operational state. A named affiliate program is not proof
 the owner's account is accepted, and provider commission is not bank receipt.
 """
 import json
+import sys
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from agent import Database
@@ -100,3 +101,4 @@ if __name__=="__main__":
         print("Enna monetization:",json.dumps({
             "phase":"source_unavailable","error_class":type(exc).__name__
         }))
+        sys.exit(1)
