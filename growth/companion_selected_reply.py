@@ -176,13 +176,6 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         return {"state":"insufficient_clean_context"}
 
     db = db or Database()
-    token_details = credentials(db)
-    if token_details is None:
-        return {"state":"meta_owner_permission_missing"}
-    token, expected = token_details
-    if expected != "dohay_dilam":
-        return {"state":"meta_identity_mismatch"}
-    verify_meta_account(token, expected)
 
     # AI generation happens only for this owner-selected post; no automated
     # discovery or scraping. Inputs are explicitly untrusted context.
@@ -229,6 +222,18 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
     fallback = {"state":"draft_only_meta_cannot_verify_target",
                 "draft":reply, "source_url":target["url"],
                 "content_angle":content_angle}
+    # Draft first, check Meta authorization second. Missing/expired OAuth must
+    # not discard a useful draft or force the owner to resend the same story.
+    try:
+        token_details = credentials(db)
+        if token_details is None:
+            return {**fallback,"state":"draft_only_meta_not_authorized"}
+        token, expected = token_details
+        if expected != "dohay_dilam":
+            return {**fallback,"state":"draft_only_meta_identity_mismatch"}
+        verify_meta_account(token, expected)
+    except (requests.RequestException, ValueError, TypeError, KeyError):
+        return {**fallback,"state":"draft_only_meta_not_authorized"}
     try:
         info = read("GET", "/" + target["candidate_id"], token,
             params={"fields":"id,username,text,timestamp,permalink"})
@@ -278,6 +283,11 @@ def safe_comment(result):
         return ("✅ Enna đã nhận xác nhận phản hồi từ Meta. "
                 "Mã phản hồi: `"+str(result.get("reply_id",""))+"`. "
                 "Hãy kiểm tra dưới bài viết đã chọn."+angle_note)
+    if state in ("draft_only_meta_not_authorized","draft_only_meta_identity_mismatch"):
+        return ("🟠 Enna đã tạo bản nháp nhưng tài khoản chưa xác nhận được "
+                "quyền OAuth để đăng. **Chưa có bình luận nào được đăng.**"
+                "\n\nBản nháp để bạn tự sử dụng nếu phù hợp:\n\n> "
+                +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="draft_only_meta_cannot_verify_target":
         return ("🟠 Enna đã soạn bình luận nhưng Meta chưa cho phép xác minh "
                 "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\n\n"
@@ -345,6 +355,8 @@ def main():
         run_id=os.environ.get("GITHUB_RUN_ID","")
         code=({"posted_confirmed":"companion_reply_posted",
                "draft_only_meta_cannot_verify_target":"companion_draft_only",
+               "draft_only_meta_not_authorized":"companion_draft_only",
+               "draft_only_meta_identity_mismatch":"companion_draft_only",
                "rejected_selection":"companion_rejected",
                "no_safe_draft":"companion_rejected",
                "ai_service_unavailable":"companion_rejected",
