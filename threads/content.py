@@ -206,6 +206,9 @@ def plan_next(db, *, low_watermark=6, force=False):
 
     index = len(history) % len(SEEDS)
     pillar, topic = SEEDS[index]
+    media_ref = None
+    media_url = None
+    media_alt = None
     tech_brief = choose_tech_brief(len(history))
     selected_plan_id = None
     if tech_brief is not None:
@@ -226,8 +229,45 @@ def plan_next(db, *, low_watermark=6, force=False):
                 selected_plan_id = planned[0].get("id")
         except Exception:
             pass
+    # Diversify future posts with genuinely original PNG memes. Do not
+    # publish a third-party search result or attach unverified media.
+    if tech_brief is None and len(history) % 5 == 0:
+        try:
+            media_rows = db.request("GET", "/enna_media_ideas", params={
+                "select": "id,title,hook_text,source_url,pillar",
+                "brand_key": "eq." + BRAND_KEY, "media_type": "eq.original_meme",
+                "source_provider": "eq.original",
+                "status": "eq.ready", "rights_status": "eq.original",
+                "order": "created_at.asc", "limit": "1",
+            })
+            if isinstance(media_rows, list) and media_rows:
+                row = media_rows[0]
+                url = row.get("source_url") or ""
+                import re
+                if (isinstance(url, str) and re.fullmatch(
+                    r"https://gjdvdohylvsauphhkutw[.]supabase[.]co/storage/v1/object/public/enna-original-media/meme/original-[a-z0-9_-]+[.]png",
+                    url)
+                    and row.get("pillar") in ("work", "organize", "travel", "conversation")
+                    and row.get("id")):
+                    media_ref = row["id"]
+                    media_url = url
+                    media_alt = ("Meme công sở: " + str(row.get("title") or "") +
+                                 " " + str(row.get("hook_text") or ""))[:175]
+                    if len(media_alt) >= 12:
+                        pillar = row["pillar"]
+                        topic = ("Viết một bài Threads gắn với MEME NGUYÊN BẢN "
+                                 "của Đồ Hay Đi Làm. Nội dung ảnh: " +
+                                 str(row.get("title") or "")[:120] + " / " +
+                                 str(row.get("hook_text") or "")[:140] +
+                                 ". Viết 60–300 ký tự, nói thêm một mẹo hoặc "
+                                 "chi tiết công việc thật sự hữu ích, hài hước "
+                                 "tự nhiên. Không nói đã dùng công cụ khi chưa thử.")
+                    else:
+                        media_ref, media_url, media_alt = None, None, None
+        except Exception:
+            media_ref, media_url, media_alt = None, None, None
     trend = None
-    if channel.get("status") == "connected" and tech_brief is None:
+    if channel.get("status") == "connected" and tech_brief is None and media_ref is None:
         from threads.trends import select_topic
         trend = select_topic(db, next_slot)
         if trend is not None:
@@ -269,19 +309,34 @@ def plan_next(db, *, low_watermark=6, force=False):
     if result is None:
         return original_failure
     key = hashlib.sha256((BRAND_KEY + "\n" + result["post_text"]).encode("utf-8")).hexdigest()
+    payload = {
+        "channel_id": channel["id"], "content_key": key,
+        "text_content": result["post_text"],
+        "pillar": result["pillar"],
+        "scheduled_at": next_slot.isoformat(),
+        "status": "queued", "created_by": "agent",
+        "risk_flags": [], "content_type": "editorial",
+        "origin_growth_opportunity_id": (
+            chosen_trend["opportunity_id"] if chosen_trend else None),
+    }
+    if rows_are_original_meme := bool(media_ref and media_url and media_alt and primary_angle_used):
+        payload.update({
+            "media_url": media_url, "media_alt_text": media_alt,
+            "media_idea_id": media_ref, "editorial_series": "visual_meme",
+        })
     rows = db.request("POST", "/threads_posts",
                       params={"on_conflict": "content_key"},
-                      payload={
-                          "channel_id": channel["id"], "content_key": key,
-                          "text_content": result["post_text"],
-                          "pillar": result["pillar"],
-                          "scheduled_at": next_slot.isoformat(),
-                          "status": "queued", "created_by": "agent",
-                          "risk_flags": [], "content_type": "editorial",
-                          "origin_growth_opportunity_id": (
-                              chosen_trend["opportunity_id"] if chosen_trend else None),
-                      },
+                      payload=payload,
                       prefer="resolution=ignore-duplicates,return=representation")
+    if rows and rows_are_original_meme:
+        try:
+            db.request("PATCH", "/enna_media_ideas", params={
+                "id": "eq." + str(media_ref), "status": "eq.ready",
+            }, payload={
+                "status": "used", "used_at": datetime.now(VN).isoformat(),
+            }, prefer="return=minimal")
+        except Exception:
+            pass
     if rows and selected_plan_id and primary_angle_used:
         try:
             db.request("PATCH", "/enna_editorial_plans", params={
