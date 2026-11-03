@@ -12,6 +12,7 @@ target, it returns a draft to the issue; no browser automation bypass.
 import base64
 import hashlib
 import json
+from difflib import SequenceMatcher
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -195,6 +196,18 @@ def can_send(text, selected, *, target):
     if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
         return False
     normalized = normalize(text)
+    original_normalized=normalize(selected)
+    # Reject extracts / near-verbatim copies and lifted profanity: a comment
+    # must CONTRIBUTE, not merely repeat the author's original words.
+    if re.search(r"\\b(dm|dcm|dcmmm|vcl|dit me|vl)\\b",normalized):
+        return False
+    if normalized in original_normalized:
+        return False
+    longest=SequenceMatcher(None,original_normalized,normalized,
+                            autojunk=False).find_longest_match(
+                                0,len(original_normalized),0,len(normalized)).size
+    if longest/max(1,len(normalized))>=0.56:
+        return False
     # Reject generic filler that only summarizes the viral post rather than
     # contributing a distinctive observation. One draft revision is permitted.
     if any(phrase in normalized for phrase in (
