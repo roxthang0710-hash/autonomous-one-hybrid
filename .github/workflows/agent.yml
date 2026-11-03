@@ -58,6 +58,8 @@ jobs:
       - name: Run unit tests
         if: steps.configuration.outputs.ready == 'true'
         run: python -m unittest discover -s tests -v
+      - name: Log verified worker start (private)
+        run: python -m growth.activity_log research started research_started
       - name: Evaluate historical proposals
         if: steps.configuration.outputs.ready == 'true'
         run: python backfill.py
@@ -67,3 +69,14 @@ jobs:
       - name: Write private-safe run summary
         if: steps.configuration.outputs.ready == 'true' && always()
         run: python dashboard.py
+
+      - name: Log worker end (private, even if a test failed)
+        if: always()
+        env:
+          ENNA_JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$ENNA_JOB_STATUS" = "success" ]; then
+            python -m growth.activity_log research success research_completed
+          else
+            python -m growth.activity_log research failed research_failed
+          fi
