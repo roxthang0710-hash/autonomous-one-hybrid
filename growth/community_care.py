@@ -202,7 +202,24 @@ def scan(db=None, *, now=None, read=thread_request, generate=answer_question):
 
 if __name__=="__main__":
     try:
-        print("Enna audience care:",scan())
+        outcome=scan()
+        print("Enna audience care:",outcome)
+        from growth.activity_log import emit
+        run_id=os.getenv("GITHUB_RUN_ID","")
+        if run_id.isdecimal():
+            code=({
+                "answered_one_real_audience_question":"community_reply_posted",
+                "no_suitable_own_audience_question":"community_no_eligible",
+                "own_replies_unavailable_or_empty":"community_scope_attention",
+                "daily_budget_or_dedup":"community_limited",
+                "not_authorized":"community_limited",
+            }).get(outcome,"community_checked")
+            try:
+                emit(Database(),"growth",
+                     "success" if code=="community_reply_posted" else "skipped",
+                     code,run_id=run_id)
+            except Exception:
+                pass
     except Exception as exc:
         # Never print account secrets or private conversation text.
         print("Enna audience care unavailable:",type(exc).__name__)
