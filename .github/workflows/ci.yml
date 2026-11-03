@@ -26,6 +26,7 @@ jobs:
       - run: node --check dashboard/web/studio.js
       - run: node --test tests/test_observatory.cjs
       - run: node --test tests/test_enna_dashboard_ui.cjs
+      - run: node --test tests/test_office_kit.cjs
       - name: Check public Enna activity feed response
         run: |
           node - <<'NODE'
