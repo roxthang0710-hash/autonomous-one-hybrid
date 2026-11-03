@@ -36,6 +36,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Verify critical policy and media code before doing anything publicly
         run: python -m unittest discover -s tests -v
+      - name: Log independent audience-care start
+        run: python -m growth.activity_log growth started community_started
       - name: Respond to at most one authentic, unanswered audience question
         id: care
         run: python -m growth.community_care
@@ -77,6 +79,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Check unit tests
         run: python -m unittest discover -s tests -v
+      - name: Log independent media scout start
+        run: python -m growth.activity_log editor started media_started
       - name: Render genuine original office memes & scout permitted media
         id: scout
         run: python -m growth.media_scout
