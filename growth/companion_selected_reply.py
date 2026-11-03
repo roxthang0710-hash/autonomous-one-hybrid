@@ -22,7 +22,7 @@ import requests
 
 from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
-from growth.companion_editor import compose_selected, EnnaModelServiceError
+from growth.companion_editor import (compose_selected, compose_selected_options, EnnaModelServiceError)
 from growth.companion_judge import judge_selected
 from growth.companion_fit import assess_selected, user_is_frustrated
 from growth.selected_direct_reply import (
@@ -234,7 +234,7 @@ def can_send(text, selected, *, target, semantic_override=False):
 def process(event, *, db=None, read=thread_request, create=compose_selected,
             credentials=get_credentials, publish=send_reply,
             direct_publish=direct_reply, allow_direct_trial=None,
-            semantic_judge=judge_selected, now=None):
+            semantic_judge=judge_selected, option_generator=None, now=None):
     """Return an honest public-issue summary, never a claimed post without Meta ID."""
     now = now or datetime.now(timezone.utc)
     issue = event.get("issue") or {}
@@ -300,8 +300,11 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 and semantic_judge(selected, candidate))
 
     if not context_approved(reply):
-        # One more safe drafting pass if the first comment is too generic.
-        # This cannot initiate a Meta publish or multiply interaction attempts.
+        # First try one targeted revision, then generate three DIFFERENT
+        # grounded alternatives and independently review each. No Threads
+        # write happens while exploring candidates.
+        attempts=[reply]
+        accepted=False
         try:
             second = create({
                 "title": selected,
@@ -309,24 +312,47 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 "source": "owner_selected_public_threads_post",
                 "niche": verdict["niche"],
                 "quality_feedback": (
-                    "Bản trước bị từ chối vì thiếu liên hệ cụ thể. "
-                    "Viết một NHẬN XÉT MỚI thật sự liên quan, nhắc ít nhất "
-                    "hai chi tiết rõ ràng của bài (diễn đạt tự nhiên, không "
-                    "bắt buộc trích nguyên văn). Thêm một ý dí dỏm hoặc "
-                    "hữu ích mới, không chép lại bài và không sáo rỗng."
+                    "Bản trước không đủ sát bài hoặc chưa góp được góc "
+                    "nhìn mới. Viết một bình luận KHÁC, giữ đúng hai "
+                    "chi tiết riêng của bài, phản hồi đúng cảm xúc. "
+                    "Không sao chép đoạn gốc và không bình luận sáo rỗng."
                 ),
             }, kind="reply_suggestion", prior_texts=(reply,))
             if second.get("should_reply") is False:
                 return {"state":"not_worth_interjecting",
                         "content_angle":str(second.get("content_angle") or content_angle)[:220]}
-            replacement = str(second.get("post_text") or "").strip()
-            if context_approved(replacement):
-                reply = replacement
-                content_angle = str(second.get("content_angle") or content_angle)[:220]
-            else:
-                return {"state":"ai_reply_not_contextual_enough",
-                        "content_angle":content_angle}
+            candidate=str(second.get("post_text") or "").strip()
+            attempts.append(candidate)
+            if context_approved(candidate):
+                reply=candidate
+                content_angle=str(second.get("content_angle") or content_angle)[:220]
+                accepted=True
         except (requests.RequestException, ValueError, KeyError, TypeError):
+            pass
+        if not accepted:
+            # Unit-test-injected writer defaults to NO extra Groq calls;
+            # actual autonomous workflow supplies its own 3-way generation.
+            generate_options=(option_generator if option_generator is not None
+                              else compose_selected_options if create is compose_selected
+                              else None)
+            if generate_options is not None:
+                try:
+                    options=generate_options({
+                        "title":selected,"niche":verdict["niche"],
+                        "source_url":target["url"]},
+                        earlier=tuple(attempts))
+                    for option in options[:3]:
+                        if not isinstance(option,dict):
+                            continue
+                        candidate=str(option.get("post_text") or "").strip()
+                        if candidate and context_approved(candidate):
+                            reply=candidate
+                            content_angle=str(option.get("content_angle") or content_angle)[:220]
+                            accepted=True
+                            break
+                except (requests.RequestException,ValueError,KeyError,TypeError):
+                    pass
+        if not accepted:
             return {"state":"ai_reply_not_contextual_enough",
                     "content_angle":content_angle}
 
