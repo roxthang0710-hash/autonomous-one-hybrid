@@ -531,6 +531,27 @@ class SelectionTests(unittest.TestCase):
         self.assertFalse(can_send(model_bad,original,target=parse_threads_url(URL)))
         self.assertTrue(can_send(better,original,target=parse_threads_url(URL)))
 
+    def test_bad_json_recovers_through_approved_three_option_generator(self):
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        options=MagicMock(return_value=[
+          {"post_text":ANSWER,"content_angle":"Quản lý bảng chung"},
+          {"post_text":"Nội dung không đủ dài","content_angle":"Không đạt"},
+          {"post_text":ANSWER,"content_angle":"Lựa chọn dự phòng"},
+        ])
+        db,read,publish=MagicMock(),MagicMock(),MagicMock()
+        result=process(e,db=db,
+          create=MagicMock(side_effect=ValueError("truncated response")),
+          option_generator=options,
+          semantic_judge=lambda source,candidate:True,
+          read=read,publish=publish,credentials=MagicMock())
+        self.assertEqual(result["state"],"draft_prepared_only")
+        self.assertEqual(result["draft"],ANSWER)
+        options.assert_called_once()
+        read.assert_not_called()
+        publish.assert_not_called()
+        db.request.assert_not_called()
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
