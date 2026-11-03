@@ -368,6 +368,19 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(api.call_args.kwargs["json"]["response_format"],
                          {"type":"json_object"})
 
+    def test_generic_positive_reply_is_not_auto_publishable(self):
+        selected=("Đang giờ nghỉ trưa mà đồng nghiệp gõ bàn phím cạch cạch "
+                  "và kéo ghế liên tục, mình thật sự không ngủ nổi. "
+                  "Nói rồi mà ngày nào cũng vậy.")
+        unrelated=("Chỉ cần một chút nụ cười, có thể làm thay đổi cả ngày "
+                   "làm việc của ai đó. Một lời khen ngọt ngào cũng đủ "
+                   "làm thoải mái tâm hồn.")
+        grounded=("Giờ nghỉ trưa mà bàn phím vẫn cạch cạch rồi còn kéo "
+                  "ghế liên tục thì đúng là khó ngủ nổi. Mong mọi người "
+                  "tôn trọng giờ nghỉ của nhau chút.")
+        self.assertFalse(can_send(unrelated,selected,target=parse_threads_url(URL)))
+        self.assertTrue(can_send(grounded,selected,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
