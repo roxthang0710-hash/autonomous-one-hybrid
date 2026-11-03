@@ -1,0 +1,40 @@
+name: Enna — Advance Publishing Preflight
+on:
+  schedule:
+    # 08:15 and 16:15 Vietnam time. GitHub schedules are best-effort.
+    - cron: '15 1,9 * * *'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+concurrency:
+  group: enna-multichannel-preflight
+  cancel-in-progress: false
+jobs:
+  check-next-72-hours:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'preflight:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install reader dependencies
+        run: pip install --disable-pip-version-check -r requirements.txt
+      - name: Validate readiness checks
+        run: python -m unittest tests.test_multichannel_preflight -v
+      - name: Run upcoming schedule and image readiness checks
+        run: python -m growth.multichannel_preflight
+      - name: Explain the scope of evidence
+        if: always()
+        run: |
+          echo '### Enna advance readiness preflight' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Checks Supabase snapshot of verified Metricool bookings for the coming three local days.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Flags missing slots/media, disabled automatic delivery, provider errors and stale snapshots.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This job does not claim live Metricool API confirmation, publication, or follow growth.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'It never creates posts or bypasses publication safety gates.' >> "$GITHUB_STEP_SUMMARY"
