@@ -136,6 +136,7 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "note":"Chỉ học cách nêu một quan sát riêng, KHÔNG được dùng lại câu ví dụ ở bài khác."
       },
       "prior_replies_to_avoid":list(prior_texts)[:6],
+      "revision_feedback":str(signal.get("quality_feedback") or "")[:450],
     }
     response=_groq_completion(call,key,{
           "model":os.getenv("GROQ_MODEL","openai/gpt-oss-20b"),
