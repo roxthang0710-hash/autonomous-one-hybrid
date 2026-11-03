@@ -89,6 +89,27 @@ def decode_issue_body(body):
     return target, text, verdict
 
 
+def clean_selected_excerpt(text):
+    """Remove incidental Threads UI controls, never infer or rewrite the story."""
+    lines = []
+    for item in str(text or "").splitlines():
+        line = item.strip()
+        if not line:
+            continue
+        if "✳ Gửi Enna" in line:
+            # The injected button is NOT part of the author's post.
+            line = line.replace("✳ Gửi Enna", "").strip()
+        if re.fullmatch(r"\\d+\\s*(giờ|phút|ngày|tuần)\\s*(trước)?", line,
+                        flags=re.IGNORECASE):
+            continue
+        if re.fullmatch(r"\\d+(?:[,.]\\d+)?[KkMm]?", line):
+            # A stand-alone engagement counter, not evidence of virality.
+            continue
+        if line:
+            lines.append(line)
+    return "\\n".join(lines)[:1800].strip()
+
+
 def verified_meta_target(info, target, selected, *, now=None):
     """Never publish unless the official Meta read matches owner selection."""
     if not isinstance(info, dict):
@@ -148,6 +169,11 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         return {"state":"rejected_selection","reason":str(exc)}
     if title != "enna-pick:" + target["shortcode"]:
         return {"state":"title_target_mismatch"}
+    # Do not let Chrome's UI button or isolated engagement counts pollute the
+    # AI context. This works even with the existing v0.3/v0.4 extension.
+    selected = clean_selected_excerpt(selected)
+    if assess_selected(selected)["state"] != "candidate":
+        return {"state":"insufficient_clean_context"}
 
     db = db or Database()
     token_details = credentials(db)
@@ -172,10 +198,13 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                     "content_angle":str(proposed.get("content_angle") or "")[:220]}
         reply = proposed["post_text"].strip()
         content_angle = str(proposed.get("content_angle") or "")[:220]
-    except (ValueError, KeyError, TypeError, requests.RequestException):
-        return {"state":"no_safe_draft"}
+    except requests.RequestException:
+        return {"state":"ai_service_unavailable"}
+    except (ValueError, KeyError, TypeError):
+        return {"state":"ai_draft_invalid_or_unavailable"}
     if not can_send(reply, selected, target=target):
-        return {"state":"no_safe_draft"}
+        return {"state":"ai_reply_not_contextual_enough",
+                "content_angle":content_angle}
 
     fallback = {"state":"draft_only_meta_cannot_verify_target",
                 "draft":reply, "source_url":target["url"],
@@ -237,6 +266,18 @@ def safe_comment(result):
     if state=="not_worth_interjecting":
         return ("Enna đã phân tích bài bạn chọn nhưng không thấy cách "
                 "bình luận tự nhiên có ích. **Không đăng bình luận.**"+angle_note)
+    if state=="ai_service_unavailable":
+        return ("Enna đã nhận bài nhưng dịch vụ tạo nội dung chưa phản hồi "
+                "thành công. **Không có bình luận nào được đăng.** "
+                "Vui lòng gửi một bài khác khi dịch vụ hoạt động lại.")
+    if state=="ai_draft_invalid_or_unavailable":
+        return ("Enna đã nhận bài nhưng bản nháp AI không đạt kiểm tra "
+                "định dạng hoặc không có cấu hình mô hình khả dụng. "
+                "**Không có bình luận nào được đăng.**")
+    if state=="ai_reply_not_contextual_enough":
+        return ("Enna đã soạn nội dung nhưng bộ kiểm tra không thấy "
+                "bình luận bám đủ sát bài gốc. **Không tự đăng**."
+                +angle_note)
     if state=="duplicate_or_daily_limit":
         return ("Enna không đăng: đã đạt giới hạn tương tác hoặc bài này đã "
                 "được xử lý trước đó. Không tự thử lại."+angle_note)
@@ -285,7 +326,10 @@ def main():
         code=({"posted_confirmed":"companion_reply_posted",
                "draft_only_meta_cannot_verify_target":"companion_draft_only",
                "rejected_selection":"companion_rejected",
-               "no_safe_draft":"companion_rejected"}).get(result.get("state"),"companion_checked")
+               "no_safe_draft":"companion_rejected",
+               "ai_service_unavailable":"companion_rejected",
+               "ai_draft_invalid_or_unavailable":"companion_rejected",
+               "ai_reply_not_contextual_enough":"companion_rejected"}).get(result.get("state"),"companion_checked")
         if run_id.isdecimal():
             try:
                 emit(Database(),"growth",
