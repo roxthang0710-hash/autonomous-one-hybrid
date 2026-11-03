@@ -14,7 +14,7 @@ CODES={
     "publisher_started", "publisher_completed", "publisher_failed",
     "growth_started", "growth_completed", "growth_failed",
     "research_started", "research_completed", "research_failed",
-    "insights_completed", "learning_completed",
+    "insights_completed", "learning_completed", "monetization_checked",
     "workflow_skipped", "workflow_failed",
 }
 
