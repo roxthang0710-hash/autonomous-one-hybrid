@@ -7,6 +7,17 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <title>Enna · Kết nối Threads | Đồ Hay Đi Làm</title>
   <link rel="stylesheet" href="./style.css">
+  <script>
+  // Supabase Auth defaults to this /oauth/ URL for dashboard-initiated
+  // password resets. Route only verified recovery-fragment shape to
+  // Enna's reset form before the Threads magic-link handler can consume it.
+  (() => {
+    const p = new URLSearchParams(location.hash.slice(1));
+    if (p.get('type') !== 'recovery' || !p.get('access_token')) return;
+    const target = new URL('../enna/affiliate/reset/', location.href);
+    location.replace(target.origin + target.pathname + location.hash);
+  })();
+  </script>
   <script src="./client.js" defer></script>
 </head>
 <body>
@@ -14,6 +25,7 @@
   <p class="eyebrow">ENNA · ĐỒ HAY ĐI LÀM</p>
   <h1>Enna · Kết nối Threads</h1>
   <p>Cấp quyền cho Enna sử dụng tài khoản <strong>@dohay_dilam</strong>. Không cần tạo mật khẩu mới.</p>
+  <p class="muted">Bạn đến đây từ email <strong>Reset your password</strong>? <a href="../enna/affiliate/reset/">Mở trang đặt lại mật khẩu quản trị Enna</a>. Nếu email cũ đã đưa bạn vào trang này, hãy tạo một email khôi phục mới sau khi cấu hình được cập nhật.</p>
   <div id="connected" role="status" class="notice success" hidden>Đã kết nối Threads thành công và lưu quyền truy cập mã hóa trong Supabase Vault.</div>
   <div id="failed" role="alert" class="notice error" hidden>Meta chưa cấp quyền hoặc phiên đã hết hạn. Hãy kiểm tra cấu hình rồi thử lại.</div>
   <div class="notice">Đăng nhập qua liên kết dùng một lần gửi đến email <strong>đã được cấp quyền quản trị Enna</strong>. Tài khoản Google đăng nhập bảng điều khiển Supabase không tự động có quyền này. Hãy kiểm tra địa chỉ website trước khi nhập App Secret; không chia sẻ liên kết đăng nhập, mã bí mật hoặc token qua chat.</div>
