@@ -325,7 +325,18 @@ def run(db=None, *, now=None, enable_public_assets=None):
 
 if __name__=="__main__":
     try:
-        print("Enna media scout:",json.dumps(run(),ensure_ascii=False))
+        result=run()
+        print("Enna media scout:",json.dumps(result,ensure_ascii=False))
+        from growth.activity_log import emit
+        run_id=os.getenv("GITHUB_RUN_ID","")
+        if run_id.isdecimal():
+            code="media_concept_prepared" if (result["original_concepts_new"] or result["video_storyboards_new"] or result["rights_review_sources_new"]) else "media_no_new"
+            try:
+                emit(Database(),"editor",
+                    "success" if code=="media_concept_prepared" else "skipped",
+                    code,run_id=run_id)
+            except Exception:
+                pass
     except Exception as exc:
         print("Enna media scouting unavailable:",type(exc).__name__)
         raise SystemExit(1)
