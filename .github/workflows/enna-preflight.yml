@@ -27,7 +27,7 @@ jobs:
       - name: Install reader dependencies
         run: pip install --disable-pip-version-check -r requirements.txt
       - name: Validate readiness checks
-        run: python -m unittest tests.test_multichannel_preflight -v
+        run: python -m unittest discover -s tests -p test_multichannel_preflight.py -v
       - name: Run upcoming schedule and image readiness checks
         run: python -m growth.multichannel_preflight
       - name: Explain the scope of evidence
