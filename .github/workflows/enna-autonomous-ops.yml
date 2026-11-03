@@ -54,6 +54,8 @@ jobs:
           test -n "$DB_SERVICE_KEY"
       - name: Run safety regression tests before publishing
         run: python -m unittest discover -s tests -v
+      - name: Check Facebook and Instagram readiness for next 72 hours
+        run: python -m growth.multichannel_preflight
       - name: Select, publish if due, reconcile, collect metrics
         run: python -m threads.daily
       - name: Read actual conversation and story results
