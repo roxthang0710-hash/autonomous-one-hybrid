@@ -126,7 +126,7 @@ class SelectionTests(unittest.TestCase):
         import base64
         encoded=base64.urlsafe_b64encode(LIFE_TEXT.encode("utf-8")).decode().rstrip("=")
         e["issue"]["body"]=(
-          HEADER+"\\nTHREADS_URL: "+URL+"\\nSELECTED_TEXT_BASE64URL: "+encoded)
+          HEADER+"\nTHREADS_URL: "+URL+"\nSELECTED_TEXT_BASE64URL: "+encoded)
         db=MagicMock()
         result=process(e,db=db,
             credentials=lambda d:("fake_token","dohay_dilam"),
