@@ -59,6 +59,25 @@ Deno.serve(async (request: Request) => {
       Date.parse(r.scheduled_at)>Date.now());
     const lastCrossCheck=s.crossChannel.map(r=>r.checked_at).filter(Boolean)
       .sort((a,b)=>Date.parse(b)-Date.parse(a))[0]||null;
+    const vnDay=(millis:number)=>new Date(millis+7*3600000).toISOString().slice(0,10);
+    const todayDay=vnDay(Date.now());
+    const futureDay=(n:number)=>vnDay(Date.now()+n*86400000);
+    const validCrossSlot=(day:string,provider:string)=>s.crossChannel.some(r=>
+      r.provider===provider && vnDay(Date.parse(r.scheduled_at))===day &&
+      (r.provider_status==='PENDING'||r.provider_status==='PUBLISHED') &&
+      !!r.auto_publish && (provider!=='instagram'||!!r.has_media));
+    const coverage=Array.from({length:3},(_,i)=>{
+      const day=futureDay(i);
+      return {day,facebook:validCrossSlot(day,'facebook'),
+                  instagram:validCrossSlot(day,'instagram')};
+    });
+    const fullyCoveredDays=coverage.filter(r=>r.facebook&&r.instagram).length;
+    const nextGap=Array.from({length:12},(_,i)=>futureDay(i))
+      .find(day=>!validCrossSlot(day,'facebook')||!validCrossSlot(day,'instagram'))||null;
+    const pendingPastDue=s.crossChannel.filter(r=>r.provider_status==='PENDING' &&
+      Date.parse(r.scheduled_at)<Date.now()-20*60000).length;
+    const staleSnapshots=s.crossChannel.filter(r=>r.provider_status==='PENDING' &&
+      Date.now()-Date.parse(r.checked_at)>24*3600000).length;
     const awaitingExternal = s.posts.filter(r=>r.status==='scheduled_external' && !providerPublishedIds.has(r.id)).length;
     const runTimeline = [
       ...s.research.map(r=>({at:r.started_at,kind:'research',status:r.status})),
@@ -128,6 +147,15 @@ Deno.serve(async (request: Request) => {
         facebookUpcoming:futureVerified.filter(r=>r.provider==='facebook').length,
         instagramUpcoming:futureVerified.filter(r=>r.provider==='instagram' && r.has_media).length,
         lastVerifiedAt:lastCrossCheck,
+        preflight: {
+          daysCovered:fullyCoveredDays,
+          daysChecked:coverage.length,
+          missingSlots:coverage.filter(r=>!r.facebook||!r.instagram).length,
+          nextGapDay:nextGap,
+          pendingPastDue,
+          staleSnapshots,
+          evidence:'provider_booking_snapshot'
+        },
         syncMode:'snapshot'
       },
       topics: {
