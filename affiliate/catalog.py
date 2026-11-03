@@ -8,10 +8,12 @@ SOURCES_CHECKED = date(2026, 11, 2)
 
 # Niche is a research hypothesis, NOT a product recommendation.
 NICHES = (
-    "phụ kiện du lịch thiết thực cho người đi công tác",
-    "dụng cụ sắp xếp hành lý cho chuyến đi ngắn",
-    "đồ dùng hỗ trợ làm việc và học tập tại nhà",
-    "phụ kiện tối ưu góc làm việc nhỏ",
+    "phụ kiện tối ưu góc làm việc nhỏ cho nhân viên văn phòng",
+    "dụng cụ sắp xếp bàn và dây cáp máy tính gọn hơn",
+    "mẹo chọn giá đỡ laptop và tư thế dùng thiết bị an toàn",
+    "đồ dùng để quản lý lịch làm việc và học tập tại nhà",
+    "bộ phụ kiện thiết thực cho người mới đi làm",
+    "phụ kiện nhỏ gọn cho người đi công tác ngắn ngày",
 )
 
 PROGRAM_WEIGHTS = {
