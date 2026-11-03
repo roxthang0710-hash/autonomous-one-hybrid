@@ -6,7 +6,7 @@ from unittest.mock import MagicMock,patch
 
 from growth.companion_selected_reply import (
     decode_issue_body,parse_threads_url,verified_meta_target,
-    can_send,process,HEADER
+    can_send,process,clean_selected_excerpt,HEADER
 )
 
 KNOWN_CODE="DdcPsEkH3NZ"
@@ -146,6 +146,27 @@ class SelectionTests(unittest.TestCase):
                 "post_text":"","content_angle":"Câu chuyện có thể trở thành meme gốc"},
             read=MagicMock(),publish=MagicMock())
         self.assertEqual(result["state"],"not_worth_interjecting")
+
+    def test_clean_clicked_post_excludes_our_button_and_engagement_counters(self):
+        raw=("tac_gia\\n6 giờ✳ Gửi Enna\\n"
+             "Một câu chuyện về chú nấu cháo và lịch sử tìm kiếm âm thầm "
+             "khiến người đọc cảm động.\\n2,8K\\n25\\n73\\n12")
+        clean=clean_selected_excerpt(raw)
+        self.assertIn("nấu cháo",clean)
+        self.assertNotIn("Gửi Enna",clean)
+        self.assertNotIn("2,8K",clean)
+        self.assertNotIn("6 giờ",clean)
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_invalid_ai_draft_is_diagnosed_without_touching_meta(self,_):
+        event=issue()
+        send=MagicMock()
+        result=process(event,db=MagicMock(),
+            credentials=lambda d:("fake_token","dohay_dilam"),
+            create=MagicMock(side_effect=ValueError("invalid_format")),
+            read=MagicMock(),publish=send)
+        self.assertEqual(result["state"],"ai_draft_invalid_or_unavailable")
+        send.assert_not_called()
 
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
