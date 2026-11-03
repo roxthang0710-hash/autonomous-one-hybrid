@@ -517,6 +517,20 @@ class SelectionTests(unittest.TestCase):
         publish.assert_not_called()
         db.request.assert_not_called()
 
+    def test_rejects_patchwork_quotes_and_unjustified_future_predictions(self):
+        original=("Team mình mới có bé Gen Z vào làm. Hôm nay thấy ẻm "
+                  "bắt đầu mang đồ để decor bàn làm việc rồi. "
+                  "Này là dấu hiệu ẻm sẽ gắn bó lâu dài với cty "
+                  "đúng không mọi người? Chắc ẻm sẽ không nghỉ việc sớm đâu nhỉ?")
+        model_bad=("Bè Gen Z đang làm đồ decor bàn làm việc thật đáng yêu! "
+                   "Có vẻ như anh ấy sẽ gắn bó lâu dài rồi, "
+                   "không phải nghỉ việc sớm đâu. 😄")
+        better=("Mang đồ decor bàn làm việc là đặt cọc tinh thần với "
+                "chiếc bàn thôi 😂 Còn gắn bó lâu dài hay không "
+                "chắc phải xem đồng nghiệp và văn hóa công ty nữa.")
+        self.assertFalse(can_send(model_bad,original,target=parse_threads_url(URL)))
+        self.assertTrue(can_send(better,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
