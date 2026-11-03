@@ -145,7 +145,7 @@ const res=await fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(1200
 out('queued',d.posts.queued);out('scheduled',d.posts.scheduledExternal);out('posted',d.posts.published??d.posts.posted);out('replies',d.replies.posted);
 const state=states[d.runtime.state]||'Cần kiểm tra',connected=Boolean(d.account.connected);
 out('topstate',d.runtime.state==='working'?'Đang làm việc':connected?'Đã kết nối':'Cần kiểm tra');
-$('topdot').className='indicator '+(d.runtime.state==='working'?'working':connected?'working':'warn');
+$('topdot').className='indicator '+(d.runtime.state==='working'?'working':connected?'':'warn');
 out('activity-status',d.runtime.state==='working'?'Đang xử lý':connected?'Đã đồng bộ':'Cần kiểm tra');
 $('activity-status').className='status-tag'+(connected?'':' offline');
 out('sys-agent',state);out('sys-threads',connected?'Đã kết nối':'Chưa xác minh');
