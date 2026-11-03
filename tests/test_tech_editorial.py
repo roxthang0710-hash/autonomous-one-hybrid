@@ -36,7 +36,9 @@ class TestTechEditorial(unittest.TestCase):
                 choose_tech_brief(value)
 
     def test_existing_post_safety_gate_unchanged(self):
-        self.assertTrue(check_post("Đặt mua ngay món này qua https://example.com nhé!"))
+        post = ("Một mẹo nhỏ hữu ích cho dân công sở, nhưng đừng bao giờ "
+                "đăng đường dẫn bán hàng kiểu https://example.com nhé.")
+        self.assertIn("blocked_pattern", check_post(post))
 
 
 if __name__ == "__main__":
