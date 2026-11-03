@@ -13,6 +13,7 @@ from agent import Database, require_env
 from threads.brand import BRAND_KEY
 from growth.scoring import normalize
 from threads.planner import SEEDS, VN, check_post, planned_seed_rows, scheduled_start
+from threads.tech_editorial import choose_tech_brief
 
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 SCHEMA = {
@@ -124,6 +125,9 @@ def generate_ai_post(pillar, topic, previous_texts=()):
             "'Theo bạn...', 'Còn bạn thì sao?' nếu không thực sự cần. "
             "Không được kể chuyện tưởng tượng như bằng chứng người viết "
             "trực tiếp chứng kiến; không mạo danh công ty/người thật. "
+            "Nếu chia sẻ công cụ/phần mềm, phải đưa một thao tác cụ thể "
+            "có thể kiểm chứng; phân biệt tính năng có sẵn và phải cài thêm, "
+            "không bịa chức năng, giới hạn miễn phí hay mức tiết kiệm thời gian. "
             "Không đưa số liệu thiếu nguồn, trải nghiệm mua/dùng giả, "
             "link, quảng cáo, ép follow, tag bạn bè hay tranh cãi độc hại. "
             "CTA chỉ xuất hiện thưa, khi quy tắc soft_cta_eligible cho phép; "
@@ -202,8 +206,11 @@ def plan_next(db, *, low_watermark=6, force=False):
 
     index = len(history) % len(SEEDS)
     pillar, topic = SEEDS[index]
+    tech_brief = choose_tech_brief(len(history))
+    if tech_brief is not None:
+        pillar, topic = tech_brief["pillar"], tech_brief["prompt"]
     trend = None
-    if channel.get("status") == "connected":
+    if channel.get("status") == "connected" and tech_brief is None:
         from threads.trends import select_topic
         trend = select_topic(db, next_slot)
         if trend is not None:
