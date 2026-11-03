@@ -36,7 +36,10 @@ Deno.serve(async (request: Request) => {
       providerEvidence: 'enna_publication_evidence?select=scheduled_post_id,provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=200',
       events: 'enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=80',
       metricoolDaily: 'growth_metricool_daily?select=measured_on,followers,new_followers&metricool_brand_id=eq.7803567&order=measured_on.desc&limit=14',
-      crossChannel: 'enna_multichannel_posts?select=provider,scheduled_at,provider_status,checked_at,auto_publish,has_media&brand_key=eq.do_hay_di_lam&order=scheduled_at.asc&limit=80'
+      crossChannel: 'enna_multichannel_posts?select=provider,scheduled_at,provider_status,checked_at,auto_publish,has_media&brand_key=eq.do_hay_di_lam&order=scheduled_at.asc&limit=80',
+      commercialTracks: 'enna_monetization_tracks?select=track_key,stage,owner_approved,fulfillment_verified,claims_verified,disclosures_ready&limit=10',
+      commercialPrograms: 'affiliate_programs?select=review_status&limit=20',
+      commercialProposals: 'affiliate_opportunities?select=review_status&limit=100'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -93,6 +96,12 @@ Deno.serve(async (request: Request) => {
       ...providerPublished.map(r=>({at:r.checked_at,kind:'publication',status:'provider_published'}))
     ].filter(r=>r.at && Number.isFinite(Date.parse(r.at)))
       .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,45);
+    const commercialApproved=s.commercialTracks.filter(t=>
+      t.stage==='live' && t.owner_approved===true &&
+      t.fulfillment_verified===true && t.claims_verified===true &&
+      t.disclosures_ready===true).length;
+    const commercialPending=s.commercialProposals.filter(t=>t.review_status==='pending').length;
+    const commercialProgramsReady=s.commercialPrograms.filter(t=>t.review_status==='active').length;
     const latest = runTimeline[0] || null;
     const connected = !!(s.account[0]?.authorized && s.account[0]?.status==='connected');
     const lifecycle=s.events.filter(e=>e.kind==='publisher' &&
@@ -157,6 +166,15 @@ Deno.serve(async (request: Request) => {
           evidence:'provider_booking_snapshot'
         },
         syncMode:'snapshot'
+      },
+      commercialReadiness: {
+        phase:commercialApproved>0?'reviewed_live':'pre_revenue',
+        trackedModels:s.commercialTracks.length,
+        modelsApprovedAndLive:commercialApproved,
+        affiliateApprovedPrograms:commercialProgramsReady,
+        affiliateDraftsNeedReview:commercialPending,
+        salesEvidence:'private_only',
+        publicationGate:commercialApproved>0?'owner_reviewed':'commercial_publication_blocked'
       },
       topics: {
         nativeQueued:s.posts.filter(r=>r.status==='queued' && !!r.topic_tag_planned).length,
