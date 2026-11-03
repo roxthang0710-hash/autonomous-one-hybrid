@@ -31,8 +31,6 @@ jobs:
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
       THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
       THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
-      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-      ENNA_ORIGINAL_MEDIA_ENABLED: 'true'
     steps:
       - name: Verify configured research credentials
         run: |
@@ -55,28 +53,6 @@ jobs:
         run: python -m growth.runner
       - name: Optional one authentic on-topic Threads reply (off until owner OAuth opt-in)
         run: python -m growth.engage
-      - name: Care for genuine unanswered questions on our own Threads posts
-        id: community
-        run: python -m growth.community_care
-      - name: Scout public-domain visuals, optional Pexels and create original office meme cards
-        id: media
-        run: python -m growth.media_scout
-      - name: Record independent community and media checks
-        if: always()
-        env:
-          COMMUNITY_OUTCOME: ${{ steps.community.outcome }}
-          MEDIA_OUTCOME: ${{ steps.media.outcome }}
-        run: |
-          if [ "$COMMUNITY_OUTCOME" = "success" ]; then
-            python -m growth.activity_log growth success community_checked
-          elif [ "$COMMUNITY_OUTCOME" != "skipped" ]; then
-            python -m growth.activity_log growth failed community_checked
-          fi
-          if [ "$MEDIA_OUTCOME" = "success" ]; then
-            python -m growth.activity_log editor success media_checked
-          elif [ "$MEDIA_OUTCOME" != "skipped" ]; then
-            python -m growth.activity_log editor failed media_checked
-          fi
       - name: Summarize monitoring without confidential drafts
         if: always()
         run: python -m growth.report
