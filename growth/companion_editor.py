@@ -47,7 +47,13 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "ít nhất 2 danh từ hoặc cụm ngắn đúng như người viết đã nêu để "
         "tránh bình luận chung chung; không ép nhắc đến công sở, "
         "không kêu gọi follow, không quảng cáo, không dẫn link, không giả "
-        "đã trải nghiệm hoặc biết tác giả. Không sao chép nguyên bài. "
+        "đã trải nghiệm hoặc biết tác giả. Tuyệt đối KHÔNG tóm tắt lại "
+        "bài theo trình tự câu chuyện hoặc liệt kê các việc nhân vật đã làm; "
+        "thay vào đó chọn một chi tiết cụ thể để thêm một góc nhìn ấm áp, "
+        "hài nhẹ hoặc một câu đối đáp có chất riêng. "
+        "Tránh mở đầu rập khuôn như 'Thật là một khoảnh khắc', "
+        "'Đúng là một câu chuyện' hoặc 'Cảm động quá'. "
+        "Không sao chép nguyên bài. "
         "Không khẳng định bài viral, được bao nhiêu view/like khi không có số liệu. "
         "Nếu bài kể chuyện quan tâm hoặc cảm xúc cá nhân, đáp lại ấm áp "
         "và tôn trọng. Một câu chuyện chăm sóc người thân không tự động "
@@ -57,6 +63,12 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "Đồng thời chỉ đề xuất 1 hướng nội dung GỐC có thể phát triển riêng "
         "cho kênh (content_angle), không được sao chép nguyên bài/ảnh/video."
       ),
+      "illustrative_quality_example": {
+        "only_context":"Một người ít nói lặng lẽ tìm cách nấu cháo cho người nhà.",
+        "avoid":"Người đó nấu cháo rồi mang tới cửa và tìm cách nấu cháo. Thật là một khoảnh khắc cảm động!",
+        "better":"Đọc tới đoạn âm thầm tìm cách nấu cháo mới thấy: có người chẳng nói nhiều, nhưng cách họ quan tâm thì rõ mồn một.",
+        "note":"Chỉ học cách nêu một quan sát riêng, KHÔNG được dùng lại câu ví dụ ở bài khác."
+      },
       "prior_replies_to_avoid":list(prior_texts)[:6],
     }
     response=call("https://api.groq.com/openai/v1/chat/completions",
