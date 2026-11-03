@@ -47,6 +47,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Unit tests before trend analysis
         run: python -m unittest discover -s tests -v
+      - name: Log verified worker start (private)
+        run: python -m growth.activity_log growth started growth_started
       - name: Collect public trend evidence and draft one safe growth idea
         run: python -m growth.runner
       - name: Optional one authentic on-topic Threads reply (off until owner OAuth opt-in)
@@ -65,3 +67,14 @@ jobs:
           echo "Threads external-public search may require Meta App Review even after user OAuth; Enna never bypasses unavailable permissions." >> "$GITHUB_STEP_SUMMARY"
           echo "Reply worker is gated by owner Meta OAuth scopes, app access, source checks and an atomic maximum of three authentic replies per Vietnam day; it may post zero." >> "$GITHUB_STEP_SUMMARY"
           echo "The number of recommended content ideas is not a revenue forecast." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Log worker end (private, even if a test failed)
+        if: always()
+        env:
+          ENNA_JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$ENNA_JOB_STATUS" = "success" ]; then
+            python -m growth.activity_log growth success growth_completed
+          else
+            python -m growth.activity_log growth failed growth_failed
+          fi
