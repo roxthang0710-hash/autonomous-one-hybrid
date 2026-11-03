@@ -12,7 +12,7 @@ VALID = {
     "title": "Những đồ dùng cần cân nhắc cho chuyến công tác",
     "target_audience": "Người đi công tác",
     "customer_problem": "Mang nhiều đồ không tiện",
-    "organic_channel": "Blog cá nhân",
+    "organic_channel": "Facebook Fanpage chính chủ",
     "content_format": "Bài viết dạng checklist",
     "draft_text": "Checklist cách sắp xếp đồ khi đi công tác; các gợi ý cần kiểm chứng.",
     "validation_plan": "Viết bản nháp và cho chủ sở hữu đánh giá trước khi đăng",
@@ -48,6 +48,13 @@ class AffiliateRunnerTests(unittest.TestCase):
         data = dict(VALID, expected_spend_vnd=50000)
         with self.assertRaises(ValueError):
             validate_draft(data)
+
+    def test_unverified_blog_or_groups_rejected(self):
+        for channel in ("Blog cá nhân", "Nhóm Facebook công khai"):
+            with self.subTest(channel=channel):
+                data = dict(VALID, organic_channel=channel)
+                with self.assertRaises(ValueError):
+                    validate_draft(data)
 
     def test_links_rejected(self):
         data = dict(VALID, draft_text="Đặt tại https://shop.example/?x=2")
