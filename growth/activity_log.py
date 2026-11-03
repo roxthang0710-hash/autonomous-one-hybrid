@@ -18,6 +18,7 @@ CODES={
     "editorial_checked", "community_checked", "media_checked",
     "community_started", "media_started", "community_reply_posted", "community_no_eligible", "community_scope_attention",
     "community_limited", "media_concept_prepared", "media_no_new",
+    "companion_checked", "companion_reply_posted", "companion_draft_only", "companion_rejected",
     "workflow_skipped", "workflow_failed",
 }
 
