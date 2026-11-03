@@ -62,6 +62,11 @@
 <div class="system-line"><span>📚 Ý tưởng Enna tự chuẩn bị</span><strong id="sys-editorial-ready">—</strong></div>
 <div class="system-line"><span>Lần chuẩn bị chủ đề</span><strong id="sys-editorial-at">—</strong></div>
 <div class="system-line"><span>Đề xuất nghiên cứu cần duyệt</span><strong id="sys-research-pending">—</strong></div>
+<div class="system-line"><span>💬 Phản hồi người xem đã đăng</span><strong id="sys-audience-replies">—</strong></div>
+<div class="system-line"><span>🔎 Tìm thảo luận bên ngoài</span><strong id="sys-public-search">—</strong></div>
+<div class="system-line"><span>🖼️ Meme gốc sẵn sàng</span><strong id="sys-meme-ready">—</strong></div>
+<div class="system-line"><span>🎞️ Ý tưởng video</span><strong id="sys-video-ideas">—</strong></div>
+<div class="system-line"><span>📷 Tư liệu cần xét quyền</span><strong id="sys-media-review">—</strong></div>
 <div class="system-line"><span>Lượt tự chạy dự kiến tiếp</span><strong id="sys-next-run">—</strong></div><div class="system-line"><span>Lần tự đánh giá</span><strong id="sys-learning-run">—</strong></div><div class="system-line"><span>Metricool xác nhận xuất bản</span><strong id="sys-provider">—</strong></div><div class="system-line"><span>Đã đối soát Meta ID</span><strong id="sys-meta">—</strong></div><div class="system-line"><span>Follower đã xác minh gần nhất</span><strong id="sys-followers">—</strong></div><div class="system-line"><span>Ngày có dữ liệu follower</span><strong id="sys-followers-at">—</strong></div><div class="system-line"><span>Facebook sắp xuất bản</span><strong id="sys-facebook">—</strong></div><div class="system-line"><span>Instagram sắp xuất bản</span><strong id="sys-instagram">—</strong></div><div class="system-line"><span>Kiểm tra lịch đa kênh</span><strong id="sys-multi-checked">—</strong></div><div class="system-line"><span>📅 Sẵn sàng 3 ngày tới</span><strong id="sys-preflight">—</strong></div><div class="system-line"><span>Ngày kế tiếp thiếu lịch</span><strong id="sys-next-gap">—</strong></div>
 <div class="system-line"><span>💼 Giai đoạn doanh thu</span><strong id="sys-commercial">—</strong></div><div class="system-line"><span>Affiliate đã duyệt theo nguồn</span><strong id="sys-affiliate-ready">—</strong></div><div class="system-line"><span>Đề xuất thương mại cần duyệt</span><strong id="sys-com-drafts">—</strong></div><div class="system-line"><span>Nhóm sản phẩm đang nghiên cứu</span><strong id="sys-aff-items">—</strong></div><div class="system-line"><span>Sản phẩm có link đã duyệt</span><strong id="sys-aff-approved">—</strong></div><div class="system-line"><span>Vị trí link đang lên phương án</span><strong id="sys-link-plans">—</strong></div><div class="system-line"><span>Trang link bio</span><strong><a href="./links/" target="_blank" rel="noopener noreferrer">Xem bản thử ↗</a></strong></div><div class="muted" style="margin-top:7px">Trạng thái chuẩn bị thương mại không có nghĩa đã mở bán hoặc phát sinh doanh thu. Dữ liệu tài chính được lưu riêng.</div><div class="system-line"><span>Đến giờ nhưng chưa đối soát lại</span><strong id="sys-due-unverified">—</strong></div><div class="system-line"><span>🏷 Bài có Topic gốc đang chờ</span><strong id="sys-topic-queued">—</strong></div><div class="system-line"><span>Topic đã yêu cầu gửi Meta</span><strong id="sys-topic-posted">—</strong></div><div class="muted" style="margin-top:9px">Tự đánh giá theo đợt và chỉ thay đổi chiến lược khi có số liệu thật. Hoạt ảnh minh họa không đồng nghĩa đang xử lý 24/7.</div></section>
 </div>
@@ -99,6 +104,8 @@ growth_started:'Đang quét tín hiệu',growth_completed:'Đã hoàn thành qu�
 monetization_checked:'Đã kiểm tra điều kiện tạo doanh thu',
 growth_failed:'Quét chủ đề gặp lỗi',research_started:'Đang nghiên cứu',
 research_completed:'Đã hoàn thành nghiên cứu',research_failed:'Nghiên cứu gặp lỗi',
+community_checked:'Đã kiểm tra câu hỏi thật dưới bài Threads',
+media_checked:'Đã rà soát meme gốc và nguồn tư liệu',
 editorial_checked:'Đã kiểm tra thư viện ý tưởng tự động',
 post_queued:'Đã thêm bài vào hàng đợi',post_scheduled_external:'Đã ghi nhận lịch Metricool',
 post_publishing:'Đang gửi bài qua Meta',post_posted:'Bài đã đăng và có ID Meta',
@@ -176,6 +183,12 @@ out('sys-editorial-ready',Number.isInteger(d.editorialAutonomy?.readyIdeas)?d.ed
 out('sys-editorial-at',d.editorialAutonomy?.lastPreparedAt?date(d.editorialAutonomy.lastPreparedAt):'Chưa tạo ý tưởng');
 out('sys-research-pending',Number.isInteger(d.editorialAutonomy?.researchPendingApprovals)?d.editorialAutonomy.researchPendingApprovals+' chờ duyệt':'—');
 out('sys-next-run',date(nextWorker())+' · dự kiến');
+out('sys-audience-replies',Number.isInteger(d.audienceCare?.ownRepliesConfirmed)?d.audienceCare.ownRepliesConfirmed+' phản hồi':'—');
+const metaDiscovery={own_posts_only_possible_app_review:'Có thể đang giới hạn App Review',empty_keyword_results:'Chưa thấy kết quả',no_relevant_recent_public_posts:'Không có thảo luận phù hợp',ok_public_posts:'Đã tìm thấy bài công khai',not_authorized:'Chưa đủ quyền',source_unavailable:'Chưa đọc được nguồn'};
+out('sys-public-search',metaDiscovery[d.audienceCare?.externalDiscovery]||'Cần kiểm tra');
+out('sys-meme-ready',Number.isInteger(d.visualLab?.originalMemesReady)?d.visualLab.originalMemesReady+' bản gốc':'—');
+out('sys-video-ideas',Number.isInteger(d.visualLab?.videoStoryboards)?d.visualLab.videoStoryboards+' kịch bản':'—');
+out('sys-media-review',Number.isInteger(d.visualLab?.externalMediaNeedsReview)?d.visualLab.externalMediaNeedsReview+' tư liệu':'—');
 out('sys-learning-run',d.learning?.lastEvaluatedAt?date(d.learning.lastEvaluatedAt)+' · '+normalizedStatus(d.learning?.lastDecision):'Chưa có lượt đo thực');
 out('sys-provider',d.providerPublications?.metricoolReportedPublished??'—');
 out('sys-meta',d.providerPublications?.metaIdsConfirmed??'—');
