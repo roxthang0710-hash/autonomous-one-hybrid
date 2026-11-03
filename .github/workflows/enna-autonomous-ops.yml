@@ -64,6 +64,8 @@ jobs:
           python -m growth.story_insights
       - name: Evaluate next editorial strategy from verified evidence
         run: python -m growth.self_improvement
+      - name: Check monetization gates and genuine revenue receipts (read only)
+        run: python -m growth.monetization
       - name: Summarize health without private content
         if: always()
         run: python -m enna
