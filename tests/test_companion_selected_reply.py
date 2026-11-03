@@ -195,6 +195,82 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(result["state"],"ai_draft_invalid_or_unavailable")
         send.assert_not_called()
 
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_owner_opt_in_official_direct_reply_after_read_scope_denied(self, _):
+        import requests
+        from growth.selected_direct_reply import ConfirmedMetaRejection
+        response=requests.Response()
+        response.status_code=403
+        read=MagicMock(side_effect=requests.HTTPError("read access denied",response=response))
+        e=issue()
+        e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat()
+        db=MagicMock()
+        db.request.return_value=[{"attempt_id":"550e8400-e29b-41d4-a716-446655440000"}]
+        direct=MagicMock(return_value=("container","meta_direct_reply_id"))
+        regular=MagicMock()
+        result=process(e,db=db,read=read,
+            publish=regular,direct_publish=direct,allow_direct_trial=True,
+            credentials=lambda d:("fake_secure_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,"post_text":ANSWER,
+                "content_angle":"Bảng chung rõ trạng thái"})
+        self.assertEqual(result["state"],"posted_confirmed")
+        self.assertEqual(result["verification"],"meta_publish_confirmed")
+        direct.assert_called_once()
+        regular.assert_not_called()
+        db.patch.assert_called_once()
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_direct_meta_create_rejection_is_not_false_success(self, _):
+        import requests
+        from growth.selected_direct_reply import ConfirmedMetaRejection
+        response=requests.Response()
+        response.status_code=403
+        e=issue()
+        e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat()
+        db=MagicMock()
+        db.request.return_value=[{"attempt_id":"550e8400-e29b-41d4-a716-446655440000"}]
+        result=process(e,db=db,read=MagicMock(side_effect=
+            requests.HTTPError("read forbidden",response=response)),
+            direct_publish=MagicMock(side_effect=ConfirmedMetaRejection(403)),
+            allow_direct_trial=True,
+            credentials=lambda d:("fake_secure_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,"post_text":ANSWER,
+                "content_angle":"Tối ưu việc nhóm"})
+        self.assertEqual(result["state"],"meta_rejected_direct_reply")
+        self.assertEqual(db.patch.call_args.args[2]["status"],"meta_rejected")
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_direct_fallback_never_follows_bad_or_old_meta_read(self, _):
+        import requests
+        e=issue()
+        e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(days=8)).isoformat()
+        response=requests.Response()
+        response.status_code=403
+        direct=MagicMock()
+        db=MagicMock()
+        result=process(e,db=db,read=MagicMock(side_effect=
+            requests.HTTPError("read forbidden",response=response)),
+            direct_publish=direct,allow_direct_trial=True,
+            credentials=lambda d:("fake_secure_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,"post_text":ANSWER,
+                "content_angle":"Việc nhóm"})
+        self.assertEqual(result["state"],"draft_only_meta_cannot_verify_target")
+        direct.assert_not_called()
+        db.request.assert_not_called()
+
+    def test_official_meta_direct_reply_api_rejected_at_create_stage(self):
+        from growth.selected_direct_reply import (
+            ConfirmedMetaRejection, direct_reply, target_read_limited)
+        import requests
+        response=requests.Response()
+        response.status_code=403
+        err=requests.HTTPError("permission",response=response)
+        self.assertTrue(target_read_limited(err))
+        writer=MagicMock(side_effect=err)
+        with self.assertRaises(ConfirmedMetaRejection):
+            direct_reply("token",KNOWN_ID,ANSWER,request=writer)
+        writer.assert_called_once()
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
