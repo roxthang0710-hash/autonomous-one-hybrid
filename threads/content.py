@@ -207,8 +207,25 @@ def plan_next(db, *, low_watermark=6, force=False):
     index = len(history) % len(SEEDS)
     pillar, topic = SEEDS[index]
     tech_brief = choose_tech_brief(len(history))
+    selected_plan_id = None
     if tech_brief is not None:
         pillar, topic = tech_brief["pillar"], tech_brief["prompt"]
+        # Enna independently maintains this curated source-checked idea queue.
+        # Failure to read it never blocks the existing safe editorial fallback.
+        try:
+            planned = db.request("GET", "/enna_editorial_plans", params={
+                "select": "id,pillar,topic_prompt",
+                "brand_key": "eq." + BRAND_KEY, "status": "eq.ready",
+                "order": "created_at.asc", "limit": "1",
+            })
+            if (isinstance(planned, list) and planned
+                    and planned[0].get("pillar") in ("work", "travel", "organize", "conversation")
+                    and isinstance(planned[0].get("topic_prompt"), str)
+                    and len(planned[0]["topic_prompt"]) <= 1000):
+                pillar, topic = planned[0]["pillar"], planned[0]["topic_prompt"]
+                selected_plan_id = planned[0].get("id")
+        except Exception:
+            pass
     trend = None
     if channel.get("status") == "connected" and tech_brief is None:
         from threads.trends import select_topic
@@ -231,6 +248,7 @@ def plan_next(db, *, low_watermark=6, force=False):
     result = None
     original_failure = "duplicate_generated"
     chosen_trend = None
+    primary_angle_used = False
     for current_pillar, current_topic, current_trend in angles[:3]:
         try:
             candidate = generate_ai_post(current_pillar, current_topic, history_texts)
@@ -246,6 +264,7 @@ def plan_next(db, *, low_watermark=6, force=False):
             original_failure = "near_duplicate_generated"
             continue
         result, chosen_trend = candidate, current_trend
+        primary_angle_used = current_pillar == pillar and current_topic == topic
         break
     if result is None:
         return original_failure
@@ -263,6 +282,17 @@ def plan_next(db, *, low_watermark=6, force=False):
                               chosen_trend["opportunity_id"] if chosen_trend else None),
                       },
                       prefer="resolution=ignore-duplicates,return=representation")
+    if rows and selected_plan_id and primary_angle_used:
+        try:
+            db.request("PATCH", "/enna_editorial_plans", params={
+                "id": "eq." + str(selected_plan_id), "status": "eq.ready",
+            }, payload={
+                "status": "used", "used_at": datetime.now(VN).isoformat(),
+            }, prefer="return=minimal")
+        except Exception:
+            # A draft was safely queued already. Do not create a duplicate
+            # because a noncritical source-plan bookkeeping write failed.
+            pass
     return "created_one" if rows else "already_created"
 
 
