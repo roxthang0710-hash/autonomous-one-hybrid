@@ -57,6 +57,8 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test before any publishing action
         run: python -m unittest discover -s tests -v
+      - name: Log verified worker start (private)
+        run: python -m growth.activity_log publisher started publisher_started
       - name: Generate drafts, publish only after OAuth, and collect real insights
         run: python -m threads.daily
       - name: Check real conversations on own Threads posts (read only)
@@ -84,3 +86,14 @@ jobs:
           echo "Metricool retains its booked calendar; adaptive Meta extras are gated by quality, a 90-minute gap, a maximum of five total posts per day, and official owner permissions." >> "$GITHUB_STEP_SUMMARY"
           echo "Enna learning only changes an auditable editorial preference after verified Meta post metrics; never self-edits source code or claims a Topic Community post." >> "$GITHUB_STEP_SUMMARY"
           echo "No affiliate links, purchases, group spam or fabricated testimonials." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Log worker end (private, even if a test failed)
+        if: always()
+        env:
+          ENNA_JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$ENNA_JOB_STATUS" = "success" ]; then
+            python -m growth.activity_log publisher success publisher_completed
+          else
+            python -m growth.activity_log publisher failed publisher_failed
+          fi
