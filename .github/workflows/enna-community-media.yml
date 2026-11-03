@@ -1,0 +1,97 @@
+name: Enna — Independent Community & Visual Lab
+on:
+  schedule:
+    # 09:40, 14:40, 19:40 Vietnam time (UTC+7). Best effort.
+    - cron: '40 2,7,12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-community-visual-lab
+  cancel-in-progress: false
+
+jobs:
+  community:
+    name: Genuine own-audience questions
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_AUTO_ENGAGE_ENABLED: ${{ secrets.THREADS_AUTO_ENGAGE_ENABLED }}
+      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Verify critical policy and media code before doing anything publicly
+        run: python -m unittest discover -s tests -v
+      - name: Respond to at most one authentic, unanswered audience question
+        id: care
+        run: python -m growth.community_care
+      - name: Audit independent community check
+        if: always()
+        env:
+          OUTCOME: ${{ steps.care.outcome }}
+        run: |
+          if [ "$OUTCOME" = "success" ]; then
+            python -m growth.activity_log growth success community_checked
+          elif [ "$OUTCOME" != "skipped" ]; then
+            python -m growth.activity_log growth failed community_checked
+          fi
+      - name: Honest summary of community scope
+        if: always()
+        run: |
+          echo 'Community Care answers only suitable real questions on own posts, if Meta reply scopes work.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'External public-post keyword searches remain in Growth Radar, subject to official Meta App Review.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Owned replies are max 1/day and share the atomic 3/day total cap with external replies; zero is normal.' >> "$GITHUB_STEP_SUMMARY"
+
+  visual:
+    name: Original memes & licensed-media research
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      ENNA_ORIGINAL_MEDIA_ENABLED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Check unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Render genuine original office memes & scout permitted media
+        id: scout
+        run: python -m growth.media_scout
+      - name: Audit independent media research
+        if: always()
+        env:
+          OUTCOME: ${{ steps.scout.outcome }}
+        run: |
+          if [ "$OUTCOME" = "success" ]; then
+            python -m growth.activity_log editor success media_checked
+          elif [ "$OUTCOME" != "skipped" ]; then
+            python -m growth.activity_log editor failed media_checked
+          fi
+      - name: Honest summary of media scope
+        if: always()
+        run: |
+          echo 'Only completely original meme PNGs are eligible for later organic queue use.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Third-party photos/videos are RESEARCH ONLY until their images, rights, faces and marks are reviewed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Pexels discovery needs an existing API key; Commons public-domain searches need no key.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No internet memes/videos or copyrighted music are automatically reposted.' >> "$GITHUB_STEP_SUMMARY"
