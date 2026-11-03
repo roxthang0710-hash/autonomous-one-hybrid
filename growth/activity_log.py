@@ -23,9 +23,11 @@ def emit(db, kind, status, code, *, run_id):
         raise ValueError("Activity event must use predefined safe codes")
     if not str(run_id).isdigit() or len(str(run_id)) > 24:
         raise ValueError("Workflow run ID required")
+    event=os.environ.get("GITHUB_EVENT_NAME","unknown")
+    event=event if event in {"schedule","issues","workflow_dispatch"} else "unknown"
     payload={
         "origin":"github", "kind":kind, "status":status,
-        "code":code, "run_key":str(run_id),
+        "code":code, "run_key":str(run_id), "trigger_kind":event,
         "dedup_key":"github:"+str(run_id)+":"+kind+":"+status+":"+code,
     }
     return db.request("POST","/enna_activity_events",
