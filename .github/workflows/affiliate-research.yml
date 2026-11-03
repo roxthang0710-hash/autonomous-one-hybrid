@@ -50,6 +50,9 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Research and store one affiliate draft
         run: python -m affiliate.runner
+      - name: Summarize commercial-readiness evidence (no publishing)
+        if: always()
+        run: python -m growth.monetization
       - name: Enna next-best-action report (read only, evidence-first)
         if: always()
         run: python -m enna
