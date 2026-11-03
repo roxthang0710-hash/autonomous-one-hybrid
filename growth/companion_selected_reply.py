@@ -23,7 +23,7 @@ import requests
 from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
 from growth.companion_editor import compose_selected, EnnaModelServiceError
-from growth.companion_fit import assess_selected
+from growth.companion_fit import assess_selected, user_is_frustrated
 from growth.selected_direct_reply import (
     ConfirmedMetaRejection, MetaStageError, direct_reply, target_read_limited,
 )
@@ -200,6 +200,13 @@ def can_send(text, selected, *, target):
     # Reject extracts / near-verbatim copies and lifted profanity: a comment
     # must CONTRIBUTE, not merely repeat the author's original words.
     if re.search(r"\\b(dm|dcm|dcmmm|vcl|dit me|vl)\\b",normalized):
+        return False
+    # Do not praise a source of frustration as a fun/positive experience.
+    if user_is_frustrated(selected) and any(x in normalized for x in (
+        "co gang het minh", "them thu vi", "diem nhan",
+        "nu cuoi", "loi khen", "tich cuc", "truyen cam hung",
+        "doi khi chi can mot chut", "dang yeu", "niem vui"
+    )):
         return False
     if normalized in original_normalized:
         return False
