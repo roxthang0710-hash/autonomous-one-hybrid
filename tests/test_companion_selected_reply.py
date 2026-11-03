@@ -385,6 +385,21 @@ class SelectionTests(unittest.TestCase):
         self.assertFalse(can_send(off_target,selected,target=parse_threads_url(URL)))
         self.assertTrue(can_send(grounded,selected,target=parse_threads_url(URL)))
 
+    def test_verbatim_quote_of_selected_post_is_not_a_comment(self):
+        source=("Gõ bàn phím cạch cạch, đập chuột, mang vòng cẩm thạch "
+                "chạm vào bàn phát ra tiếng. Ngày nào như ngày nấy. "
+                "Tôi đã nhắc nhở mà vẫn không thấy thay đổi.")
+        copied=("Gõ bàn phím cạch cạch, đập chuột, mang vòng cẩm thạch "
+                "chạm vào bàn phát ra tiếng. Ngày nào như ngày nấy.")
+        self.assertFalse(can_send(copied,source,target=parse_threads_url(URL)))
+        novel=("Nghỉ trưa mà bàn phím cứ cạch cạch rồi còn đập chuột "
+               "liên tục thì đúng là mất cả giờ yên tĩnh. Đã nhắc rồi "
+               "mà không thay đổi mới khiến người ta mệt.")
+        context=("Đang giờ nghỉ trưa thì người cùng phòng gõ bàn phím "
+                 "cạch cạch, đập chuột ầm ầm. Đã nhắc nhở mà ngày nào "
+                 "cũng vậy, ảnh hưởng cả phòng.")
+        self.assertTrue(can_send(novel,context,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
