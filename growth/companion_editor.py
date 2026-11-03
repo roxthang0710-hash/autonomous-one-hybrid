@@ -110,6 +110,7 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "'Đúng là một câu chuyện' hoặc 'Cảm động quá'. "
         "Không sao chép nguyên bài. "
         "Không khẳng định bài viral, được bao nhiêu view/like khi không có số liệu. "
+        "Nếu bài là lời than phiền, hãy hiểu đúng nguyên nhân và nhắc lại hai chi tiết cụ thể, đưa ra nhận xét hợp tình huống thay vì lời động viên chung chung. "
         "Nếu bài kể chuyện quan tâm hoặc cảm xúc cá nhân, đáp lại ấm áp "
         "và tôn trọng. Một câu chuyện chăm sóc người thân không tự động "
         "là lời khuyên y tế: có thể nói về sự tử tế trong hành động cụ thể, "
