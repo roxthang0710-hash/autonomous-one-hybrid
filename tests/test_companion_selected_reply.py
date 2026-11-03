@@ -474,6 +474,49 @@ class SelectionTests(unittest.TestCase):
         publish.assert_not_called()
         db.request.assert_not_called()
 
+    def test_self_healing_three_options_finds_safe_relevant_reply(self):
+        irrelevant=("Mỗi ngày hãy thật vui và cố gắng giữ tinh thần "
+                    "lạc quan để cuộc sống thêm tốt đẹp hơn nhé.")
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        source=MagicMock(return_value={"should_reply":True,
+            "post_text":irrelevant,"content_angle":"Tư duy tích cực"})
+        three=MagicMock(return_value=[
+            {"post_text":irrelevant,"content_angle":"Khởi đầu"},
+            {"post_text":ANSWER,"content_angle":"Thống nhất bảng theo dõi"},
+            {"post_text":irrelevant,"content_angle":"Khác"},
+        ])
+        db,read,publish,credentials=MagicMock(),MagicMock(),MagicMock(),MagicMock()
+        result=process(e,db=db,create=source,option_generator=three,
+                       semantic_judge=lambda a,b:False,
+                       read=read,publish=publish,credentials=credentials)
+        self.assertEqual(result["state"],"draft_prepared_only")
+        self.assertEqual(result["draft"],ANSWER)
+        self.assertEqual(source.call_count,2)
+        three.assert_called_once()
+        db.request.assert_not_called()
+        read.assert_not_called()
+        publish.assert_not_called()
+        credentials.assert_not_called()
+
+    def test_three_bad_drafts_never_trigger_threads_publish(self):
+        unrelated=("Ngày nào cũng nên uống cà phê và mỉm cười trước "
+                   "mọi thử thách của cuộc sống để vui hơn.")
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        candidates=MagicMock(return_value=[
+            {"post_text":unrelated,"content_angle":"Không liên quan"}]*3)
+        publish=MagicMock()
+        db=MagicMock()
+        result=process(e,db=db,option_generator=candidates,
+            create=lambda *a,**kw:{"should_reply":True,
+                  "post_text":unrelated,"content_angle":"Thử"},
+            read=MagicMock(),publish=publish,credentials=MagicMock())
+        self.assertEqual(result["state"],"ai_reply_not_contextual_enough")
+        candidates.assert_called_once()
+        publish.assert_not_called()
+        db.request.assert_not_called()
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
