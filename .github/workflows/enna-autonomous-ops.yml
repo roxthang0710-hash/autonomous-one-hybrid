@@ -66,6 +66,8 @@ jobs:
         run: python -m growth.self_improvement
       - name: Check monetization gates and genuine revenue receipts (read only)
         run: python -m growth.monetization
+      - name: Rank verified affiliate product hypotheses (read only)
+        run: python -m growth.affiliate_selection
       - name: Log confirmed monetization readiness check
         run: python -m growth.activity_log system success monetization_checked
       - name: Summarize health without private content
