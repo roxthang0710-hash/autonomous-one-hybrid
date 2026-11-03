@@ -27,14 +27,15 @@ Deno.serve(async (request: Request) => {
     const endpoints: Record<string,string> = {
       research: 'agent_runs?select=started_at,finished_at,status,trigger_kind&order=started_at.desc&limit=25',
       growth: 'growth_runs?select=started_at,finished_at,status,signal_count,shortlisted,drafts_created&order=started_at.desc&limit=25',
-      posts: 'threads_posts?select=id,status,scheduled_at,published_at,topic_tag_planned,topic_tag_requested,editorial_series&limit=500',
+      posts: 'threads_posts?select=id,status,scheduled_at,published_at,platform_post_id,topic_tag_planned,topic_tag_requested,editorial_series&limit=500',
       tasks: 'agent_tasks?select=status,kind&limit=500',
       replies: 'growth_engagement_attempts?select=status,finished_at&limit=500',
       account: 'threads_channels?select=username,status,authorized,auto_publish_enabled&limit=1',
       learning: 'enna_learning_policy?select=preferred_format,applied_at,version&brand_key=eq.do_hay_di_lam&limit=1',
       learningDecisions: 'enna_learning_decisions?select=evaluated_at,decision&brand_key=eq.do_hay_di_lam&order=evaluated_at.desc&limit=8',
       providerEvidence: 'enna_publication_evidence?select=scheduled_post_id,provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=200',
-      events: 'enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=80'
+      events: 'enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=80',
+      metricoolDaily: 'growth_metricool_daily?select=measured_on,followers,new_followers&metricool_brand_id=eq.7803567&order=measured_on.desc&limit=14'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -46,11 +47,13 @@ Deno.serve(async (request: Request) => {
     // Keep provider confirmation and Meta media-ID verification separate.
     // A PUBLISHED Metricool post still marked scheduled_external in our DB
     // MUST show as published without falsifying its Meta reconciliation status.
-    const metaPosted = new Set(s.posts.filter(r=>r.status==='posted').map(r=>r.id));
+    const metaPosted = new Set(s.posts.filter(r=>r.status==='posted' &&
+      typeof r.platform_post_id==='string' && r.platform_post_id.length>0).map(r=>r.id));
     const providerPublished = s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED');
     const providerPublishedIds = new Set(providerPublished.map(r=>r.scheduled_post_id).filter(Boolean));
     const providerOnly = providerPublished.filter(r=>!r.scheduled_post_id || !metaPosted.has(r.scheduled_post_id));
     const publishedTotal = metaPosted.size + providerOnly.length;
+    const followerRow=s.metricoolDaily.find(r=>Number.isInteger(r.followers) && r.followers>=0)||null;
     const awaitingExternal = s.posts.filter(r=>r.status==='scheduled_external' && !providerPublishedIds.has(r.id)).length;
     const runTimeline = [
       ...s.research.map(r=>({at:r.started_at,kind:'research',status:r.status})),
@@ -107,7 +110,14 @@ Deno.serve(async (request: Request) => {
                  lastEvaluatedAt:s.learningDecisions[0]?.evaluated_at||null},
       providerPublications: {
         metricoolReportedPublished:providerPublished.length,
-        metaIdsConfirmed:s.providerEvidence.filter(r=>r.provider_status==='PUBLISHED' && !!r.meta_post_id).length
+        metaIdsConfirmed:metaPosted.size
+      },
+      followerKpi: {
+        goal:1000,
+        latestKnown:followerRow?.followers??null,
+        asOf:followerRow?.measured_on||null,
+        latestDailyDelta:followerRow?.new_followers??null,
+        upToDate:false
       },
       topics: {
         nativeQueued:s.posts.filter(r=>r.status==='queued' && !!r.topic_tag_planned).length,
