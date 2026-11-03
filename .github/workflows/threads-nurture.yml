@@ -70,6 +70,20 @@ jobs:
       - name: Update evidence-gated editorial learning (rollback-safe)
         if: always()
         run: python -m growth.self_improvement
+      - name: Autonomously prepare source-verified work-tool content briefs
+        id: editorial
+        if: success()
+        run: python -m growth.editorial_autopilot
+      - name: Log autonomous editorial pass to private operations
+        if: always() && steps.editorial.outcome != 'skipped'
+        env:
+          EDITORIAL_OUTCOME: ${{ steps.editorial.outcome }}
+        run: |
+          if [ "$EDITORIAL_OUTCOME" = "success" ]; then
+            python -m growth.activity_log editor success editorial_checked
+          else
+            python -m growth.activity_log editor failed editorial_checked
+          fi
       - name: Account cultivation and Shopee application readiness (read only)
         if: always()
         run: |
