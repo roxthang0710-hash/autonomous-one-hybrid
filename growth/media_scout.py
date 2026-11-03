@@ -139,7 +139,8 @@ def pexels_candidates(query, key, *, fetch=requests.get):
             ident=item.get("id")
             url=item.get("url")
             if not ident or not allowed_source_url(url,"pexels"):continue
-            credit=str(item.get("photographer") or item.get("user",{}).get("name") or "Pexels")
+            user=item.get("user") if isinstance(item.get("user"),dict) else {}
+            credit=str(item.get("photographer") or user.get("name") or "Pexels")
             collected.append({
                 "idea_key":"pexels-"+make_key("pexels",str(ident)),
                 "media_type":"licensed_photo" if media=="photo" else "licensed_video",
@@ -168,6 +169,12 @@ def upload_original_png(path,png, *, post=requests.post):
         headers["Authorization"]="Bearer "+key
     response=post(host+"/storage/v1/object/"+BUCKET+"/"+path,
                   data=png,headers=headers,timeout=20)
+    if response.status_code == 409:
+        # A prior upload may have succeeded before its database update failed.
+        # Confirm the exact public object exists without repeating the write.
+        probe=requests.head(PUBLIC_BASE+path,timeout=10)
+        if probe.status_code == 200 and probe.headers.get("Content-Type","").startswith("image/png"):
+            return PUBLIC_BASE+path
     if response.status_code not in (200,201):
         # Never accept an ambiguous timeout as proof of upload.
         raise RuntimeError("Original meme upload was not confirmed")
