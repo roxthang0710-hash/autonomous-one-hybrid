@@ -82,5 +82,9 @@ def main():
          ("#E8F7FF","#4389B7","#273C52","#D5EFFC"),
          ["DEADLINE"],"LẠI NHÂN ĐÔI",
          ["Một việc chưa xong.", "Ba việc mới tới."],svg="enna-thinking.svg")
+    make("enna-ctrl-z.png",
+         ("#FFF6DD","#B78345","#473B37","#FFF0CB"),
+         ["CÔNG SỞ ƠI"],"CHO XIN CTRL+Z",
+         ["Tệp thì còn sửa được.", "Câu lỡ nói thì... chịu."],svg="enna-thinking.svg")
 
 if __name__=="__main__":main()
