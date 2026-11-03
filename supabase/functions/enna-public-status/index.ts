@@ -35,7 +35,8 @@ Deno.serve(async (request: Request) => {
       learningDecisions: 'enna_learning_decisions?select=evaluated_at,decision&brand_key=eq.do_hay_di_lam&order=evaluated_at.desc&limit=8',
       providerEvidence: 'enna_publication_evidence?select=scheduled_post_id,provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=200',
       events: 'enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=80',
-      metricoolDaily: 'growth_metricool_daily?select=measured_on,followers,new_followers&metricool_brand_id=eq.7803567&order=measured_on.desc&limit=14'
+      metricoolDaily: 'growth_metricool_daily?select=measured_on,followers,new_followers&metricool_brand_id=eq.7803567&order=measured_on.desc&limit=14',
+      crossChannel: 'enna_multichannel_posts?select=provider,scheduled_at,provider_status,checked_at,auto_publish,has_media&brand_key=eq.do_hay_di_lam&order=scheduled_at.asc&limit=80'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -54,6 +55,10 @@ Deno.serve(async (request: Request) => {
     const providerOnly = providerPublished.filter(r=>!r.scheduled_post_id || !metaPosted.has(r.scheduled_post_id));
     const publishedTotal = metaPosted.size + providerOnly.length;
     const followerRow=s.metricoolDaily.find(r=>Number.isInteger(r.followers) && r.followers>=0)||null;
+    const futureVerified=s.crossChannel.filter(r=>r.provider_status==='PENDING' && r.auto_publish &&
+      Date.parse(r.scheduled_at)>Date.now());
+    const lastCrossCheck=s.crossChannel.map(r=>r.checked_at).filter(Boolean)
+      .sort((a,b)=>Date.parse(b)-Date.parse(a))[0]||null;
     const awaitingExternal = s.posts.filter(r=>r.status==='scheduled_external' && !providerPublishedIds.has(r.id)).length;
     const runTimeline = [
       ...s.research.map(r=>({at:r.started_at,kind:'research',status:r.status})),
@@ -118,6 +123,12 @@ Deno.serve(async (request: Request) => {
         asOf:followerRow?.measured_on||null,
         latestDailyDelta:followerRow?.new_followers??null,
         upToDate:false
+      },
+      crossChannel: {
+        facebookUpcoming:futureVerified.filter(r=>r.provider==='facebook').length,
+        instagramUpcoming:futureVerified.filter(r=>r.provider==='instagram' && r.has_media).length,
+        lastVerifiedAt:lastCrossCheck,
+        syncMode:'snapshot'
       },
       topics: {
         nativeQueued:s.posts.filter(r=>r.status==='queued' && !!r.topic_tag_planned).length,
