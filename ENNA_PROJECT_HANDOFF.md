@@ -78,3 +78,24 @@ In a new conversation request reading **ENNA_PROJECT_HANDOFF.md** from repositor
 - Supabase docs: built-in Auth email provider has a shared project quota of 2 emails/hour for /recover and other email-send endpoints, plus a default 60-second per-user reset request limit. Do not repeatedly send requests. Check Authentication → Rate Limits and allow time for quota to renew; custom SMTP if production demand warrants.
 - Code verification: docs/enna/affiliate/reset/index.html constructs `redirect_to = location.origin + location.pathname` and passes it to `/auth/v1/recover`. The intended destination is https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/affiliate/reset/ . Supabase actual Redirect URLs allowlist was NOT directly retrievable by the connector; owner can review it in Authentication → URL Configuration. Site URL /oauth/ retained to protect Threads sign-in.
 - Updated reset page error handling to explain `email rate limit exceeded` without incorrectly labeling it a redirect problem. Public deployment and end-to-end reset still require live verification.
+
+## Enna editorial expansion: work software, tool tips and office workflows (2026-11-03)
+
+User explicitly requested researching and building new content lanes for sharing useful software, digital tools, methods and small work hacks; maintain youthful but natural Vietnamese voice, not constant product sales. Six lanes:
+1. Phần mềm hay, đi làm đỡ cực (PowerToys and practical apps).
+2. Mẹo máy tính 30 giây (Windows shortcuts).
+3. Bớt khổ với bảng tính (Google Sheets).
+4. AI làm trợ lý, không làm hộ suy nghĩ (prompting, fact checks, privacy).
+5. Quy trình nhỏ, hiệu quả lớn (meeting, daily task planning).
+6. Enna Mini – Công cụ nhà làm (truthful demonstration of existing free functionality).
+
+Implementation:
+- Research/editorial rules and 4-week plan: `ENNA_EDITORIAL_TOOL_SERIES_2026.md`.
+- Sourced curated topic bank: `threads/tech_editorial.py` with 10 briefs and source links from Microsoft/Google/Enna Mini.
+- Future-generation integration: `threads/content.py` calls `choose_tech_brief(len(history))` once per three newly generated posts; existing SEEDS, 4 database pillar enum values, scheduling and duplicate checks remain unchanged. Trend-driven override is skipped for that specific tool-tip selection. Adds explicit no-invented-capability editorial instructions.
+- Regression checks authored in `tests/test_tech_editorial.py`.
+- Online searchable **draft library**: `docs/enna/content-lab/index.html` intended at https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/content-lab/ . 14 draft captions, filter by series and week, copy text button. Drafts are public-source-based *ideas*, not Metricool scheduled posts nor approval to publish.
+- Metricool brand 7803567 still contains prebooked dates through 17/11 and Supabase queue has posts through 21/11/2026 09:30 Vietnam. Preserve these; do not inject extra posts or edit old dates.
+- Tech rotation only affects **new** generated content when ordinary low-watermark queue logic starts creating again. Do not claim new content has published or even been queued yet.
+- GitHub code and contents confirmed from connector. GitHub Pages public availability could not be verified through web, and full repo Python tests could not run in this environment because outgoing GitHub network DNS was unavailable; unit test code exists but PASS is not proven. Re-check deployment and CI later.
+- Future: compare sourced tool-tip content performance with humor/office-life once there is enough REAL Metricool and Threads data. Keep attribution, no fake tutorials/reviews and no confidential files pasted into AI.
