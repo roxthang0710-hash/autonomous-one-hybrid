@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Enna Affiliate · Khôi phục mật khẩu</title>
+<meta name="referrer" content="no-referrer">
+<style>
+:root{font:16px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;color:#322744;background:#f7f4fc}*{box-sizing:border-box}body{margin:0}main{max-width:540px;margin:8vh auto;padding:22px}article{background:#fff;border:1px solid #e4d9f1;border-radius:22px;box-shadow:0 8px 32px #32274410;padding:26px}header{font-size:12px;letter-spacing:.12em;font-weight:700;color:#7453ac}h1{font-size:27px;line-height:1.25;margin:12px 0}.muted{color:#71647c;font-size:14px}label{display:block;font-size:14px;font-weight:650;margin-top:14px}input{font:inherit;padding:12px;width:100%;border-radius:11px;border:1px solid #d9cfe6;margin-top:5px}button{margin-top:19px;background:#7651b9;border:0;color:white;border-radius:11px;padding:12px 15px;font:inherit;font-weight:700;width:100%;cursor:pointer}button:disabled{opacity:.55}a{color:#6844aa}#status{min-height:26px;font-size:14px;margin-top:15px;overflow-wrap:anywhere}.hidden{display:none}.error{color:#a5274d}.ok{color:#23684c}footer{text-align:center;font-size:12px;color:#766c84;margin-top:20px}
+</style></head><body><main><article>
+<header>ĐỒ HAY ĐI LÀM · ENNA</header><h1>Đặt lại mật khẩu quản trị</h1>
+<p class="muted">Chỉ sử dụng cho tài khoản Supabase Auth đã đăng ký trong dự án Enna. Bạn không cần biết mật khẩu cũ, và không cần tạo tài khoản mới.</p>
+<form id="request"><label for="email">Email đăng nhập Enna</label><input id="email" type="email" required autocomplete="email" placeholder="Nhập email của bạn"><button id="send">Gửi email khôi phục</button></form>
+<form id="change" class="hidden"><label for="password">Mật khẩu mới</label><input id="password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><label for="confirm">Nhập lại mật khẩu</label><input id="confirm" type="password" minlength="12" maxlength="128" autocomplete="new-password" required><button id="save">Lưu mật khẩu mới</button></form>
+<p id="status" role="status" aria-live="polite"></p>
+<p class="muted">Nếu đã nhận email, hãy bấm liên kết khôi phục trong email. Không gửi mật khẩu, mã xác thực hoặc liên kết khôi phục cho bất kỳ ai.</p>
+<a href="../">Quay về Enna Affiliate Control</a>
+</article><footer>Dữ liệu đăng nhập được gửi trực tiếp tới Supabase Auth qua HTTPS. Trang không ghi lại mật khẩu.</footer></main>
+<script>
+'use strict';
+const BASE='https://gjdvdohylvsauphhkutw.supabase.co';
+const KEY='sb_publishable_sJxwXdpQPn4FrrGZPusJmA_Xy5TI0-H';
+const $=id=>document.getElementById(id), status=(s,error=false)=>{$('status').textContent=s;$('status').className=error?'error':'ok'};
+const fragment=new URLSearchParams(location.hash.slice(1));
+let recoveryToken=fragment.get('type')==='recovery'?fragment.get('access_token'):null;
+if(recoveryToken){history.replaceState(null,'',location.pathname);$('request').classList.add('hidden');$('change').classList.remove('hidden');status('Đã xác thực liên kết khôi phục. Vui lòng đặt mật khẩu mới.')}
+else if(fragment.get('error')||fragment.get('error_description')){history.replaceState(null,'',location.pathname);status('Liên kết khôi phục đã hết hạn hoặc không hợp lệ. Vui lòng gửi yêu cầu mới.',true)}
+async function jsonRequest(url,body,token=null,method='POST'){
+ const response=await fetch(url,{method,headers:{'Content-Type':'application/json',apikey:KEY,...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body),cache:'no-store'});
+ if(!response.ok){let msg='Yêu cầu không thành công ('+response.status+').';try{const p=await response.json();if(p.msg)msg=p.msg;else if(p.message)msg=p.message;}catch{}throw Error(msg)}return response;
+}
+$('request').onsubmit=async e=>{
+ e.preventDefault();const btn=$('send');btn.disabled=true;status('Đang xử lý…');
+ try{
+   const redirect=location.origin+location.pathname;
+   await jsonRequest(BASE+'/auth/v1/recover?redirect_to='+encodeURIComponent(redirect),{email:$('email').value.trim()});
+   status('Nếu email này thuộc tài khoản hợp lệ và dịch vụ gửi thư hoạt động, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu. Kiểm tra cả thư rác.');
+ }catch(err){status('Chưa gửi được yêu cầu: '+err.message+'. Hãy kiểm tra cấu hình email và URL chuyển hướng trong Supabase.',true)}finally{btn.disabled=false}
+};
+$('change').onsubmit=async e=>{
+ e.preventDefault();const btn=$('save');btn.disabled=true;
+ try{
+  const p=$('password').value,c=$('confirm').value;
+  if(p.length<12||p!==c)throw Error('Mật khẩu phải dài ít nhất 12 ký tự và hai ô phải trùng nhau.');
+  if(!recoveryToken)throw Error('Phiên khôi phục không hợp lệ.');
+  await jsonRequest(BASE+'/auth/v1/user',{password:p},recoveryToken,'PUT');
+  recoveryToken=null;$('password').value='';$('confirm').value='';
+  $('change').classList.add('hidden');
+  status('Đã cập nhật mật khẩu. Trở lại trang Enna Affiliate Control và đăng nhập bằng mật khẩu mới.');
+ }catch(err){status('Chưa đặt lại được mật khẩu: '+err.message,true)}finally{btn.disabled=false}
+};
+</script></body></html>
