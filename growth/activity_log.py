@@ -15,6 +15,7 @@ CODES={
     "growth_started", "growth_completed", "growth_failed",
     "research_started", "research_completed", "research_failed",
     "insights_completed", "learning_completed", "monetization_checked",
+    "editorial_checked",
     "workflow_skipped", "workflow_failed",
 }
 
