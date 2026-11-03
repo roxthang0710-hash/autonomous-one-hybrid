@@ -211,6 +211,29 @@ def can_send(text, selected, *, target, semantic_override=False):
         return False
     if normalized in original_normalized:
         return False
+    # A real reply must contribute new information or a fresh observation.
+    # The previous model response copied three source phrases and supplied
+    # only generic praise, despite passing the old overlap gate.
+    source_tokens=original_normalized.split()
+    reply_tokens=normalized.split()
+    source_words=set(source_tokens)
+    source_pairs=set(zip(source_tokens,source_tokens[1:]))
+    novelty=sum(word not in source_words for word in reply_tokens)/max(1,len(reply_tokens))
+    copied_pairs=sum(pair in source_pairs for pair in zip(reply_tokens,reply_tokens[1:]))/max(1,len(reply_tokens)-1)
+    if novelty < 0.33 or copied_pairs > 0.38:
+        return False
+    # An open question about another person's future is not evidence of their
+    # intention or gender. Don't invent certainty about employment tenure.
+    if ("gan bo lau dai" in original_normalized or
+        "nghi viec som" in original_normalized):
+        if any(p in normalized for p in (
+            "chac chan se gan bo", "co ve se gan bo lau dai",
+            "khong phai nghi viec som", "khong nghi viec som dau",
+            "se khong nghi viec", "se gan bo lau dai roi",
+        )):
+            return False
+    if ("anh ay" in normalized and "anh ay" not in original_normalized):
+        return False
     longest=SequenceMatcher(None,original_normalized,normalized,
                             autojunk=False).find_longest_match(
                                 0,len(original_normalized),0,len(normalized)).size
