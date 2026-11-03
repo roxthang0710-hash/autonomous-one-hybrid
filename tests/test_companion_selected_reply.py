@@ -300,7 +300,7 @@ class SelectionTests(unittest.TestCase):
         import requests
         e=issue()
         e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat()
-        e["issue"]["body"]+="\\nENNA_LOCAL_BROWSER_MODE: true"
+        e["issue"]["body"]+="\nENNA_LOCAL_BROWSER_MODE: true"
         info=decode_issue_body(e["issue"]["body"])
         self.assertTrue(info[2]["local_browser_mode"])
         r=requests.Response()
@@ -321,7 +321,7 @@ class SelectionTests(unittest.TestCase):
 
     def test_rejects_forged_handoff_flag(self):
         e=issue()
-        e["issue"]["body"]+="\\nENNA_LOCAL_BROWSER_MODE: surely"
+        e["issue"]["body"]+="\nENNA_LOCAL_BROWSER_MODE: surely"
         with self.assertRaises(ValueError):
             decode_issue_body(e["issue"]["body"])
 
