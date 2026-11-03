@@ -24,7 +24,7 @@ from growth.engage import get_credentials, send_reply, verify_meta_account
 from growth.companion_editor import compose_selected
 from growth.companion_fit import assess_selected
 from growth.selected_direct_reply import (
-    ConfirmedMetaRejection, direct_reply, target_read_limited,
+    ConfirmedMetaRejection, MetaStageError, direct_reply, target_read_limited,
 )
 from growth.scoring import normalize
 from growth.voice import suitable_reply
@@ -314,6 +314,16 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         return {"state":"meta_rejected_direct_reply","draft":reply,
                 "source_url":target["url"],"content_angle":content_angle,
                 "http_status":exc.http_status}
+    except MetaStageError as exc:
+        # A 5xx response on container creation, or any failure after that
+        # boundary, must be considered ambiguous. Persist safe stage only.
+        safe_stage = "meta_" + exc.stage + "_HTTP_" + str(exc.http_status)
+        db.patch("enna_companion_attempts",attempt_id,{
+            "status":"uncertain","error_kind":safe_stage[:60],
+            "finished_at":datetime.now(timezone.utc).isoformat(),
+        })
+        return {"state":"uncertain_do_not_retry","source_url":target["url"],
+                "meta_stage":exc.stage}
     except Exception as exc:
         db.patch("enna_companion_attempts",attempt_id,{
             "status":"uncertain","error_kind":type(exc).__name__[:60],
