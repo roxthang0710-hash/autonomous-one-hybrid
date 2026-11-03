@@ -53,6 +53,8 @@ jobs:
       - name: Summarize commercial-readiness evidence (no publishing)
         if: always()
         run: python -m growth.monetization
+      - name: Log confirmed monetization readiness check
+        run: python -m growth.activity_log system success monetization_checked
       - name: Enna next-best-action report (read only, evidence-first)
         if: always()
         run: python -m enna
