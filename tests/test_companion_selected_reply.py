@@ -325,6 +325,49 @@ class SelectionTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             decode_issue_body(e["issue"]["body"])
 
+    def test_owner_draft_diagnostic_never_calls_meta_or_claim(self):
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        e["sender"]["login"]="roxthang0710-hash"
+        db=MagicMock()
+        read=MagicMock()
+        publish=MagicMock()
+        credentials=MagicMock()
+        result=process(e,db=db,read=read,publish=publish,
+            credentials=credentials,create=lambda *a,**k:{
+                "should_reply":True,"post_text":ANSWER,
+                "content_angle":"Cách thống nhất bảng tính nhóm"})
+        self.assertEqual(result["state"],"draft_prepared_only")
+        self.assertEqual(result["draft"],ANSWER)
+        read.assert_not_called()
+        publish.assert_not_called()
+        credentials.assert_not_called()
+        db.request.assert_not_called()
+
+    def test_groq_429_status_is_classified_and_not_retried(self):
+        from growth.companion_editor import _groq_completion,EnnaModelServiceError
+        response=MagicMock(status_code=429)
+        api=MagicMock(return_value=response)
+        with self.assertRaises(EnnaModelServiceError) as caught:
+            _groq_completion(api,"fake_key",{"response_format":{"type":"json_schema"}})
+        self.assertEqual(caught.exception.safe_reason,"provider_rate_limited_429")
+        api.assert_called_once()
+
+    def test_groq_400_tries_json_object_once(self):
+        from growth.companion_editor import _groq_completion
+        bad=MagicMock(status_code=400)
+        good=MagicMock(status_code=200)
+        api=MagicMock(side_effect=[bad,good])
+        result=_groq_completion(api,"fake_key",{
+            "model":"openai/gpt-oss-20b",
+            "response_format":{"type":"json_schema","json_schema":{"strict":True}},
+            "max_completion_tokens":1400,
+        })
+        self.assertIs(result,good)
+        self.assertEqual(api.call_count,2)
+        self.assertEqual(api.call_args.kwargs["json"]["response_format"],
+                         {"type":"json_object"})
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
