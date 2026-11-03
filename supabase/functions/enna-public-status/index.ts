@@ -13,15 +13,15 @@ Deno.serve(async (request: Request) => {
     // Lightweight redacted operational journal for frequent dashboard polling.
     // RLS protects the raw table; this endpoint never returns drafts or secrets.
     if (new URL(request.url).searchParams.get('mode') === 'events') {
-      const endpoint='enna_activity_events?select=occurred_at,kind,status,code&order=occurred_at.desc&limit=60';
+      const endpoint='enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=60';
       const res=await fetch(url+'/rest/v1/'+endpoint,{
         headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},
         signal:AbortSignal.timeout(8000)
       });
       if(!res.ok) throw new Error('journal_source_unavailable');
-      const events=(await res.json()) as Array<{occurred_at:string;kind:string;status:string;code:string}>;
+      const events=(await res.json()) as Array<{occurred_at:string;kind:string;status:string;code:string;trigger_kind:string}>;
       const activity=events.filter(e=>Number.isFinite(Date.parse(e.occurred_at)))
-        .map(e=>({at:e.occurred_at,kind:e.kind,status:e.status,code:e.code}));
+        .map(e=>({at:e.occurred_at,kind:e.kind,status:e.status,code:e.code,trigger_kind:e.trigger_kind}));
       return reply({updatedAt:new Date().toISOString(),activity,source:'verified_backend_events'});
     }
     const endpoints: Record<string,string> = {
@@ -34,7 +34,7 @@ Deno.serve(async (request: Request) => {
       learning: 'enna_learning_policy?select=preferred_format,applied_at,version&brand_key=eq.do_hay_di_lam&limit=1',
       learningDecisions: 'enna_learning_decisions?select=evaluated_at,decision&brand_key=eq.do_hay_di_lam&order=evaluated_at.desc&limit=8',
       providerEvidence: 'enna_publication_evidence?select=scheduled_post_id,provider_status,meta_post_id,checked_at&brand_key=eq.do_hay_di_lam&limit=200',
-      events: 'enna_activity_events?select=occurred_at,kind,status,code&order=occurred_at.desc&limit=80'
+      events: 'enna_activity_events?select=occurred_at,kind,status,code,trigger_kind&order=occurred_at.desc&limit=80'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -58,7 +58,7 @@ Deno.serve(async (request: Request) => {
     ].filter(r=>r.at && Number.isFinite(Date.parse(r.at)))
       .sort((a,b)=>Date.parse(b.at)-Date.parse(a.at));
     const recentEvents = s.events.filter(e=>Number.isFinite(Date.parse(e.occurred_at)))
-      .map(e=>({at:e.occurred_at,kind:e.kind,status:e.status,code:e.code}));
+      .map(e=>({at:e.occurred_at,kind:e.kind,status:e.status,code:e.code,trigger_kind:e.trigger_kind}));
     const timeline = [
       ...recentEvents,
       ...runTimeline,
@@ -71,6 +71,8 @@ Deno.serve(async (request: Request) => {
     const lifecycle=s.events.filter(e=>e.kind==='publisher' &&
       ['ops_started','ops_completed','ops_failed','publisher_started','publisher_completed','publisher_failed'].includes(e.code));
     const currentWorker=lifecycle[0]||null;
+    const lastScheduledWorker=lifecycle.find(e=>e.trigger_kind==='schedule' &&
+      ['ops_completed','publisher_completed','ops_failed','publisher_failed'].includes(e.code))||null;
     const lastWorkerAt=currentWorker?.occurred_at||null;
     const ageMinutes=lastWorkerAt?(Date.now()-Date.parse(lastWorkerAt))/60000:null;
     const working=!!(currentWorker?.status==='started' && ageMinutes!==null &&
@@ -85,6 +87,8 @@ Deno.serve(async (request: Request) => {
         state:working?'working':stale||failed||latest?.status==='failed'?'attention':connected?'scheduled':'attention',
         lastRunAt:lastWorkerAt||latest?.at||null,
         workerLastResult:currentWorker?.code||'no_worker_heartbeat',
+        workerTrigger:currentWorker?.trigger_kind||'unknown',
+        lastScheduledRunAt:lastScheduledWorker?.occurred_at||null,
         workerLastAt:lastWorkerAt
       },
       posts: {queued:by(s.posts,'queued'),scheduledExternal:awaitingExternal,
