@@ -18,6 +18,12 @@ ANSWER=("Với bảng tính dùng chung, thử tạo danh sách chọn trạng t
         "thống nhất ai cập nhật từng việc trước hạn chót. "
         "Đỡ cảnh cùng một việc mà ai cũng hiểu một kiểu.")
 URL="https://www.threads.com/@nguoi_demo/post/"+KNOWN_CODE
+LIFE_TEXT=("Cuối tuần cả nhóm đi chơi, bất ngờ thấy một chú chó nằm ngủ ngon lành "
+           "ở quán cà phê. Ai cũng bật cười vì chú chó trông còn thư thái "
+           "hơn cả chúng tôi. Một khoảnh khắc vui khiến ngày dài dễ chịu hơn.")
+LIFE_REPLY=("Chú chó ngủ ngon lành giữa quán cà phê đúng là chuyên gia nghỉ ngơi! "
+            "Cả nhóm bật cười vì gặp một khoảnh khắc nhỏ mà dễ thương thật.")
+
 
 
 def issue():
@@ -102,6 +108,44 @@ class SelectionTests(unittest.TestCase):
         publish.assert_called_once()
         self.assertEqual(db.request.call_args.kwargs["payload"]["p_target_post_id"],KNOWN_ID)
         db.patch.assert_called_once()
+
+    def test_owner_can_select_everyday_humor_without_office_keywords(self):
+        from growth.companion_fit import assess_selected
+        verdict = assess_selected(LIFE_TEXT)
+        self.assertEqual(verdict["state"], "candidate")
+        self.assertTrue(verdict["human_selected"])
+        self.assertFalse(verdict["viral_metrics_verified"])
+        self.assertTrue(can_send(LIFE_REPLY, LIFE_TEXT, target=parse_threads_url(URL)))
+        self.assertEqual(assess_selected(
+            "Đăng số điện thoại 0901234567 để mọi người gọi hỏi cho vui"
+        )["state"],"rejected")
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_selected_everyday_post_can_be_reviewed_and_drafted(self,_):
+        e=issue()
+        import base64
+        encoded=base64.urlsafe_b64encode(LIFE_TEXT.encode("utf-8")).decode().rstrip("=")
+        e["issue"]["body"]=(
+          HEADER+"\\nTHREADS_URL: "+URL+"\\nSELECTED_TEXT_BASE64URL: "+encoded)
+        db=MagicMock()
+        result=process(e,db=db,
+            credentials=lambda d:("fake_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,
+                "post_text":LIFE_REPLY,"content_angle":"Những khoảnh khắc nhỏ giúp ngày vui hơn"},
+            read=MagicMock(side_effect=ValueError("third_party_scope_blocked")),
+            publish=MagicMock())
+        self.assertEqual(result["state"],"draft_only_meta_cannot_verify_target")
+        self.assertIn("khoảnh khắc",result["content_angle"])
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_enna_can_decide_not_to_interject(self,_):
+        e=issue()
+        result=process(e,db=MagicMock(),
+            credentials=lambda d:("fake_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":False,
+                "post_text":"","content_angle":"Câu chuyện có thể trở thành meme gốc"},
+            read=MagicMock(),publish=MagicMock())
+        self.assertEqual(result["state"],"not_worth_interjecting")
 
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
