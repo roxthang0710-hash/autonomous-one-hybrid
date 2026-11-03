@@ -85,7 +85,7 @@ const icons={research:'✏️',growth:'🔎',learning:'🧠',publication:'📣',
 const states={working:'Đang xử lý',scheduled:'Chờ lịch làm việc',attention:'Cần kiểm tra'};
 const out=(id,text)=>$(id).textContent=String(text);
 const date=s=>s?new Date(s).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
-const nextWorker=()=>{const now=new Date(),hours=[1,5,9,13].map(h=>[h,15]).concat([2,7,12].map(h=>[h,15]),[2,4,6,8,10,12,14].map(h=>[h,5]));const times=[];for(let n=0;n<2;n++)for(const [h,m] of hours){const d=new Date(now);d.setUTCDate(d.getUTCDate()+n);d.setUTCHours(h,m,0,0);if(d>now)times.push(d);}return times.sort((a,b)=>a-b)[0]||null;};
+const nextWorker=()=>{const now=new Date(),hours=[1,5,9,13].map(h=>[h,15]).concat([2,7,12].map(h=>[h,15]),[2,4,6,8,10,12,14].map(h=>[h,5]));hours.push(...[2,7,12].map(h=>[h,40]));const times=[];for(let n=0;n<2;n++)for(const [h,m] of hours){const d=new Date(now);d.setUTCDate(d.getUTCDate()+n);d.setUTCHours(h,m,0,0);if(d>now)times.push(d);}return times.sort((a,b)=>a-b)[0]||null;};
 const clock=s=>s?new Date(s).toLocaleTimeString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit'}):'—';
 const normalizedStatus=status=>({completed:'Hoàn tất',success:'Thành công',running:'Đang xử lý',failed:'Gặp lỗi',blocked:'Chờ duyệt',insufficient_evidence:'Chưa đủ dữ liệu',hold:'Giữ chiến lược',promote_story:'Ưu tiên kể chuyện',promote_practical:'Ưu tiên bài hữu ích',rollback_balanced:'Trở lại cân bằng',source_unavailable:'Chưa đọc được dữ liệu',provider_published:'Metricool xác nhận đã đăng',
 preflight_ready:'Đã kiểm tra sẵn sàng trước giờ xuất bản',
