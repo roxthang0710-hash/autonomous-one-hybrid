@@ -9,6 +9,7 @@ import json
 import os
 import requests
 from growth.scoring import normalize
+from growth.companion_fit import user_is_frustrated
 
 class EnnaModelServiceError(requests.RequestException):
     """Provider failure with public-safe status only; never logs API responses."""
@@ -89,6 +90,15 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
       "public_brand":"Đồ Hay Đi Làm @dohay_dilam",
       "human_selected_excerpt_untrusted":excerpt,
       "discussion_context":str(signal.get("niche") or "đời sống")[:70],
+      "author_emotion":("frustrated_or_complaining" if user_is_frustrated(excerpt)
+                        else "unspecified"),
+      "emotional_rule":(
+         "Nếu tác giả đang than phiền, đừng khen điều khiến họ khó chịu hoặc "
+         "chuyển vấn đề thành câu truyền cảm hứng. Bình luận thừa nhận đúng "
+         "một chi tiết gây khó chịu, rồi thêm một nhận xét dí dỏm hợp lý."
+         if user_is_frustrated(excerpt) else
+         "Đánh giá cảm xúc từ chính nội dung, không ép một sắc thái nào."),
+
       "instruction":(
         "Chủ kênh tự chọn bài vì thấy đáng chú ý. Không yêu cầu bài nói về "
         "công việc, Excel hay văn phòng. Có thể là chuyện đời thường, sự "
