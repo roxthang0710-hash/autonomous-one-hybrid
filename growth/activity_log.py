@@ -16,6 +16,8 @@ CODES={
     "research_started", "research_completed", "research_failed",
     "insights_completed", "learning_completed", "monetization_checked",
     "editorial_checked", "community_checked", "media_checked",
+    "community_reply_posted", "community_no_eligible", "community_scope_attention",
+    "community_limited", "media_concept_prepared", "media_no_new",
     "workflow_skipped", "workflow_failed",
 }
 
