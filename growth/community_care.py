@@ -51,7 +51,7 @@ def eligible_question(item, *, now=None):
     if not 26<=len(text)<=350 or re.search(r"https?://|www\.|@|\b\d{8,}\b",text,re.I):
         return False
     normalized=normalize(text)
-    if not any(normalize(q) in normalized for q in QUERIES):
+    if not ("?" in text or any(normalize(q) in normalized for q in QUERIES if q != "?")):
         return False
     if any(x in normalized for x in [normalize(v) for v in SENSITIVE]):
         return False
