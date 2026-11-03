@@ -18,7 +18,8 @@ function nextSchedule(now=new Date()){
  const times=[
   ...[1,5,9,13].map(h=>[h,15,'Nghiên cứu chiến lược']),
   ...[2,7,12].map(h=>[h,15,'Quét chủ đề']),
-  ...[2,4,6,8,10,12,14].map(h=>[h,5,'Chuẩn bị nội dung & kiểm tra Threads'])
+  ...[2,4,6,8,10,12,14].map(h=>[h,5,'Chuẩn bị nội dung & kiểm tra Threads']),
+  ...[2,7,12].map(h=>[h,40,'Chăm sóc hội thoại & nghiên cứu hình ảnh'])
  ];
  const slots=[];for(let day=0;day<2;day++)for(const[h,m,label]of times){const d=new Date(now);d.setUTCDate(d.getUTCDate()+day);d.setUTCHours(h,m,0,0);if(d>now)slots.push({at:d.toISOString(),label});}return slots.sort((a,b)=>a.at.localeCompare(b.at)).slice(0,3);
 }
