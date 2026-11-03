@@ -203,8 +203,28 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
     except (ValueError, KeyError, TypeError):
         return {"state":"ai_draft_invalid_or_unavailable"}
     if not can_send(reply, selected, target=target):
-        return {"state":"ai_reply_not_contextual_enough",
-                "content_angle":content_angle}
+        # One more safe drafting pass if the first comment is too generic.
+        # This cannot initiate a Meta publish or multiply interaction attempts.
+        try:
+            second = create({
+                "title": selected,
+                "source_url": target["url"],
+                "source": "owner_selected_public_threads_post",
+                "niche": verdict["niche"],
+            }, kind="reply_suggestion", prior_texts=(reply,))
+            if second.get("should_reply") is False:
+                return {"state":"not_worth_interjecting",
+                        "content_angle":str(second.get("content_angle") or content_angle)[:220]}
+            replacement = str(second.get("post_text") or "").strip()
+            if can_send(replacement, selected, target=target):
+                reply = replacement
+                content_angle = str(second.get("content_angle") or content_angle)[:220]
+            else:
+                return {"state":"ai_reply_not_contextual_enough",
+                        "content_angle":content_angle}
+        except (requests.RequestException, ValueError, KeyError, TypeError):
+            return {"state":"ai_reply_not_contextual_enough",
+                    "content_angle":content_angle}
 
     fallback = {"state":"draft_only_meta_cannot_verify_target",
                 "draft":reply, "source_url":target["url"],
