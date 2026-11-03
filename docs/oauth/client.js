@@ -110,6 +110,12 @@ async function verifyOwner(token) {
 async function consumeEmailMagicLink() {
   if (!location.hash) return;
   const hash = new URLSearchParams(location.hash.slice(1));
+  // Password-recovery tokens must never be interpreted as Threads owner login.
+  if (hash.get("type") === "recovery") {
+    const target = new URL("../enna/affiliate/reset/", location.href);
+    location.replace(target.origin + target.pathname + location.hash);
+    return;
+  }
   const accessToken = hash.get("access_token");
   const type = hash.get("token_type");
   const error = hash.get("error");
