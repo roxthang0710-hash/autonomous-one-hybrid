@@ -184,8 +184,11 @@ def has_concrete_overlap(reply, original):
         return False
     def pairs(seq):
         return {" ".join(seq[i:i+2]) for i in range(len(seq)-1)
-                if seq[i] in selected and seq[i+1] in selected}
-    return len(repeated)>=3 or bool(pairs(a) & pairs(b))
+                if len(seq[i])>=2 and len(seq[i+1])>=2
+                and (seq[i] in selected or seq[i+1] in selected)}
+    # Matching three independent generic words can still produce an entirely
+    # irrelevant reply. Require an actual adjacent phrase from the source.
+    return bool(pairs(a) & pairs(b))
 
 
 def can_send(text, selected, *, target):
