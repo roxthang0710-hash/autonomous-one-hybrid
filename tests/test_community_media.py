@@ -64,16 +64,18 @@ class MediaTests(unittest.TestCase):
         self.assertFalse(allowed_source_url("https://evil.tld/steal","pexels"))
 
     @patch("growth.media_scout.commons_candidates",return_value=[])
-    def test_idea_worker_does_not_publish_when_upload_off(self,_):
+    @patch("growth.meme_ideas.generate",return_value=None)
+    def test_idea_worker_does_not_publish_when_upload_off(self,_,__):
         db=MagicMock()
-        db.request.side_effect=[[],[{"id":"first"}],[{"id":"second"}]]
+        db.request.side_effect=[[],[],[],[{"id":"first"}],[{"id":"second"}]]
         with patch.dict("os.environ",{"PEXELS_API_KEY":""}):
             result=run(db,now=NOW,enable_public_assets=False)
         self.assertEqual(result["original_concepts_new"],1)
         self.assertEqual(result["video_storyboards_new"],1)
         self.assertEqual([c.args[1] for c in db.request.call_args_list],
-                         ["/enna_media_ideas"]*3)
-        self.assertEqual(db.request.call_args_list[1].kwargs["payload"]["status"],"research")
+                         ["/enna_media_ideas","/threads_posts","/threads_metrics",
+                          "/enna_media_ideas","/enna_media_ideas"])
+        self.assertEqual(db.request.call_args_list[3].kwargs["payload"]["status"],"research")
 
     @patch("threads.publisher.thread_request")
     def test_media_publish_requires_verified_own_storage_url(self,request):
