@@ -99,15 +99,15 @@ def clean_selected_excerpt(text):
         if "✳ Gửi Enna" in line:
             # The injected button is NOT part of the author's post.
             line = line.replace("✳ Gửi Enna", "").strip()
-        if re.fullmatch(r"\\d+\\s*(giờ|phút|ngày|tuần)\\s*(trước)?", line,
+        if re.fullmatch(r"\d+\s*(giờ|phút|ngày|tuần)\\s*(trước)?", line,
                         flags=re.IGNORECASE):
             continue
-        if re.fullmatch(r"\\d+(?:[,.]\\d+)?[KkMm]?", line):
+        if re.fullmatch(r"\d+(?:[,.]\d+)?[KkMm]?", line):
             # A stand-alone engagement counter, not evidence of virality.
             continue
         if line:
             lines.append(line)
-    return "\\n".join(lines)[:1800].strip()
+    return "\n".join(lines)[:1800].strip()
 
 
 def verified_meta_target(info, target, selected, *, now=None):
