@@ -23,6 +23,9 @@ from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
 from growth.companion_editor import compose_selected
 from growth.companion_fit import assess_selected
+from growth.selected_direct_reply import (
+    ConfirmedMetaRejection, direct_reply, target_read_limited,
+)
 from growth.scoring import normalize
 from growth.voice import suitable_reply
 from threads.publisher import thread_request
@@ -110,6 +113,14 @@ def clean_selected_excerpt(text):
     return "\n".join(lines)[:1800].strip()
 
 
+def parse_owner_issue_time(value):
+    try:
+        stamp = datetime.fromisoformat(str(value).replace("Z","+00:00"))
+        return stamp.astimezone(timezone.utc) if stamp.tzinfo else None
+    except (TypeError, ValueError, OverflowError):
+        return None
+
+
 def verified_meta_target(info, target, selected, *, now=None):
     """Never publish unless the official Meta read matches owner selection."""
     if not isinstance(info, dict):
@@ -157,7 +168,8 @@ def can_send(text, selected, *, target):
 
 
 def process(event, *, db=None, read=thread_request, create=compose_selected,
-            credentials=get_credentials, publish=send_reply, now=None):
+            credentials=get_credentials, publish=send_reply,
+            direct_publish=direct_reply, allow_direct_trial=None, now=None):
     """Return an honest public-issue summary, never a claimed post without Meta ID."""
     now = now or datetime.now(timezone.utc)
     issue = event.get("issue") or {}
@@ -241,13 +253,28 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         verify_meta_account(token, expected)
     except (requests.RequestException, ValueError, TypeError, KeyError):
         return {**fallback,"state":"draft_only_meta_not_authorized"}
+    direct_trial = False
     try:
         info = read("GET", "/" + target["candidate_id"], token,
             params={"fields":"id,username,text,timestamp,permalink"})
+    except requests.HTTPError as exc:
+        permitted = (allow_direct_trial if allow_direct_trial is not None
+                     else os.getenv("ENNA_OWNER_SELECTED_DIRECT_REPLY_TRIAL", "").lower()=="true")
+        # Owner explicitly selected this exact public post; for this narrow
+        # owner-initiated request only, a Graph READ-scope denial does not
+        # necessarily imply a WRITE-scope denial. Try official Meta WRITE once.
+        # NEVER try if Graph returns unexpected/mismatched content or 5xx.
+        created_at = parse_owner_issue_time(issue.get("created_at"))
+        is_recent = bool(created_at and timedelta(0)<=now-created_at<=timedelta(hours=48))
+        if permitted and is_recent and target_read_limited(exc):
+            direct_trial = True
+        else:
+            return fallback
     except (requests.RequestException, ValueError):
         return fallback
-    if not verified_meta_target(info, target, selected, now=now):
-        return fallback
+    else:
+        if not verified_meta_target(info, target, selected, now=now):
+            return fallback
 
     # One authorized issue, one target, one author cooldown, daily cap shared
     # with external-keyword and own-account reply workers.
@@ -263,7 +290,10 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 "source_url":target["url"]}
     attempt_id = claim[0]["attempt_id"]
     try:
-        _, remote_id = publish(token, target["candidate_id"], reply)
+        if direct_trial:
+            _, remote_id = direct_publish(token, target["candidate_id"], reply)
+        else:
+            _, remote_id = publish(token, target["candidate_id"], reply)
         if not remote_id:
             raise RuntimeError("missing_reply_confirmation")
         db.patch("enna_companion_attempts",attempt_id,{
@@ -271,7 +301,19 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
             "finished_at":datetime.now(timezone.utc).isoformat(),
         })
         return {"state":"posted_confirmed","source_url":target["url"],
-                "reply_id":str(remote_id),"content_angle":content_angle}
+                "reply_id":str(remote_id),"content_angle":content_angle,
+                "verification":"meta_publish_confirmed" if direct_trial else "meta_read_and_publish"}
+    except ConfirmedMetaRejection as exc:
+        # A definitive refusal on the first official Meta create call means
+        # there is NO published reply. The atomic claim remains consumed.
+        db.patch("enna_companion_attempts",attempt_id,{
+            "status":"meta_rejected",
+            "error_kind":"HTTP_"+str(exc.http_status),
+            "finished_at":datetime.now(timezone.utc).isoformat(),
+        })
+        return {"state":"meta_rejected_direct_reply","draft":reply,
+                "source_url":target["url"],"content_angle":content_angle,
+                "http_status":exc.http_status}
     except Exception as exc:
         db.patch("enna_companion_attempts",attempt_id,{
             "status":"uncertain","error_kind":type(exc).__name__[:60],
@@ -303,6 +345,13 @@ def safe_comment(result):
     if state=="not_worth_interjecting":
         return ("Enna đã phân tích bài bạn chọn nhưng không thấy cách "
                 "bình luận tự nhiên có ích. **Không đăng bình luận.**"+angle_note)
+    if state=="meta_rejected_direct_reply":
+        return ("🟠 Enna đã thử đăng MỘT lần bằng API Threads chính thức, "
+                "nhưng Meta từ chối tạo bình luận (HTTP "
+                +str(result.get("http_status") or "lỗi")+
+                "). **Không có bình luận nào được đăng, không tự thử lại.**"
+                "\n\nBản nháp nếu bạn muốn dùng thủ công:\n\n> "
+                +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="ai_service_unavailable":
         return ("Enna đã nhận bài nhưng dịch vụ tạo nội dung chưa phản hồi "
                 "thành công. **Không có bình luận nào được đăng.** "
@@ -367,6 +416,7 @@ def main():
                "rejected_selection":"companion_rejected",
                "no_safe_draft":"companion_rejected",
                "ai_service_unavailable":"companion_rejected",
+               "meta_rejected_direct_reply":"companion_draft_only",
                "ai_draft_invalid_or_unavailable":"companion_rejected",
                "ai_reply_not_contextual_enough":"companion_rejected"}).get(result.get("state"),"companion_checked")
         if run_id.isdecimal():
