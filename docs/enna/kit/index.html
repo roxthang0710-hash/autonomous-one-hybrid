@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Bộ mẫu công sở miễn phí: chốt việc sau họp, hỏi thứ tự ưu tiên, quản lý công việc đang gấp.">
+<title>Enna Mini · Bộ mẫu sinh tồn công sở | Đồ Hay Đi Làm</title>
+<style>
+:root{color-scheme:light;--bg:#f8f5ff;--ink:#372c49;--accent:#7050bb;--line:#ded5ed}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,Arial,sans-serif;margin:0}
+header,main,footer{max-width:920px;margin:auto;padding:24px}.top{display:flex;gap:12px;justify-content:space-between;align-items:center}
+.brand{font-size:16px;font-weight:800;letter-spacing:.4px}.chip{font-size:12px;border:1px solid var(--line);border-radius:50px;padding:4px 10px}
+h1{font-size:clamp(32px,6vw,54px);line-height:1.13;letter-spacing:-1.7px;margin:22px 0 10px}
+h2{font-size:22px;margin:0 0 10px}.lead{font-size:18px;max-width:720px;color:#625875}
+.panel{background:white;border:1px solid var(--line);padding:26px;margin:20px 0;border-radius:22px;box-shadow:0 4px 26px #6d528012}
+label{display:block;margin-top:12px;font-weight:650;font-size:14px}input,textarea{font:inherit;color:inherit;border:1px solid #cabfe0;border-radius:10px;padding:10px;width:100%;background:white}
+textarea{min-height:110px;resize:vertical}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+button,.link{display:inline-block;border:0;border-radius:12px;background:var(--accent);color:white;padding:11px 16px;font:inherit;font-weight:650;cursor:pointer;text-decoration:none;margin:10px 8px 0 0}
+button.secondary{background:#eee8fa;color:#4a3680}button:hover{filter:brightness(.92)}
+.muted{color:#685e79;font-size:14px}.example{white-space:pre-wrap;background:#f5f0ff;border:1px solid var(--line);padding:16px;border-radius:12px}
+footer{font-size:13px;color:#685e79}a{color:var(--accent)}#notice{min-height:24px;font-size:13px}
+@media(max-width:600px){header,main,footer{padding:17px}.panel{padding:20px}.grid{grid-template-columns:1fr}}
+</style></head>
+<body><header class="top"><div class="brand">ĐỒ HAY ĐI LÀM · ENNA MINI</div><span class="chip">Bản thử miễn phí</span></header>
+<main>
+<p class="muted">Công cụ số · Thử nghiệm trước khi ra mắt</p>
+<h1>Lúc nào cũng “gấp” thì việc nào gấp trước? 🫠</h1>
+<p class="lead">Ba mẫu nhỏ để dân công sở bớt phải đoán ý nhau. Không cần tài khoản, không thu email, không mua bán.</p>
+<section class="panel"><h2>01 · Nói sao khi có thêm việc gấp?</h2>
+<p>Bạn không cần nói “em làm hết được” ngay khi lịch đã kín. Chọn một câu mềm mà rõ.</p>
+<div class="example" id="reply">Dạ em nhận được ạ. Hiện em đang làm [việc A] hạn [giờ/ngày]. Anh/chị giúp em chốt việc nào cần ưu tiên trước để em xử lý đúng hạn nhé.</div>
+<button type="button" data-copy="reply">Sao chép câu trả lời</button>
+<p class="muted">Nhớ thay phần trong dấu ngoặc bằng tình huống thật của bạn. Mẫu không thay bạn thương lượng.</p></section>
+<section class="panel"><h2>02 · Chốt việc sau cuộc họp</h2>
+<p>Họp 15 phút hay 1 tiếng cũng được, miễn là kết thúc có việc rõ ràng.</p>
+<div class="grid"><div><label for="task">Việc cần làm</label><input id="task" maxlength="140" placeholder="Ví dụ: Gửi báo cáo tuần"></div>
+<div><label for="owner">Ai phụ trách</label><input id="owner" maxlength="100" placeholder="Ví dụ: Minh"></div>
+<div><label for="due">Hạn chót</label><input id="due" maxlength="70" placeholder="Ví dụ: Thứ Tư 16:00"></div>
+<div><label for="check">Cần xác nhận gì</label><input id="check" maxlength="140" placeholder="Ví dụ: Người duyệt số liệu"></div></div>
+<button type="button" id="copy-summary">Sao chép tóm tắt</button>
+<button type="button" id="export" class="secondary">Tải dòng CSV</button>
+<p class="muted">CSV được tạo ngay trên máy bạn. Không gửi nội dung cuộc họp đến máy chủ.</p></section>
+<section class="panel"><h2>03 · Ba ưu tiên cho hôm nay</h2>
+<p>Không phải 18 việc đều phải xong trước 17 giờ. Nếu chỉ chọn ba việc, bạn chọn gì?</p>
+<label for="one">Quan trọng nhất</label><input id="one" maxlength="140" placeholder="Việc số 1">
+<label for="two">Việc số 2</label><input id="two" maxlength="140" placeholder="Việc số 2">
+<label for="three">Việc số 3</label><input id="three" maxlength="140" placeholder="Việc số 3">
+<button type="button" id="copy-top">Sao chép 3 ưu tiên</button>
+<p id="notice" role="status" aria-live="polite"></p></section>
+<p class="muted">Đây là bản thử nghiệm miễn phí để tìm hiểu điều gì thực sự hữu ích với người đi làm. Chưa có gói trả phí hay chương trình tiếp thị liên kết nào được cung cấp trên trang này.</p>
+</main>
+<footer>Đồ Hay Đi Làm · Enna Mini. Dữ liệu bạn nhập chỉ nằm trong trang đang mở; trang không lưu lại sau khi đóng. Nội dung mang tính gợi ý, không phải lời khuyên pháp lý hoặc quản trị chuyên nghiệp.</footer>
+<script>
+"use strict";
+const val=id=>document.getElementById(id).value.trim();
+const note=s=>{document.getElementById("notice").textContent=s};
+async function copyText(value){
+  try{await navigator.clipboard.writeText(value);note("Đã sao chép. Đi làm bớt một cái đau đầu nha 😌")}
+  catch(e){note("Không sao chép tự động được. Hãy chọn và sao chép thủ công.")}
+}
+document.querySelectorAll("[data-copy]").forEach(el=>el.addEventListener("click",()=>copyText(document.getElementById(el.dataset.copy).textContent)));
+const summary=()=>["VIỆC SAU CUỘC HỌP","Việc: "+(val("task")||"Chưa chốt"),
+"Ai phụ trách: "+(val("owner")||"Chưa chốt"),
+"Hạn: "+(val("due")||"Chưa chốt"),"Cần xác nhận: "+(val("check")||"Không")].join("\n");
+document.getElementById("copy-summary").addEventListener("click",()=>copyText(summary()));
+document.getElementById("copy-top").addEventListener("click",()=>copyText(
+["3 VIỆC ƯU TIÊN HÔM NAY",val("one"),val("two"),val("three")]
+.map((x,i)=>i===0?x:`${i}. ${x||"Chưa chọn"}`).join("\n")));
+document.getElementById("export").addEventListener("click",()=>{
+const fields=[val("task"),val("owner"),val("due"),val("check")];
+const escapeCSV=x=>'"'+x.replace(/"/g,'""').replace(/^[=+\-@]/,"'"+x[0])+'"';
+const csv="\uFEFFviệc cần làm,phụ trách,hạn chót,cần xác nhận\r\n"+
+fields.map(escapeCSV).join(",")+"\r\n";
+const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");a.href=url;a.download="enna-mau-chot-viec.csv";a.click();
+setTimeout(()=>URL.revokeObjectURL(url),30000);note("Đã tạo mẫu CSV ngay trên trình duyệt.");
+});
+</script></body></html>
