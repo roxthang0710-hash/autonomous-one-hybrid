@@ -2,6 +2,8 @@ name: Enna — Owner-Selected Threads Reply
 on:
   issues:
     types: [opened]
+  issue_comment:
+    types: [created]
 permissions:
   contents: read
   issues: write
@@ -10,7 +12,18 @@ concurrency:
   cancel-in-progress: false
 jobs:
   selected:
-    if: github.event.issue.user.login == github.repository_owner && github.event.sender.login == github.repository_owner && startsWith(github.event.issue.title, 'enna-pick:')
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      github.event.sender.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'enna-pick:') &&
+      (
+        github.event_name == 'issues' ||
+        (
+          github.event_name == 'issue_comment' &&
+          github.event.comment.user.login == github.repository_owner &&
+          github.event.comment.body == '/enna retry'
+        )
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 7
     env:
