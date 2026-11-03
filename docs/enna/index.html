@@ -28,6 +28,8 @@
 @media(max-width:1350px){.topbar{gap:10px;padding:7px 15px}.tabs{gap:1px}.tabs a{font-size:12px;padding:7px 9px}.hero{grid-template-columns:25% 44% 31%}.hero-title{font-size:28px}.meet{padding:12px}.meet h2{font-size:19px}.meet p{font-size:13px}.panel-heading{font-size:17px}.flow-ico{font-size:23px;width:48px;height:48px}.flow-step small{font-size:10px}.dashboard{grid-template-columns:25% 42% 33%;gap:9px}.stat{gap:4px;padding:9px 7px}.stat-ico{font-size:20px}.stat-number{font-size:24px}.righttop{grid-template-columns:1fr 1fr;gap:7px}.righttop .card{padding:10px}}
 @media(max-width:980px){.hero{grid-template-columns:1fr 1.2fr;min-height:350px;height:auto}.hero-left{min-height:350px}.hero-title{left:4%;font-size:30px}.hero-sub{left:7.5%}.hero-art{height:350px}.hero-right{grid-column:1/-1;padding:10px 14px}.how{height:auto}.flow-step{min-height:115px}.dashboard{grid-template-columns:1fr 1fr}.activity{grid-column:1}.midcol{grid-column:2}.rightcol{grid-column:1/-1;grid-template-columns:1fr 1fr}.righttop{grid-template-columns:1fr 1fr}.topbar{flex-wrap:wrap}.tabs{order:3;width:100%;overflow:auto;justify-content:flex-start}.stats{grid-template-columns:repeat(2,1fr)}.mood-picture{height:120px}}
 @media(max-width:680px){.topbar{padding:5px 10px;gap:8px}.brand{font-size:23px}.brand-icon{font-size:23px}.topright .pill{padding:6px 9px;font-size:11px}.tabs a{font-size:11px;padding:6px 8px}.hero{display:flex;flex-direction:column}.hero-left{min-height:275px;padding:10px 16px}.hero-title{position:relative;top:auto;left:auto;margin:14px 0 2px;font-size:29px;white-space:normal}.hero-sub{position:relative;top:auto;left:auto;margin:3px 0;font-size:12px}.meet{top:auto;min-height:0;max-width:none;margin-top:10px;padding:14px 17px}.hero-art{height:270px;width:100%}.hero-right{padding:10px}.flow-step{min-height:100px}.flow-ico{width:42px;height:42px;font-size:22px}.dashboard{display:block;padding:10px 10px}.dashboard>*{margin-bottom:12px}.midcol{display:flex;flex-direction:column}.stats{grid-template-columns:repeat(2,1fr)}.rightcol{display:block}.rightcol>*{margin:12px 0}.righttop{grid-template-columns:1fr 1fr}.log-row{grid-template-columns:53px 22px 1fr;gap:5px;padding:10px 2px}.log-result{grid-column:3;justify-self:start}.card-title{font-size:19px}.activity{min-height:0}}
+#recent-logs{max-height:500px;overflow:auto;padding-right:3px}
+#activity-feed{max-height:460px;overflow:auto;padding-right:3px}
 </style></head>
 <body><header class="topbar">
 <a class="brand" href="#top"><span class="brand-icon">🐑</span> Enna</a>
@@ -47,16 +49,16 @@
 <div class="flow-step"><div class="flow-ico">➤</div><strong>4. Post</strong><small>Đến hạn và được cấp quyền</small></div>
 </div></div></div></section>
 <div class="dashboard">
-<section class="card activity" id="activity"><h2 class="card-title"><span>◉ Live Activity</span><span class="status-tag offline" id="activity-status">Đang tải</span></h2><div class="muted">Hoạt động gần nhất được hệ thống ghi nhận</div><div id="activity-feed"><p class="empty">Đang đồng bộ nhật ký…</p></div></section>
+<section class="card activity" id="activity"><h2 class="card-title"><span>◉ Enna đang làm gì?</span><span class="status-tag offline" id="activity-status">Đang tải</span></h2><div class="muted">Nhật ký sự kiện thật, tự cập nhật khoảng 15 giây/lần. Không phải hoạt ảnh mô phỏng.</div><div id="activity-feed"><p class="empty">Đang đồng bộ nhật ký…</p></div></section>
 <div class="midcol"><div class="stats">
 <div class="stat"><span class="stat-ico">💬</span><div><div class="stat-number" id="queued">—</div><small>Bài AI chờ đăng</small></div></div>
 <div class="stat"><span class="stat-ico">☑</span><div><div class="stat-number" id="scheduled">—</div><small>Metricool chờ đăng</small></div></div>
 <div class="stat"><span class="stat-ico">◷</span><div><div class="stat-number" id="posted">—</div><small>Bài đã xuất bản</small></div></div>
 <div class="stat"><span class="stat-ico">✨</span><div><div class="stat-number" id="replies">—</div><small>Phản hồi ghi nhận</small></div></div>
-</div><section class="card logs" id="logs"><h2 class="card-title"><span>▤ Recent Logs</span><span class="buttons"><span class="muted" id="sync-label">Chưa đồng bộ</span><button class="mini-btn" id="refresh">Làm mới ↻</button></span></h2><div class="muted">Nhật ký thực thi công khai · Không hiển thị nội dung nháp</div><div id="recent-logs"><p class="empty">Đang tải các hoạt động từ hệ thống…</p></div></section></div>
+</div><section class="card logs" id="logs"><h2 class="card-title"><span>▤ Nhật ký thực thi</span><span class="buttons"><span class="muted" id="sync-label">Chưa đồng bộ</span><button class="mini-btn" id="refresh">Làm mới ↻</button></span></h2><div class="muted">Ghi nhận các lần chạy, quyết định xuất bản và kết quả đối soát · Không hiển thị nội dung nháp</div><div id="recent-logs"><p class="empty">Đang tải các hoạt động từ hệ thống…</p></div></section></div>
 <div class="rightcol"><div class="righttop">
 <section class="card" id="tasks"><h2 class="card-title"><span>▣ Tasks</span><span class="muted" id="task-count">—</span></h2><div class="progress"><i id="task-progress"></i></div><div class="task-line"><b>☑</b> Hoàn thành <strong id="task-completed">—</strong></div><div class="task-line"><b>▫</b> Đang chờ <strong id="task-pending">—</strong></div><div class="task-line"><b>◷</b> Chờ phê duyệt <strong id="task-blocked">—</strong></div><p class="muted">Số lượng từ các nhiệm vụ đã ghi nhận, không nhất thiết trong hôm nay.</p></section>
-<section class="card" id="status"><h2 class="card-title">◈ System Status</h2><div class="system-line"><span>AI Agent (Enna)</span><strong id="sys-agent">—</strong></div><div class="system-line"><span>Kết nối Threads</span><strong id="sys-threads">—</strong></div><div class="system-line"><span>Lượt chạy gần nhất</span><strong id="sys-run">—</strong></div><div class="system-line"><span>Dữ liệu</span><strong id="sys-data">Chờ đồng bộ</strong></div><div class="system-line"><span>🧠 Chiến lược tự học</span><strong id="sys-learning">Chưa đồng bộ</strong></div><div class="system-line"><span>Lần tự đánh giá</span><strong id="sys-learning-run">—</strong></div><div class="system-line"><span>Metricool xác nhận xuất bản</span><strong id="sys-provider">—</strong></div><div class="system-line"><span>Đã đối soát Meta ID</span><strong id="sys-meta">—</strong></div><div class="system-line"><span>🏷 Bài có Topic gốc đang chờ</span><strong id="sys-topic-queued">—</strong></div><div class="system-line"><span>Topic đã yêu cầu gửi Meta</span><strong id="sys-topic-posted">—</strong></div><div class="muted" style="margin-top:9px">Tự đánh giá theo đợt và chỉ thay đổi chiến lược khi có số liệu thật. Hoạt ảnh minh họa không đồng nghĩa đang xử lý 24/7.</div></section>
+<section class="card" id="status"><h2 class="card-title">◈ System Status</h2><div class="system-line"><span>AI Agent (Enna)</span><strong id="sys-agent">—</strong></div><div class="system-line"><span>Kết nối Threads</span><strong id="sys-threads">—</strong></div><div class="system-line"><span>Lượt chạy gần nhất</span><strong id="sys-run">—</strong></div><div class="system-line"><span>Lượt tự động gần nhất</span><strong id="sys-worker">—</strong></div><div class="system-line"><span>Dữ liệu</span><strong id="sys-data">Chờ đồng bộ</strong></div><div class="system-line"><span>🧠 Chiến lược tự học</span><strong id="sys-learning">Chưa đồng bộ</strong></div><div class="system-line"><span>Lần tự đánh giá</span><strong id="sys-learning-run">—</strong></div><div class="system-line"><span>Metricool xác nhận xuất bản</span><strong id="sys-provider">—</strong></div><div class="system-line"><span>Đã đối soát Meta ID</span><strong id="sys-meta">—</strong></div><div class="system-line"><span>🏷 Bài có Topic gốc đang chờ</span><strong id="sys-topic-queued">—</strong></div><div class="system-line"><span>Topic đã yêu cầu gửi Meta</span><strong id="sys-topic-posted">—</strong></div><div class="muted" style="margin-top:9px">Tự đánh giá theo đợt và chỉ thay đổi chiến lược khi có số liệu thật. Hoạt ảnh minh họa không đồng nghĩa đang xử lý 24/7.</div></section>
 </div>
 <section class="card moods"><h2 class="card-title"><span>♡ Enna in Action</span><div class="buttons"><button class="mini-btn" id="motion" aria-pressed="false">Tắt hoạt ảnh</button></div></h2><div class="muted">Mỗi trạng thái có biểu cảm và cử chỉ riêng (hoạt ảnh minh họa, không phản ánh thời gian thực)</div><div class="mood-row">
 <div class="mood"><div class="mood-picture"><img src="enna-work.svg?v=4" alt="Enna mở to mắt, mỉm cười hào hứng khi tập trung gõ bàn phím"><span class="mood-symbol">✨</span></div><b>⌨ Đang làm việc</b><p>Thực hiện nhiệm vụ theo lịch</p></div>
@@ -68,16 +70,64 @@
 <script>
 (()=>{'use strict';
 const endpoint='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-public-status', $=id=>document.getElementById(id);
-const names={research:'Nghiên cứu ý tưởng',growth:'Quét tín hiệu và chủ đề',learning:'Tự đánh giá nội dung',publication:'Xuất bản trên Threads'};
-const icons={research:'✏️',growth:'🔎',learning:'🧠',publication:'📣'};
+const names={research:'Nghiên cứu ý tưởng',growth:'Quét tín hiệu và chủ đề',learning:'Tự đánh giá nội dung',publication:'Xuất bản trên Threads',publisher:'Vận hành và xuất bản',editor:'Biên tập nội dung',reconcile:'Đối soát kết quả',insights:'Đo hiệu quả',system:'Theo dõi hệ thống',metricool:'Lịch Metricool'};
+const icons={research:'✏️',growth:'🔎',learning:'🧠',publication:'📣',publisher:'📣',editor:'✏️',reconcile:'🔁',insights:'📊',system:'⚙️',metricool:'📅'};
 const states={working:'Đang xử lý',scheduled:'Chờ lịch làm việc',attention:'Cần kiểm tra'};
 const out=(id,text)=>$(id).textContent=String(text);
 const date=s=>s?new Date(s).toLocaleString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 const clock=s=>s?new Date(s).toLocaleTimeString('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit'}):'—';
 const normalizedStatus=status=>({completed:'Hoàn tất',success:'Thành công',running:'Đang xử lý',failed:'Gặp lỗi',blocked:'Chờ duyệt',insufficient_evidence:'Chưa đủ dữ liệu',hold:'Giữ chiến lược',promote_story:'Ưu tiên kể chuyện',promote_practical:'Ưu tiên bài hữu ích',rollback_balanced:'Trở lại cân bằng',source_unavailable:'Chưa đọc được dữ liệu',provider_published:'Metricool xác nhận đã đăng'})[status]||'Đã ghi nhận';
-let loading=false;
-function addLog(item){const row=document.createElement('div');row.className='log-row';const time=document.createElement('time');time.textContent=clock(item.at);const icon=document.createElement('span');icon.className='log-ico';icon.textContent=icons[item.kind]||'▤';const title=document.createElement('span');title.className='log-title';title.textContent=names[item.kind]||'Hoạt động';const result=document.createElement('span');result.className='log-result'+(item.status==='failed'?' warn':'');result.textContent=normalizedStatus(item.status);row.append(time,icon,title,result);return row;}
-function addActivity(item){const row=document.createElement('div');row.className='activity-line';const dot=document.createElement('span');dot.className='timeline-dot';const icon=document.createElement('div');icon.className='event-icon';icon.textContent=icons[item.kind]||'▤';const content=document.createElement('div');const b=document.createElement('strong');b.textContent=names[item.kind]||'Hoạt động';const sub=document.createElement('p');sub.textContent=normalizedStatus(item.status);const time=document.createElement('small');time.textContent=date(item.at);content.append(b,sub,time);row.append(dot,icon,content);return row;}
+const codeLabels={
+ops_started:'Bắt đầu lượt làm việc tự động',ops_completed:'Hoàn tất lượt vận hành tự động',
+ops_failed:'Lượt vận hành gặp lỗi',publisher_started:'Bắt đầu kiểm tra và xuất bản',
+publisher_completed:'Hoàn tất lượt xuất bản',publisher_failed:'Lượt xuất bản gặp lỗi',
+growth_started:'Đang quét tín hiệu',growth_completed:'Đã hoàn thành quét chủ đề',
+growth_failed:'Quét chủ đề gặp lỗi',research_started:'Đang nghiên cứu',
+research_completed:'Đã hoàn thành nghiên cứu',research_failed:'Nghiên cứu gặp lỗi',
+post_queued:'Đã thêm bài vào hàng đợi',post_scheduled_external:'Đã ghi nhận lịch Metricool',
+post_publishing:'Đang gửi bài qua Meta',post_posted:'Bài đã đăng và có ID Meta',
+post_uncertain:'Chờ xác minh kết quả Meta',post_failed:'Đăng bài thất bại',
+provider_published:'Metricool xác nhận đã đăng'
+};
+const eventResult=item=>codeLabels[item.code]||normalizedStatus(item.status);
+let loading=false,eventLoading=false;
+function addLog(item){const row=document.createElement('div');row.className='log-row';const time=document.createElement('time');time.textContent=clock(item.at);const icon=document.createElement('span');icon.className='log-ico';icon.textContent=icons[item.kind]||'▤';const title=document.createElement('span');title.className='log-title';title.textContent=names[item.kind]||'Hoạt động';const result=document.createElement('span');result.className='log-result'+(item.status==='failed'?' warn':'');result.textContent=eventResult(item);row.append(time,icon,title,result);return row;}
+function addActivity(item){const row=document.createElement('div');row.className='activity-line';const dot=document.createElement('span');dot.className='timeline-dot';const icon=document.createElement('div');icon.className='event-icon';icon.textContent=icons[item.kind]||'▤';const content=document.createElement('div');const b=document.createElement('strong');b.textContent=names[item.kind]||'Hoạt động';const sub=document.createElement('p');sub.textContent=eventResult(item);const time=document.createElement('small');time.textContent=date(item.at);content.append(b,sub,time);row.append(dot,icon,content);return row;}
+function renderJournal(events){
+const activity=$('activity-feed'),logs=$('recent-logs');
+activity.replaceChildren();logs.replaceChildren();
+for(const e of events.slice(0,8))activity.append(addActivity(e));
+for(const e of events.slice(0,18))logs.append(addLog(e));
+if(!events.length){activity.append('Chưa có sự kiện thực thi nào được ghi nhận.');
+logs.append('Chưa có nhật ký để hiển thị.');}
+}
+async function loadEvents(){
+if(eventLoading||document.hidden)return;
+eventLoading=true;
+try{
+const res=await fetch(endpoint+'?mode=events&_='+Date.now(),{
+cache:'no-store',signal:AbortSignal.timeout(9000)});
+if(!res.ok)throw Error('network');
+const data=await res.json();if(data.error||!Array.isArray(data.activity))throw Error('missing');
+renderJournal(data.activity);out('sync-label',date(data.updatedAt)+' · gần trực tiếp');
+const first=data.activity.find(e=>e.kind==='publisher' &&
+['ops_started','ops_completed','ops_failed','publisher_started','publisher_completed','publisher_failed'].includes(e.code));
+if(first){
+ const elapsed=(Date.now()-Date.parse(first.at))/60000;
+ if(first.status==='started'&&elapsed>=0&&elapsed<12){
+ out('topstate','Đang thực thi tác vụ');out('sys-agent','Đang xử lý');
+ out('activity-status','Đang xử lý');
+ } else if(first.status==='failed') {
+ out('sys-agent','Cần kiểm tra lỗi');out('activity-status','Có lỗi cần xem');
+ } else {
+ out('sys-agent','Chờ lượt làm việc tiếp');out('activity-status','Đã đồng bộ');
+ }
+ out('sys-run',date(first.at));
+ out('sys-worker',eventResult(first));
+}
+}catch(_error){out('sync-label','Nhật ký tạm thời chưa đồng bộ');}
+finally{eventLoading=false;}
+}
 async function load(){if(loading)return;loading=true;$('refresh').disabled=true;
 try{
 const res=await fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(12000)});if(!res.ok)throw Error('network');const d=await res.json();if(d.error)throw Error('unavailable');
@@ -87,7 +137,11 @@ out('topstate',d.runtime.state==='working'?'Đang làm việc':connected?'Đã k
 $('topdot').className='indicator '+(d.runtime.state==='working'?'working':connected?'working':'warn');
 out('activity-status',d.runtime.state==='working'?'Đang xử lý':connected?'Đã đồng bộ':'Cần kiểm tra');
 $('activity-status').className='status-tag'+(connected?'':' offline');
-out('sys-agent',state);out('sys-threads',connected?'Đã kết nối':'Chưa xác minh');out('sys-run',date(d.runtime.lastRunAt));out('sys-data','Đã đồng bộ');
+out('sys-agent',state);out('sys-threads',connected?'Đã kết nối':'Chưa xác minh');
+out('sys-run',date(d.runtime.lastRunAt));
+const wr=d.runtime?.workerLastResult;
+out('sys-worker',wr?eventResult({status:'pending',code:wr}):'Chưa có lượt chạy');
+out('sys-data','Đã đồng bộ');
 const fmt={balanced:'Cân bằng',story:'Ưu tiên kể chuyện',practical:'Ưu tiên mẹo hữu ích'};
 out('sys-learning',fmt[d.learning?.format]||'Chưa có chính sách');
 out('sys-learning-run',d.learning?.lastEvaluatedAt?date(d.learning.lastEvaluatedAt)+' · '+normalizedStatus(d.learning?.lastDecision):'Chưa có lượt đo thực');
@@ -99,14 +153,11 @@ out('sync-label',date(d.updatedAt));
 const total=d.tasks.completed+d.tasks.pending+d.tasks.blocked;
 out('task-count',d.tasks.completed+'/'+total);out('task-completed',d.tasks.completed);out('task-pending',d.tasks.pending);out('task-blocked',d.tasks.blocked);
 $('task-progress').style.width=(total?Math.round(d.tasks.completed/total*100):0)+'%';
-const activity=$('activity-feed'),logs=$('recent-logs');activity.replaceChildren();logs.replaceChildren();
-for(const e of (d.activity||[]).slice(0,6))activity.append(addActivity(e));
-for(const e of (d.activity||[]).slice(0,8))logs.append(addLog(e));
-if(!d.activity?.length){activity.append('Chưa có hoạt động công khai được ghi nhận.');logs.append('Chưa có nhật ký được ghi nhận.');}
+renderJournal(d.activity||[]);
 }catch(e){out('topstate','Chưa đồng bộ');out('sys-data','Tạm thời không có dữ liệu');out('sync-label','Không thể tải dữ liệu');$('activity-feed').replaceChildren();$('activity-feed').append('Không kết nối được nhật ký công khai.');$('recent-logs').replaceChildren();$('recent-logs').append('Chưa tải được dữ liệu. Có thể thử làm mới.');}
 finally{loading=false;$('refresh').disabled=false;}}
 $('refresh').onclick=load;$('motion').onclick=()=>{const value=document.body.classList.toggle('no-motion');document.querySelectorAll('img[src*="enna-"]').forEach(img=>{const match=img.getAttribute('src').match(/enna-(scene|work|thinking|sleep)(?:-still)?\.svg/);if(match)img.src='enna-'+match[1]+(value?'-still.svg?v=4':'.svg?v=4');});out('motion',value?'Bật hoạt ảnh':'Tắt hoạt ảnh');$('motion').setAttribute('aria-pressed',String(value));};
 $('share').onclick=async()=>{try{if(navigator.share)await navigator.share({title:'Enna Control Dashboard',url:location.href});else if(navigator.clipboard){await navigator.clipboard.writeText(location.href);out('share','Đã sao chép ✓');}}catch{}};
-load();setInterval(()=>{if(!document.hidden)load()},60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)load()});
+load();setInterval(()=>{if(!document.hidden)load()},60000);setInterval(loadEvents,15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){load();loadEvents()}});
 })();
 </script></body></html>
