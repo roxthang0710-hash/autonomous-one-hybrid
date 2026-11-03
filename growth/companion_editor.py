@@ -121,7 +121,7 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "'Đúng là một câu chuyện' hoặc 'Cảm động quá'. "
         "Không sao chép nguyên bài. "
         "Không khẳng định bài viral, được bao nhiêu view/like khi không có số liệu. "
-        "Nếu bài là lời than phiền, hãy hiểu đúng nguyên nhân và nhắc lại hai chi tiết cụ thể, đưa ra nhận xét hợp tình huống thay vì lời động viên chung chung. "
+        "Nếu bài là lời than phiền, phản hồi đúng nguyên nhân thực tế; nếu bài là câu hỏi hài hước, đừng biến thành lời giáo huấn. Chọn một chi tiết, thêm nhận xét sắc sảo hoặc một câu đùa mới có liên quan. "
         "Nếu bài kể chuyện quan tâm hoặc cảm xúc cá nhân, đáp lại ấm áp "
         "và tôn trọng. Một câu chuyện chăm sóc người thân không tự động "
         "là lời khuyên y tế: có thể nói về sự tử tế trong hành động cụ thể, "
@@ -130,12 +130,12 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "Đồng thời chỉ đề xuất 1 hướng nội dung GỐC có thể phát triển riêng "
         "cho kênh (content_angle), không được sao chép nguyên bài/ảnh/video."
       ),
-      "illustrative_quality_example": {
-        "only_context":"Một người ít nói lặng lẽ tìm cách nấu cháo cho người nhà.",
-        "avoid":"Người đó nấu cháo rồi mang tới cửa và tìm cách nấu cháo. Thật là một khoảnh khắc cảm động!",
-        "better":"Đọc tới đoạn âm thầm tìm cách nấu cháo mới thấy: có người chẳng nói nhiều, nhưng cách họ quan tâm thì rõ mồn một.",
-        "note":"Chỉ học cách nêu một quan sát riêng, KHÔNG được dùng lại câu ví dụ ở bài khác."
-      },
+      # No fixed story examples: they biased unrelated user-selected posts.
+      # Source context is always the selected post, not a canned template.
+      "current_post_clauses":[
+          x.strip()[:150] for x in re.split(r"[.!?\n]+",excerpt)
+          if len(x.strip())>=16 and "Gửi Enna" not in x
+      ][:5],
       "prior_replies_to_avoid":list(prior_texts)[:6],
       "revision_feedback":str(signal.get("quality_feedback") or "")[:450],
     }
