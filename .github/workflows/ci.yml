@@ -40,6 +40,13 @@ jobs:
                       'Journal must include a verified automatic-operations smoke test');
             assert.ok(data.activity.every(e=>e.at && e.kind && e.status && e.code),
                       'Activity entries must be structured');
-            console.log('Enna public activity feed online:',data.activity.length,'events');
+            const snapshot=await fetch(url.replace('?mode=events',''),{signal:AbortSignal.timeout(12000)});
+            assert.equal(snapshot.status,200,'Full Enna dashboard feed must be reachable');
+            const full=await snapshot.json();
+            assert.ok(Array.isArray(full.activity),'Dashboard activity must be an array');
+            assert.ok(Number.isInteger(full.posts.published),'Published count must be verifiable');
+            assert.equal(typeof full.runtime.workerLastResult,'string','Worker heartbeat must be present');
+            console.log('Enna public feeds online:',data.activity.length,'events;',
+                        full.posts.published,'verified published posts');
           })().catch(e=>{console.error(e.message);process.exitCode=1});
           NODE
