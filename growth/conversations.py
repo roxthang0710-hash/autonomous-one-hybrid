@@ -16,6 +16,9 @@ QUERIES = (
     "dây sạc", "bàn phím", "làm việc", "văn phòng",
     "công sở", "đồng nghiệp", "deadline", "kỹ năng",
     "họp hành", "học tập", "công nghệ", "đi làm",
+    "mẹo công việc", "Excel văn phòng", "Google Sheets",
+    "phím tắt máy tính", "phần mềm miễn phí", "công cụ số",
+    "AI đi làm", "mẹo máy tính", "tự động hóa công việc",
 )
 
 
