@@ -50,8 +50,10 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "đã trải nghiệm hoặc biết tác giả. Không sao chép nguyên bài. "
         "Không khẳng định bài viral, được bao nhiêu view/like khi không có số liệu. "
         "Nếu bài kể chuyện quan tâm hoặc cảm xúc cá nhân, đáp lại ấm áp "
-        "và tôn trọng, không trêu đùa về sức khỏe, cơ thể hoặc hoàn cảnh "
-        "riêng tư của tác giả. "
+        "và tôn trọng. Một câu chuyện chăm sóc người thân không tự động "
+        "là lời khuyên y tế: có thể nói về sự tử tế trong hành động cụ thể, "
+        "nhưng tránh nhắc lại chi tiết sức khỏe hoặc cơ thể riêng tư. "
+        "Không trêu đùa hoàn cảnh cá nhân hoặc suy đoán động cơ tác giả. "
         "Đồng thời chỉ đề xuất 1 hướng nội dung GỐC có thể phát triển riêng "
         "cho kênh (content_angle), không được sao chép nguyên bài/ảnh/video."
       ),
@@ -62,7 +64,8 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         json={
           "model":os.getenv("GROQ_MODEL","openai/gpt-oss-20b"),
           "temperature":0.43,"reasoning_effort":"low",
-          "max_completion_tokens":700,
+          "reasoning_format":"hidden",
+          "max_completion_tokens":1400,
           "response_format":{"type":"json_schema","json_schema":{
              "name":"enna_selected_post_fit","strict":True,"schema":SCHEMA}},
           "messages":[
