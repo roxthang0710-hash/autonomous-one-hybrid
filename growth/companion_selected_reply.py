@@ -99,7 +99,7 @@ def clean_selected_excerpt(text):
         if "✳ Gửi Enna" in line:
             # The injected button is NOT part of the author's post.
             line = line.replace("✳ Gửi Enna", "").strip()
-        if re.fullmatch(r"\d+\s*(giờ|phút|ngày|tuần)\\s*(trước)?", line,
+        if re.fullmatch(r"\d+\s*(giờ|phút|ngày|tuần)\s*(trước)?", line,
                         flags=re.IGNORECASE):
             continue
         if re.fullmatch(r"\d+(?:[,.]\d+)?[KkMm]?", line):
