@@ -59,3 +59,10 @@
 
 ## Resume protocol for user
 In a new conversation request reading **ENNA_PROJECT_HANDOFF.md** from repository roxthang0710-hash/autonomous-one-hybrid (main); compare with live GitHub, Supabase project gjdvdohylvsauphhkutw and Metricool 7803567; list confirmed, tentative and blocked state, then continue latest task. Never prompt the user to reshare chat history or credentials if connectors can retrieve state. This prompt cannot guarantee access when connectors aren't attached.
+
+## Password recovery enhancement (2026-11-03)
+- User forgot the Supabase Auth reviewer password. Passwords cannot be retrieved in plaintext; preserve the original authorized Auth user and its public.agent_reviewers membership.
+- Added a "Quên mật khẩu?" link on docs/enna/affiliate/index.html and email recovery page at docs/enna/affiliate/reset/index.html. The recovery page requests a reset email via Supabase Auth /recover and updates the password using an authenticated recovery access token through /user; no service key or passwords stored.
+- Intended reset URL: https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/affiliate/reset/
+- Owner must verify that this exact URL is permitted in Supabase Dashboard → Authentication → URL Configuration → Redirect URLs. Supabase email delivery must work (free SMTP has restrictions). Email used must belong to the existing Auth user.
+- GitHub code was committed; public Pages live availability, actual delivery and successful password change have NOT been independently verified. Never claim success without owner verification. Do not ask owner to paste passwords/reset tokens into ChatGPT. Do not create another reviewer without explicit permission.
