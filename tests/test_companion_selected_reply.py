@@ -400,6 +400,21 @@ class SelectionTests(unittest.TestCase):
                  "cũng vậy, ảnh hưởng cả phòng.")
         self.assertTrue(can_send(novel,context,target=parse_threads_url(URL)))
 
+    def test_frustrated_owner_post_rejects_false_positive_tone(self):
+        from growth.companion_fit import user_is_frustrated
+        src=("Tôi ghét nhất giờ nghỉ trưa mà đồng nghiệp vẫn gõ bàn phím "
+             "cạch cạch rồi đập chuột, đã nhắc nhở mà ngày nào cũng vậy. "
+             "Mệt thực sự, chỉ muốn yên tĩnh.")
+        false_praise=("Gõ bàn phím cạch cạch, còn vòng cẩm thạch "
+                      "chạm vào bàn. Có vẻ anh ấy đang cố gắng hết mình "
+                      "và thêm điểm nhấn thú vị cho giờ nghỉ trưa.")
+        self.assertTrue(user_is_frustrated(src))
+        self.assertFalse(can_send(false_praise,src,target=parse_threads_url(URL)))
+        useful=("Nghỉ trưa mà bàn phím cứ cạch cạch rồi còn đập chuột "
+                "thì đúng là một ca thử thách sự bình tĩnh. "
+                "Đã nhắc rồi mà vẫn ồn mới mệt.")
+        self.assertTrue(can_send(useful,src,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
