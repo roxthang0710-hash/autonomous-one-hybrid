@@ -39,7 +39,9 @@ Deno.serve(async (request: Request) => {
       crossChannel: 'enna_multichannel_posts?select=provider,scheduled_at,provider_status,checked_at,auto_publish,has_media&brand_key=eq.do_hay_di_lam&order=scheduled_at.asc&limit=80',
       commercialTracks: 'enna_monetization_tracks?select=track_key,stage,owner_approved,fulfillment_verified,claims_verified,disclosures_ready&limit=10',
       commercialPrograms: 'affiliate_programs?select=review_status&limit=20',
-      commercialProposals: 'affiliate_opportunities?select=review_status&limit=100'
+      commercialProposals: 'affiliate_opportunities?select=review_status&limit=100',
+      affiliateCandidates: 'enna_affiliate_candidates?select=stage,affiliate_url,internal_priority_score&limit=100',
+      affiliateTests: 'enna_affiliate_tests?select=status,placement&limit=100'
     };
     const entries = await Promise.all(Object.entries(endpoints).map(async ([name, endpoint])=>{
       const res = await fetch(url+'/rest/v1/'+endpoint,{headers:{apikey:secret,Authorization:'Bearer '+secret,Accept:'application/json'},signal:AbortSignal.timeout(8000)});
@@ -173,6 +175,12 @@ Deno.serve(async (request: Request) => {
         modelsApprovedAndLive:commercialApproved,
         affiliateApprovedPrograms:commercialProgramsReady,
         affiliateDraftsNeedReview:commercialPending,
+        productCategoriesUnderResearch:s.affiliateCandidates.length,
+        affiliateProductsApproved:s.affiliateCandidates.filter(x=>
+          ['approved','published'].includes(x.stage)&&!!x.affiliate_url).length,
+        linkPlacementPlans:s.affiliateTests.filter(x=>x.status==='planned').length,
+        activeLinkExperiments:s.affiliateTests.filter(x=>x.status==='active').length,
+        linkHubReadyForOrganicUse:true,
         salesEvidence:'private_only',
         publicationGate:commercialApproved>0?'owner_reviewed':'commercial_publication_blocked'
       },
