@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from difflib import SequenceMatcher
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -78,6 +79,12 @@ def validate_generated(result):
     return result
 
 
+def should_offer_cta(previous_texts=()):
+    """Keep organic follow invitations sparse; never pressure every reader."""
+    recent=[x.casefold() for x in previous_texts if isinstance(x,str)][:4]
+    return not any(re.search(r"(?:follow|theo dõi)",x) for x in recent)
+
+
 def generate_ai_post(pillar, topic, previous_texts=()):
     """No affiliate CTA, no fabricated first-hand experience, no links."""
     key = require_env("GROQ_API_KEY")
@@ -85,6 +92,16 @@ def generate_ai_post(pillar, topic, previous_texts=()):
         "editor": "Enna — biên tập viên AI của thương hiệu Đồ Hay Đi Làm",
         "pillar": pillar, "topic": topic,
         "recent_posts_to_avoid_repeating": list(previous_texts)[:12],
+        "soft_cta_eligible": should_offer_cta(previous_texts),
+        "soft_cta_rule": (
+            "Chỉ khi đủ tự nhiên, thêm tối đa 1 câu rủ người đọc theo dõi "
+            "@dohay_dilam bằng giọng vui, hơi tự trào, đúng chủ đề. "
+            "Không ép người xem, không hứa thưởng hay câu kéo. "
+            "Nếu bài đang gãy nhịp vì CTA, ưu tiên không thêm. "
+            if should_offer_cta(previous_texts) else
+            "BÀI NÀY KHÔNG CTA FOLLOW: các bài gần đây đã có CTA, "
+            "hãy tập trung nội dung tự nhiên, không nhắc theo dõi."
+        ),
         "task": (
             "Viết 1 bài Threads tiếng Việt tự nhiên như một người thật đang "
             "kể chuyện cho đồng nghiệp thân, không phải thương hiệu đang làm "
@@ -108,7 +125,9 @@ def generate_ai_post(pillar, topic, previous_texts=()):
             "Không được kể chuyện tưởng tượng như bằng chứng người viết "
             "trực tiếp chứng kiến; không mạo danh công ty/người thật. "
             "Không đưa số liệu thiếu nguồn, trải nghiệm mua/dùng giả, "
-            "link, quảng cáo, CTA follow, tag bạn bè hay tranh cãi độc hại. "
+            "link, quảng cáo, ép follow, tag bạn bè hay tranh cãi độc hại. "
+            "CTA chỉ xuất hiện thưa, khi quy tắc soft_cta_eligible cho phép; "
+            "không nhét CTA vào mọi bài hoặc phá câu kết đang tự nhiên. "
             "Đặc biệt tránh âm điệu sáng tác AI quá tròn trịa. "
             "Bài phải đủ tự nhiên để một người đọc thành tiếng mà không ngượng. "
             "Ví dụ về NHỊP ĐIỆU (không sao chép nội dung): "
