@@ -10,6 +10,61 @@ import os
 import requests
 from growth.scoring import normalize
 
+class EnnaModelServiceError(requests.RequestException):
+    """Provider failure with public-safe status only; never logs API responses."""
+
+    def __init__(self, safe_reason):
+        self.safe_reason = str(safe_reason)[:48]
+        super().__init__(self.safe_reason)
+
+
+def _groq_completion(call, key, payload):
+    """One primary request and at most one compatibility/transient fallback.
+
+    Groq strict JSON Schema supports gpt-oss-20b, but a provider 400 may
+    indicate invalid parameter combinations; JSON object is a safer fallback.
+    No unbounded retries, and no logging prompts, messages or API keys.
+    """
+    url="https://api.groq.com/openai/v1/chat/completions"
+    headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"}
+    for attempt in range(2):
+        try:
+            response=call(url,headers=headers,json=payload,timeout=40)
+        except requests.Timeout:
+            if attempt==0:
+                continue
+            raise EnnaModelServiceError("network_timeout") from None
+        except requests.RequestException:
+            raise EnnaModelServiceError("network_error") from None
+        status=getattr(response,"status_code",None)
+        if status is None:
+            try:
+                response.raise_for_status()
+            except requests.HTTPError as exc:
+                status=getattr(getattr(exc,"response",None),"status_code",0)
+            else:
+                return response
+        if status is not None and 200<=int(status)<300:
+            return response
+        if status==400 and attempt==0:
+            # An alternate *public API format*, not a different access path.
+            # Still validate every returned field and never publish invalid text.
+            payload={**payload,
+                "response_format":{"type":"json_object"},
+                "max_completion_tokens":800}
+            continue
+        if status in (500,502,503,504) and attempt==0:
+            continue
+        if status==429:
+            raise EnnaModelServiceError("provider_rate_limited_429") from None
+        if status in (401,403):
+            raise EnnaModelServiceError("provider_auth_or_access_"+str(status)) from None
+        if status is None:
+            raise EnnaModelServiceError("provider_unknown_response") from None
+        raise EnnaModelServiceError("provider_http_"+str(int(status))) from None
+    raise EnnaModelServiceError("provider_retries_exhausted")
+
+
 SCHEMA = {
   "type":"object","additionalProperties":False,
   "properties":{
@@ -71,9 +126,7 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
       },
       "prior_replies_to_avoid":list(prior_texts)[:6],
     }
-    response=call("https://api.groq.com/openai/v1/chat/completions",
-        headers={"Authorization":"Bearer "+key,"Content-Type":"application/json"},
-        json={
+    response=_groq_completion(call,key,{
           "model":os.getenv("GROQ_MODEL","openai/gpt-oss-20b"),
           "temperature":0.43,"reasoning_effort":"low",
           "reasoning_format":"hidden",
@@ -90,9 +143,11 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
               "spam, promotion, identity claims, hate or copied viral phrases. "
               "Return only valid JSON with the declared schema."},
              {"role":"user","content":json.dumps(guidance,ensure_ascii=False)},
-          ]},timeout=55)
-    response.raise_for_status()
-    data=json.loads(response.json()["choices"][0]["message"]["content"])
+          ]})
+    try:
+        data=json.loads(response.json()["choices"][0]["message"]["content"])
+    except (ValueError, KeyError, TypeError, IndexError):
+        raise ValueError("Provider gave invalid JSON reply") from None
     if not isinstance(data,dict) or set(data)!=set(SCHEMA["required"]):
         raise ValueError("Unexpected editorial decision fields")
     if not isinstance(data["should_reply"],bool) or not all(
