@@ -6,8 +6,9 @@ Connected Metricool brand: Đồ Hay Đi Làm, brand ID `7803567`.
 Networks connected: Threads `@dohay_dilam`, Instagram `@dohay_dilam`,
 Facebook page ID `1474032685783831`.
 
-**PENDING means booked, not published.** All six new cross-channel
-slots have `autoPublish=true`, confirmed by the Metricool scheduling API.
+**PENDING means booked, not published.** At the first rollout, six
+cross-channel slots had `autoPublish=true`, confirmed by the Metricool scheduling API.
+A second rollout on 03/11 increased this to 14 slots (seven per platform).
 These bookings are visible in `enna_multichannel_posts`; Dashboard displays
 upcoming slots only. This is a snapshot-based monitor, not a live Metricool API
 connector inside Supabase. No automated status flip is claimed after its due time.
@@ -56,3 +57,56 @@ post gets a CTA. No reward bait, fake engagement or repetitive spam.
    Facebook/Instagram growth complements this, never substitutes for it.
 6. A cross-channel account connection does not grant permission to publish
    into a Threads Community via API.
+
+## Advance preparation — verified 03/11/2026
+
+Enna prepared in advance for the entire 03–09/11 campaign, not at the
+scheduled publication minute:
+
+- **Facebook:** 7 text-based posts, 1/day from Nov 3 to Nov 9. Four
+  additional posts are booked on Nov 6 18:15, Nov 7 18:10, Nov 8 18:30,
+  Nov 9 18:20 (Vietnam time). All autoPublish true and provider PENDING.
+- **Instagram:** 7 posts, 1/day Nov 3–9. The earlier Nov 4 gap has been
+  filled at 19:15 with `enna-ctrl-z.png`. The Nov 7, 8, 9 slots are
+  12:45, 19:20, 12:45, with original prepared images
+  `enna-thu-bay-nao-truc.png`, `enna-chu-nhat.png`, and
+  `enna-deadline.png`. All autoPublish true and provider PENDING.
+- **Original images:** The GitHub card-generation workflow built and
+  verified four additional 1080 × 1350 PNGs before they were accepted by
+  Metricool, using the existing original Enna mascot; no borrowed meme
+  pictures or claimed human portraits.
+- **Supabase:** All 14 booking records are stored in
+  `enna_multichannel_posts` with provider ID/UUID, provider status, scheduled
+  time, auto-delivery and media-presence flags. The public Dashboard exposes
+  only aggregated counts, not drafts or account tokens.
+
+### Early checks and actual independence
+
+- `growth/multichannel_preflight.py`: read-only check of the next three
+  Vietnam local days, detecting missing Facebook/Instagram bookings, duplicate
+  slots, absent Instagram media, inactive auto-publish, provider errors, stale
+  provider snapshots, and past-due unverified posts. Never claims that the
+  scheduled posts have published.
+- `.github/workflows/enna-autonomous-ops.yml`: runs preflight as part of
+  periodic operations before publishing.
+- `.github/workflows/enna-preflight.yml`: independent GitHub Actions
+  check at 08:15 and 16:15 Vietnam daily, plus manual owner smoke tests.
+- The owner-authorized smoke-test on 03/11 at 14:45 passed and inserted six
+  `preflight_ready` events (two platforms × three dates). This proves the
+  code and its journal work, **not** yet that GitHub's cron fired unattended.
+- A separate ChatGPT recurring task, **Enna — Chuẩn bị nội dung trước**,
+  was created for morning review of the *live* Metricool schedule and
+  proactive preparation where connected integrations permit. The existing
+  18:00 KPI summary remains independent. Do not claim an automation run
+  before its run status is actually recorded.
+- Enna public viewer displays 72-hour readiness, next unprepared date and
+  overdue posts requiring provider re-verification. The Supabase provider
+  table is explicitly a snapshot, not live streaming from Metricool.
+
+### Next content horizon
+
+The current campaign is covered through Nov 9; Nov 10 is the earliest
+currently unprepared Facebook/Instagram day. Morning checks should begin
+proposing the next wave before it enters the 72-hour window. Follow
+engagement evidence and keep <=1 post/day per FB/IG channel while testing
+organic content; don't blindly fill unbounded calendars.
