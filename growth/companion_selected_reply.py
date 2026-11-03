@@ -70,8 +70,10 @@ def decode_issue_body(body):
     if not isinstance(body, str) or len(body) > 4500:
         raise ValueError("invalid_issue_body")
     lines = body.strip().splitlines()
-    if len(lines) != 3 or lines[0].strip() != HEADER:
+    if len(lines) not in (3, 4) or lines[0].strip() != HEADER:
         raise ValueError("not_an_enna_companion_issue")
+    if len(lines)==4 and lines[3].strip()!="ENNA_LOCAL_BROWSER_MODE: true":
+        raise ValueError("unsupported_companion_handoff_mode")
     if not lines[1].startswith("THREADS_URL: ") or not lines[2].startswith("SELECTED_TEXT_BASE64URL: "):
         raise ValueError("unsupported_companion_issue_format")
     target = parse_threads_url(lines[1].split(": ", 1)[1])
@@ -89,6 +91,10 @@ def decode_issue_body(body):
     verdict = assess_selected(text)
     if verdict["state"] != "candidate":
         raise ValueError("unsafe_or_insufficient_selected_context")
+    # Opt-in comes from the owner-created Issue; Chrome still independently
+    # requires a private per-profile enabled switch and exact selected target.
+    # Server never assumes the browser has posted or should be retried.
+    verdict = {**verdict, "local_browser_mode": len(lines)==4}
     return target, text, verdict
 
 
@@ -266,7 +272,7 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         # NEVER try if Graph returns unexpected/mismatched content or 5xx.
         created_at = parse_owner_issue_time(issue.get("created_at"))
         is_recent = bool(created_at and timedelta(0)<=now-created_at<=timedelta(hours=48))
-        if permitted and is_recent and target_read_limited(exc):
+        if permitted and not verdict.get("local_browser_mode") and is_recent and target_read_limited(exc):
             direct_trial = True
         else:
             return fallback
