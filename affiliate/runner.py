@@ -51,6 +51,12 @@ def validate_draft(data):
             raise ValueError("Invalid affiliate list " + field)
         if spec["type"] == "integer" and type(val) is not int:
             raise ValueError("Invalid affiliate amount")
+    channels=data["organic_channel"].casefold()
+    # Only use already-connected owned accounts. Research must not invent
+    # a blog/shop or suggest publishing unsolicited posts into groups.
+    if ("blog" in channels or "nhóm" in channels or
+        not any(x in channels for x in ("threads","facebook","instagram","fanpage"))):
+        raise ValueError("Unverified social publishing channel")
     if data["expected_spend_vnd"] != 0:
         raise ValueError("Paid campaign rejected")
     if re.search(r"https?://|www\.|bit\.ly/|shope\.ee/", data["draft_text"], re.I):
@@ -94,6 +100,9 @@ def generate(program, niche):
             "Do not fabricate testimonials or affiliate URLs. "
             "No spam, posting into groups without permission, deceptive claims, mass messaging, financial trading, paid promotions, "
             "automatic publishing or account registration. "
+            "Allowed distribution hypotheses: owned Threads @dohay_dilam, "
+            "the connected Facebook Fanpage and Instagram; do not invent "
+            "a blog, group distribution, or a business website. "
             "Prioritize helpful ideas for office workers and @dohay_dilam; "
             "do not promote untested products as personal recommendations. "
             "For any eventual affiliate/sponsored post, require clear disclosure "
