@@ -28,6 +28,10 @@ test("only real backend events are labeled activity, and refresh is periodic",()
   assert.match(edge,/instagramUpcoming/);
   assert.match(html,/sys-facebook/);
   assert.match(html,/sys-instagram/);
+  assert.match(html,/sys-preflight/);
+  assert.match(html,/sys-next-gap/);
+  assert.match(edge,/daysCovered/);
+  assert.match(edge,/nextGapDay/);
   assert.match(edge,/enna_activity_events\?select=occurred_at,kind,status,code/);
   assert.match(edge,/Cache-Control':'no-store/);
   assert.doesNotMatch(edge,/select=\*/);
