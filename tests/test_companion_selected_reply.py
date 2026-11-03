@@ -148,9 +148,9 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(result["state"],"not_worth_interjecting")
 
     def test_clean_clicked_post_excludes_our_button_and_engagement_counters(self):
-        raw=("tac_gia\\n6 giờ✳ Gửi Enna\\n"
+        raw=("tac_gia\n6 giờ✳ Gửi Enna\n"
              "Một câu chuyện về chú nấu cháo và lịch sử tìm kiếm âm thầm "
-             "khiến người đọc cảm động.\\n2,8K\\n25\\n73\\n12")
+             "khiến người đọc cảm động.\n2,8K\n25\n73\n12")
         clean=clean_selected_excerpt(raw)
         self.assertIn("nấu cháo",clean)
         self.assertNotIn("Gửi Enna",clean)
