@@ -34,6 +34,13 @@ test("only real backend events are labeled activity, and refresh is periodic",()
   assert.match(edge,/nextGapDay/);
   assert.match(edge,/enna_monetization_tracks/);
   assert.match(edge,/commercialReadiness/);
+  assert.match(edge,/enna_affiliate_candidates/);
+  assert.match(edge,/enna_affiliate_tests/);
+  assert.match(edge,/productCategoriesUnderResearch/);
+  assert.match(edge,/affiliateProductsApproved/);
+  assert.match(html,/sys-aff-items/);
+  assert.match(html,/sys-aff-approved/);
+  assert.match(html,/\.\/links\//);
   assert.match(html,/sys-commercial/);
   assert.match(html,/sys-affiliate-ready/);
   assert.match(html,/sys-com-drafts/);
