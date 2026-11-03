@@ -64,6 +64,8 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
       PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
       ENNA_ORIGINAL_MEDIA_ENABLED: 'true'
     steps:
       - uses: actions/checkout@v4
