@@ -426,6 +426,54 @@ class SelectionTests(unittest.TestCase):
                "qua vài đợt deadline mới biết.")
         self.assertTrue(can_send(reply,post,target=parse_threads_url(URL)))
 
+    def test_semantic_judge_allows_grounded_paraphrase_only_in_draft_test(self):
+        text=("Thử thống nhất cách ghi tình trạng của từng nhiệm vụ, có tên "
+              "người phụ trách và mốc chốt cụ thể. Nhìn danh sách là thấy "
+              "việc nào còn vướng, khỏi phải đoán ý nhau.")
+        self.assertFalse(can_send(text,TEXT,target=parse_threads_url(URL)))
+        self.assertTrue(can_send(text,TEXT,target=parse_threads_url(URL),
+                                 semantic_override=True))
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        read,publish=MagicMock(),MagicMock()
+        reviewer=MagicMock(return_value=True)
+        result=process(e,db=MagicMock(),read=read,publish=publish,
+            credentials=MagicMock(),semantic_judge=reviewer,
+            create=lambda *a,**kw:{"should_reply":True,"post_text":text,
+                                    "content_angle":"Cách thiết kế bảng theo dõi chung"})
+        self.assertEqual(result["state"],"draft_prepared_only")
+        reviewer.assert_called_once()
+        read.assert_not_called()
+        publish.assert_not_called()
+        from growth.companion_selected_reply import safe_comment
+        output=safe_comment(result)
+        self.assertIn("KIỂM THỬ NỘI DUNG",output)
+        self.assertNotIn("Bản nháp để bạn xem và tự đăng nếu phù hợp",output)
+
+    def test_semantic_judge_cannot_override_safety_prohibitions(self):
+        promo=("Muốn xử lý bảng tính công việc nhanh thì theo dõi kênh và "
+               "bấm link bio ngay để nhận ưu đãi bạn nhé, rất dễ làm luôn.")
+        self.assertFalse(can_send(promo,TEXT,target=parse_threads_url(URL),
+                                  semantic_override=True))
+
+    def test_semantic_judge_can_reject_unrelated_draft_without_posting(self):
+        irrelevant=("Ngày nào cũng nên mỉm cười, uống cà phê và tận hưởng "
+                    "một bầu không khí tích cực để mọi thứ nhẹ nhàng hơn.")
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        db,read,publish=MagicMock(),MagicMock(),MagicMock()
+        judge=MagicMock(return_value=False)
+        result=process(e,db=db,read=read,publish=publish,
+            credentials=MagicMock(),semantic_judge=judge,
+            create=lambda *a,**kw:{"should_reply":True,
+                                  "post_text":irrelevant,
+                                  "content_angle":"Sự lạc đề"})
+        self.assertEqual(result["state"],"ai_reply_not_contextual_enough")
+        self.assertGreaterEqual(judge.call_count,1)
+        read.assert_not_called()
+        publish.assert_not_called()
+        db.request.assert_not_called()
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
