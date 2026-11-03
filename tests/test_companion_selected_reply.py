@@ -295,6 +295,36 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(again.exception.http_status,403)
         self.assertEqual(after_create.call_count,2)
 
+    @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_browser_mode_never_launches_direct_meta_write_on_read_denial(self,_):
+        import requests
+        e=issue()
+        e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat()
+        e["issue"]["body"]+="\\nENNA_LOCAL_BROWSER_MODE: true"
+        info=decode_issue_body(e["issue"]["body"])
+        self.assertTrue(info[2]["local_browser_mode"])
+        r=requests.Response()
+        r.status_code=403
+        direct=MagicMock()
+        publish=MagicMock()
+        db=MagicMock()
+        result=process(e,db=db,read=MagicMock(side_effect=
+            requests.HTTPError("read forbidden",response=r)),
+            direct_publish=direct,publish=publish,allow_direct_trial=True,
+            credentials=lambda d:("fake_secure_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,"post_text":ANSWER,
+                "content_angle":"Quy trình thống nhất công việc"})
+        self.assertEqual(result["state"],"draft_only_meta_cannot_verify_target")
+        direct.assert_not_called()
+        publish.assert_not_called()
+        db.request.assert_not_called()
+
+    def test_rejects_forged_handoff_flag(self):
+        e=issue()
+        e["issue"]["body"]+="\\nENNA_LOCAL_BROWSER_MODE: surely"
+        with self.assertRaises(ValueError):
+            decode_issue_body(e["issue"]["body"])
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
