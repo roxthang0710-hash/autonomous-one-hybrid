@@ -6,7 +6,10 @@ from datetime import datetime, timezone
 PILLARS = {
     "work": ("van phong", "cong so", "ban lam viec", "nang suat",
              "work from home", "remote work", "office",
-             "laptop", "ban phim", "quan ly thoi gian", "ghi chu", "hoc tap"),
+             "laptop", "ban phim", "quan ly thoi gian", "ghi chu", "hoc tap",
+             "excel", "google sheets", "phan mem", "cong cu so",
+             "phim tat", "tu dong hoa", "ai di lam", "meo may tinh",
+             "thu thuat may tinh", "tin hoc van phong"),
     "travel": ("du lich", "cong tac", "hanh ly", "vali", "may bay", "di chuyen",
                "hanh trinh", "khach san", "travel", "trip", "backpack", "packing"),
     "organize": ("sap xep", "don dep", "gon gang", "ngan nap", "toi gian",
