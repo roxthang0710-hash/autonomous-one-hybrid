@@ -271,6 +271,30 @@ class SelectionTests(unittest.TestCase):
             direct_reply("token",KNOWN_ID,ANSWER,request=writer)
         writer.assert_called_once()
 
+    def test_meta_stage_diagnostics_never_retry_after_container(self):
+        from growth.selected_direct_reply import (
+            MetaStageError, direct_reply, ConfirmedMetaRejection)
+        import requests
+        http=requests.Response()
+        http.status_code=503
+        create=MagicMock(side_effect=requests.HTTPError("gateway",response=http))
+        with self.assertRaises(MetaStageError) as ctx:
+            direct_reply("token",KNOWN_ID,ANSWER,request=create)
+        self.assertEqual(ctx.exception.stage,"create")
+        self.assertEqual(ctx.exception.http_status,503)
+        self.assertEqual(create.call_count,1)
+
+        http.status_code=403
+        after_create=MagicMock(side_effect=[
+            {"id":"fake_container"},
+            requests.HTTPError("publish denied",response=http)
+        ])
+        with self.assertRaises(MetaStageError) as again:
+            direct_reply("token",KNOWN_ID,ANSWER,request=after_create)
+        self.assertEqual(again.exception.stage,"publish")
+        self.assertEqual(again.exception.http_status,403)
+        self.assertEqual(after_create.call_count,2)
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
