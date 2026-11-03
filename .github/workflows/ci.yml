@@ -25,3 +25,21 @@ jobs:
 
       - run: node --check dashboard/web/studio.js
       - run: node --test tests/test_observatory.cjs
+      - run: node --test tests/test_enna_dashboard_ui.cjs
+      - name: Check public Enna activity feed response
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          const url='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-public-status?mode=events';
+          (async()=>{
+            const response=await fetch(url,{signal:AbortSignal.timeout(12000)});
+            assert.equal(response.status,200,'Safe public journal must be reachable');
+            const data=await response.json();
+            assert.ok(Array.isArray(data.activity),'Activity should be an array');
+            assert.ok(data.activity.some(e=>e.code==='ops_completed'),
+                      'Journal must include a verified automatic-operations smoke test');
+            assert.ok(data.activity.every(e=>e.at && e.kind && e.status && e.code),
+                      'Activity entries must be structured');
+            console.log('Enna public activity feed online:',data.activity.length,'events');
+          })().catch(e=>{console.error(e.message);process.exitCode=1});
+          NODE
