@@ -54,6 +54,7 @@ jobs:
         if: always()
         run: |
           echo 'Only an issue submitted by the repository owner can trigger this action.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'An official Meta GET must verify the post ID, author, text and permalink before one automatic reply is attempted.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'If Meta App Review prevents that verification, Enna returns a draft; it never clicks the Threads web UI to bypass access controls.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Enna first drafts a useful, contextual reply. Any backend publish uses official Meta APIs with one atomic attempt only.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Owner browser-mode opt-in disables the direct API write trial when Meta read scope is denied; an independent local extension MAY then try UI interaction under a separate user-controlled switch.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No GitHub job is proof of a Threads reply: only an official published reply ID or separately verified on-site result is reliable.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Comments share an atomic maximum of three per Vietnam day across Enna engagement workers, including uncertain attempts.' >> "$GITHUB_STEP_SUMMARY"
