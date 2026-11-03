@@ -23,6 +23,7 @@ import requests
 from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
 from growth.companion_editor import compose_selected, EnnaModelServiceError
+from growth.companion_judge import judge_selected
 from growth.companion_fit import assess_selected, user_is_frustrated
 from growth.selected_direct_reply import (
     ConfirmedMetaRejection, MetaStageError, direct_reply, target_read_limited,
@@ -192,7 +193,7 @@ def has_concrete_overlap(reply, original):
     return bool(pairs(a) & pairs(b))
 
 
-def can_send(text, selected, *, target):
+def can_send(text, selected, *, target, semantic_override=False):
     if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
         return False
     normalized = normalize(text)
@@ -221,8 +222,9 @@ def can_send(text, selected, *, target):
         "that la mot khoanh khac", "dung la mot cau chuyen",
         "mot khoanh khac doi thuong ngot ngao")):
         return False
-    return (has_concrete_overlap(text, selected)
-            and suitable_reply(text, selected, require_niche=False)
+    return ((semantic_override or has_concrete_overlap(text, selected))
+            and suitable_reply(text, selected, require_niche=False,
+                               require_overlap=not semantic_override)
             and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
@@ -231,7 +233,8 @@ def can_send(text, selected, *, target):
 
 def process(event, *, db=None, read=thread_request, create=compose_selected,
             credentials=get_credentials, publish=send_reply,
-            direct_publish=direct_reply, allow_direct_trial=None, now=None):
+            direct_publish=direct_reply, allow_direct_trial=None,
+            semantic_judge=judge_selected, now=None):
     """Return an honest public-issue summary, never a claimed post without Meta ID."""
     now = now or datetime.now(timezone.utc)
     issue = event.get("issue") or {}
@@ -286,7 +289,17 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         return {"state":"ai_service_unavailable","provider_reason":"transport_error"}
     except (ValueError, KeyError, TypeError):
         return {"state":"ai_draft_invalid_or_unavailable"}
-    if not can_send(reply, selected, target=target):
+    def context_approved(candidate):
+        # The old exact-phrase gate is high precision but rejects natural
+        # paraphrases. A separate conservative semantic judge can approve
+        # those cases ONLY after all non-contextual safety gates pass.
+        if can_send(candidate, selected, target=target):
+            return True
+        return (can_send(candidate, selected, target=target,
+                         semantic_override=True)
+                and semantic_judge(selected, candidate))
+
+    if not context_approved(reply):
         # One more safe drafting pass if the first comment is too generic.
         # This cannot initiate a Meta publish or multiply interaction attempts.
         try:
@@ -297,17 +310,17 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 "niche": verdict["niche"],
                 "quality_feedback": (
                     "Bản trước bị từ chối vì thiếu liên hệ cụ thể. "
-                    "Viết một NHẬN XÉT MỚI có ít nhất một cụm 2-3 từ "
-                    "LIỀN NHAU trích đúng bài gốc, thêm ít nhất hai "
-                    "chi tiết riêng của bài. Phản hồi đúng thái độ "
-                    "tác giả, không chép lại nguyên bài, không sáo rỗng."
+                    "Viết một NHẬN XÉT MỚI thật sự liên quan, nhắc ít nhất "
+                    "hai chi tiết rõ ràng của bài (diễn đạt tự nhiên, không "
+                    "bắt buộc trích nguyên văn). Thêm một ý dí dỏm hoặc "
+                    "hữu ích mới, không chép lại bài và không sáo rỗng."
                 ),
             }, kind="reply_suggestion", prior_texts=(reply,))
             if second.get("should_reply") is False:
                 return {"state":"not_worth_interjecting",
                         "content_angle":str(second.get("content_angle") or content_angle)[:220]}
             replacement = str(second.get("post_text") or "").strip()
-            if can_send(replacement, selected, target=target):
+            if context_approved(replacement):
                 reply = replacement
                 content_angle = str(second.get("content_angle") or content_angle)[:220]
             else:
