@@ -1,0 +1,44 @@
+name: Enna — Owner-Selected Threads Reply
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: enna-selected-issue-${{ github.event.issue.number }}
+  cancel-in-progress: false
+jobs:
+  selected:
+    if: github.event.issue.user.login == github.repository_owner && github.event.sender.login == github.repository_owner && startsWith(github.event.issue.title, 'enna-pick:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+      THREADS_AUTO_ENGAGE_ENABLED: ${{ secrets.THREADS_AUTO_ENGAGE_ENABLED }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install verified dependencies
+        run: pip install -r requirements.txt
+      - name: Run policy regression tests before any Threads action
+        run: python -m unittest discover -s tests -v
+      - name: Evaluate this one owner-selected Threads post
+        run: python -m growth.companion_selected_reply
+      - name: Public-repo-safe explanation
+        if: always()
+        run: |
+          echo 'Only an issue submitted by the repository owner can trigger this action.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'An official Meta GET must verify the post ID, author, text and permalink before one automatic reply is attempted.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'If Meta App Review prevents that verification, Enna returns a draft; it never clicks the Threads web UI to bypass access controls.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Comments share an atomic maximum of three per Vietnam day across Enna engagement workers, including uncertain attempts.' >> "$GITHUB_STEP_SUMMARY"
