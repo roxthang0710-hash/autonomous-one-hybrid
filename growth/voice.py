@@ -39,7 +39,7 @@ DISALLOWED_REPLY_PATTERN = (
 MAX_EMOJI_CHARS = 2
 
 
-def suitable_reply(reply, original, prior_texts=()):
+def suitable_reply(reply, original, prior_texts=(), *, require_niche=True):
     """Deterministic second-stage checks; model output is NEVER a safe default."""
     if not isinstance(reply, str) or not isinstance(original, str):
         return False
@@ -48,7 +48,7 @@ def suitable_reply(reply, original, prior_texts=()):
         return False
     folded = normalize(text)
     original_norm = normalize(original)
-    if not original_norm or classify(original)["state"] != "candidate":
+    if not original_norm or (require_niche and classify(original)["state"] != "candidate"):
         return False
     if any(normalize(x) in folded for x in DISALLOWED_REPLY_PATTERN):
         return False
