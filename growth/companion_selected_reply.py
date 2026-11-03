@@ -157,6 +157,37 @@ def verified_meta_target(info, target, selected, *, now=None):
     return True
 
 
+# Generic words must never count as grounding for an auto-comment.
+# This is a relevance check, NOT a restriction to office-related topics.
+COMMON_CONTEXT_WORDS = frozenset({
+    "mot","nhung","nguoi","ngay","viec","khong","minh","ban","cung",
+    "chung","lam","dang","thay","duoc","nhieu","nhat","truoc","sau",
+    "moi","dang","noi","cho","neu","theo","thoi","nghia","khac",
+    "chinh","mot","nhat","that","cong","quan","trong","chuyen",
+    "thanh","phai","phan","tiep","nhan","nhau","thuc","dieu",
+})
+
+
+def has_concrete_overlap(reply, original):
+    """Require distinctive actual post details, not generic positivity.
+
+    Two source-specific words must recur, plus a shared phrase of two words
+    (or at least three distinct specifics). Works for hobbies, life and memes
+    without a single mandatory niche keyword.
+    """
+    a = normalize(original).split()
+    b = normalize(reply).split()
+    selected = {t for t in a if len(t)>=4 and t not in COMMON_CONTEXT_WORDS}
+    repeated = selected.intersection(
+        t for t in b if len(t)>=4 and t not in COMMON_CONTEXT_WORDS)
+    if len(repeated)<2:
+        return False
+    def pairs(seq):
+        return {" ".join(seq[i:i+2]) for i in range(len(seq)-1)
+                if seq[i] in selected and seq[i+1] in selected}
+    return len(repeated)>=3 or bool(pairs(a) & pairs(b))
+
+
 def can_send(text, selected, *, target):
     if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
         return False
@@ -167,10 +198,12 @@ def can_send(text, selected, *, target):
         "that la mot khoanh khac", "dung la mot cau chuyen",
         "mot khoanh khac doi thuong ngot ngao")):
         return False
-    return suitable_reply(text, selected, require_niche=False) and not any(
+    return (has_concrete_overlap(text, selected)
+            and suitable_reply(text, selected, require_niche=False)
+            and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
-            "mua ngay", "giam gia"))
+            "mua ngay", "giam gia")))
 
 
 def process(event, *, db=None, read=thread_request, create=compose_selected,
