@@ -224,16 +224,16 @@ def safe_comment(result):
     """Owner sees accurate outcome and an optional *original* content angle."""
     state=result.get("state","unknown")
     angle=str(result.get("content_angle") or "").strip()[:220]
-    angle_note=("\\n\\nGóc nội dung riêng Enna có thể phát triển: "+angle) if angle else ""
+    angle_note=("\n\nGóc nội dung riêng Enna có thể phát triển: "+angle) if angle else ""
     if state=="posted_confirmed":
         return ("✅ Enna đã nhận xác nhận phản hồi từ Meta. "
                 "Mã phản hồi: `"+str(result.get("reply_id",""))+"`. "
                 "Hãy kiểm tra dưới bài viết đã chọn."+angle_note)
     if state=="draft_only_meta_cannot_verify_target":
         return ("🟠 Enna đã soạn bình luận nhưng Meta chưa cho phép xác minh "
-                "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\\n\\n"
-                "Bản nháp để bạn xem và tự đăng nếu phù hợp:\\n\\n> "+
-                str(result.get("draft","")).replace("\\n","\\n> ")+angle_note)
+                "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\n\n"
+                "Bản nháp để bạn xem và tự đăng nếu phù hợp:\n\n> "+
+                str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="not_worth_interjecting":
         return ("Enna đã phân tích bài bạn chọn nhưng không thấy cách "
                 "bình luận tự nhiên có ích. **Không đăng bình luận.**"+angle_note)
