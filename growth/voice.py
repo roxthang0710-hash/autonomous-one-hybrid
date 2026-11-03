@@ -39,7 +39,7 @@ DISALLOWED_REPLY_PATTERN = (
 MAX_EMOJI_CHARS = 2
 
 
-def suitable_reply(reply, original, prior_texts=(), *, require_niche=True):
+def suitable_reply(reply, original, prior_texts=(), *, require_niche=True, require_overlap=True):
     """Deterministic second-stage checks; model output is NEVER a safe default."""
     if not isinstance(reply, str) or not isinstance(original, str):
         return False
@@ -68,7 +68,7 @@ def suitable_reply(reply, original, prior_texts=(), *, require_niche=True):
     reply_terms = set(folded.split())
     # A reply should refer to a concrete topic from the actual post, not
     # a generic one-line joke that works below every trending thread.
-    if len(original_terms & reply_terms) < 2:
+    if require_overlap and len(original_terms & reply_terms) < 2:
         return False
     for previous in prior_texts:
         if (isinstance(previous, str) and
