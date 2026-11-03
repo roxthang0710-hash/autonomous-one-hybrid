@@ -32,7 +32,7 @@ $('request').onsubmit=async e=>{
    const redirect=location.origin+location.pathname;
    await jsonRequest(BASE+'/auth/v1/recover?redirect_to='+encodeURIComponent(redirect),{email:$('email').value.trim()});
    status('Nếu email này thuộc tài khoản hợp lệ và dịch vụ gửi thư hoạt động, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu. Kiểm tra cả thư rác.');
- }catch(err){status('Chưa gửi được yêu cầu: '+err.message+'. Hãy kiểm tra cấu hình email và URL chuyển hướng trong Supabase.',true)}finally{btn.disabled=false}
+ }catch(err){const rate=/rate limit|too many|429/i.test(err.message);status(rate?'Supabase đã đạt giới hạn gửi email khôi phục. Với máy chủ gửi thư mặc định, hạn mức là 2 email/giờ cho toàn dự án và có giới hạn theo từng tài khoản. Không bấm gửi liên tục; hãy thử lại sau khi hạn mức được làm mới. Đây không phải lỗi URL chuyển hướng.':'Chưa gửi được email: '+err.message+'. Nếu nghi ngờ đường dẫn, kiểm tra Redirect URLs trong Supabase Authentication.',true)}finally{btn.disabled=false}
 };
 $('change').onsubmit=async e=>{
  e.preventDefault();const btn=$('save');btn.disabled=true;
