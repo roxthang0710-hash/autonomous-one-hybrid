@@ -295,6 +295,13 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 "source_url": target["url"],
                 "source": "owner_selected_public_threads_post",
                 "niche": verdict["niche"],
+                "quality_feedback": (
+                    "Bản trước bị từ chối vì thiếu liên hệ cụ thể. "
+                    "Viết một NHẬN XÉT MỚI có ít nhất một cụm 2-3 từ "
+                    "LIỀN NHAU trích đúng bài gốc, thêm ít nhất hai "
+                    "chi tiết riêng của bài. Phản hồi đúng thái độ "
+                    "tác giả, không chép lại nguyên bài, không sáo rỗng."
+                ),
             }, kind="reply_suggestion", prior_texts=(reply,))
             if second.get("should_reply") is False:
                 return {"state":"not_worth_interjecting",
