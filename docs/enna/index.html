@@ -63,6 +63,8 @@
 <div class="system-line"><span>Lần chuẩn bị chủ đề</span><strong id="sys-editorial-at">—</strong></div>
 <div class="system-line"><span>Đề xuất nghiên cứu cần duyệt</span><strong id="sys-research-pending">—</strong></div>
 <div class="system-line"><span>💬 Phản hồi người xem đã đăng</span><strong id="sys-audience-replies">—</strong></div>
+<div class="system-line"><span>🎯 Bài chủ kênh chọn cho Enna</span><strong id="sys-companion-selected">—</strong></div>
+<div class="system-line"><span>💬 Bình luận bài đã chọn xác nhận</span><strong id="sys-companion-posted">—</strong></div>
 <div class="system-line"><span>🔎 Tìm thảo luận bên ngoài</span><strong id="sys-public-search">—</strong></div>
 <div class="system-line"><span>🖼️ Meme gốc sẵn sàng</span><strong id="sys-meme-ready">—</strong></div>
 <div class="system-line"><span>🎞️ Ý tưởng video</span><strong id="sys-video-ideas">—</strong></div>
@@ -114,6 +116,10 @@ media_started:'Bắt đầu nghiên cứu ảnh và video',
 media_checked:'Đã rà soát meme gốc và nguồn tư liệu',
 media_concept_prepared:'Đã chuẩn bị ý tưởng hình ảnh hoặc video',
 media_no_new:'Không có tư liệu mới phù hợp',
+companion_checked:'Đã rà soát bài chủ tài khoản lựa chọn',
+companion_reply_posted:'Đã xác nhận bình luận vào bài được chọn',
+companion_draft_only:'Đã soạn bình luận, Meta chưa cấp truy cập',
+companion_rejected:'Bài được chọn không vượt qua kiểm tra',
 editorial_checked:'Đã kiểm tra thư viện ý tưởng tự động',
 post_queued:'Đã thêm bài vào hàng đợi',post_scheduled_external:'Đã ghi nhận lịch Metricool',
 post_publishing:'Đang gửi bài qua Meta',post_posted:'Bài đã đăng và có ID Meta',
@@ -192,6 +198,8 @@ out('sys-editorial-at',d.editorialAutonomy?.lastPreparedAt?date(d.editorialAuton
 out('sys-research-pending',Number.isInteger(d.editorialAutonomy?.researchPendingApprovals)?d.editorialAutonomy.researchPendingApprovals+' chờ duyệt':'—');
 out('sys-next-run',date(nextWorker())+' · dự kiến');
 out('sys-audience-replies',Number.isInteger(d.audienceCare?.ownRepliesConfirmed)?d.audienceCare.ownRepliesConfirmed+' phản hồi':'—');
+out('sys-companion-selected',Number.isInteger(d.audienceCare?.ownerSelectedAttempts)?d.audienceCare.ownerSelectedAttempts+' lần thử đăng':'—');
+out('sys-companion-posted',Number.isInteger(d.audienceCare?.ownerSelectedRepliesConfirmed)?d.audienceCare.ownerSelectedRepliesConfirmed+' bình luận':'—');
 const metaDiscovery={own_posts_only_possible_app_review:'Có thể đang giới hạn App Review',empty_keyword_results:'Chưa thấy kết quả',no_relevant_recent_public_posts:'Không có thảo luận phù hợp',ok_public_posts:'Đã tìm thấy bài công khai',not_authorized:'Chưa đủ quyền',source_unavailable:'Chưa đọc được nguồn'};
 out('sys-public-search',metaDiscovery[d.audienceCare?.externalDiscovery]||'Cần kiểm tra');
 out('sys-meme-ready',Number.isInteger(d.visualLab?.originalMemesReady)?d.visualLab.originalMemesReady+' bản gốc':'—');
