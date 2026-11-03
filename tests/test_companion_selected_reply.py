@@ -415,6 +415,17 @@ class SelectionTests(unittest.TestCase):
                 "Đã nhắc rồi mà vẫn ồn mới mệt.")
         self.assertTrue(can_send(useful,src,target=parse_threads_url(URL)))
 
+    def test_gen_z_decor_post_can_get_grounded_playful_reply(self):
+        post=("Team mình mới có bé Gen Z vào làm. Hôm nay thấy ẻm "
+              "bắt đầu mang đồ để decor bàn làm việc rồi. "
+              "Này là dấu hiệu ẻm sẽ gắn bó lâu dài với công ty "
+              "đúng không mọi người? Chắc ẻm không nghỉ việc sớm đâu nhỉ?")
+        reply=("Mới vào đã mang đồ decor bàn làm việc thì ít nhất "
+               "ẻm đang có kế hoạch gắn bó với chiếc bàn trước đã 😂 "
+               "Còn có ở lâu với công ty hay không chắc phải chờ "
+               "qua vài đợt deadline mới biết.")
+        self.assertTrue(can_send(reply,post,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
