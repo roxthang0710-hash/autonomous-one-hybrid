@@ -198,6 +198,11 @@ class SelectionTests(unittest.TestCase):
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
+    def test_generic_story_paraphrase_rejected(self):
+        summary=("Chú ở chung nhà, rồi chú múc tô cháo để trước cửa,"
+                 " mở YouTube xem lại. Thật là một khoảnh khắc đời thường ngọt ngào!")
+        self.assertFalse(can_send(summary,TEXT,target=parse_threads_url(URL)))
+
 
 if __name__=="__main__":
     unittest.main()
