@@ -70,5 +70,17 @@ def main():
          ("#E9FAEE","#43866A","#243C38","#D8F5E0"),
          ["BÀN GỌN 10/10"],"TÌM BÚT: 0/10",
          ["Bàn làm việc đẹp quá.", "Cây bút không tìm thấy."],svg="enna-thinking.svg")
+    make("enna-thu-bay-nao-truc.png",
+         ("#F0ECFF","#7662AD","#332C4B","#E9E2FF"),
+         ["THỨ BẢY RỒI"],"NÃO: CHƯA TAN",
+         ["Công ty đã hết ca.", "Não tự mở một ca mới."],svg="enna-thinking.svg")
+    make("enna-chu-nhat.png",
+         ("#FFF0E6","#C97E78","#4D303E","#FFE2D6"),
+         ["TỐI CHỦ NHẬT"],"MAI TÍNH NHA",
+         ["Thứ Hai chưa tới.", "Đừng giao việc sớm cho não."],svg="enna-work.svg")
+    make("enna-deadline.png",
+         ("#E8F7FF","#4389B7","#273C52","#D5EFFC"),
+         ["DEADLINE"],"LẠI NHÂN ĐÔI",
+         ["Một việc chưa xong.", "Ba việc mới tới."],svg="enna-thinking.svg")
 
 if __name__=="__main__":main()
