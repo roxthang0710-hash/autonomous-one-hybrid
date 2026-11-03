@@ -430,10 +430,15 @@ def safe_comment(result):
                 "\n\nBản nháp để bạn tự sử dụng nếu phù hợp:\n\n> "
                 +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
     if state=="draft_prepared_only":
-        return ("📝 Enna đã kiểm thử tạo bình luận theo lệnh chủ tài khoản. "
-                "**Không có bình luận tự động nào được đăng.**"
-                "\n\nBản nháp để bạn xem và tự đăng nếu phù hợp:\n\n> "
-                +str(result.get("draft","")).replace("\n","\n> ")+angle_note)
+        # A draft-only GitHub command MUST NOT be consumed by existing
+        # Chrome AutoReply clients as a fresh publishable handoff.
+        # In particular, do not use their recognized draft marker text.
+        return ("🧪 KIỂM THỬ NỘI DUNG, KHÔNG ĐĂNG THREADS. "
+                "Lệnh /enna draft chỉ dành để kiểm tra khả năng biên tập. "
+                "Không coi kết quả này là lệnh tự đăng.\n\n"
+                "Nội dung tham khảo (chỉ kiểm tra):\n\n> "
+                +str(result.get("draft","")).replace("\n","\n> ")
+                +angle_note)
     if state=="draft_only_meta_cannot_verify_target":
         return ("🟠 Enna đã soạn bình luận nhưng Meta chưa cho phép xác minh "
                 "bài mục tiêu qua API chính thức. **Không có bình luận tự động nào được đăng.**\n\n"
