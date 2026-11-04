@@ -1,0 +1,53 @@
+name: Enna — Growth Sprint Execution & Measurement
+on:
+  schedule:
+    # VN: 08:37, 14:37, 20:37; best effort, not a guaranteed delivery.
+    - cron: '37 1,7,13 * * *'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-growth-sprint-operator
+  cancel-in-progress: false
+
+jobs:
+  learn-and-act:
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.issue.user.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'sprint:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+      THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Safety tests for official data and bounded actions
+        run: |
+          python -m unittest discover -s tests -p 'test_account_followers.py' -v
+          python -m unittest discover -s tests -p 'test_conversion_loop.py' -v
+      - name: Fetch actual Meta account followers when authorized
+        run: python -m growth.account_followers
+      - name: Act on verified growth signal and record experiment
+        run: python -m growth.conversion_loop
+      - name: Explain actions and restrictions
+        if: always()
+        run: |
+          echo '## Enna growth sprint' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Reads official Meta followers when authorized and checks verified Metricool history.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'May adjust ONLY the existing safe future-content preference; it never publishes, edits booked Metricool posts, changes profile, spends, follows, or replies.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The editorial publisher remains separately controlled by Meta OAuth, account identity and anti-duplicate gates.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A measured change in follower count is NOT proof this experiment caused it.' >> "$GITHUB_STEP_SUMMARY"
