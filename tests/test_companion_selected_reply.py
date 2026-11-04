@@ -596,6 +596,17 @@ class SelectionTests(unittest.TestCase):
                "hy vọng sẽ ở lâu cùng công ty nhé.")
         self.assertFalse(can_send(bland,original,target=parse_threads_url(URL)))
 
+    def test_independent_judge_can_veto_grounded_draft(self):
+        e=issue()
+        e["comment"]={"body":"/enna draft","user":{"login":"roxthang0710-hash"}}
+        judge=MagicMock(return_value=False)
+        result=process(e,db=MagicMock(),
+                       create=lambda *args,**kw:{"should_reply":True,
+                           "post_text":ANSWER,"content_angle":"Example"},
+                       semantic_judge=judge,option_generator=lambda *args,**kw:[])
+        self.assertEqual(result["state"],"ai_reply_not_contextual_enough")
+        self.assertGreaterEqual(judge.call_count,1)
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
