@@ -53,6 +53,25 @@ class SelfHealingTests(unittest.TestCase):
             self.assertFalse(eligible(sample_issue(),[failed_comment(),result],
                                       owner=OWNER,now=NOW))
 
+    def test_old_false_positive_repair_reopens_for_missing_punchline(self):
+        """Real Issue 49 was falsely marked repaired for an invented work ethic."""
+        issue=sample_issue()
+        status=progress(1,status="repaired",when=NOW-dt.timedelta(hours=1))
+        status["body"]=status["body"].split("Đang xử lý.")[0]+(
+            "Gợi ý đã kiểm tra:\n\n> Thấy sinh viên đã tính toán "
+            "chi phí ăn uống rồi, chắc sẽ làm việc chăm chỉ để bù lại.")
+        source=("Em định nghỉ bên pizza vì em dùng hết mã giảm giá "
+                "để ăn rồi nên giờ em qua bên này xin làm.")
+        with patch("growth.companion_autorecover.decode_issue_body",
+                   return_value=({"username":"example"},source,{})):
+            self.assertTrue(eligible(issue,[failed_comment(),status],
+                                     owner=OWNER,now=NOW))
+            status["body"]=status["body"].split("Gợi ý đã kiểm tra:")[0]+(
+                "Gợi ý đã kiểm tra:\n\n> Hết mã giảm giá là tới "
+                "lượt em cập nhật CV, lịch chuyển việc chạy theo voucher =)))")
+            self.assertFalse(eligible(issue,[failed_comment(),status],
+                                      owner=OWNER,now=NOW))
+
     def test_regression_failed_after_ai_failure_still_eligible(self):
         # Reproduces real Issue #49, whose last message is a failing CI test
         # rather than the original Groq/editorial failure.
