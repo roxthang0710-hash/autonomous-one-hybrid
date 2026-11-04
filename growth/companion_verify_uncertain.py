@@ -5,6 +5,7 @@ A confirmed reply must belong to the OAuth account, match the exact parent
 Threads media ID, and fall within the one-shot attempt's time window.
 """
 from datetime import datetime, timedelta, timezone
+import os
 import requests
 
 from agent import Database
@@ -123,6 +124,18 @@ def main():
     result=verify_ambiguous(db)
     print("Enna read-only reply verification:",
           result["state"],"verified",result["verified"])
+    # Emit only a safe, deduplicated status so scheduled runs are observable
+    # without logging OAuth tokens, raw replies or any third-party identity.
+    run_id=os.environ.get("GITHUB_RUN_ID","")
+    if run_id.isdecimal():
+        try:
+            from growth.activity_log import emit
+            verified=result["verified"]>0
+            emit(db,"growth","success" if verified else "skipped",
+                 "companion_reply_posted" if verified else "companion_checked",
+                 run_id=run_id)
+        except (ValueError,TypeError,KeyError,requests.RequestException):
+            pass
 
 
 if __name__=="__main__":
