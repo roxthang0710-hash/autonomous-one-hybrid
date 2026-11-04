@@ -243,6 +243,17 @@ def can_send(text, selected, *, target, semantic_override=False):
             return False
     if ("anh ay" in normalized and "anh ay" not in original_normalized):
         return False
+    # Posts asking whether someone will remain employed invite jokes, NOT
+    # unsupported certainty about that person's intentions or future.
+    if any(p in original_normalized for p in (
+        "gan bo lau dai","nghi viec som","nghi viec","roi di dau"
+    )):
+        if any(p in normalized for p in (
+            "chac chan", "se khong muon roi", "se khong roi di",
+            "khong muon roi di", "se o lai", "se khong nghi",
+            "se gan bo", "khong muon nghi", "co ve ho se"
+        )):
+            return False
     longest=SequenceMatcher(None,original_normalized,normalized,
                             autojunk=False).find_longest_match(
                                 0,len(original_normalized),0,len(normalized)).size
