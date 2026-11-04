@@ -38,27 +38,59 @@ function renderTasks(){
  const parent=$("task-list");parent.replaceChildren();
  if(!tasks.length){parent.append(el("p","Chưa có nhiệm vụ. Hãy giao công việc đầu tiên cho Enna.","muted"));return;}
  for(const item of tasks){
-  const node=el("article",null,"task");const head=el("div",null,"task-head");
+  const node=el("article",null,"task");
+  const head=el("div",null,"task-head");
   head.append(el("strong",kindLabels[item.kind]||"Nhiệm vụ"),el("small",formatDate(item.created_at)));
   node.append(head,el("p",item.request_text));
-  const badge=el("span",item.status==="completed"?"Đã trả kết quả":item.status==="failed"?"Gặp lỗi":"Đang xử lý","tag"+(item.status==="completed"?"":item.status==="failed"?" fail":" wait"));
-  node.append(badge);
-  const data=item.response;
-  if(data){
-   const details=el("details");const summary=el("summary","Xem kết quả và các chuyên trách");details.append(summary);
-   const wrapper=el("div");
-   const evidence=data.evidence||{};wrapper.append(el("p","Dữ liệu nguồn: "+(evidence.follower_count==null?"Chưa xác minh follower":evidence.follower_count+" follower"+(evidence.follower_stale?" (dữ liệu cũ)":""))));
-   for(const role of Array.isArray(data.roles)?data.roles:[]){
-    const title=el("h3",({analyst:"📈 Phân tích",strategist:"💡 Chiến lược",operator:"🛠 Vận hành"})[role.role]||role.role);wrapper.append(title);
-    wrapper.append(el("p",role.summary||"Chưa có phản hồi từ chuyên trách."));
-    if(role.status==="rule_based_fallback")wrapper.append(el("p","Phân tích theo quy tắc dự phòng; chưa có phản hồi từ mô hình AI.","muted"));
-    if(role.status==="unavailable")wrapper.append(el("p","Chuyên trách chưa khả dụng.","muted"));
-    if(Array.isArray(role.actions)){const ul=el("ul");for(const item of role.actions.slice(0,4))ul.append(el("li",item));wrapper.append(ul);}
+  const data=item.response||{};
+  const aiComplete=item.status==="completed"&&item.model_used==="groq_task_specific_v2"&&typeof data.direct_answer==="string";
+  const isFailed=item.status==="failed";
+  const label=aiComplete?"Đã có phân tích AI":isFailed?"Không xử lý được":"Đang phân tích · chưa có kết quả AI";
+  node.append(el("span",label,"tag"+(aiComplete?"":isFailed?" fail":" wait")));
+  if(aiComplete){
+   const answer=el("div",null,"agent-answer");
+   answer.append(el("h3","Enna trả lời trực tiếp"),el("p",data.direct_answer));
+   if(Array.isArray(data.verified_findings)&&data.verified_findings.length){
+    answer.append(el("h4","Căn cứ đang có"));
+    const list=el("ul");
+    for(const fact of data.verified_findings.slice(0,4))list.append(el("li",fact));
+    answer.append(list);
    }
-   wrapper.append(el("p","Lưu ý: đây là phân tích và đề xuất, chưa phải hành động đăng bài hay bình luận thực tế.","muted"));
-   details.append(wrapper);node.append(details);
+   if(Array.isArray(data.action_plan)&&data.action_plan.length){
+    answer.append(el("h4","Phương án hành động"));
+    const list=el("ol");
+    for(const step of data.action_plan.slice(0,5)){
+     const li=el("li");
+     li.append(el("strong",step.action||"Chưa xác định"));
+     li.append(el("p",step.rationale||""));
+     const actor=step.executor==="owner"?"Cần bạn":step.executor==="joint"?"Enna & bạn":"Enna";
+     li.append(el("small",actor+" · "+(step.status==="needs_permission"?"Chờ cấp quyền":"Đề xuất, chưa thực hiện")+" · Kiểm chứng: "+(step.success_check||"Chưa có")));
+     list.append(li);
+    }
+    answer.append(list);
+   }
+   if(Array.isArray(data.unknowns)&&data.unknowns.length){
+    answer.append(el("h4","Điều chưa xác minh"));
+    const list=el("ul");for(const v of data.unknowns.slice(0,3))list.append(el("li",v));answer.append(list);
+   }
+   const detail=el("details");
+   detail.append(el("summary","Xem góc nhìn của ba chuyên trách"));
+   for(const role of Array.isArray(data.roles)?data.roles:[]){
+    const name=({analyst:"📈 Phân tích",strategist:"💡 Chiến lược",operator:"🛠 Vận hành"})[role.role]||role.role;
+    detail.append(el("h4",name),el("p",role.summary||""));
+   }
+   answer.append(detail);
+   answer.append(el("p","Đây là phân tích AI. Những hành động chưa có bằng chứng thực hiện đều được ghi là đề xuất.","muted"));
+   node.append(answer);
+  }else if(isFailed){
+   node.append(el("p","Enna chưa xử lý được nhiệm vụ: "+(item.error_code||"lỗi không xác định")+". Không có câu trả lời mẫu được coi là hoàn thành.","muted"));
+  }else{
+   const oldAnswer=["rule_based_multi_role","groq_multi_role_partial"].includes(item.model_used);
+   node.append(el("p",oldAnswer?
+    "Enna đã nhận diện đây là phản hồi theo khuôn cũ và đang thay thế bằng phân tích thực sự theo nhiệm vụ. Nội dung cũ không còn được tính là kết quả đạt yêu cầu.":
+    "Enna đã tiếp nhận nhiệm vụ. Đang phân tích số liệu và yêu cầu của bạn bằng mô hình; nhật ký sẽ tự cập nhật khi có câu trả lời được kiểm chứng.","processing-message"));
+   if(item.error_code)node.append(el("p","Lượt phân tích trước chưa đạt: "+item.error_code+". Worker sẽ thử lại theo lịch, không gửi trùng nhiệm vụ.","muted"));
   }
-  if(item.status==="failed")node.append(el("p","Lỗi: "+(item.error_code||"không rõ"),"muted"));
   parent.append(node);
  }
 }
@@ -121,7 +153,7 @@ function sessionUi(){
  $("session-label").textContent=logged?"Đã xác thực chủ Enna":"Chưa đăng nhập";
  if(!logged){clearInterval(currentTimer);currentTimer=null;status("Chờ chủ dự án đăng nhập",false);$("task-list").replaceChildren(el("p","Vui lòng đăng nhập để giao việc.","muted"));return;}
  refresh(true);
- if(!currentTimer)currentTimer=setInterval(()=>{if(!document.hidden)refresh();},30000);
+ if(!currentTimer)currentTimer=setInterval(()=>{if(!document.hidden)refresh();},10000);
 }
 async function beginOwnerSignIn(){
  error("");
@@ -164,7 +196,10 @@ $("task-form").addEventListener("submit",async event=>{
  const key=crypto.randomUUID();
  try{
   const result=await api("POST",{action:"task",kind,text:txt,request_key:key});
-  if(result.status==="completed")$("prompt").value="";
+  if(result.accepted===true||result.status==="completed"){
+   $("prompt").value="";
+   status("Enna đã nhận nhiệm vụ; đang chờ mô hình trả lời đúng câu hỏi.",true);
+  }
   await refresh(true);
  }catch(e){error("Chưa xác minh hoàn tất: "+e.message+". Kiểm tra nhật ký trước khi gửi lại để tránh tạo trùng.");await refresh(false);}
  finally{btn.disabled=!session;btn.textContent="Giao Enna xử lý →";}
