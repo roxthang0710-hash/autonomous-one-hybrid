@@ -21,3 +21,16 @@ textarea{width:100%;border:1px solid #d6cbbf;border-radius:13px;padding:14px;res
 .hero-auth.connected{display:none}
 #sign-in{background:#2e6744;color:#fff;border-color:#2e6744;font-size:14px;padding:11px 14px;min-height:43px;white-space:nowrap}
 @media(max-width:780px){.hero{flex-wrap:wrap;align-items:flex-start}.hero-copy{min-width:0;flex:1 1 100%}.hero-auth{margin:14px 0 0}.hero-connect{width:100%}.session #sign-in{font-size:12px;padding:9px 10px}}
+
+/* Verified task-specific AI report: readable plan, never pretend drafts are executed. */
+.agent-answer{margin-top:15px;border-top:1px solid var(--border);padding-top:13px;line-height:1.6}
+.agent-answer>h3{font-size:17px;color:#355c42;margin:0 0 9px}
+.agent-answer>h4{font-size:14px;color:#51684d;margin:17px 0 5px}
+.agent-answer p{margin:6px 0 10px}
+.agent-answer ol,.agent-answer ul{padding-left:22px;margin:8px 0}
+.agent-answer li{padding:5px 0}
+.agent-answer li p{margin:4px 0;font-size:13px}
+.agent-answer li small{display:block;color:#80776d;font-size:12px;line-height:1.45}
+.agent-answer details{border:1px solid #e9e1d7;background:#f8f8f3;border-radius:10px;padding:10px;margin-top:17px}
+.agent-answer details summary{cursor:pointer;color:#436f4a;font-weight:800}
+.processing-message{border-left:3px solid #e0af58;background:#fff7e9;border-radius:6px;padding:12px 14px;color:#665442;line-height:1.6}
