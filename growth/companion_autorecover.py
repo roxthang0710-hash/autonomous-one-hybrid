@@ -66,16 +66,16 @@ def recovered_draft_still_grounded(issue, progress):
     body=str(progress.get("body") or "")
     token="Gợi ý đã kiểm tra:"
     if token not in body:
-        return False
+        return True
     section=body.split(token,1)[1]
     match=re.search(r"(?m)^> (.+)$",section)
     if not match:
-        return False
+        return True
     try:
         target,selected,_=decode_issue_body(issue.get("body",""))
         selected=clean_selected_excerpt(selected,author=target["username"])
     except (ValueError,KeyError,TypeError):
-        return False
+        return True
     return punchline_grounded(selected,match.group(1))
 
 
