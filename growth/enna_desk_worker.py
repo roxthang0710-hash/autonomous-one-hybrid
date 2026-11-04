@@ -14,7 +14,7 @@ from agent import Database
 
 import requests
 
-MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
+MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 QUEUED_MODELS = ("awaiting_model_v2", "rule_based_multi_role", "groq_multi_role_partial")
 SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -237,22 +237,27 @@ def call_model(task, evidence, *, api=requests.post):
         "không được giả vờ là ba AI độc lập đã thực thi công việc. "
         "Với nguồn số liệu quá hạn, hãy nêu điều chắc chắn và vẫn đề xuất thí nghiệm khả thi."
     )
-    messages=[{"role":"system","content":guidance+" Trả về duy nhất một đối tượng JSON hợp lệ khớp cấu trúc đã mô tả."},
+    # Prefer the larger multilingual model for genuine Vietnamese analysis.
+    # Use JSON Object mode; Groq strict schema is limited to select models.
+    prompt["expected_json_keys"]=list(SCHEMA["required"])
+    prompt["action_fields"]=SCHEMA["properties"]["actions"]["items"]["required"]
+    messages=[{"role":"system","content":guidance+
+               " Chỉ trả về một JSON object với direct_answer, verified_findings, actions, role_summaries, unknowns."
+               " Mỗi action cần action, rationale, executor (enna/owner/joint), success_check, status (proposed/needs_permission)."
+               " role_summaries phải có analyst, strategist, operator. Không dùng markdown/code fences."},
               {"role":"user","content":json.dumps(prompt,ensure_ascii=False)}]
-    body={
-        "model":MODEL,"temperature":0.32,"max_completion_tokens":2400,
-        "reasoning_effort":"low",
-        "response_format":{"type":"json_schema","json_schema":{
-            "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
-        "messages":messages,
-    }
+    body={"model":MODEL,"temperature":0.31,"max_completion_tokens":2350,
+          "response_format":{"type":"json_object"},"messages":messages}
+    if MODEL.startswith("openai/gpt-oss"):
+        body["reasoning_effort"]="low"
     headers={"Authorization":"Bearer "+key,"content-type":"application/json"}
     resp=api("https://api.groq.com/openai/v1/chat/completions",
              headers=headers,json=body,timeout=55)
-    # JSON schema strict can be rejected by Groq for an unsupported schema
-    # subset. Retry at most once in JSON Object mode, not on rate limits.
-    if getattr(resp,"status_code",200)==400:
-        body["response_format"]={"type":"json_object"}
+    # One bounded fallback only for an unsupported-model/payload HTTP 400.
+    if getattr(resp,"status_code",200)==400 and MODEL!="openai/gpt-oss-20b":
+        body={"model":"openai/gpt-oss-20b","temperature":0.3,
+              "max_completion_tokens":2350,"reasoning_effort":"low",
+              "response_format":{"type":"json_object"},"messages":messages}
         resp=api("https://api.groq.com/openai/v1/chat/completions",
                  headers=headers,json=body,timeout=55)
     resp.raise_for_status()
