@@ -1,6 +1,9 @@
 name: Enna — Autonomous Editorial Self-Healing
 
 on:
+  workflow_run:
+    workflows: ['Enna — Owner-Selected Threads Reply']
+    types: [completed]
   schedule:
     - cron: '17 * * * *'
   workflow_dispatch:
