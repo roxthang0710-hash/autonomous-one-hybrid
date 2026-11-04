@@ -262,8 +262,16 @@ def call_model(task, evidence, *, api=requests.post):
                  headers=headers,json=body,timeout=55)
     resp.raise_for_status()
     result=json.loads(resp.json()["choices"][0]["message"]["content"])
-    if not isinstance(result,dict) or set(result)!=set(SCHEMA["required"]):
-        raise ValueError("invalid_schema")
+    if not isinstance(result,dict) or not isinstance(result.get("actions"),list) or not isinstance(result.get("direct_answer"),str):
+        raise ValueError("missing_core_ai_reasoning")
+    # JSON mode can omit auxiliary fields; source-backed facts are never taken
+    # from model assertions. Recover only auxiliary fields, not actions.
+    result["verified_findings"]=verified_facts(evidence)
+    if not isinstance(result.get("unknowns"),list):
+        result["unknowns"]=[]
+    if not isinstance(result.get("role_summaries"),dict):
+        result["role_summaries"]={}
+    result={key:result[key] for key in SCHEMA["required"]}
     # Validate structural actions first, then repair a weak headline from evidence.
     if not isinstance(result.get("direct_answer"),str):
         raise ValueError("answer_not_text")
@@ -295,13 +303,19 @@ def call_model(task, evidence, *, api=requests.post):
         result["direct_answer"]=grounded_answer(task,evidence,actions)
     if not is_vi(result["direct_answer"]):
         raise ValueError("grounded_answer_invalid")
-    summaries=result.get("role_summaries")
-    if not isinstance(summaries,dict) or set(summaries)!={"analyst","strategist","operator"}:
-        raise ValueError("role_summaries_invalid")
-    if not all(is_vi(s) and 15<=len(s)<=400 for s in summaries.values()):
-        raise ValueError("role_summaries_not_vietnamese")
-    if not isinstance(result.get("unknowns"),list) or len(result["unknowns"])>3:
-        raise ValueError("unknowns_invalid")
+    summaries=result["role_summaries"]
+    baseline=verified_facts(evidence)
+    model_actions=[x["action"] for x in actions]
+    role_fallbacks={
+        "analyst":"Bằng chứng chính cần theo dõi: "+(baseline[0] if baseline else "Chưa có dữ liệu follower hiện tại."),
+        "strategist":"Giả thuyết cần thử: "+("; ".join(model_actions[:2]))+".",
+        "operator":"Đầu việc cần kiểm chứng: "+("; ".join(model_actions[-2:]))+". Chưa có xác nhận đã thực hiện.",
+    }
+    for role in ("analyst","strategist","operator"):
+        content=summaries.get(role)
+        if not isinstance(content,str) or not is_vi(content) or not 15<=len(content)<=400:
+            summaries[role]=role_fallbacks[role][:400]
+    result["unknowns"]=[str(x)[:230] for x in result["unknowns"][:3] if isinstance(x,str)]
     return result
 
 
@@ -356,7 +370,8 @@ def run(db=None):
             http_status=(error.response.status_code
                          if isinstance(error,requests.HTTPError) and error.response is not None else None)
             print("Enna model response not verified:",reason,
-                  "error_type",type(error).__name__,"http_status",http_status,"attempt",attempts)
+                  "error_type",type(error).__name__,"error_code",str(error)[:80] if isinstance(error,ValueError) else "api_error",
+                  "http_status",http_status,"attempt",attempts)
             failed=attempts>=3
             db.request("PATCH","/enna_desk_tasks",params={
                 "id":"eq."+str(task["id"]),"model_used":"eq."+str(task["model_used"])},
