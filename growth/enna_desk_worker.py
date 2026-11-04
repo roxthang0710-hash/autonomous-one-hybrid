@@ -75,6 +75,13 @@ def verified_facts(evidence):
         facts.append(f"Supabase ghi nhận {f['followers']} follower ngày {f.get('measured_on','không rõ')}{freshness}; đây không nhất thiết là số hiện tại.")
     else:
         facts.append("Chưa có số follower được xác minh trong dữ liệu đang đọc.")
+    recent=[s for s in valid[:2] if isinstance(s.get("profile_views"),int)]
+    if recent:
+        pairs=", ".join(
+            f"{s.get('measured_on')}: {s['profile_views']} lượt vào hồ sơ, {s.get('new_followers','chưa rõ')} follower mới"
+            for s in recent
+        )
+        facts.append(f"Metricool thống kê {pairs}; không thể quy toàn bộ follower mới trực tiếp cho lượt vào hồ sơ.")
     states=evidence.get("threads_status_counts") or {}
     facts.append(f"Ledger Threads: {states.get('posted',0)} ghi nhận đã đăng, {states.get('scheduled_external',0)} lên lịch ngoài và {states.get('queued',0)} đang chờ; chưa đủ để suy ra follower mới.")
     posts=evidence.get("top_measured_posts") or []
@@ -83,7 +90,7 @@ def verified_facts(evidence):
         facts.append(f"Bài có số lượt xem cao nhất trong mẫu: {post.get('views','chưa rõ')} view, {post.get('likes','chưa rõ')} lượt thích; chưa xác minh lượt theo dõi do bài này tạo ra.")
     media=evidence.get("media_ready_by_type") or {}
     facts.append(f"Kho media: {media.get('original_meme',0)} meme gốc có tệp sẵn sàng, {media.get('original_video',0)} video có tệp sẵn sàng.")
-    return facts[:4]
+    return facts[:5]
 
 
 def eligible(row):
@@ -104,7 +111,7 @@ def safe_get(db, table, **params):
 
 def evidence_snapshot(db, current):
     """Bounded fresh read. Old cached snapshot is NOT a substitute for provider data."""
-    growth = safe_get(db, "growth_metricool_daily", select="measured_on,followers,post_views,new_followers,interactions",
+    growth = safe_get(db, "growth_metricool_daily", select="measured_on,followers,post_views,new_followers,interactions,profile_views",
                       order="measured_on.desc", limit="10")
     threads = safe_get(db, "threads_posts",
         select="id,status,scheduled_at,published_at,platform_post_id,permalink,topic_tag_requested,topic_tag_planned,media_url,text_content",
@@ -189,6 +196,9 @@ def call_model(task, evidence, *, api=requests.post):
         "Không được kết luận chắc chắn không có CTA, Topic, meme, trả lời hay video chỉ từ những mẫu thiếu dữ liệu. "
         "Không khẳng định lịch ngoài Metricool chưa xuất bản; trạng thái scheduled_external có thể đã đăng qua nhà cung cấp. "
         "Không được suy ra follower tăng từ số lượt xem nếu không có số liệu chuyển đổi. "
+        "Nếu có profile_views và new_followers, hãy xem xét giả thuyết hiệu quả chuyển người xem hồ sơ thành follower thấp; "
+        "đề xuất tối ưu bio, bài ghim và lý do theo dõi, nhưng không gọi tỷ lệ này là chuyển đổi xác thực. "
+
         "Bài đã yêu cầu topic_tag chưa đồng nghĩa đã hiển thị Topic thành công. "
 
         "Phần direct_answer phải giải thích nguyên nhân khả dĩ có điều kiện, điểm nghẽn cụ thể, "
