@@ -83,15 +83,17 @@ class DeskWorkerTests(unittest.TestCase):
         self.assertTrue(any("2065 view" in x for x in facts))
         self.assertTrue(any("0 video" in x for x in facts))
 
-    def test_validation_rejects_english_or_bad_language(self):
+    def test_english_or_echo_is_rewritten_from_evidence_and_model_actions(self):
         class Resp:
             def raise_for_status(self): pass
             def json(self):
                 return {"choices":[{"message":{"content":__import__("json").dumps(
                     {**result(task(),{}),"direct_answer":"This is a generic English message with no meaningful Vietnamese."})}}]}
         with patch.dict(os.environ,{"GROQ_API_KEY":"fake"}):
-            with self.assertRaises(ValueError):
-                call_model(task(),{},api=lambda *a,**kw:Resp())
+            value=call_model(task(),{},api=lambda *a,**kw:Resp())
+            self.assertIn("Enna",value["direct_answer"])
+            self.assertIn("ngoài",value["direct_answer"])
+            self.assertNotIn("generic English",value["direct_answer"])
 
 if __name__=="__main__":
     unittest.main()
