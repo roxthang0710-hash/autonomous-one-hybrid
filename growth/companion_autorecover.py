@@ -93,9 +93,13 @@ def eligible(issue, comments, *, owner, now=None):
     progress=state_marker(comments)
     if progress["attempts"]>=MAX_ATTEMPTS:
         return False
-    if progress["status"]=="repaired" and recovered_draft_still_grounded(issue,progress):
+    invalid_old_repair=(progress["status"]=="repaired"
+                        and not recovered_draft_still_grounded(issue,progress))
+    if progress["status"]=="repaired" and not invalid_old_repair:
         return False
-    if (progress["last"] and
+    # Allow one immediate correction of a proven false-positive quality check.
+    # Normal provider failures still wait for cooldown and preserve max 3.
+    if (not invalid_old_repair and progress["last"] and
         now-progress["last"]<dt.timedelta(minutes=MIN_INTERVAL_MINUTES)):
         return False
     # Look only at normal bot results; self-heal's own status is not a
