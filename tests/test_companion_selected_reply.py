@@ -658,6 +658,13 @@ class SelectionTests(unittest.TestCase):
               "lịch nhảy việc chạy theo voucher mất rồi =)))")
         self.assertTrue(can_send(good,original,target=parse_threads_url(URL)))
 
+    def test_issue_49_shift_change_is_not_job_change_punchline(self):
+        original=("Em định nghỉ bên pizza vì dùng hết mã giảm giá "
+                  "để ăn nên giờ chuyển chỗ làm mới.")
+        fake=("Nếu em dùng hết mã giảm giá, lần tới có kế hoạch "
+              "đổi ca làm để được nhận thêm ưu đãi không?")
+        self.assertFalse(can_send(fake,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
