@@ -86,10 +86,16 @@ class PublisherTests(unittest.TestCase):
             do_publish("token","Một góc bàn làm việc nhỏ vẫn có thể rất gọn. "
                        "Hãy thử giữ đồ hay dùng trong tầm với.",topic_tag="Góc làm việc")
             self.assertEqual(calls[0][2]["data"]["topic_tag"],"Góc làm việc")
+            # Existing DB queue includes this valid editorial topic; before
+            # this fix it would have been rejected prior to publishing.
+            do_publish("token","Bài kể chuyện đi làm có một ý hài hước "
+                       "và một góc nhìn khiến người đọc muốn trò chuyện.",
+                       topic_tag="Đời sống đi làm")
+            self.assertEqual(calls[3][2]["data"]["topic_tag"],"Đời sống đi làm")
             with self.assertRaises(ValueError):
                 do_publish("token","Một góc bàn làm việc nhỏ vẫn có thể rất gọn. "
                            "Hãy thử giữ đồ hay dùng trong tầm với.",topic_tag="Tin nóng")
-        self.assertEqual(sum(call[1]=="/me/threads" for call in calls),1)
+        self.assertEqual(sum(call[1]=="/me/threads" for call in calls),2)
 
     def test_one_claim_max_per_worker_cycle(self):
         db = Mock()
