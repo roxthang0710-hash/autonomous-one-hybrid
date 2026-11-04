@@ -57,3 +57,19 @@ def punchline_grounded(source, reply):
         "chon noi lam", "quen phong van", "tuyen dung"
     ))
     return mentions_perk and plays_on_change and actual_twist
+
+
+def tightly_grounded_fallbacks(source):
+    """Small, factual backstops for unambiguous story twists only.
+
+    Do not use for sensitive topics or generic social posts. These strings
+    are *candidates* and still pass the standard brand/safety + independent
+    model review before appearing anywhere. Not a publication authorization.
+    """
+    if is_coupon_job_change_story(source):
+        return [
+            "Hết mã giảm giá là em cập nhật CV luôn, lịch nhảy việc chạy theo voucher mất rồi =)))",
+            "Đi làm theo hạn sử dụng mã giảm giá: hết ưu đãi là đến kỳ chuyển chỗ =)))",
+            "Lương chưa kịp hỏi mà số mã giảm giá còn lại đã quyết định nơi ứng tuyển tiếp theo =)))",
+        ]
+    return []
