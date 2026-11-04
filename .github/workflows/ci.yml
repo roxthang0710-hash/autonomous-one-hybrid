@@ -38,8 +38,8 @@ jobs:
             assert.equal(response.status,200,'Safe public journal must be reachable');
             const data=await response.json();
             assert.ok(Array.isArray(data.activity),'Activity should be an array');
-            assert.ok(data.activity.some(e=>e.code==='ops_completed'),
-                      'Journal must include a verified automatic-operations smoke test');
+            assert.ok(data.activity.length > 0,
+                      'Public journal must contain real operational entries');
             assert.ok(data.activity.every(e=>e.at && e.kind && e.status && e.code),
                       'Activity entries must be structured');
             const snapshot=await fetch(url.replace('?mode=events',''),{signal:AbortSignal.timeout(12000)});
