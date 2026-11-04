@@ -41,22 +41,21 @@ def punchline_grounded(source, reply):
         "ma giam gia", "voucher", "coupon", "code", "ma uu dai",
         "uu dai", "giam gia", "khuyen mai", "quyen loi an"
     ))
-    plays_on_change=any(x in r for x in (
-        "het", "can", "chuyen", "doi", "nhay", "nghi",
-        "qua ben", "tuyen", "cv", "don", "noi lam",
-        "di lam", "cong ty", "cho lam", "ca lam"
+    # A comment about changing shifts or imagining future coupon plans is
+    # NOT the same as the author's punchline: changing employers.
+    mentions_job_switch=any(x in r for x in (
+        "nhay viec", "chuyen cho lam", "chuyen noi lam", "doi cho lam",
+        "doi quan", "chuyen quan", "chuyen viec", "doi viec",
+        "cap nhat cv", "nop cv", "cv moi", "nghi viec",
+        "tuyen dung", "ung tuyen", "phuc loi", "noi lam tiep",
+        "di lam cho khac", "chuyen cho", "chuyen ben"
     ))
-    # Mentioning the discount in passing is not enough: the joke is that
-    # a job switch tracks remaining food perks. Encourage a contrast or
-    # a fresh conversational quip, not an HR-sounding recap.
-    actual_twist=any(x in r for x in (
-        "het ma", "het voucher", "het code", "nhay viec",
-        "chuyen cho", "doi cho", "doi quan", "chuyen viec",
-        "cap nhat cv", "nop cv", "nghi viec",
-        "phuc loi", "han dung", "han su dung", "lich di lam",
-        "chon noi lam", "quen phong van", "tuyen dung"
-    ))
-    return mentions_perk and plays_on_change and actual_twist
+    if any(x in r for x in (
+        "doi ca", "ca lam moi", "ke hoach nhan them uu dai",
+        "co ke hoach", "nhan them uu dai"
+    )):
+        return False
+    return mentions_perk and mentions_job_switch
 
 
 def tightly_grounded_fallbacks(source):
