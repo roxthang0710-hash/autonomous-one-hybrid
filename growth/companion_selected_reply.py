@@ -24,6 +24,7 @@ from agent import Database
 from growth.engage import get_credentials, send_reply, verify_meta_account
 from growth.companion_editor import (compose_selected, compose_selected_options, EnnaModelServiceError)
 from growth.companion_judge import judge_selected
+from growth.companion_quality import punchline_grounded
 from growth.companion_fit import assess_selected, user_is_frustrated
 from growth.selected_direct_reply import (
     ConfirmedMetaRejection, MetaStageError, direct_reply, target_read_limited,
@@ -208,6 +209,8 @@ def can_send(text, selected, *, target, semantic_override=False):
         return False
     normalized = normalize(text)
     original_normalized=normalize(selected)
+    if not punchline_grounded(selected, text):
+        return False
     # Reject extracts / near-verbatim copies and lifted profanity: a comment
     # must CONTRIBUTE, not merely repeat the author's original words.
     if re.search(r"\b(dm|dcm|dcmmm|vcl|dit me|vl)\b",normalized):
