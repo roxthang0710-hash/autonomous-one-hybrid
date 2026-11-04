@@ -1,0 +1,56 @@
+name: Enna — Autonomous Editorial Self-Healing
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: enna-owner-selected-selfheal
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    if: >-
+      github.event_name != 'issue_comment' ||
+      (
+        github.event.issue.user.login == github.repository_owner &&
+        github.event.comment.user.login == github.repository_owner &&
+        github.event.sender.login == github.repository_owner &&
+        startsWith(github.event.issue.title, 'enna-pick:') &&
+        github.event.comment.body == '/enna heal'
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-120b
+      ENNA_HEAL_ISSUE: ${{ github.event_name == 'issue_comment' && github.event.issue.number || '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install project dependencies
+        run: pip install -r requirements.txt
+      - name: Verify safe self-healing and owner-selected reply policy
+        run: |
+          python -m unittest discover -s tests -p 'test_companion_autorecover.py' -v
+          python -m unittest discover -s tests -p 'test_companion_selected_reply.py' -v
+      - name: Enna fixes one recent failed owner-selected draft
+        run: python -m growth.companion_autorecover
+      - name: Explain trust boundary and recovery limits
+        if: always()
+        run: |
+          echo 'Self-healing reads owner-selected GitHub Issues and reviews only draft text.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No Threads/Meta token is provided to this workflow; it CANNOT post, reply, click Chrome, or retry an uncertain Meta write.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Up to 3 safe recovery attempts per issue, at least 45 minutes apart; no infinite retries.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A repaired draft does not equal a published Threads reply. Local Chrome UI is not controlled or audited from GitHub.' >> "$GITHUB_STEP_SUMMARY"
