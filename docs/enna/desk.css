@@ -37,3 +37,6 @@ textarea{width:100%;border:1px solid #d6cbbf;border-radius:13px;padding:14px;res
 
 .sprint-summary{border:1px solid #dce9d5;background:#f5faf1;border-radius:12px;padding:14px;line-height:1.55}
 .sprint-summary strong{color:#345c42}.sprint-summary p{margin:8px 0;font-size:13px;line-height:1.5}
+
+/* Practical owner-only profile conversion action. */
+.bio-proposal{padding:14px;border-radius:12px;background:#f7f8ed;border:1px solid #e1e8d6;white-space:pre-line;line-height:1.6;font-size:13px;color:#355b42}.profile-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.profile-actions a{text-decoration:none;color:#366448}.profile-actions button{color:#366448}.profile-fix code{font-size:11px;overflow-wrap:anywhere}
