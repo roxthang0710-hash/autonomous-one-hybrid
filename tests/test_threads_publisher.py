@@ -123,6 +123,27 @@ class PublisherTests(unittest.TestCase):
         ))
         db.insert.assert_called_once()
 
+    def test_preplanned_lifestyle_topic_survives_publisher_queue(self):
+        db=Mock()
+        item={"id":"queued-topic-post","content_type":"editorial",
+              "pillar":"conversation","topic_tag_planned":"Đời sống đi làm",
+              "text_content":("Buổi họp nói xong ai cũng gật đầu, tới lúc "
+                              "ra về lại không biết người nào làm việc gì.")}
+        db.request.side_effect=[0,[item]]
+        db.insert.return_value={"id":"attempt"}
+        with patch("threads.credentials.load_credentials",
+                   return_value=("token","dohay_dilam")), \
+             patch("threads.publisher.authenticate"), \
+             patch("threads.publisher.do_publish",
+                   return_value=("container","post123","https://example.com")) as send:
+            self.assertEqual(publish_due(db),"published")
+        self.assertEqual(send.call_args.kwargs["topic_tag"],"Đời sống đi làm")
+        self.assertTrue(any(
+            call.args[0]=="threads_posts"
+            and call.args[2].get("topic_tag_requested")=="Đời sống đi làm"
+            for call in db.patch.call_args_list
+        ))
+
     def test_network_timeout_marks_uncertain_never_requeued(self):
         db = Mock()
         item = {"id": "post", "content_type": "editorial",
