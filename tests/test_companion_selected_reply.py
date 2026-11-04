@@ -218,6 +218,29 @@ class SelectionTests(unittest.TestCase):
         db.patch.assert_called_once()
 
     @patch("growth.companion_selected_reply.verify_meta_account")
+    def test_owner_explicit_official_api_command_on_browser_mode_issue(self, _):
+        import requests
+        e=issue()
+        e["issue"]["created_at"]=(datetime.now(timezone.utc)-timedelta(hours=1)).isoformat()
+        e["issue"]["body"]+="\nENNA_LOCAL_BROWSER_MODE: true"
+        e["comment"]={"body":"/enna official",
+                     "user":{"login":"roxthang0710-hash"}}
+        read_response=requests.Response()
+        read_response.status_code=403
+        direct=MagicMock(return_value=("container","meta_reply_id"))
+        db=MagicMock()
+        db.request.return_value=[{"attempt_id":"550e8400-e29b-41d4-a716-446655440000"}]
+        result=process(e,db=db,
+            read=MagicMock(side_effect=requests.HTTPError("forbidden",response=read_response)),
+            direct_publish=direct,allow_direct_trial=True,
+            credentials=lambda d:("safe_test_token","dohay_dilam"),
+            create=lambda *a,**k:{"should_reply":True,
+                                  "post_text":ANSWER,"content_angle":"Thảo luận bảng chung"})
+        self.assertEqual(result["state"],"posted_confirmed")
+        self.assertEqual(result["verification"],"meta_publish_confirmed")
+        direct.assert_called_once()
+
+    @patch("growth.companion_selected_reply.verify_meta_account")
     def test_direct_meta_create_rejection_is_not_false_success(self, _):
         import requests
         from growth.selected_direct_reply import ConfirmedMetaRejection
