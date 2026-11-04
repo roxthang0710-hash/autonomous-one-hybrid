@@ -1,54 +1,81 @@
-"""Only one validated private Enna Desk task is updated with real Groq roles."""
+"""Verify owner answers are model-generated and evidence-grounded, never canned."""
 import os
 import unittest
 from unittest.mock import patch, MagicMock
-from growth.enna_desk_worker import eligible, upgrade, run
+from growth.enna_desk_worker import eligible, upgrade, run, evidence_snapshot, call_model
 
-def sample():
-    return {"id":"00000000-0000-4000-8000-000000000001","kind":"plan",
-      "request_text":"Phân tích cách phát triển kênh Threads tự nhiên",
-      "status":"completed","model_used":"rule_based_multi_role",
-      "response":{"evidence":{"follower_count":3,"follower_stale":True},
-       "roles":[{"role":r,"status":"rule_based_fallback","summary":"Dữ liệu chưa đủ.",
-                 "actions":["Đo lại dữ liệu","Kiểm tra nguồn"],"risks":[]}
-                for r in ("analyst","strategist","operator")]}}
+def task(used="awaiting_model_v2",status="running",text="Tìm phương án tăng follower ngoài đăng bài"):
+    return {"id":"00000000-0000-4000-8000-000000000001",
+        "kind":"warroom","request_text":text,"status":status,
+        "model_used":used,"response":{"evidence":{"follower_count":3}}}
+
+def result(task,evidence):
+    return {
+        "direct_answer":"Vấn đề không chỉ nằm ở số lượng bài. Enna cần thử tăng tỷ lệ chuyển từ người xem sang người theo dõi và phân phối đúng các cộng đồng liên quan, sau đó đo lường kết quả có căn cứ.",
+        "verified_findings":["Dữ liệu follower chưa được đồng bộ và không đủ để kết luận nguyên nhân chính."],
+        "actions":[
+            {"action":"Thiết kế lại hồ sơ và lời kêu gọi theo dõi của kênh",
+             "rationale":"Người xem cần biết lợi ích của việc theo dõi", "executor":"enna",
+             "success_check":"Lưu bản nháp và kiểm tra lượt truy cập hồ sơ", "status":"proposed"},
+            {"action":"Thử bình luận hữu ích tại các cuộc thảo luận phù hợp",
+             "rationale":"Tiếp cận người có nhu cầu cụ thể", "executor":"enna",
+             "success_check":"Chỉ tính bình luận có mã xác nhận và tương tác thật", "status":"proposed"},
+            {"action":"Làm một meme nguyên bản để người xem chia sẻ",
+             "rationale":"Cải thiện tiếp cận tự nhiên và khả năng lưu nội dung", "executor":"enna",
+             "success_check":"Đo lượt chia sẻ và follower mới trong 24 giờ", "status":"proposed"},
+        ],
+        "unknowns":["Số follower hiện tại chưa được xác minh."],
+        "role_summaries":{
+            "analyst":"Cần đối chiếu dữ liệu follower với số lượt xem từng định dạng.",
+            "strategist":"Ưu tiên thí nghiệm chuyển đổi, tương tác hữu ích và tối ưu hồ sơ.",
+            "operator":"Mỗi bước cần có bằng chứng, không tính dự kiến như đã hoàn thành."
+        }
+    }
 
 class DeskWorkerTests(unittest.TestCase):
-    def test_exclude_unfinished_and_already_model_answered(self):
-        obj=sample()
-        self.assertTrue(eligible(obj))
-        obj["status"]="running"
-        self.assertFalse(eligible(obj))
-        obj["status"]="completed"
-        obj["model_used"]="groq_multi_role_async"
-        self.assertFalse(eligible(obj))
-
-    def test_three_roles_upgrade_and_retains_evidence(self):
-        def fake(role, task):
-            return {"role":role,"status":"completed",
-                    "summary":"Đề xuất thử nghiệm dựa trên dữ liệu đã kiểm chứng.",
-                    "actions":["Đồng bộ dữ liệu từ Meta và Metricool",
-                               "Tổng hợp tương tác của từng bài trong 24 giờ"],
-                    "risks":[]}
-        data, model = upgrade(sample(),caller=fake)
-        self.assertEqual(model,"groq_multi_role_async")
-        self.assertEqual(data["ai_upgrade"]["confirmed_roles"],3)
-        self.assertEqual(data["evidence"]["follower_count"],3)
-
-    def test_missing_role_retains_labelled_fallback(self):
-        def fake(role, task):
-            return None if role=="operator" else {
-              "role":role,"status":"completed","summary":"Phân tích có kiểm chứng.",
-              "actions":["Thực hiện báo cáo","Đề xuất Topic"],"risks":[]}
-        data, model=upgrade(sample(),caller=fake)
-        self.assertEqual(model,"groq_multi_role_partial")
-        self.assertEqual(data["ai_upgrade"]["confirmed_roles"],2)
-        self.assertEqual(data["roles"][2]["status"],"rule_based_fallback")
-
-    def test_bounded_no_key_no_db_connection(self):
+    def test_queue_and_legacy_are_eligible(self):
+        self.assertTrue(eligible(task()))
+        self.assertTrue(eligible(task("rule_based_multi_role","completed")))
+        self.assertTrue(eligible(task("groq_multi_role_partial","completed")))
+        self.assertFalse(eligible(task("groq_task_specific_v2","completed")))
+        self.assertFalse(eligible(task("awaiting_model_v2","failed")))
+    def test_model_response_replaces_old_template(self):
+        t=task()
+        out=upgrade(t,{"follower_snapshots":[{"followers":3}]},model_call=result)
+        self.assertEqual(out["engine"],"groq_task_specific_v2")
+        self.assertIn("ngoài",t["request_text"])
+        self.assertIn("không chỉ",out["direct_answer"])
+        self.assertEqual(len(out["action_plan"]),3)
+        self.assertTrue(out["previous_response_replaced"])
+        self.assertNotIn("rule_based_fallback",str(out))
+    def test_distinct_prompts_are_preserved(self):
+        a=upgrade(task(text="Hãy đưa cách tăng follow ngoài việc đăng bài"),{},model_call=result)
+        b=upgrade(task(text="Lỗi workflow không chạy, kiểm tra nguyên nhân"),{},model_call=result)
+        self.assertNotEqual(a["request"],b["request"])
+    def test_no_key_does_not_fake_results(self):
         with patch.dict(os.environ,{"GROQ_API_KEY":""}):
-            self.assertEqual(run(db=MagicMock()),"ai_key_unavailable")
-
+            self.assertEqual(run(db=MagicMock()),"groq_key_unavailable")
+    def test_empty_db_is_no_tasks(self):
+        with patch.dict(os.environ,{"GROQ_API_KEY":"fake"}):
+            db=MagicMock()
+            db.request.return_value=[]
+            self.assertEqual(run(db=db),"no_pending_tasks")
+    def test_evidence_refresh_does_not_invent_metric(self):
+        db=MagicMock()
+        db.request.return_value=[]
+        e=evidence_snapshot(db,task())
+        self.assertEqual(e["follower_snapshots"],[])
+        self.assertFalse(e["native_topic_visually_confirmed"])
+        self.assertEqual(e["top_measured_posts"],[])
+    def test_validation_rejects_english_or_bad_language(self):
+        class Resp:
+            def raise_for_status(self): pass
+            def json(self):
+                return {"choices":[{"message":{"content":__import__("json").dumps(
+                    {**result(task(),{}),"direct_answer":"This is a generic English message with no meaningful Vietnamese."})}}]}
+        with patch.dict(os.environ,{"GROQ_API_KEY":"fake"}):
+            with self.assertRaises(ValueError):
+                call_model(task(),{},api=lambda *a,**kw:Resp())
 
 if __name__=="__main__":
     unittest.main()
