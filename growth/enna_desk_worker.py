@@ -220,8 +220,8 @@ def call_model(task, evidence, *, api=requests.post):
     resp=api("https://api.groq.com/openai/v1/chat/completions",
         headers={"Authorization":"Bearer "+key,"content-type":"application/json"},
         json={
-            "model":MODEL, "temperature":0.36, "max_completion_tokens":3200,
-            "reasoning_effort":"high",
+            "model":MODEL, "temperature":0.33, "max_completion_tokens":2200,
+            "reasoning_effort":"medium",
             "response_format":{"type":"json_schema","json_schema":{
                 "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
             "messages":[{"role":"system","content":guidance},
@@ -316,7 +316,10 @@ def run(db=None):
             # Never falsely report completed or replace a prior response with a template.
             attempts=int(task.get("analysis_attempts") or 0)+1
             reason="ai_quality_rejected" if isinstance(error,ValueError) else "ai_backend_unavailable"
-            print("Enna model response not verified:",reason,"attempt",attempts)
+            http_status=(error.response.status_code
+                         if isinstance(error,requests.HTTPError) and error.response is not None else None)
+            print("Enna model response not verified:",reason,
+                  "error_type",type(error).__name__,"http_status",http_status,"attempt",attempts)
             failed=attempts>=3
             db.request("PATCH","/enna_desk_tasks",params={
                 "id":"eq."+str(task["id"]),"model_used":"eq."+str(task["model_used"])},
