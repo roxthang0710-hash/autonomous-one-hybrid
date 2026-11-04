@@ -83,6 +83,24 @@ class DeskWorkerTests(unittest.TestCase):
         self.assertTrue(any("2065 view" in x for x in facts))
         self.assertTrue(any("0 video" in x for x in facts))
 
+    def test_five_verified_facts_do_not_reject_good_ai_output(self):
+        import json
+        class Resp:
+            def raise_for_status(self): pass
+            def json(self):
+                return {"choices":[{"message":{"content":json.dumps(result(task(),{}),ensure_ascii=False)}}]}
+        evidence={
+            "follower_snapshots":[{"measured_on":"2026-11-04","followers":6,
+                "new_followers":1,"profile_views":324,"age_days":1}],
+            "threads_status_counts":{"posted":10,"scheduled_external":30,"queued":8},
+            "top_measured_posts":[{"views":2065,"likes":19}],
+            "media_ready_by_type":{"original_meme":1,"original_video":0},
+        }
+        with patch.dict(os.environ,{"GROQ_API_KEY":"fake"}):
+            value=call_model(task(),evidence,api=lambda *a,**kw:Resp())
+            self.assertEqual(len(value["verified_findings"]),5)
+            self.assertIn("324 lượt vào hồ sơ",str(value["verified_findings"]))
+
     def test_english_or_echo_is_rewritten_from_evidence_and_model_actions(self):
         class Resp:
             def raise_for_status(self): pass
