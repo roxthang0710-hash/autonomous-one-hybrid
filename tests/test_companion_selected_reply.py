@@ -607,6 +607,33 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(result["state"],"ai_reply_not_contextual_enough")
         self.assertGreaterEqual(judge.call_count,1)
 
+    def test_threads_ui_noise_removed_without_losing_actual_joke(self):
+        raw=("sample_writer\n14 giờ✳ Gửi Enna\n"
+             "Mình phỏng vấn ứng viên F&B làm thêm, em ấy hỏi về "
+             "ưu đãi đồ ăn trước tiên.\n"
+             "Hỏi lý do em chuyển nơi làm thì em bảo vì đã dùng "
+             "hết mã giảm giá để ăn ở chỗ cũ.\n"
+             "=))))\n1\n/\n2\n3,4K\nHàng đầu\n"
+             "Xem hoạt động\nTrả lời sample_writer...")
+        cleaned=clean_selected_excerpt(raw,author="sample_writer")
+        self.assertIn("hết mã giảm giá để ăn",cleaned)
+        self.assertNotIn("Hàng đầu",cleaned)
+        self.assertNotIn("Trả lời sample_writer",cleaned)
+        self.assertNotIn("✳ Gửi Enna",cleaned)
+        self.assertNotIn("sample_writer",cleaned)
+
+    def test_source_context_includes_final_punchline_not_only_setup(self):
+        from growth.companion_editor import important_source_clauses
+        post=("T làm F&B. Hôm qua phỏng vấn một em làm part-time.\n"
+              "Em hỏi có ăn giảm giá không?\n"
+              "T hỏi sao đã nói chuyện lương chưa mà hỏi đồ ăn.\n"
+              "Em nói đang làm bên pizza.\n"
+              "Rồi em kể là hết mã giảm giá để ăn ở nơi cũ "
+              "nên mới ứng tuyển qua đây.\n=))))")
+        focus=important_source_clauses(post)
+        self.assertIn("hết mã giảm giá",focus[-1])
+        self.assertLessEqual(len(focus),5)
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
