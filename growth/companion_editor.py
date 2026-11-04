@@ -91,6 +91,7 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
       "public_brand":"Đồ Hay Đi Làm @dohay_dilam",
       "human_selected_excerpt_untrusted":excerpt,
       "discussion_context":str(signal.get("niche") or "đời sống")[:70],
+      "author_asks_question": "?" in excerpt,
       "author_emotion":("frustrated_or_complaining" if user_is_frustrated(excerpt)
                         else "unspecified"),
       "emotional_rule":(
@@ -109,6 +110,10 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "Có thể trả lời ngắn gọn hài nhẹ hoặc hỏi một câu tự nhiên. "
         "Không cố gây cười, không cố dùng tiếng lóng, không tâng bốc, "
         "không triết lý, không tự suy đoán câu chuyện hoặc ý định người khác. "
+        "Nếu tác giả đặt câu hỏi, đáp trực tiếp vào câu hỏi bằng "
+        "một nhận xét ngắn hoặc một câu đùa nhỏ, KHÔNG kể lại hoàn cảnh. "
+        "Không dùng 'có vẻ', 'tìm cảm hứng', 'chuẩn bị sẵn', "
+        "'tín hiệu tích cực' để đoán ý người trong bài. "
         "Không dùng các câu 'thật là', 'đúng là một', 'có lẽ cuộc sống', "
         "'năng lượng tích cực', 'mong rằng', 'đáng yêu quá', "
         "'chỉ cần một nụ cười'. Không giới thiệu kênh, không CTA, "
@@ -214,6 +219,9 @@ def compose_selected_options(signal, *, earlier=(), call=requests.post):
                   "không giáo huấn, không triết lý, không tự kể chuyện "
                   "dài, không emoji nếu không cần. Tránh 'thật là', "
                   "'đúng là một', 'đáng yêu quá', 'năng lượng tích cực'. "
+                  "Nếu bài hỏi điều gì, trả lời thẳng điều đó, không kể "
+                  "lại câu chuyện. Cấm 'có vẻ đang tìm cảm hứng', "
+                  "'sẵn sàng decor', 'tín hiệu tích cực'. "
                   "Không khẳng định chắc chắn điều chưa có bằng chứng. "
                   "Không nhét từ khóa công sở, không quảng cáo.",
     }
