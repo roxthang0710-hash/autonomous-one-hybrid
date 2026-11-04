@@ -59,6 +59,30 @@ jobs:
           })().catch(e=>{console.error(e);process.exitCode=1});
           NODE
 
+      - name: Verify GitHub Pages renders Enna as HTML
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          const page='https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/desk.html';
+          (async()=>{
+            const r=await fetch(page,{signal:AbortSignal.timeout(18000),cache:'no-store'});
+            const contentType=r.headers.get('content-type')||'';
+            const html=await r.text();
+            console.log('GitHub Pages status:',r.status,'Content-Type:',contentType);
+            assert.equal(r.status,200,'Enna Pages must respond 200');
+            assert.match(contentType,/text\/html/i,'Browser must render HTML, not raw text source');
+            assert.match(html,/id="sign-in-hero"/,'Owner sign-in button must be visible');
+            const js=await fetch(new URL('desk.js',page),{signal:AbortSignal.timeout(18000)});
+            const scriptType=js.headers.get('content-type')||'';
+            const body=await js.text();
+            console.log('Enna Desk JS status:',js.status,'Content-Type:',scriptType);
+            assert.equal(js.status,200,'Desk Javascript must be accessible');
+            assert.match(scriptType,/javascript/i,'Javascript must be served with correct MIME type');
+            assert.match(body,/sign-in-hero/,'Desk Javascript must wire owner sign-in');
+            console.log('GitHub Pages Enna Desk HTML/CSS/JS deploy check passed');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
+
       - name: Check public Enna activity feed response
         run: |
           node - <<'NODE'
