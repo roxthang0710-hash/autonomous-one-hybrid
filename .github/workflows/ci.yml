@@ -30,6 +30,26 @@ jobs:
       - run: node --test tests/test_enna_link_hub.cjs
       - run: node --check docs/enna/desk.js
       - run: node --test tests/test_enna_desk_web.cjs
+      - name: Verify deployed Agent Desk and owner-only API
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          const page='https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/desk.html';
+          const endpoint='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-desk';
+          (async()=>{
+            let html='';
+            for(let i=0;i<3;i++){
+              const res=await fetch(page,{signal:AbortSignal.timeout(12000),cache:'no-store'});
+              if(res.status===200){html=await res.text();if(html.includes('id="task-form"'))break;}
+              await new Promise(resolve=>setTimeout(resolve,1500));
+            }
+            assert.match(html,/id="task-form"/,'Live Enna Desk must render task form');
+            const api=await fetch(endpoint,{signal:AbortSignal.timeout(12000)});
+            assert.ok([401,403].includes(api.status),'Unauthenticated desk API must refuse access');
+            console.log('Live Enna Desk accessible; private API blocked unauthenticated requests');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
+
       - name: Check public Enna activity feed response
         run: |
           node - <<'NODE'
