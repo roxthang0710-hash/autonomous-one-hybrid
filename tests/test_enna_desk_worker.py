@@ -2,7 +2,7 @@
 import os
 import unittest
 from unittest.mock import patch, MagicMock
-from growth.enna_desk_worker import eligible, upgrade, run, evidence_snapshot, call_model, is_prompt_echo, verified_facts
+from growth.enna_desk_worker import eligible, upgrade, run, evidence_snapshot, call_model, is_prompt_echo, verified_facts, prioritize_actions
 
 def task(used="awaiting_model_v2",status="running",text="Tìm phương án tăng follower ngoài đăng bài"):
     return {"id":"00000000-0000-4000-8000-000000000001",
@@ -67,6 +67,16 @@ class DeskWorkerTests(unittest.TestCase):
         self.assertEqual(e["follower_snapshots"],[])
         self.assertFalse(e["native_topic_visually_confirmed"])
         self.assertEqual(e["top_measured_posts"],[])
+    def test_explicit_nonposting_goal_changes_priority(self):
+        actions=[{"action":"Đăng bài vào Topic"},{"action":"Tối ưu bio và bài ghim"},
+                 {"action":"Kiểm tra lỗi tương tác"},{"action":"Đánh giá lịch đăng"}]
+        nonpost=prioritize_actions(task(text="Ngoài đăng bài, Enna hãy chủ động cải thiện follower"),actions)
+        self.assertEqual(nonpost[0]["action"],"Tối ưu bio và bài ghim")
+        self.assertEqual(nonpost[1]["action"],"Kiểm tra lỗi tương tác")
+        self.assertEqual(nonpost[-1]["action"],"Đánh giá lịch đăng")
+        ordinary=prioritize_actions(task(text="Báo cáo hôm nay và đối chiếu số liệu"),actions)
+        self.assertEqual(ordinary,actions)
+
     def test_rejects_verbatim_user_echo(self):
         question="Enna hiện tại chỉ đưa ra lý thuyết rỗng chưa áp dụng thực tế, ngoài đăng bài thì còn cách nào khác"
         self.assertTrue(is_prompt_echo(question.replace(",",""),question))
