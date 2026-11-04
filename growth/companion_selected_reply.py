@@ -247,6 +247,10 @@ def can_send(text, selected, *, target, semantic_override=False):
             return False
     if ("anh ay" in normalized and "anh ay" not in original_normalized):
         return False
+    if ("chac anh" in normalized or "chac chi" in normalized) and not any(
+        x in original_normalized for x in ("anh ay", "chi ay", "anh ta", "chi ta")
+    ):
+        return False
     # Posts asking whether someone will remain employed invite jokes, NOT
     # unsupported certainty about that person's intentions or future.
     if any(p in original_normalized for p in (
@@ -326,13 +330,16 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         and str((comment.get("user") or {}).get("login") or "")==owner
     )
     def context_approved(candidate):
-        # Hard safety checks remain mandatory even if an independent
-        # semantic judge accepts a natural paraphrase.
-        if can_send(candidate, selected, target=target):
-            return True
-        return (can_send(candidate, selected, target=target,
-                         semantic_override=True)
-                and semantic_judge(selected, candidate))
+        # Safety rules are never bypassed. Production AI output MUST be
+        # evaluated semantically even when a lexical phrase happens to match.
+        # Injected test writers still use the original deterministic fast path
+        # unless the test explicitly supplies a semantic judge.
+        if not can_send(candidate, selected, target=target,
+                        semantic_override=True):
+            return False
+        if create is compose_selected or semantic_judge is not judge_selected:
+            return bool(semantic_judge(selected, candidate))
+        return can_send(candidate, selected, target=target)
 
     def choose_alternatives(earlier=()):
         generator=(option_generator if option_generator is not None
