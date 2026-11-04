@@ -51,6 +51,8 @@ function renderTasks(){
    for(const role of Array.isArray(data.roles)?data.roles:[]){
     const title=el("h3",({analyst:"📈 Phân tích",strategist:"💡 Chiến lược",operator:"🛠 Vận hành"})[role.role]||role.role);wrapper.append(title);
     wrapper.append(el("p",role.summary||"Chưa có phản hồi từ chuyên trách."));
+    if(role.status==="rule_based_fallback")wrapper.append(el("p","Phân tích theo quy tắc dự phòng; chưa có phản hồi từ mô hình AI.","muted"));
+    if(role.status==="unavailable")wrapper.append(el("p","Chuyên trách chưa khả dụng.","muted"));
     if(Array.isArray(role.actions)){const ul=el("ul");for(const item of role.actions.slice(0,4))ul.append(el("li",item));wrapper.append(ul);}
    }
    wrapper.append(el("p","Lưu ý: đây là phân tích và đề xuất, chưa phải hành động đăng bài hay bình luận thực tế.","muted"));
@@ -117,5 +119,5 @@ $("task-form").addEventListener("submit",async event=>{
  }catch(e){error("Chưa xác minh hoàn tất: "+e.message+". Kiểm tra nhật ký trước khi gửi lại để tránh tạo trùng.");await refresh(false);}
  finally{btn.disabled=!session;btn.textContent="Giao Enna xử lý →";}
 });
-supabase.auth.onAuthStateChange((_event, s)=>{session=s;sessionUi();});
+supabase.auth.onAuthStateChange((_event, s)=>{session=s;setTimeout(sessionUi,0);});
 (async()=>{try{const {data,error:e}=await supabase.auth.getSession();if(e)throw e;session=data.session;sessionUi();}catch(e){error("Không khôi phục được phiên đăng nhập: "+e.message);sessionUi();}})();
