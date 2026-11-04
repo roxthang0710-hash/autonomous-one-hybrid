@@ -1,0 +1,71 @@
+name: Enna — KPI Watchdog (No Publishing)
+on:
+  schedule:
+    - cron: '11 0,6,12,18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: enna-kpi-watchdog
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Verify monitoring logic
+        run: python -m unittest discover -s tests -p 'test_kpi_watchdog.py' -v
+      - name: Collect provider-grounded health (no Meta writes)
+        run: python -m growth.kpi_watchdog > kpi_watchdog.json
+      - name: Append current status to run summary
+        run: |
+          python - <<'PY'
+          import json, os
+          x=json.load(open('kpi_watchdog.json',encoding='utf-8'))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as f:
+              f.write('## Enna KPI watchdog\n')
+              for k in ('status','followers','snapshot_date','fresh','remaining','daily_needed','observed_daily_change','action'):
+                  f.write('- {}: {}\n'.format(k,x.get(k,'unavailable')))
+              f.write('\nNo posts, likes, replies, purchases, or permissions changed.\n')
+          PY
+      - name: Raise one persistent KPI issue if attention is needed
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          x=json.load(open('kpi_watchdog.json',encoding='utf-8'))
+          if x.get('status') not in ('at_risk','stale','missing','source_unavailable','deadline_missed'):
+              raise SystemExit(0)
+          title='ENNA KPI WATCH — follower shortfall or stale provider metrics'
+          existing=subprocess.run(['gh','issue','list','--state','all','--limit','100','--json','title'],
+                                  check=True,capture_output=True,text=True)
+          if any(i.get('title')==title for i in json.loads(existing.stdout)):
+              print('Existing KPI issue retained; no duplicate alert.')
+              raise SystemExit(0)
+          body=(
+            'Enna KPI monitoring detected a gap or unavailable/stale provider evidence.\n\n'
+            '- Status: {}\n'.format(x.get('status'))+
+            '- Last verified followers: {}\n'.format(x.get('followers','unavailable'))+
+            '- Snapshot date: {}\n'.format(x.get('snapshot_date','unavailable'))+
+            '- Remaining to 1,000: {}\n'.format(x.get('remaining','unavailable'))+
+            '- Recommended action: {}\n\n'.format(x.get('action'))+
+            'Do NOT fabricate follower updates or change posting permissions. '
+            'Sync Metricool/official Meta metrics and compare safe content tests. '
+            'This issue is persistent; automated checks avoid duplicate issues.'
+          )
+          subprocess.run(['gh','issue','create','--title',title,'--body',body],check=True)
+          PY
