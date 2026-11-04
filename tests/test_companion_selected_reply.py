@@ -634,6 +634,20 @@ class SelectionTests(unittest.TestCase):
         self.assertIn("hết mã giảm giá",focus[-1])
         self.assertLessEqual(len(focus),5)
 
+    def test_original_discount_story_can_be_replied_to_without_ads(self):
+        """Issue 49: the source itself is about running out of discount codes."""
+        original=("Phỏng vấn sinh viên làm thêm ở F&B. Em nói muốn chuyển "
+                  "chỗ làm vì đã dùng hết mã giảm giá để ăn ở tiệm pizza, "
+                  "nên giờ đang ứng tuyển qua bên mình.")
+        good=("Hết mã giảm giá là em cập nhật CV luôn, đúng là lịch "
+              "nhảy việc chạy theo voucher rồi =)))")
+        unrelated=("Sinh viên cần chăm chỉ và cố gắng làm việc "
+                   "để bù lại chi phí ăn uống trong cuộc sống.")
+        self.assertTrue(can_send(good,original,target=parse_threads_url(URL)))
+        self.assertFalse(can_send(unrelated,original,target=parse_threads_url(URL)))
+        self.assertFalse(can_send("Mua ngay giảm giá siêu sốc ở link bio nhé!",original,
+                                  target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
