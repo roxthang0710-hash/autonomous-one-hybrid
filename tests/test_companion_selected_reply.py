@@ -581,6 +581,14 @@ class SelectionTests(unittest.TestCase):
         self.assertFalse(can_send(long_reply,original,target=parse_threads_url(URL)))
         self.assertFalse(can_send(cringe,original,target=parse_threads_url(URL)))
 
+    def test_bland_gen_z_recap_rejected_even_when_short(self):
+        original=("Team mình mới có bé Gen Z vào làm, bắt đầu mang đồ "
+                  "để decor bàn làm việc. Liệu bạn ấy có gắn bó "
+                  "lâu dài với công ty không nhỉ?")
+        bland=("Gen Z vừa đến, bàn làm việc đã sẵn sàng decor, "
+               "có vẻ họ đang tìm cảm hứng mới rồi!")
+        self.assertFalse(can_send(bland,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
