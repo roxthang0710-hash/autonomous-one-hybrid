@@ -62,7 +62,7 @@ jobs:
         if: github.event_name == 'issue_comment' && github.event.comment.body == '/enna verify'
         run: python -m growth.companion_verify_uncertain
       - name: Evaluate this one owner-selected Threads post
-        if: github.event_name != 'issue_comment' || github.event.comment.body != '/enna heal'
+        if: github.event_name != 'issue_comment' || (github.event.comment.body != '/enna heal' && github.event.comment.body != '/enna verify')
         env:
           ENNA_OWNER_SELECTED_DIRECT_REPLY_TRIAL: 'true'
         run: python -m growth.companion_selected_reply
