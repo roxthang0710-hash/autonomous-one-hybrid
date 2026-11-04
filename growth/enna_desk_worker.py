@@ -175,6 +175,19 @@ def evidence_snapshot(db, current):
     }
 
 
+def prioritize_actions(task, actions):
+    """Follow the user's explicit distinction: growth outside of posting."""
+    goal=task.get("request_text","").lower()
+    outside=any(w in goal for w in ("ngoài đăng","chỉ đăng","lý thuyết","chủ động","thực sự áp dụng"))
+    if not outside:
+        return actions
+    def rank(action):
+        text=str(action.get("action","")).lower()
+        is_schedule=bool(re.search(r"(đăng bài|lịch đăng|tần suất đăng|topic|hashtag|gắn topic)",text))
+        return 1 if is_schedule else 0
+    return sorted(actions,key=rank)
+
+
 def grounded_answer(task, evidence, actions):
     """Salvage useful model-planned actions when its introductory prose parrots
     the user or invents numbers; metrics are sourced separately, not generated."""
@@ -185,6 +198,7 @@ def grounded_answer(task, evidence, actions):
         point+=" nhưng chưa có dữ liệu quy trực tiếp từng lượt theo dõi cho một bài cụ thể."
     else:
         point="Chưa có số follower đủ tin cậy để kết luận nguyên nhân tăng trưởng."
+    actions=prioritize_actions(task,actions)
     choices=[str(a.get("action") or "").strip().rstrip(".") for a in actions[:3]]
     choices=[x for x in choices if x]
     if any(k in task["request_text"].lower() for k in ("ngoài đăng","lý thuyết","chủ động","thực sự áp dụng")):
@@ -294,7 +308,10 @@ def call_model(task, evidence, *, api=requests.post):
     outside_posts=sum(not re.search(r"\bđăng\s+(?:bài|threads|nội dung)\b",a["action"].lower()) for a in actions)
     if outside_posts < 2:
         raise ValueError("lacks_nonposting_growth_actions")
-    if (not is_vi(result["direct_answer"]) or
+    result["actions"]=prioritize_actions(task,actions)
+    actions=result["actions"]
+    if (any(k in task["request_text"].lower() for k in ("ngoài đăng","lý thuyết","chủ động","thực sự áp dụng")) or
+        not is_vi(result["direct_answer"]) or
         not 80<=len(result["direct_answer"])<=1300 or
         is_prompt_echo(result["direct_answer"],task["request_text"]) or
         re.search(r"\d",result["direct_answer"]) or
