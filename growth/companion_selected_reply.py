@@ -345,6 +345,10 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         str(comment.get("body") or "").strip()=="/enna draft"
         and str((comment.get("user") or {}).get("login") or "")==owner
     )
+    owner_official_trial=(
+        str(comment.get("body") or "").strip()=="/enna official"
+        and str((comment.get("user") or {}).get("login") or "")==owner
+    )
     def context_approved(candidate):
         # Safety rules are never bypassed. Production AI output MUST be
         # evaluated semantically even when a lexical phrase happens to match.
@@ -478,7 +482,8 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         # NEVER try if Graph returns unexpected/mismatched content or 5xx.
         created_at = parse_owner_issue_time(issue.get("created_at"))
         is_recent = bool(created_at and timedelta(0)<=now-created_at<=timedelta(hours=48))
-        if permitted and not verdict.get("local_browser_mode") and is_recent and target_read_limited(exc):
+        if (permitted and is_recent and target_read_limited(exc)
+                and (not verdict.get("local_browser_mode") or owner_official_trial)):
             direct_trial = True
         else:
             return fallback
