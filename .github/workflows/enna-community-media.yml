@@ -4,6 +4,8 @@ on:
     # 09:40, 14:40, 19:40 Vietnam time (UTC+7). Best effort.
     - cron: '40 2,7,12 * * *'
   workflow_dispatch:
+  issues:
+    types: [opened]
   # Re-run VISUAL asset creation after repairing media code or safety tests.
   # Do not add an unsolicited audience-reply run on these engineering pushes.
   push:
@@ -23,7 +25,10 @@ concurrency:
 
 jobs:
   community:
-    if: github.event_name != 'push'
+    if: >-
+      github.event_name != 'push' &&
+      (github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'care:')))
     name: Genuine own-audience questions
     runs-on: ubuntu-latest
     timeout-minutes: 7
@@ -69,6 +74,7 @@ jobs:
           echo 'Owned replies are max 1/day and share the atomic 3/day total cap with external replies; zero is normal.' >> "$GITHUB_STEP_SUMMARY"
 
   visual:
+    if: github.event_name != 'issues'
     name: Original memes & licensed-media research
     runs-on: ubuntu-latest
     timeout-minutes: 7
