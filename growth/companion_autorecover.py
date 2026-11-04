@@ -12,6 +12,7 @@ import re
 import requests
 from growth.companion_editor import compose_selected_options, compose_selected
 from growth.companion_judge import judge_selected
+from growth.companion_quality import punchline_grounded
 from growth.companion_selected_reply import (
     can_send, clean_selected_excerpt, decode_issue_body,
 )
@@ -53,8 +54,29 @@ def state_marker(comments):
         match=re.search(r"<!-- ENNA_SELFHEAL_V1 attempts=(\d+) last=([0-9TZ:+-]+) status=([a-z_]+) -->",body)
         if match:
             return {"id":int(c["id"]), "attempts":int(match.group(1)),
-                    "last":parse_time(match.group(2)), "status":match.group(3)}
-    return {"id":None,"attempts":0,"last":None,"status":"new"}
+                    "last":parse_time(match.group(2)), "status":match.group(3),
+                    "body":body}
+    return {"id":None,"attempts":0,"last":None,"status":"new","body":""}
+
+
+def recovered_draft_still_grounded(issue, progress):
+    """Re-open a falsely 'repaired' Issue when the real source hook was missed."""
+    if progress.get("status")!="repaired":
+        return False
+    body=str(progress.get("body") or "")
+    token="Gợi ý đã kiểm tra:"
+    if token not in body:
+        return False
+    section=body.split(token,1)[1]
+    match=re.search(r"(?m)^> (.+)$",section)
+    if not match:
+        return False
+    try:
+        target,selected,_=decode_issue_body(issue.get("body",""))
+        selected=clean_selected_excerpt(selected,author=target["username"])
+    except (ValueError,KeyError,TypeError):
+        return False
+    return punchline_grounded(selected,match.group(1))
 
 
 def eligible(issue, comments, *, owner, now=None):
@@ -69,7 +91,9 @@ def eligible(issue, comments, *, owner, now=None):
     if not when or not dt.timedelta(0)<=now-when<=dt.timedelta(hours=WINDOW_HOURS):
         return False
     progress=state_marker(comments)
-    if progress["status"]=="repaired" or progress["attempts"]>=MAX_ATTEMPTS:
+    if progress["attempts"]>=MAX_ATTEMPTS:
+        return False
+    if progress["status"]=="repaired" and recovered_draft_still_grounded(issue,progress):
         return False
     if (progress["last"] and
         now-progress["last"]<dt.timedelta(minutes=MIN_INTERVAL_MINUTES)):
