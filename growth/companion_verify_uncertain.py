@@ -5,13 +5,10 @@ A confirmed reply must belong to the OAuth account, match the exact parent
 Threads media ID, and fall within the one-shot attempt's time window.
 """
 from datetime import datetime, timedelta, timezone
-import os
-import re
 import requests
 
 from agent import Database
 from growth.engage import get_credentials, verify_meta_account
-from growth.companion_selected_reply import comment_on_issue
 from threads.publisher import thread_request
 
 FIELDS="id,text,timestamp,replied_to,root_post,permalink"
@@ -70,7 +67,7 @@ def read_own_replies(token, *, read=thread_request):
 
 
 def verify_ambiguous(db, *, token=None, expected=None, read=thread_request,
-                     now=None, notify=comment_on_issue):
+                     now=None):
     now=now or datetime.now(timezone.utc)
     pending=db.request("GET","/enna_companion_attempts",params={
         "select":"id,github_issue_id,target_post_id,status,attempted_at",
@@ -115,12 +112,6 @@ def verify_ambiguous(db, *, token=None, expected=None, read=thread_request,
             "finished_at":now.isoformat(),
             "error_kind":None,
         })
-        issue_id=attempt.get("github_issue_id")
-        if isinstance(issue_id,int) or str(issue_id).isdecimal():
-            # Note: github_issue_id stores GitHub's DATABASE id, not its
-            # human-readable issue NUMBER. Resolve via GitHub REST issue list
-            # in the notification layer before attempting a comment.
-            pass
         confirmed+=1
         print("Enna Meta self-reply verified for one prior uncertain attempt")
     return {"state":"verified" if confirmed else "no_matching_reply",
