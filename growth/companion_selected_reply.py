@@ -200,7 +200,7 @@ def can_send(text, selected, *, target, semantic_override=False):
     original_normalized=normalize(selected)
     # Reject extracts / near-verbatim copies and lifted profanity: a comment
     # must CONTRIBUTE, not merely repeat the author's original words.
-    if re.search(r"\\b(dm|dcm|dcmmm|vcl|dit me|vl)\\b",normalized):
+    if re.search(r"\b(dm|dcm|dcmmm|vcl|dit me|vl)\b",normalized):
         return False
     # Do not praise a source of frustration as a fun/positive experience.
     if user_is_frustrated(selected) and any(x in normalized for x in (
@@ -210,6 +210,15 @@ def can_send(text, selected, *, target, semantic_override=False):
     )):
         return False
     if normalized in original_normalized:
+        return False
+    # A selected public post is not evidence of theft, crime or coercion.
+    # Prevent spurious accusations and ominous predictions in auto replies.
+    claims=(
+        "tranh trom", "de tranh trom", "trom cap", "an trom",
+        "bi mat cap", "do trom", "mat do", "se mat do", "trom cho lam",
+        "lay cap", "gian lan", "lua dao", "tu y lay", "dau doc"
+    )
+    if any(p in normalized and p not in original_normalized for p in claims):
         return False
     # A real reply must contribute new information or a fresh observation.
     # The previous model response copied three source phrases and supplied
