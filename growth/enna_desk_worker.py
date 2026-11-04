@@ -237,16 +237,24 @@ def call_model(task, evidence, *, api=requests.post):
         "không được giả vờ là ba AI độc lập đã thực thi công việc. "
         "Với nguồn số liệu quá hạn, hãy nêu điều chắc chắn và vẫn đề xuất thí nghiệm khả thi."
     )
+    messages=[{"role":"system","content":guidance+" Trả về duy nhất một đối tượng JSON hợp lệ khớp cấu trúc đã mô tả."},
+              {"role":"user","content":json.dumps(prompt,ensure_ascii=False)}]
+    body={
+        "model":MODEL,"temperature":0.32,"max_completion_tokens":2400,
+        "reasoning_effort":"low",
+        "response_format":{"type":"json_schema","json_schema":{
+            "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
+        "messages":messages,
+    }
+    headers={"Authorization":"Bearer "+key,"content-type":"application/json"}
     resp=api("https://api.groq.com/openai/v1/chat/completions",
-        headers={"Authorization":"Bearer "+key,"content-type":"application/json"},
-        json={
-            "model":MODEL, "temperature":0.32, "max_completion_tokens":2400,
-            "reasoning_effort":"low",
-            "response_format":{"type":"json_schema","json_schema":{
-                "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
-            "messages":[{"role":"system","content":guidance},
-                        {"role":"user","content":json.dumps(prompt,ensure_ascii=False)}],
-        },timeout=65)
+             headers=headers,json=body,timeout=55)
+    # JSON schema strict can be rejected by Groq for an unsupported schema
+    # subset. Retry at most once in JSON Object mode, not on rate limits.
+    if getattr(resp,"status_code",200)==400:
+        body["response_format"]={"type":"json_object"}
+        resp=api("https://api.groq.com/openai/v1/chat/completions",
+                 headers=headers,json=body,timeout=55)
     resp.raise_for_status()
     result=json.loads(resp.json()["choices"][0]["message"]["content"])
     if not isinstance(result,dict) or set(result)!=set(SCHEMA["required"]):
