@@ -39,6 +39,14 @@ class CommunityTests(unittest.TestCase):
         self.assertTrue(validate_answer(good,q,parent))
         self.assertFalse(validate_answer("Bạn ơi, theo dõi kênh ngay nhé! "+good,q,parent))
         self.assertFalse(validate_answer("Bài này hay quá, cảm ơn bạn nhiều",q,parent))
+        # The context is Vietnamese multi-word terms: "báo cáo", "bộ lọc".
+        # Do not demand two >=5-character single words and block real answers.
+        self.assertTrue(validate_answer(
+            "Bộ lọc riêng cho báo cáo tuần giúp mọi người không sửa mất "
+            "chế độ xem của nhau, thử dùng kiểu này nhé.", q, parent))
+        self.assertFalse(validate_answer(
+            "Ngày hôm nay thật là một cơ hội tuyệt vời để ai cũng "
+            "trở thành phiên bản tốt hơn của chính mình.", q, parent))
 
 
 class MediaTests(unittest.TestCase):
