@@ -31,7 +31,10 @@ def punchline_grounded(source, reply):
     if any(x in r for x in (
         "cham chi", "co gang lam", "lam viec nghiem tuc",
         "bu lai chi phi", "tinh toan chi phi", "gia tri cong viec",
-        "cong viec quan trong hon", "dong luc lam viec"
+        "cong viec quan trong hon", "dong luc lam viec",
+        "tinh toan", "loi nhuan", "diem cong", "chu dong tai chinh",
+        "co ve", "chac dang", "chac se", "chac em", "chac ban",
+        "kinh te gia dinh", "tiet kiem chi phi"
     )):
         return False
     mentions_perk=any(x in r for x in (
@@ -43,4 +46,14 @@ def punchline_grounded(source, reply):
         "qua ben", "tuyen", "cv", "don", "noi lam",
         "di lam", "cong ty", "cho lam", "ca lam"
     ))
-    return mentions_perk and plays_on_change
+    # Mentioning the discount in passing is not enough: the joke is that
+    # a job switch tracks remaining food perks. Encourage a contrast or
+    # a fresh conversational quip, not an HR-sounding recap.
+    actual_twist=any(x in r for x in (
+        "het ma", "het voucher", "het code", "nhay viec",
+        "chuyen cho", "doi cho", "doi quan", "chuyen viec",
+        "cap nhat cv", "nop cv", "nghi viec",
+        "phuc loi", "han dung", "han su dung", "lich di lam",
+        "chon noi lam", "quen phong van", "tuyen dung"
+    ))
+    return mentions_perk and plays_on_change and actual_twist
