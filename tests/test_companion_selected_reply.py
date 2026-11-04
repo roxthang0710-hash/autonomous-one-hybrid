@@ -561,6 +561,26 @@ class SelectionTests(unittest.TestCase):
              "sáng tạo, ở lại công ty lâu thôi!")
         self.assertFalse(can_send(bad,post,target=parse_threads_url(URL)))
 
+    def test_short_natural_comment_allowed_without_extra_padding(self):
+        original=("Có bạn mới vào công ty đã decor bàn làm việc rất nhanh. "
+                  "Mọi người đoán bạn ấy gắn bó với công ty lâu không?")
+        good=("Decor bàn làm việc là gắn bó với cái bàn trước thôi. "
+              "Còn công ty thì phải xem đã 😄")
+        self.assertTrue(can_send(good,original,target=parse_threads_url(URL)))
+        self.assertLessEqual(len(good),140)
+
+    def test_long_winded_or_cringe_comment_rejected(self):
+        original=("Có bạn mới vào công ty đã decor bàn làm việc rất nhanh. "
+                  "Mọi người đoán bạn ấy gắn bó với công ty lâu không?")
+        long_reply=("Decor bàn làm việc từ lúc mới vào công ty thật sự là "
+                    "một câu chuyện truyền cảm hứng cho tất cả mọi người. "
+                    "Đôi khi cuộc sống chỉ cần một góc nhỏ ấm áp để "
+                    "chúng ta thấy sự trân trọng và nguồn năng lượng tích cực.")
+        cringe=("Bắt đầu decor bàn làm việc thật là một khoảnh khắc "
+                "đáng yêu, ai cũng nên lan tỏa năng lượng tích cực mỗi ngày!")
+        self.assertFalse(can_send(long_reply,original,target=parse_threads_url(URL)))
+        self.assertFalse(can_send(cringe,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
