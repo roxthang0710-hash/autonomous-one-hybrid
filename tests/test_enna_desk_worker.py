@@ -2,7 +2,7 @@
 import os
 import unittest
 from unittest.mock import patch, MagicMock
-from growth.enna_desk_worker import eligible, upgrade, run, evidence_snapshot, call_model
+from growth.enna_desk_worker import eligible, upgrade, run, evidence_snapshot, call_model, is_prompt_echo, verified_facts
 
 def task(used="awaiting_model_v2",status="running",text="Tìm phương án tăng follower ngoài đăng bài"):
     return {"id":"00000000-0000-4000-8000-000000000001",
@@ -67,6 +67,22 @@ class DeskWorkerTests(unittest.TestCase):
         self.assertEqual(e["follower_snapshots"],[])
         self.assertFalse(e["native_topic_visually_confirmed"])
         self.assertEqual(e["top_measured_posts"],[])
+    def test_rejects_verbatim_user_echo(self):
+        question="Enna hiện tại chỉ đưa ra lý thuyết rỗng chưa áp dụng thực tế, ngoài đăng bài thì còn cách nào khác"
+        self.assertTrue(is_prompt_echo(question.replace(",",""),question))
+        useful="Có ba hướng Enna nên thử: thay đổi hồ sơ, xây dựng tương tác hữu ích và đo lường số người theo dõi từ nguồn thật thay vì lặp lại lịch đăng bài."
+        self.assertFalse(is_prompt_echo(useful,question))
+    def test_verified_fact_summary_is_deterministic(self):
+        e={"follower_snapshots":[{"measured_on":"2026-11-02","followers":3,"age_days":3}],
+           "threads_status_counts":{"posted":10,"scheduled_external":30,"queued":8},
+           "top_measured_posts":[{"views":2065,"likes":19}],
+           "media_ready_by_type":{"original_meme":1,"original_video":0}}
+        facts=verified_facts(e)
+        self.assertTrue(any("dữ liệu quá hạn" in x for x in facts))
+        self.assertTrue(any("10 ghi nhận" in x for x in facts))
+        self.assertTrue(any("2065 view" in x for x in facts))
+        self.assertTrue(any("0 video" in x for x in facts))
+
     def test_validation_rejects_english_or_bad_language(self):
         class Resp:
             def raise_for_status(self): pass
