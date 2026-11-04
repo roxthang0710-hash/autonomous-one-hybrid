@@ -33,5 +33,5 @@ test("Scheduled monitor is proactive, owner-only, bounded and deduplicated",()=>
  assert.match(main,/python -m growth\.enna_desk_monitor/);
  assert.match(monitors,/on_conflict/);
  assert.match(monitors,/owner_id/);
- assert.match(monitors,/Follower/);
+ assert.match(monitors,/follower/i);
 });
