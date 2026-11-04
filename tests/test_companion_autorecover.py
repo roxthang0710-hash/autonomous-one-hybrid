@@ -53,6 +53,16 @@ class SelfHealingTests(unittest.TestCase):
             self.assertFalse(eligible(sample_issue(),[failed_comment(),result],
                                       owner=OWNER,now=NOW))
 
+    def test_regression_failed_after_ai_failure_still_eligible(self):
+        # Reproduces real Issue #49, whose last message is a failing CI test
+        # rather than the original Groq/editorial failure.
+        ci={"id":102,"user":{"login":"github-actions[bot]"},
+            "body":"Enna đã dừng trước khi đăng vì bộ kiểm thử biên tập "
+                   "chưa đạt. Không có bình luận Threads nào được gửi."}
+        self.assertTrue(eligible(sample_issue(),
+                                 [failed_comment(),ci],
+                                 owner=OWNER,now=NOW))
+
     def test_repair_state_has_cooldown_and_max_attempts(self):
         comments=[failed_comment(),progress(1,when=NOW-dt.timedelta(minutes=5))]
         self.assertFalse(eligible(sample_issue(),comments,owner=OWNER,now=NOW))
