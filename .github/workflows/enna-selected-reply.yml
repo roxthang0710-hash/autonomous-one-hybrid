@@ -21,7 +21,7 @@ jobs:
         (
           github.event_name == 'issue_comment' &&
           github.event.comment.user.login == github.repository_owner &&
-          (github.event.comment.body == '/enna retry' || github.event.comment.body == '/enna draft' || github.event.comment.body == '/enna heal')
+          (github.event.comment.body == '/enna retry' || github.event.comment.body == '/enna draft' || github.event.comment.body == '/enna heal' || github.event.comment.body == '/enna official')
         )
       )
     runs-on: ubuntu-latest
