@@ -110,6 +110,22 @@ class SelfHealingTests(unittest.TestCase):
         self.assertNotIn("Meta chưa cho phép",args[3])
         recover.assert_called_once()
 
+    def test_repaired_browser_issue_gets_strict_owner_chrome_handoff_marker(self):
+        issue=sample_issue()
+        issue["body"]+="\nENNA_LOCAL_BROWSER_MODE: true"
+        gh=MagicMock()
+        gh.repo=OWNER+"/autonomous-one-hybrid"
+        gh.issues.return_value=[issue]
+        gh.comments.return_value=[failed_comment()]
+        run(github=gh,recover=lambda _:{"draft":
+            "Hết mã giảm giá là cập nhật CV, chuyển việc theo hạn voucher =)))",
+            "model":"source_grounded"},now=NOW)
+        emitted=gh.status.call_args.args[3]
+        self.assertIn("ENNA_BROWSER_HANDOFF_V1",emitted)
+        self.assertIn("Bản nháp đã duyệt cho Chrome:",emitted)
+        self.assertIn("Chưa đăng lên Threads",emitted)
+        self.assertNotIn("Bản nháp để bạn xem và tự đăng nếu phù hợp",emitted)
+
     def test_failed_repair_reuses_one_comment_not_repost(self):
         gh=MagicMock()
         gh.repo=OWNER+"/autonomous-one-hybrid"
