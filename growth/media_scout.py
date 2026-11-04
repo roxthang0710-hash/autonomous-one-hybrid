@@ -10,7 +10,9 @@ import json
 import os
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
+from io import BytesIO
+from PIL import Image, UnidentifiedImageError
 
 import requests
 
@@ -22,7 +24,9 @@ VN=ZoneInfo("Asia/Ho_Chi_Minh")
 BUCKET="enna-original-media"
 PUBLIC_BASE="https://gjdvdohylvsauphhkutw.supabase.co/storage/v1/object/public/"+BUCKET+"/"
 MAX_READY_ORIGINAL=7
-MAX_RESEARCH=18
+MAX_RESEARCH=40
+MAX_ARCHIVE_BYTES=5*1024*1024
+ARCHIVE_MIME={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"}
 
 # All text and visual elements are original; no copied viral templates.
 MEME_CONCEPTS=(
@@ -47,7 +51,7 @@ VIDEO_STORYBOARDS=(
 )
 
 # Search only safe scenes without identifiable people, logos or celebrity references.
-COMMONS_QUERIES=("office desk stationery","computer keyboard desk","notebook desk calendar")
+COMMONS_QUERIES=("funny cat expression", "confused animal expression", "sleepy cat face", "surprised dog expression", "funny office illustration", "public domain cartoon reaction")
 PEXELS_QUERIES=("desk workspace stationery","minimal keyboard on desk","notebook planning closeup")
 
 
@@ -63,6 +67,57 @@ def allowed_source_url(url, provider):
     return host in ({"commons.wikimedia.org"} if provider=="wikimedia_commons"
                     else {"www.pexels.com","pexels.com"} if provider=="pexels"
                     else set())
+
+
+def allowed_commons_binary(url):
+    """Only HTTPS Wikimedia-hosted image objects: never fetch arbitrary result URLs."""
+    if not isinstance(url,str): return False
+    parsed=urlparse(url)
+    return (parsed.scheme=="https" and parsed.hostname=="upload.wikimedia.org"
+            and parsed.port in (None,443) and parsed.username is None
+            and parsed.password is None and parsed.path.startswith("/wikipedia/commons/")
+            and not parsed.query and not parsed.fragment)
+
+
+def archive_commons_image(item, *, get=requests.get, post=requests.post):
+    """Archive CC0/PD candidate bytes under /reference; never a published meme."""
+    if item.get("source_provider")!="wikimedia_commons" or item.get("status")!="needs_review":
+        return None
+    if item.get("license_code") not in ("cc0","cc0 1.0","public domain","public domain mark 1.0"):
+        return None
+    evidence=item.get("evidence") or {}
+    url=evidence.get("original_image_url")
+    mime=evidence.get("mime")
+    if not allowed_commons_binary(url) or mime not in ARCHIVE_MIME: return None
+    response=get(url,timeout=20,stream=True,allow_redirects=False,
+                 headers={"User-Agent":"EnnaContentScout/1.1 (public-domain archival)"})
+    if response.status_code!=200: return None
+    try:
+        content=bytearray()
+        for chunk in response.iter_content(chunk_size=65536):
+            content.extend(chunk)
+            if len(content)>MAX_ARCHIVE_BYTES:return None
+        with Image.open(BytesIO(content)) as im:
+            im.verify()
+        with Image.open(BytesIO(content)) as im:
+            if im.width<180 or im.height<180 or im.width*im.height>20000000:
+                return None
+            actual={"PNG":"image/png","JPEG":"image/jpeg","WEBP":"image/webp"}.get(im.format)
+            if actual!=mime:return None
+        object_path="reference/"+item["idea_key"]+"."+ARCHIVE_MIME[mime]
+        host=os.getenv("SUPABASE_URL","").rstrip("/")
+        secret=os.getenv("DB_SERVICE_KEY","")
+        if not host.startswith("https://") or not secret:return None
+        headers={"apikey":secret,"Content-Type":mime,"x-upsert":"false"}
+        if not secret.startswith("sb_secret_"):headers["Authorization"]="Bearer "+secret
+        result=post(host+"/storage/v1/object/"+BUCKET+"/"+object_path,
+                    data=bytes(content),headers=headers,timeout=20)
+        if result.status_code not in (200,201):return None
+        return PUBLIC_BASE+object_path
+    except (requests.RequestException,OSError,ValueError,UnidentifiedImageError):
+        return None
+    finally:
+        response.close()
 
 
 def inspect_commons(payload, query):
@@ -86,19 +141,21 @@ def inspect_commons(payload, query):
         url="https://commons.wikimedia.org/wiki/"+quote(name.replace(" ","_"),safe=":_()-.")
         if not allowed_source_url(url,"wikimedia_commons"):continue
         mime=str(info.get("mime") or "")
-        if not (mime.startswith("image/") or mime.startswith("video/")): continue
+        if mime not in ARCHIVE_MIME: continue
+        original_url=str(info.get("url") or "")
+        if not allowed_commons_binary(original_url): continue
         suggestions.append({
             "idea_key":"commons-"+make_key("commons",name),
-            "media_type":"licensed_video" if mime.startswith("video/") else "licensed_photo",
-            "title":("Tư liệu tham khảo: "+query)[:140],
-            "creative_brief":"Tư liệu bối cảnh cho góc làm việc. Kiểm tra ảnh/video thực tế, nhân vật, logo và quyền sử dụng trước khi đăng.",
-            "hook_text":"Ảnh/video tư liệu tham khảo, không khẳng định mức độ phổ biến.",
+            "media_type":"licensed_meme_source",
+            "title":("Meme nguồn mở: "+name[5:])[:140],
+            "creative_brief":"Nguồn biểu cảm/tình huống để sáng tác meme công sở tiếng Việt. Duyệt trực quan, tác giả, logo, nhân vật và quyền liên quan trước khi dùng.",
+            "hook_text":"Chọn tình huống công sở phù hợp; viết lời vui ngắn, không sao chép câu cửa miệng có bản quyền.",
             "source_provider":"wikimedia_commons","source_url":url,
-            "creator_credit":"Xem thông tin tác giả tại Wikimedia Commons",
+            "creator_credit":clean("Artist")[:200] or "Xem thông tin tác giả tại Wikimedia Commons",
             "license_code":short[:50],"license_url":clean("LicenseUrl")[:500] or None,
             "rights_status":"review_required","status":"needs_review",
             "pillar":"organize",
-            "evidence":{"query":query,"api":"commons_api","license_metadata":"checked","not_auto_publishable":True},
+            "evidence":{"query":query,"api":"commons_api","license_metadata":"checked","original_image_url":original_url,"mime":mime,"not_auto_publishable":True},
         })
     return suggestions
 
@@ -108,7 +165,7 @@ def commons_candidates(query, *, fetch=requests.get):
         resp=fetch("https://commons.wikimedia.org/w/api.php",
             headers={"User-Agent":"EnnaContentScout/1.0 (original media research; account: @dohay_dilam)"},
             params={"action":"query","format":"json","generator":"search",
-               "gsrsearch":query,"gsrnamespace":6,"gsrlimit":8,
+               "gsrsearch":query+" filetype:bitmap","gsrnamespace":6,"gsrlimit":12,
                "prop":"imageinfo","iiprop":"url|extmetadata|mime"},
             timeout=15)
         resp.raise_for_status()
@@ -306,11 +363,17 @@ def run(db=None, *, now=None, enable_public_assets=None):
             break
     research_count=sum(x.get("status")=="needs_review" for x in existing)
     new_sources=0
+    archived_sources=0
     if research_count<MAX_RESEARCH:
         query=COMMONS_QUERIES[today.toordinal()%len(COMMONS_QUERIES)]
         for item in commons_candidates(query):
+            archived_url=archive_commons_image(item)
+            if archived_url:
+                item["evidence"]={**item["evidence"],"archive_url":archived_url,
+                                  "archived_for_review":True,"not_auto_publishable":True}
             if insert_idea(db,{"brand_key":BRAND,**item}):
                 new_sources+=1
+                archived_sources+=int(bool(archived_url))
         key=os.getenv("PEXELS_API_KEY","").strip()
         if key:
             for item in pexels_candidates(PEXELS_QUERIES[today.toordinal()%len(PEXELS_QUERIES)],key):
@@ -319,6 +382,7 @@ def run(db=None, *, now=None, enable_public_assets=None):
     return {"original_concepts_new":new_original,
         "video_storyboards_new":new_storyboard,
         "rights_review_sources_new":new_sources,
+        "licensed_meme_sources_archived":archived_sources,
         "media_asset_upload_enabled":os.getenv("ENNA_ORIGINAL_MEDIA_ENABLED","false")=="true" if enable_public_assets is None else enable_public_assets,
         "external_sources_are_not_published":True}
 
