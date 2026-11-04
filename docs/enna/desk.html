@@ -53,6 +53,15 @@
       </form>
       <p id="task-error" class="error" role="alert" hidden></p>
     </section>
+    <section class="pane research-pane">
+      <div class="section-heading"><h2>Enna thực thi nghiên cứu</h2><small>Luồng GitHub Actions hiện có · không đăng bài</small></div>
+      <p class="muted">Chạy một nghiên cứu độc lập về chủ đề bạn chọn. Enna xử lý trên máy chủ, lưu lại kết quả và bạn có thể đóng trang trong lúc thực thi. Giới hạn tối đa 2 yêu cầu/ngày.</p>
+      <form id="research-form" class="research-form">
+        <input id="research-topic" type="text" minlength="3" maxlength="140" required placeholder="Ví dụ: Mẹo Excel và nội dung công sở dễ chia sẻ"/>
+        <button id="research-submit" class="primary" type="submit" disabled>Chạy nghiên cứu</button>
+      </form>
+      <div id="research-list" class="task-list"><p class="muted">Chưa có nghiên cứu trực tiếp từ Enna Desk.</p></div>
+    </section>
     <section class="pane">
       <div class="section-heading"><h2>Nhật ký nhiệm vụ</h2><button id="refresh" type="button" class="light">Làm mới</button></div>
       <div id="task-list" class="task-list"><p class="muted">Đăng nhập để xem nhiệm vụ riêng.</p></div>
