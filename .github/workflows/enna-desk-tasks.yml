@@ -1,0 +1,42 @@
+name: Enna — Multi-Agent Task Upgrade
+on:
+  schedule:
+    # Best effort hourly fallback; owner-created task can dispatch earlier.
+    - cron: '21 * * * *'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-desk-groq-worker
+  cancel-in-progress: false
+
+jobs:
+  upgrade:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'desk-ai:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Check idempotent bounded AI upgrade
+        run: python -m unittest discover -s tests -p 'test_enna_desk_worker.py' -v
+      - name: Upgrade at most one owner task using GitHub Groq secret
+        run: python -m growth.enna_desk_worker
+      - name: Confirm scope
+        if: always()
+        run: |
+          echo 'Read-only research and multi-agent analysis; no social posts, replies, payments or permission edits.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'If Groq is down, owner sees explicit rule-based fallback without fabricated claims.' >> "$GITHUB_STEP_SUMMARY"
