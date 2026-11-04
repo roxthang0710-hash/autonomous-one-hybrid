@@ -256,13 +256,28 @@ def run(*, github=None, recover=make_recovery_draft, now=None,
         except (requests.RequestException,ValueError,TypeError,KeyError):
             draft=None
         if draft:
-            # IMPORTANT: not one of the Chrome extension's publishable markers.
             status="repaired"
-            message=("🧰 Enna đã tự sửa lỗi biên tập và tạo được bình luận "
-                     "ngắn, đúng ngữ cảnh. **CHỈ KIỂM THỬ — KHÔNG TỰ ĐĂNG THREADS.**"
-                     "\n\nGợi ý đã kiểm tra:\n\n> "+draft["draft"]+
-                     "\n\nTác vụ tự phục hồi đã hoàn tất, không yêu cầu "
-                     "chủ tài khoản chọn lại bài.")
+            owner_browser_mode=(
+                str(issue.get("body") or "").strip().splitlines()[-1].strip()
+                == "ENNA_LOCAL_BROWSER_MODE: true"
+            )
+            if owner_browser_mode:
+                # Not a publish claim. This marker allows ONLY the locally
+                # enabled/identity-verified Chrome Companion to receive a
+                # reviewed draft for the *same already owner-picked issue*.
+                # Issue with a prior uncertain official write is ineligible.
+                message=("<!-- ENNA_BROWSER_HANDOFF_V1 -->\n"
+                         "🧰 Enna đã tự sửa bản nháp. **Chưa đăng lên Threads.** "
+                         "Chrome Companion có thể thử gửi đúng MỘT lần "
+                         "nếu chủ tài khoản đã bật AutoReply.\n\n"
+                         "Bản nháp đã duyệt cho Chrome:\n\n> "
+                         +draft["draft"])
+            else:
+                message=("🧰 Enna đã tự sửa lỗi biên tập và tạo được bình luận "
+                         "ngắn, đúng ngữ cảnh. **CHỈ KIỂM THỬ — KHÔNG TỰ ĐĂNG THREADS.**"
+                         "\n\nGợi ý đã kiểm tra:\n\n> "+draft["draft"]+
+                         "\n\nTác vụ tự phục hồi đã hoàn tất, không yêu cầu "
+                         "chủ tài khoản chọn lại bài.")
         else:
             status="retrying" if attempt<MAX_ATTEMPTS else "needs_attention"
             message=("🧰 Enna đang tự xử lý lỗi nội dung trong giới hạn "
