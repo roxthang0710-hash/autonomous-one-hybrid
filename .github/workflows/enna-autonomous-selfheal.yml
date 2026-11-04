@@ -44,5 +44,5 @@ jobs:
         run: |
           echo 'Self-healing reads owner-selected GitHub Issues and reviews only draft text.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No Threads/Meta token is provided to this workflow; it CANNOT post, reply, click Chrome, or retry an uncertain Meta write.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Up to 3 safe recovery attempts per issue, at least 45 minutes apart; no infinite retries.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Up to 5 safe recovery attempts per issue to correct prior false approvals, at least 45 minutes apart unless proven false-positive; no infinite retries.' >> "$GITHUB_STEP_SUMMARY"
           echo 'A repaired draft does not equal a published Threads reply. Local Chrome UI is not controlled or audited from GitHub.' >> "$GITHUB_STEP_SUMMARY"
