@@ -193,6 +193,16 @@ async function beginOwnerSignIn(){
 $("sign-in").addEventListener("click",beginOwnerSignIn);
 $("sign-in-hero").addEventListener("click",beginOwnerSignIn);
 $("sign-out").addEventListener("click",async()=>{await supabase.auth.signOut();session=null;sessionUi();});
+$("copy-profile-bio").addEventListener("click",async()=>{
+ const text=$("profile-bio-copy").textContent.trim();
+ const status=$("bio-copy-result");
+ try{
+  await navigator.clipboard.writeText(text);
+  status.textContent="Đã sao chép bản bio. Hãy dán trên Threads và gắn liên kết trang bio; Enna chưa tự thay đổi hồ sơ.";
+ }catch(e){
+  status.textContent="Trình duyệt chặn sao chép. Chọn và chép trực tiếp nội dung bio trong ô phía trên.";
+ }
+});
 $("refresh").addEventListener("click",()=>refresh(true));
 $("research-form").addEventListener("submit",async e=>{
  e.preventDefault();if(!session||busy)return;
