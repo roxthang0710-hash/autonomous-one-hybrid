@@ -480,7 +480,7 @@ class SelectionTests(unittest.TestCase):
         ])
         db,read,publish,credentials=MagicMock(),MagicMock(),MagicMock(),MagicMock()
         result=process(e,db=db,create=source,option_generator=three,
-                       semantic_judge=lambda a,b:False,
+                       semantic_judge=lambda a,b:b==ANSWER,
                        read=read,publish=publish,credentials=credentials)
         self.assertEqual(result["state"],"draft_prepared_only")
         self.assertEqual(result["draft"],ANSWER)
