@@ -2,7 +2,7 @@
 import unittest
 from datetime import datetime,timezone
 from unittest.mock import MagicMock
-from growth.conversion_loop import clean_days,select_policy,measure,run
+from growth.conversion_loop import clean_days,select_policy,measure,measure_official,run
 
 NOW=datetime(2026,11,5,2,tzinfo=timezone.utc)
 ROWS=[
@@ -46,6 +46,28 @@ class GrowthConversionTests(unittest.TestCase):
          "latest_observation":{"proxy_new_followers_per_profile_view":.00221}}
         r=measure(sprint,ROWS,datetime(2026,11,7,2,tzinfo=timezone.utc).date())
         self.assertEqual(r["status"],"waiting_new_data")
+    def test_official_same_source_snapshots_close_loop(self):
+        baseline={"baseline_day":"2026-11-04"}
+        meta=[{"local_day":"2026-11-05","followers":6},
+              {"local_day":"2026-11-06","followers":6},
+              {"local_day":"2026-11-07","followers":7}]
+        got=measure_official(baseline,meta,datetime(2026,11,7,2,tzinfo=timezone.utc).date())
+        self.assertEqual(got["status"],"measured")
+        self.assertEqual(got["observed_net_change"],1)
+        self.assertEqual(got["decision"],"retain_trial")
+        self.assertIn("cannot attribute",got["caveat"])
+    def test_official_needs_two_day_span_not_one_snapshot(self):
+        self.assertEqual(measure_official({"baseline_day":"2026-11-04"},
+          [{"local_day":"2026-11-05","followers":6}],
+          datetime(2026,11,7,2,tzinfo=timezone.utc).date())["status"],
+          "awaiting_two_day_meta_span")
+    def test_official_no_gain_triggers_safe_policy_rollback(self):
+        got=measure_official({"baseline_day":"2026-11-04"},
+          [{"local_day":"2026-11-05","followers":6},
+           {"local_day":"2026-11-07","followers":6}],
+          datetime(2026,11,7,2,tzinfo=timezone.utc).date())
+        self.assertEqual(got["decision"],"return_balanced")
+
     def test_run_updates_actual_future_editorial_policy_not_posts(self):
         db=MagicMock()
         def f(method,path,*,params=None,payload=None,prefer=None):
