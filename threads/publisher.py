@@ -19,12 +19,18 @@ TIMEOUT = 20
 
 # Meta native topic_tag is not a hashtag embedded in text.
 # Only directly published Enna posts use it; Metricool has a separate queue.
+# Native Threads Topic tagging uses the API's topic_tag parameter,
+# not a visible text hashtag. Keep known vocabulary plus already-queued plans.
 TOPIC_BY_PILLAR = {
     "work": "Công sở",
     "travel": "Du lịch",
     "organize": "Góc làm việc",
     "conversation": "Công sở",
 }
+ALLOWED_TOPIC_TAGS = frozenset({
+    *TOPIC_BY_PILLAR.values(),
+    "Đời sống đi làm", "Học tập", "Đồ dùng",
+})
 
 
 def enabled():
@@ -102,7 +108,7 @@ def do_publish(token, text, topic_tag=None, *, image_url=None, alt_text=None):
     elif alt_text is not None:
         raise ValueError("Alt text without an original image is invalid")
     if topic_tag is not None:
-        if topic_tag not in TOPIC_BY_PILLAR.values():
+        if topic_tag not in ALLOWED_TOPIC_TAGS:
             raise ValueError("Unknown native topic tag")
         data["topic_tag"] = topic_tag
     container = thread_request(
@@ -170,7 +176,7 @@ def publish_due(db):
     })
     try:
         topic_tag = post.get("topic_tag_planned") or TOPIC_BY_PILLAR.get(post.get("pillar"))
-        if topic_tag is not None and topic_tag not in TOPIC_BY_PILLAR.values():
+        if topic_tag is not None and topic_tag not in ALLOWED_TOPIC_TAGS:
             raise ValueError("Unknown planned native Threads topic")
         container_id, remote_id, link = do_publish(
             token, post["text_content"], topic_tag=topic_tag,
