@@ -92,7 +92,7 @@ class DeskWorkerTests(unittest.TestCase):
         with patch.dict(os.environ,{"GROQ_API_KEY":"fake"}):
             value=call_model(task(),{},api=lambda *a,**kw:Resp())
             self.assertIn("Enna",value["direct_answer"])
-            self.assertIn("ngoài",value["direct_answer"])
+            self.assertIn("lịch đăng",value["direct_answer"])
             self.assertNotIn("generic English",value["direct_answer"])
 
 if __name__=="__main__":
