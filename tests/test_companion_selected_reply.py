@@ -589,6 +589,13 @@ class SelectionTests(unittest.TestCase):
                "có vẻ họ đang tìm cảm hứng mới rồi!")
         self.assertFalse(can_send(bland,original,target=parse_threads_url(URL)))
 
+    def test_generic_hr_style_signal_comment_rejected(self):
+        original=("Bé Gen Z mới vào công ty đã mang đồ decor bàn làm việc. "
+                  "Mọi người đoán bạn này sẽ làm lâu không?")
+        bland=("Món đồ mới để bàn làm việc là tín hiệu nhiệt huyết, "
+               "hy vọng sẽ ở lâu cùng công ty nhé.")
+        self.assertFalse(can_send(bland,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
