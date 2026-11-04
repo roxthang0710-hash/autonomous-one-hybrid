@@ -303,7 +303,8 @@ def run(db=None, *, now=None, enable_public_assets=None):
             except Exception:
                 pass
 
-    # Typography-only cards are a rare fallback, not the main visual library.\n    if ready<MAX_READY_ORIGINAL and original_today<1 and today.toordinal()%3==0:
+    # Typography-only cards are a rare fallback, not the main visual library.
+    if ready<MAX_READY_ORIGINAL and original_today<1 and today.toordinal()%3==0:
         from growth.meme_ideas import generate as invent
         past=[x.get("creative_brief") for x in existing
               if x.get("media_type")=="original_meme" and x.get("creative_brief")]
