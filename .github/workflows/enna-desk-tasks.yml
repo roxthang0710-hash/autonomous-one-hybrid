@@ -1,8 +1,8 @@
 name: Enna — Multi-Agent Task Upgrade
 on:
   schedule:
-    # Best effort hourly fallback; owner-created task can dispatch earlier.
-    - cron: '21 * * * *'
+    # Best-effort every five minutes; no Groq call if nothing is queued.
+    - cron: '*/5 * * * *'
   workflow_dispatch:
   issues:
     types: [opened]
@@ -33,7 +33,7 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Check idempotent bounded AI upgrade
         run: python -m unittest discover -s tests -p 'test_enna_desk_worker.py' -v
-      - name: Upgrade at most one owner task using GitHub Groq secret
+      - name: Process up to three queued owner tasks with task-specific reasoning
         run: python -m growth.enna_desk_worker
       - name: Confirm scope
         if: always()
