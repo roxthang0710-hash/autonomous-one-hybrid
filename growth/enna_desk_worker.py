@@ -175,6 +175,26 @@ def evidence_snapshot(db, current):
     }
 
 
+def grounded_answer(task, evidence, actions):
+    """Salvage useful model-planned actions when its introductory prose parrots
+    the user or invents numbers; metrics are sourced separately, not generated."""
+    snapshots=evidence.get("follower_snapshots") or []
+    latest=next((x for x in snapshots if isinstance(x.get("followers"),int)),None)
+    if latest:
+        point=f"Metricool gần nhất ghi nhận {latest['followers']} follower ngày {latest.get('measured_on')},"
+        point+=" nhưng chưa có dữ liệu quy trực tiếp từng lượt theo dõi cho một bài cụ thể."
+    else:
+        point="Chưa có số follower đủ tin cậy để kết luận nguyên nhân tăng trưởng."
+    choices=[str(a.get("action") or "").strip().rstrip(".") for a in actions[:3]]
+    choices=[x for x in choices if x]
+    if any(k in task["request_text"].lower() for k in ("ngoài đăng","lý thuyết","chủ động","thực sự áp dụng")):
+        intro="Đúng: chỉ tăng lịch đăng sẽ không giải quyết được vấn đề. Enna cần kiểm tra và cải thiện cách người xem quyết định theo dõi."
+    else:
+        intro="Không thể kết luận rằng follower ít chỉ vì số bài hoặc Topic. Cần đo từng bước từ tiếp cận đến lượt theo dõi."
+    plan="; ".join(f"{i+1}) {action}" for i,action in enumerate(choices))
+    return f"{intro} {point} Hướng ưu tiên để kiểm chứng: {plan}. Đây là những việc đề xuất, chưa được tự động thực hiện."
+
+
 def call_model(task, evidence, *, api=requests.post):
     key=os.getenv("GROQ_API_KEY","").strip()
     if not key:
@@ -220,8 +240,8 @@ def call_model(task, evidence, *, api=requests.post):
     resp=api("https://api.groq.com/openai/v1/chat/completions",
         headers={"Authorization":"Bearer "+key,"content-type":"application/json"},
         json={
-            "model":MODEL, "temperature":0.33, "max_completion_tokens":2200,
-            "reasoning_effort":"medium",
+            "model":MODEL, "temperature":0.32, "max_completion_tokens":2400,
+            "reasoning_effort":"low",
             "response_format":{"type":"json_schema","json_schema":{
                 "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
             "messages":[{"role":"system","content":guidance},
@@ -231,16 +251,9 @@ def call_model(task, evidence, *, api=requests.post):
     result=json.loads(resp.json()["choices"][0]["message"]["content"])
     if not isinstance(result,dict) or set(result)!=set(SCHEMA["required"]):
         raise ValueError("invalid_schema")
-    if not is_vi(result.get("direct_answer")) or not 80<=len(result["direct_answer"])<=1300:
-        raise ValueError("answer_not_specific_vietnamese")
-    if is_prompt_echo(result["direct_answer"],task["request_text"]):
-        raise ValueError("answer_echoes_user_question")
-    if re.search(r"\d",result["direct_answer"]):
-        raise ValueError("unsupported_numeric_claim_in_summary")
-    # Strong factual negations may be hallucinations when some provider events are
-    # missing from the ledger. They need confirmation, not confident prose.
-    if re.search(r"(không có|chưa có)\s+(?:meme|topic|chủ đề|cta|bình luận|video)",result["direct_answer"].lower()):
-        raise ValueError("unsupported_absolute_claim")
+    # Validate structural actions first, then repair a weak headline from evidence.
+    if not isinstance(result.get("direct_answer"),str):
+        raise ValueError("answer_not_text")
     findings=result.get("verified_findings")
     if not isinstance(findings,list) or not 1<=len(findings)<=4:
         raise ValueError("findings_invalid")
@@ -255,9 +268,20 @@ def call_model(task, evidence, *, api=requests.post):
         if not all(isinstance(a.get(k),str) and 8<=len(a[k])<=330
                    for k in ("action","rationale","success_check")):
             raise ValueError("action_not_concrete")
+        if not is_vi(a["action"]) or not is_vi(a["rationale"]):
+            raise ValueError("action_not_vietnamese")
     outside_posts=sum(not re.search(r"\bđăng\s+(?:bài|threads|nội dung)\b",a["action"].lower()) for a in actions)
     if outside_posts < 2:
         raise ValueError("lacks_nonposting_growth_actions")
+    if (not is_vi(result["direct_answer"]) or
+        not 80<=len(result["direct_answer"])<=1300 or
+        is_prompt_echo(result["direct_answer"],task["request_text"]) or
+        re.search(r"\d",result["direct_answer"]) or
+        re.search(r"(không có|chưa có)\s+(?:meme|topic|chủ đề|cta|bình luận|video)",
+                  result["direct_answer"].lower())):
+        result["direct_answer"]=grounded_answer(task,evidence,actions)
+    if not is_vi(result["direct_answer"]):
+        raise ValueError("grounded_answer_invalid")
     summaries=result.get("role_summaries")
     if not isinstance(summaries,dict) or set(summaries)!={"analyst","strategist","operator"}:
         raise ValueError("role_summaries_invalid")
