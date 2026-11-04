@@ -15,6 +15,11 @@ test("Owner desk is reachable from public Enna dashboard",()=>{
  assert.match(html,/id="sign-in-hero"/);
  assert.match(html,/KẾT NỐI ENNA BẰNG GITHUB/);
  assert.match(html,/id="research-form"/);
+ assert.match(html,/id="copy-profile-bio"/);
+ assert.match(html,/id="profile-bio-copy"/);
+ assert.match(js,/navigator\.clipboard\.writeText/);
+ assert.match(js,/bio-copy-result/);
+
  assert.match(html,/id="growth-sprint"/);
  assert.match(js,/renderSprint/);
  assert.match(js,/follower_source/);
@@ -34,6 +39,15 @@ test("Desk supports independent signed-in task submission",()=>{
 test("DOM uses safe text nodes for untrusted model and task content",()=>{
  assert.match(js,/node\.textContent=/);
  assert.doesNotMatch(js,/\.innerHTML\s*=/);
+});
+test("Link-in-bio clearly invites real following before any affiliate catalog",()=>{
+ const page=fs.readFileSync(path.join(root,"docs/enna/links/index.html"),"utf8");
+ assert.match(page,/Theo dõi Đồ Hay Đi Làm trên Threads/);
+ assert.match(page,/https:\/\/www\.threads\.com\/@dohay_dilam/);
+ assert.match(page,/Lấy bộ mẫu miễn phí/);
+ const follow=page.indexOf("Theo dõi Đồ Hay Đi Làm trên Threads");
+ const products=page.indexOf('id="approved-items"');
+ assert.ok(follow>0 && products>follow);
 });
 test("Desk cannot contain private GitHub access or service role tokens",()=>{
  assert.doesNotMatch(js,/ghp_[a-zA-Z0-9]{15,}|sb_secret_|DB_SERVICE_KEY|SUPABASE_SERVICE_ROLE_KEY/);
