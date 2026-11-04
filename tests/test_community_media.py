@@ -4,7 +4,7 @@ from datetime import datetime,timedelta,timezone
 from unittest.mock import MagicMock,patch
 
 from growth.community_care import eligible_question,validate_answer
-from growth.media_scout import inspect_commons,allowed_source_url,run
+from growth.media_scout import inspect_commons,allowed_source_url,allowed_commons_binary,archive_commons_image,run
 from growth.meme_renderer import make_card
 from threads.publisher import do_publish
 
@@ -60,6 +60,7 @@ class MediaTests(unittest.TestCase):
         entry={"query":{"pages":{"12":{
             "title":"File:Keyboard and paper notebook.jpg",
             "imageinfo":[{"mime":"image/jpeg",
+                "url":"https://upload.wikimedia.org/wikipedia/commons/a/ab/example.jpg",
                 "extmetadata":{"LicenseShortName":{"value":"CC0 1.0"}}}]},
             "13":{"title":"File:Unlicensed office.jpg",
             "imageinfo":[{"mime":"image/jpeg",
@@ -70,6 +71,23 @@ class MediaTests(unittest.TestCase):
         self.assertEqual(found[0]["rights_status"],"review_required")
         self.assertTrue(allowed_source_url(found[0]["source_url"],"wikimedia_commons"))
         self.assertFalse(allowed_source_url("https://evil.tld/steal","pexels"))
+
+    def test_external_archive_only_accepts_wikimedia_cc0(self):
+        self.assertTrue(allowed_commons_binary(
+            "https://upload.wikimedia.org/wikipedia/commons/a/ab/example.jpg"))
+        self.assertFalse(allowed_commons_binary("https://malicious.test/a.jpg"))
+        self.assertFalse(allowed_commons_binary(
+            "https://upload.wikimedia.org.evil.test/wikipedia/commons/a.jpg"))
+        self.assertFalse(allowed_commons_binary(
+            "https://upload.wikimedia.org/wikipedia/commons/a.jpg?download=1"))
+        candidate={"source_provider":"wikimedia_commons","status":"needs_review",
+                   "license_code":"cc-by","idea_key":"commons-testing",
+                   "evidence":{"original_image_url":
+                       "https://upload.wikimedia.org/wikipedia/commons/a/ab/example.jpg",
+                       "mime":"image/jpeg"}}
+        fetch=MagicMock()
+        self.assertIsNone(archive_commons_image(candidate,get=fetch))
+        fetch.assert_not_called()
 
     @patch("growth.media_scout.commons_candidates",return_value=[])
     @patch("growth.meme_ideas.generate",return_value=None)
