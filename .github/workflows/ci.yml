@@ -28,6 +28,8 @@ jobs:
       - run: node --test tests/test_enna_dashboard_ui.cjs
       - run: node --test tests/test_office_kit.cjs
       - run: node --test tests/test_enna_link_hub.cjs
+      - run: node --check docs/enna/desk.js
+      - run: node --test tests/test_enna_desk_web.cjs
       - name: Check public Enna activity feed response
         run: |
           node - <<'NODE'
