@@ -184,6 +184,13 @@ def call_model(task, evidence, *, api=requests.post):
         "Đây là vấn đề thực tế cần giải quyết, không phải bài tập viết lời khuyên. "
         "Trả lời trực tiếp câu hỏi cụ thể, xem lại những câu hỏi trước để KHÔNG lặp lại. "
         "QUAN TRỌNG: Không được nhắc lại hoặc chép lại nguyên văn câu hỏi trong direct_answer. "
+        "Trường direct_answer KHÔNG được chứa chữ số hoặc con số thống kê; các dữ kiện định lượng "
+        "được viết bởi hệ thống từ nguồn đã xác minh. Tập trung giải thích vấn đề và hướng xử lý. "
+        "Không được kết luận chắc chắn không có CTA, Topic, meme, trả lời hay video chỉ từ những mẫu thiếu dữ liệu. "
+        "Không khẳng định lịch ngoài Metricool chưa xuất bản; trạng thái scheduled_external có thể đã đăng qua nhà cung cấp. "
+        "Không được suy ra follower tăng từ số lượt xem nếu không có số liệu chuyển đổi. "
+        "Bài đã yêu cầu topic_tag chưa đồng nghĩa đã hiển thị Topic thành công. "
+
         "Phần direct_answer phải giải thích nguyên nhân khả dĩ có điều kiện, điểm nghẽn cụ thể, "
         "và trả lời việc Enna tự thực hiện được ngay. Không được nói chỉ cần đăng đều là sẽ tăng follow. "
         "Bắt đầu như: Có 3 vấn đề đã thấy..., không mở đầu bằng cách trích câu của người dùng. "
@@ -203,7 +210,8 @@ def call_model(task, evidence, *, api=requests.post):
     resp=api("https://api.groq.com/openai/v1/chat/completions",
         headers={"Authorization":"Bearer "+key,"content-type":"application/json"},
         json={
-            "model":MODEL, "temperature":0.42, "max_completion_tokens":2600,
+            "model":MODEL, "temperature":0.36, "max_completion_tokens":3200,
+            "reasoning_effort":"high",
             "response_format":{"type":"json_schema","json_schema":{
                 "name":"enna_task_specific_reasoning_v2","strict":True,"schema":SCHEMA}},
             "messages":[{"role":"system","content":guidance},
@@ -217,6 +225,12 @@ def call_model(task, evidence, *, api=requests.post):
         raise ValueError("answer_not_specific_vietnamese")
     if is_prompt_echo(result["direct_answer"],task["request_text"]):
         raise ValueError("answer_echoes_user_question")
+    if re.search(r"\d",result["direct_answer"]):
+        raise ValueError("unsupported_numeric_claim_in_summary")
+    # Strong factual negations may be hallucinations when some provider events are
+    # missing from the ledger. They need confirmation, not confident prose.
+    if re.search(r"(không có|chưa có)\s+(?:meme|topic|chủ đề|cta|bình luận|video)",result["direct_answer"].lower()):
+        raise ValueError("unsupported_absolute_claim")
     findings=result.get("verified_findings")
     if not isinstance(findings,list) or not 1<=len(findings)<=4:
         raise ValueError("findings_invalid")
