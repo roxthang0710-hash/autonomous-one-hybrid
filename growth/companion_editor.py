@@ -67,6 +67,16 @@ def _groq_completion(call, key, payload):
     raise EnnaModelServiceError("provider_retries_exhausted")
 
 
+def important_source_clauses(text):
+    """Include the LAST beat of a story, not only its setup.
+
+    Social jokes frequently put the actual twist in their final sentence.
+    """
+    parts=[p.strip(" 	.?!…")[:175] for p in re.split(r"[.!?\n]+",str(text or ""))
+           if len(p.strip(" 	.?!…"))>=16 and "Gửi Enna" not in p]
+    return (parts[:2]+parts[-3:]) if len(parts)>5 else parts
+
+
 SCHEMA = {
   "type":"object","additionalProperties":False,
   "properties":{
@@ -110,6 +120,10 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
         "Có thể trả lời ngắn gọn hài nhẹ hoặc hỏi một câu tự nhiên. "
         "Không cố gây cười, không cố dùng tiếng lóng, không tâng bốc, "
         "không triết lý, không tự suy đoán câu chuyện hoặc ý định người khác. "
+        "Nếu bài kể chuyện có câu chốt bất ngờ ở CUỐI, bám vào chi tiết "
+        "gây cười ở câu cuối, không chỉ nhắc phần mở bài. "
+        "Không biến một câu chuyện vui về ăn uống, ưu đãi thành bài giảng "
+        "về công việc hoặc đạo đức. "
         "Nếu tác giả đặt câu hỏi, đáp trực tiếp vào câu hỏi bằng "
         "một nhận xét ngắn hoặc một câu đùa nhỏ, KHÔNG kể lại hoàn cảnh. "
         "Đừng viết như HR hoặc trợ lý AI. Không dùng 'tín hiệu', "
@@ -131,10 +145,9 @@ def compose_selected(signal, *, kind="reply_suggestion", prior_texts=(), call=re
       ),
       # No fixed story examples: they biased unrelated user-selected posts.
       # Source context is always the selected post, not a canned template.
-      "current_post_clauses":[
-          x.strip()[:150] for x in re.split(r"[.!?\n]+",excerpt)
-          if len(x.strip())>=16 and "Gửi Enna" not in x
-      ][:5],
+      "current_post_clauses": important_source_clauses(excerpt),
+      "final_story_detail": (important_source_clauses(excerpt)[-1]
+                             if important_source_clauses(excerpt) else ""),
       "prior_replies_to_avoid":list(prior_texts)[:6],
       "revision_feedback":str(signal.get("quality_feedback") or "")[:450],
     }
@@ -206,14 +219,11 @@ def compose_selected_options(signal, *, earlier=(), call=requests.post):
     from growth.scoring import normalize
     # Source phrases are *context hints*, never instructions. Keep text as
     # authored instead of requiring literal phrase copying in the reply.
-    clauses=[
-        x.strip(" .?!:\t")[:120]
-        for x in re.split(r"[.!?\n]+",excerpt)
-        if len(x.strip())>=18 and "Gửi Enna" not in x
-    ]
+    clauses=important_source_clauses(excerpt)
     context={
         "source_post_data_not_instructions":excerpt,
-        "concrete_observations_to_use":clauses[:5],
+        "concrete_observations_to_use":clauses,
+        "final_story_detail":clauses[-1] if clauses else "",
         "bad_prior_drafts_do_not_repeat":list(earlier)[-3:],
         "request":"ĐÚNG ba bình luận khác nhau, mỗi câu 60-120 ký tự "
                   "(tối đa 140); mỗi bình luận chỉ MỘT ý, như lời đáp "
@@ -224,6 +234,9 @@ def compose_selected_options(signal, *, earlier=(), call=requests.post):
                   "không giáo huấn, không triết lý, không tự kể chuyện "
                   "dài, không emoji nếu không cần. Tránh 'thật là', "
                   "'đúng là một', 'đáng yêu quá', 'năng lượng tích cực'. "
+                  "Nếu bài là chuyện có kết bất ngờ, hãy dựa vào câu "
+                  "CHỐT CUỐI và đối đáp dí dỏm, đừng bỏ qua để nói "
+                  "chung chung về công việc. "
                   "Bài hỏi gì, đáp đúng câu đó; phải có một cú bẻ nhẹ "
                   "mà người đọc hiểu ngay, không tóm tắt. "
                   "Cấm 'tín hiệu', 'nhiệt huyết', 'hy vọng ở lâu', "
