@@ -9,7 +9,7 @@
 <header class="topbar">
   <a class="brand" href="./">🐑 <span>ENNA</span></a>
   <span class="toplabel">Bàn điều hành Agent</span>
-  <div class="session"><span id="session-label">Chưa đăng nhập</span><button id="sign-in" type="button">Kết nối GitHub</button><button id="sign-out" type="button" hidden>Đăng xuất</button></div>
+  <div class="session"><span id="session-label">Chưa đăng nhập</span><button id="sign-in" type="button" aria-label="Kết nối Enna với GitHub">🔗 Kết nối GitHub</button><button id="sign-out" type="button" hidden>Đăng xuất</button></div>
 </header>
 <main>
 <section class="hero">
@@ -33,6 +33,10 @@
     <span class="eyebrow">ENNA · MULTI-AGENT DESK</span>
     <h1>Mình là Enna.<br><em>Hôm nay chúng ta làm gì?</em></h1>
     <p>Giao việc trực tiếp, theo dõi ba chuyên trách phân tích – chiến lược – kỹ thuật và nhận báo cáo từ dữ liệu thực. Không phải gửi GitHub Issue mỗi lần.</p>
+    <div class="hero-auth" id="hero-auth">
+      <button type="button" class="primary hero-connect" id="sign-in-hero">🔗 KẾT NỐI ENNA BẰNG GITHUB</button>
+      <p class="hero-auth-guide">Nhấn nút trên, đăng nhập bằng GitHub chủ dự án rồi quay lại bàn làm việc Enna.</p>
+    </div>
     <p class="live-line"><span id="pulse" class="pulse"></span><span id="connection">Đang khởi tạo Enna...</span></p>
   </div>
 </section>
