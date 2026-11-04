@@ -30,7 +30,7 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_MODEL: openai/gpt-oss-20b
+      GROQ_MODEL: openai/gpt-oss-120b
       THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
       THREADS_PUBLISH_ENABLED: ${{ secrets.THREADS_PUBLISH_ENABLED }}
       THREADS_AUTO_ENGAGE_ENABLED: ${{ secrets.THREADS_AUTO_ENGAGE_ENABLED }}
