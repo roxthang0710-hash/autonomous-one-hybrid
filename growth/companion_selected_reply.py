@@ -303,7 +303,9 @@ def can_send(text, selected, *, target, semantic_override=False):
             and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
-            "mua ngay", "giam gia")))
+            "mua ngay"))
+            and ("giam gia" not in normalized or
+                 "giam gia" in original_normalized))
 
 
 def process(event, *, db=None, read=thread_request, create=compose_selected,
