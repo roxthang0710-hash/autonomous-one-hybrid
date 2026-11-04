@@ -52,6 +52,11 @@ jobs:
         if: failure()
         run: |
           gh issue comment "${{ github.event.issue.number }}" --body "Enna đã dừng trước khi đăng vì bộ kiểm thử biên tập chưa đạt. **Không có bình luận Threads nào được gửi.** Xem lỗi ở GitHub Actions: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}. Enna cần sửa bộ kiểm thử trước khi tiếp tục."
+      - name: Self-heal selected issue without publishing
+        if: github.event_name == 'issue_comment' && github.event.comment.body == '/enna heal'
+        env:
+          ENNA_HEAL_ISSUE: ${{ github.event.issue.number }}
+        run: python -m growth.companion_autorecover
       - name: Evaluate this one owner-selected Threads post
         env:
           ENNA_OWNER_SELECTED_DIRECT_REPLY_TRIAL: 'true'
