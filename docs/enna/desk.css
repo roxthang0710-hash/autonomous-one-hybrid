@@ -13,3 +13,11 @@ textarea{width:100%;border:1px solid #d6cbbf;border-radius:13px;padding:14px;res
 @media(prefers-reduced-motion:reduce){.mascot,.mascot .arm,.mascot .spark{animation:none}}
 
 .research-form{display:flex;gap:10px;margin:12px 0 17px}.research-form input{flex:1;min-width:0;border:1px solid #d6cbbf;border-radius:12px;padding:12px}.research-form input:focus{outline:2px solid #8fb18a}.research-pane .muted{line-height:1.6}.research-results h3{margin:12px 0 4px;font-size:14px}.research-results p{margin:5px 0}.research-results ul{padding-left:22px}@media(max-width:640px){.research-form{flex-direction:column}}
+
+/* Connection must be obvious at any viewport size, not hidden in the header. */
+.hero-auth{margin-top:18px;padding:15px 17px;background:#fffdfa;border:2px solid #a1c29f;border-radius:16px;max-width:560px;box-shadow:0 4px 18px #426d501c}
+.hero-connect{font-size:15px!important;padding:15px 24px!important;background:#286c42!important;color:#fff!important;box-shadow:0 4px 12px #2359373b;min-height:50px;letter-spacing:.01em}
+.hero-auth-guide{margin:11px 0 0!important;font-size:12px;color:#4b5f47!important}
+.hero-auth.connected{display:none}
+#sign-in{background:#2e6744;color:#fff;border-color:#2e6744;font-size:14px;padding:11px 14px;min-height:43px;white-space:nowrap}
+@media(max-width:780px){.hero{flex-wrap:wrap;align-items:flex-start}.hero-copy{min-width:0;flex:1 1 100%}.hero-auth{margin:14px 0 0}.hero-connect{width:100%}.session #sign-in{font-size:12px;padding:9px 10px}}
