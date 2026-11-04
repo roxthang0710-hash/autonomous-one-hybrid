@@ -561,6 +561,15 @@ class SelectionTests(unittest.TestCase):
                   "một tín hiệu gắn bó lâu dài với công ty đó.")
         self.assertFalse(can_send(invented,source,target=parse_threads_url(URL)))
 
+    def test_selected_future_tenure_question_rejects_certain_prediction(self):
+        post=("Mới có bạn Gen Z vào công ty, đã đem đồ để decor bàn "
+              "làm việc. Liệu đó có nghĩa bạn sẽ gắn bó lâu dài "
+              "hay nghỉ việc sớm không nhỉ?")
+        bad=("Bạn Gen Z đã mang đồ decor bàn làm việc nên chắc chắn "
+             "sẽ không muốn rời đi đâu. Rõ là có nhiều ý tưởng "
+             "sáng tạo, ở lại công ty lâu thôi!")
+        self.assertFalse(can_send(bad,post,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
