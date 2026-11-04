@@ -4,7 +4,7 @@ const KEY="sb_publishable_sJxwXdpQPn4FrrGZPusJmA_Xy5TI0-H";
 const API=SUPABASE+"/functions/v1/enna-desk";
 const supabase=createClient(SUPABASE,KEY,{auth:{flowType:"pkce",detectSessionInUrl:true,persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id);
-let session=null,tasks=[],notes=[],currentTimer=null,busy=false;
+let session=null,tasks=[],notes=[],research=[],currentTimer=null,busy=false;
 const kindLabels={warroom:"Phòng điều hành",report:"Báo cáo",plan:"Chiến lược",diagnose:"Chẩn đoán",ideas:"Ý tưởng"};
 const formatDate=s=>{if(!s)return "";const d=new Date(s);return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("vi-VN",{timeZone:"Asia/Ho_Chi_Minh",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}).format(d):""};
 const el=(tag,text,cls)=>{const node=document.createElement(tag);if(text!=null)node.textContent=String(text);if(cls)node.className=cls;return node;};
@@ -62,6 +62,29 @@ function renderTasks(){
   parent.append(node);
  }
 }
+function renderResearch(){
+ const parent=$("research-list");parent.replaceChildren();
+ if(!research.length){parent.append(el("p","Chưa có nghiên cứu được gửi từ Enna Desk.","muted"));return;}
+ for(const run of research.slice(0,12)){
+  const card=el("article",null,"task research-results");const heading=el("div",null,"task-head");
+  heading.append(el("strong",run.topic||"Nghiên cứu"),el("small",formatDate(run.created_at)));
+  card.append(heading,el("span",run.status==="completed"?"Đã hoàn thành":run.status==="failed"?"Gặp lỗi":run.status==="pending"?"Chờ worker":"Đang thực hiện","tag"+(run.status==="failed"?" fail":run.status==="completed"?"":" wait")));
+  if(Array.isArray(run.proposals)&&run.proposals.length){
+   for(const p of run.proposals.slice(0,3)){
+    const proposal=p.proposal||{};
+    const details=el("details");details.append(el("summary","Xem phương án nghiên cứu ("+(p.approval_status||"chờ duyệt")+")"));
+    for(const k of ["title","target_customer","problem_hypothesis","zero_cost_experiment","success_metric","risks","recommended_next_step"]){
+     const v=proposal[k];if(v==null)continue;
+     const text=Array.isArray(v)?v.join("; "):String(v);
+     details.append(el("p",k.replaceAll("_"," ")+": "+text.slice(0,900)));
+    }
+    card.append(details);
+   }
+  }else card.append(el("p","Chưa có đề xuất được xác nhận từ worker. Theo dõi trạng thái; không tự gửi lại nếu yêu cầu chưa rõ kết quả.","muted"));
+  parent.append(card);
+ }
+}
+
 function renderNotes(){
  const parent=$("notification-list");parent.replaceChildren();
  const active=notes.filter(n=>!n.acknowledged_at);
@@ -80,8 +103,9 @@ async function refresh(force=false){
  try{
   const data=await api("GET");
   tasks=Array.isArray(data.tasks)?data.tasks:[];
+  research=Array.isArray(data.research)?data.research:[];
   notes=Array.isArray(data.notifications)?data.notifications:[];
-  renderStats(data.stats||{});renderTasks();renderNotes();
+  renderStats(data.stats||{});renderTasks();renderNotes();renderResearch();
   status("Enna đã đồng bộ • "+new Intl.DateTimeFormat("vi-VN",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Ho_Chi_Minh"}).format(new Date()),true);
   if(force)error("");
  }catch(e){status("Chưa đồng bộ: "+e.message,false);if(force)error(e.message);}
@@ -91,6 +115,7 @@ function sessionUi(){
  const logged=!!session;
  $("sign-in").hidden=logged;$("sign-out").hidden=!logged;
  $("submit").disabled=!logged;
+ $("research-submit").disabled=!logged;
  $("session-label").textContent=logged?"Đã xác thực chủ Enna":"Chưa đăng nhập";
  if(!logged){clearInterval(currentTimer);currentTimer=null;status("Chờ chủ dự án đăng nhập",false);$("task-list").replaceChildren(el("p","Vui lòng đăng nhập để giao việc.","muted"));return;}
  refresh(true);
@@ -105,6 +130,22 @@ $("sign-in").addEventListener("click",async()=>{
 });
 $("sign-out").addEventListener("click",async()=>{await supabase.auth.signOut();session=null;sessionUi();});
 $("refresh").addEventListener("click",()=>refresh(true));
+$("research-form").addEventListener("submit",async e=>{
+ e.preventDefault();if(!session||busy)return;
+ const topic=$("research-topic").value.trim();
+ if(topic.length<3||topic.length>140){error("Chủ đề nghiên cứu cần 3–140 ký tự.");return;}
+ if(/(?:mật khẩu|password|api[_-]?key|token|otp|https?:)/i.test(topic)){error("Không gửi thông tin riêng tư hoặc URL qua nhiệm vụ nghiên cứu.");return;}
+ const btn=$("research-submit");btn.disabled=true;btn.textContent="Đang giao worker...";error("");
+ const request_key=crypto.randomUUID();
+ try{
+  const result=await api("POST",{action:"run_research",topic,request_key});
+  if(result.dispatch_status==="uncertain_do_not_retry")error("Máy chủ không xác nhận được lệnh nghiên cứu. Không gửi lại cùng chủ đề ngay; hãy kiểm tra nhật ký.");
+  else if(result.queued){$("research-topic").value="";status("Enna đã nhận nghiên cứu. Worker đang xử lý, kết quả sẽ xuất hiện trong nhật ký.",true);}
+  else error("Đã tạo yêu cầu nhưng chưa xác minh worker chạy. Kiểm tra nhật ký, không gửi lại.");
+  await refresh(true);
+ }catch(e){error("Không bắt đầu được nghiên cứu: "+e.message);}
+ finally{btn.disabled=!session;btn.textContent="Chạy nghiên cứu";}
+});
 $("task-form").addEventListener("submit",async event=>{
  event.preventDefault();if(!session||busy)return;
  const txt=$("prompt").value.trim(),kind=document.querySelector('input[name="kind"]:checked')?.value;
