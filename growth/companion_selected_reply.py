@@ -194,7 +194,7 @@ def has_concrete_overlap(reply, original):
 
 
 def can_send(text, selected, *, target, semantic_override=False):
-    if not isinstance(text, str) or not 60 <= len(text.strip()) <= 380:
+    if not isinstance(text, str) or not 60 <= len(text.strip()) <= 140:
         return False
     normalized = normalize(text)
     original_normalized=normalize(selected)
@@ -263,11 +263,17 @@ def can_send(text, selected, *, target, semantic_override=False):
     # contributing a distinctive observation. One draft revision is permitted.
     if any(phrase in normalized for phrase in (
         "that la mot khoanh khac", "dung la mot cau chuyen",
-        "mot khoanh khac doi thuong ngot ngao")):
+        "mot khoanh khac doi thuong ngot ngao",
+        "nang luong tich cuc", "chi can mot nu cuoi",
+        "truyen cam hung", "khoanh khac nho", "mong rang",
+        "that dang yeu", "that y nghia", "bai hoc quy gia",
+        "cuoc song doi khi", "ban that tuyet voi",
+        "rat dang tran trong")):
         return False
     return ((semantic_override or has_concrete_overlap(text, selected))
             and suitable_reply(text, selected, require_niche=False,
-                               require_overlap=not semantic_override)
+                               require_overlap=not semantic_override,
+                               max_chars=140)
             and not any(
         forbidden in normalize(text) for forbidden in (
             "follow", "theo doi", "ghé trang", "link bio", "tin nhan rieng",
@@ -385,9 +391,9 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
                 "niche": verdict["niche"],
                 "quality_feedback": (
                     "Bản trước không đủ sát bài hoặc chưa góp được góc "
-                    "nhìn mới. Viết một bình luận KHÁC, giữ đúng hai "
-                    "chi tiết riêng của bài, phản hồi đúng cảm xúc. "
-                    "Không sao chép đoạn gốc và không bình luận sáo rỗng."
+                    "nhìn mới. Viết MỘT câu thật NGẮN (60-120 ký tự), "
+                    "bắt đúng MỘT chi tiết của bài để thêm một ý riêng. "
+                    "Không tóm tắt, triết lý hay gượng gây hài."
                 ),
             }, kind="reply_suggestion", prior_texts=(reply,))
             if second.get("should_reply") is False:
