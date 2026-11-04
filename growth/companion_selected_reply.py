@@ -231,7 +231,9 @@ def can_send(text, selected, *, target, semantic_override=False):
     # One-sentence answers naturally reuse topic words; don't force filler
     # merely to hit an arbitrary proportion of new vocabulary.
     minimum_novelty = 0.23 if len(normalized) <= 140 else 0.33
-    if novelty < minimum_novelty or copied_pairs > 0.38:
+    # Quoting one small source phrase is natural in a short reply; full
+    # repetition is still blocked by novelty and longest-match checks.
+    if novelty < minimum_novelty or copied_pairs > 0.48:
         return False
     # An open question about another person's future is not evidence of their
     # intention or gender. Don't invent certainty about employment tenure.
