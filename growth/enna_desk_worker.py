@@ -194,8 +194,16 @@ def grounded_answer(task, evidence, actions):
     snapshots=evidence.get("follower_snapshots") or []
     latest=next((x for x in snapshots if isinstance(x.get("followers"),int)),None)
     if latest:
-        point=f"Metricool gần nhất ghi nhận {latest['followers']} follower ngày {latest.get('measured_on')},"
-        point+=" nhưng chưa có dữ liệu quy trực tiếp từng lượt theo dõi cho một bài cụ thể."
+        point=f"Metricool gần nhất ghi nhận {latest['followers']} follower ngày {latest.get('measured_on')}."
+        recent=[x for x in snapshots[:2] if isinstance(x.get("profile_views"),int)]
+        if recent:
+            trends="; ".join(
+                f"{x.get('measured_on')}: {x['profile_views']} lượt xem hồ sơ, "
+                f"{x.get('new_followers','chưa rõ')} follower mới"
+                for x in recent
+            )
+            point+=f" Dữ liệu đáng kiểm tra: {trends}."
+        point+=" Đây chưa phải bằng chứng từng lượt theo dõi đến trực tiếp từ lượt xem hồ sơ."
     else:
         point="Chưa có số follower đủ tin cậy để kết luận nguyên nhân tăng trưởng."
     actions=prioritize_actions(task,actions)
