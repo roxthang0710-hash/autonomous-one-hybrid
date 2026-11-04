@@ -44,6 +44,11 @@ jobs:
               await new Promise(resolve=>setTimeout(resolve,1500));
             }
             assert.match(html,/id="task-form"/,'Live Enna Desk must render task form');
+            assert.match(html,/id="research-form"/,'Live Enna Desk must expose research execution');
+            const scriptResponse=await fetch(page.replace('desk.html','desk.js'),{signal:AbortSignal.timeout(12000)});
+            assert.equal(scriptResponse.status,200,'Live Enna Desk script must exist');
+            const js=await scriptResponse.text();
+            assert.match(js,/run_research/,'Live Enna Desk script must support research execution');
             const api=await fetch(endpoint,{signal:AbortSignal.timeout(12000)});
             assert.ok([401,403].includes(api.status),'Unauthenticated desk API must refuse access');
             console.log('Live Enna Desk accessible; private API blocked unauthenticated requests');
