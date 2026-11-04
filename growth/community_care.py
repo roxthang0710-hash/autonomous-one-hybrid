@@ -152,7 +152,7 @@ def scan(db=None, *, now=None, read=thread_request, generate=answer_question):
     verify_meta_account(token,expected)
     posts=db.request("GET","/threads_posts",params={
         "select":"id,platform_post_id,text_content,published_at,status",
-        "status":"eq.posted","order":"published_at.desc","limit":"12"})
+        "status":"eq.posted","order":"published_at.desc","limit":"40"})
     if not isinstance(posts,list):return "source_unavailable"
     used=db.request("GET","/enna_community_attempts",params={
         "select":"target_reply_id,author_fingerprint",
@@ -161,7 +161,10 @@ def scan(db=None, *, now=None, read=thread_request, generate=answer_question):
     used_posts={str(r.get("target_reply_id")) for r in used}
     authors={str(r.get("author_fingerprint")) for r in used}
     scanned=0
-    for own in posts[:8]:
+    # Review up to twenty recent owned posts for authentic questions.
+    # Still publish at most one reply/day via atomic claim, so broader discovery
+    # never increases the allowed engagement volume.
+    for own in posts[:20]:
         post_id=str(own.get("platform_post_id") or "")
         when=parse_time(own.get("published_at"))
         if not post_id.isdecimal() or not when or now-when>timedelta(days=7):
