@@ -70,6 +70,6 @@ def tightly_grounded_fallbacks(source):
         return [
             "Hết mã giảm giá là em cập nhật CV luôn, lịch nhảy việc chạy theo voucher mất rồi =)))",
             "Đi làm theo hạn sử dụng mã giảm giá: hết ưu đãi là đến kỳ chuyển chỗ =)))",
-            "Lương chưa kịp hỏi mà số mã giảm giá còn lại đã quyết định nơi ứng tuyển tiếp theo =)))",
+            "Em này chuyển chỗ làm nhanh hơn vòng đời mã giảm giá, bộ phận tuyển dụng chắc bất ngờ =)))",
         ]
     return []
