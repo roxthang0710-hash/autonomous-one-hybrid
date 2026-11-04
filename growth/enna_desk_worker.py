@@ -276,7 +276,7 @@ def call_model(task, evidence, *, api=requests.post):
     if not isinstance(result.get("direct_answer"),str):
         raise ValueError("answer_not_text")
     findings=result.get("verified_findings")
-    if not isinstance(findings,list) or not 1<=len(findings)<=4:
+    if not isinstance(findings,list) or not 1<=len(findings)<=5:
         raise ValueError("findings_invalid")
     actions=result.get("actions")
     if not isinstance(actions,list) or not 3<=len(actions)<=5:
