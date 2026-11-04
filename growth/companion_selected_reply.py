@@ -173,16 +173,15 @@ COMMON_CONTEXT_WORDS = frozenset({
 def has_concrete_overlap(reply, original):
     """Require distinctive actual post details, not generic positivity.
 
-    Two source-specific words must recur, plus a shared phrase of two words
-    (or at least three distinct specifics). Works for hobbies, life and memes
-    without a single mandatory niche keyword.
+    A compact reply may anchor in just one distinctive phrase from the
+    original post. Semantic judging handles paraphrases, not word stuffing.
     """
     a = normalize(original).split()
     b = normalize(reply).split()
     selected = {t for t in a if len(t)>=4 and t not in COMMON_CONTEXT_WORDS}
     repeated = selected.intersection(
         t for t in b if len(t)>=4 and t not in COMMON_CONTEXT_WORDS)
-    if len(repeated)<2:
+    if len(repeated)<1:
         return False
     def pairs(seq):
         return {" ".join(seq[i:i+2]) for i in range(len(seq)-1)
