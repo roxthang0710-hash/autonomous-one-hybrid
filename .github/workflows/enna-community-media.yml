@@ -53,6 +53,10 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Log independent audience-care start
         run: python -m growth.activity_log growth started community_started
+      - name: Verify live-profile audit never writes or invents data
+        run: python -m unittest discover -s tests -p 'test_profile_conversion.py' -v
+      - name: Audit official owner bio and send actionable profile alert
+        run: python -m growth.profile_conversion
       - name: Respond to at most one authentic, unanswered audience question
         id: care
         run: python -m growth.community_care
@@ -72,6 +76,7 @@ jobs:
           echo 'Community Care answers only suitable real questions on own posts, if Meta reply scopes work.' >> "$GITHUB_STEP_SUMMARY"
           echo 'External public-post keyword searches remain in Growth Radar, subject to official Meta App Review.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Owned replies are max 1/day and share the atomic 3/day total cap with external replies; zero is normal.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'The profile auditor reads only official Meta bio, prepares a ready-to-copy bio, and never modifies an account profile.' >> "$GITHUB_STEP_SUMMARY"
 
   visual:
     if: github.event_name != 'issues'
