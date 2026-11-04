@@ -552,6 +552,15 @@ class SelectionTests(unittest.TestCase):
         publish.assert_not_called()
         db.request.assert_not_called()
 
+    def test_generated_comment_cannot_invent_theft_risk(self):
+        source=("Team mình mới có bé Gen Z vào làm. Hôm nay thấy ẻm "
+                "mang đồ để decor bàn làm việc rồi. Có phải dấu hiệu "
+                "bạn ấy muốn gắn bó lâu dài với công ty không?")
+        invented=("Nhìn bé Gen Z decor bàn làm việc, sếp phải mua thêm "
+                  "tủ đựng đồ để tránh trộm chỗ làm. Có lẽ đây là "
+                  "một tín hiệu gắn bó lâu dài với công ty đó.")
+        self.assertFalse(can_send(invented,source,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
