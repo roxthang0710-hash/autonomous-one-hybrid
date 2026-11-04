@@ -7,7 +7,9 @@ completed only after a validated model response has actually been stored.
 import json
 import os
 import re
+from difflib import SequenceMatcher
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from agent import Database
 
 import requests
@@ -47,6 +49,41 @@ def is_vi(sentence):
     return isinstance(sentence, str) and bool(re.search(
         r"[àáạảãăắặằẳẵâấậầẩẫđèéẹẻẽêếệềểễìíịỉĩòóọỏõôốộồổỗơớợờởỡùúụủũưứựừửữỳýỵỷỹ]",
         sentence.lower()))
+
+
+def is_prompt_echo(answer, question):
+    """Reject answers that merely restate the user's words."""
+    def clean(x):
+        return re.sub(r"[^a-z0-9à-ỹđ ]", " ", x.lower()).strip()
+    a,b=clean(answer),clean(question)
+    if not a or not b:
+        return True
+    ratio=SequenceMatcher(None,a,b).ratio()
+    # Prefix/sentence repetition matters even when boilerplate is added.
+    return ratio >= 0.66 or (a.startswith(b[:min(90,len(b))]) and len(a)<len(b)*2)
+
+
+def verified_facts(evidence):
+    """Facts come from source rows, not language-model guesses."""
+    facts=[]
+    snapshots=evidence.get("follower_snapshots") or []
+    valid=[s for s in snapshots if isinstance(s.get("followers"),int) and s["followers"]>=0]
+    if valid:
+        f=valid[0]
+        age=f.get("age_days")
+        freshness=" (dữ liệu quá hạn)" if age is None or age>1 else " (mốc mới nhất được lưu)"
+        facts.append(f"Supabase ghi nhận {f['followers']} follower ngày {f.get('measured_on','không rõ')}{freshness}; đây không nhất thiết là số hiện tại.")
+    else:
+        facts.append("Chưa có số follower được xác minh trong dữ liệu đang đọc.")
+    states=evidence.get("threads_status_counts") or {}
+    facts.append(f"Ledger Threads: {states.get('posted',0)} ghi nhận đã đăng, {states.get('scheduled_external',0)} lên lịch ngoài và {states.get('queued',0)} đang chờ; chưa đủ để suy ra follower mới.")
+    posts=evidence.get("top_measured_posts") or []
+    if posts:
+        post=posts[0]
+        facts.append(f"Bài có số lượt xem cao nhất trong mẫu: {post.get('views','chưa rõ')} view, {post.get('likes','chưa rõ')} lượt thích; chưa xác minh lượt theo dõi do bài này tạo ra.")
+    media=evidence.get("media_ready_by_type") or {}
+    facts.append(f"Kho media: {media.get('original_meme',0)} meme gốc có tệp sẵn sàng, {media.get('original_video',0)} video có tệp sẵn sàng.")
+    return facts[:4]
 
 
 def eligible(row):
@@ -99,16 +136,18 @@ def evidence_snapshot(db, current):
     events = safe_get(db,"enna_activity_events",
         select="kind,code,status,occurred_at",order="occurred_at.desc",limit="20")
     now=datetime.now(timezone.utc)
+    local_today=now.astimezone(ZoneInfo("Asia/Ho_Chi_Minh")).date()
     growth_out=[]
     for x in growth[:6]:
         day=x.get("measured_on")
         try:
-            age=(now.date()-datetime.fromisoformat(str(day)).date()).days
+            age=(local_today-datetime.fromisoformat(str(day)).date()).days
         except (ValueError,TypeError):
             age=None
         growth_out.append({**x,"age_days":age})
     return {
         "checked_at":now.isoformat(),
+        "local_date":local_today.isoformat(),
         "follower_snapshots":growth_out,
         "threads_status_counts":{s:sum(x.get("status")==s for x in threads)
              for s in ("posted","scheduled_external","queued","uncertain")},
@@ -143,6 +182,10 @@ def call_model(task, evidence, *, api=requests.post):
         "tiếng Việt tự nhiên (không dùng tiếng Anh trong phần câu trả lời). "
         "Đây là vấn đề thực tế cần giải quyết, không phải bài tập viết lời khuyên. "
         "Trả lời trực tiếp câu hỏi cụ thể, xem lại những câu hỏi trước để KHÔNG lặp lại. "
+        "QUAN TRỌNG: Không được nhắc lại hoặc chép lại nguyên văn câu hỏi trong direct_answer. "
+        "Phần direct_answer phải giải thích nguyên nhân khả dĩ có điều kiện, điểm nghẽn cụ thể, "
+        "và trả lời việc Enna tự thực hiện được ngay. Không được nói chỉ cần đăng đều là sẽ tăng follow. "
+        "Bắt đầu như: Có 3 vấn đề đã thấy..., không mở đầu bằng cách trích câu của người dùng. "
         "Phân tích dựa trên bằng chứng; phân biệt dữ liệu cũ, thiếu dữ liệu và kết quả thật. "
         "Nêu ít nhất 2 hành động ngoài đăng bài: có thể là cải thiện hồ sơ/bio, xây cộng đồng "
         "chính thống, nội dung gốc có tính chia sẻ, hợp tác tự nguyện, chủ động phân phối vào Topic, "
@@ -171,6 +214,8 @@ def call_model(task, evidence, *, api=requests.post):
         raise ValueError("invalid_schema")
     if not is_vi(result.get("direct_answer")) or not 80<=len(result["direct_answer"])<=1300:
         raise ValueError("answer_not_specific_vietnamese")
+    if is_prompt_echo(result["direct_answer"],task["request_text"]):
+        raise ValueError("answer_echoes_user_question")
     findings=result.get("verified_findings")
     if not isinstance(findings,list) or not 1<=len(findings)<=4:
         raise ValueError("findings_invalid")
@@ -185,6 +230,9 @@ def call_model(task, evidence, *, api=requests.post):
         if not all(isinstance(a.get(k),str) and 8<=len(a[k])<=330
                    for k in ("action","rationale","success_check")):
             raise ValueError("action_not_concrete")
+    outside_posts=sum(not re.search(r"\bđăng\s+(?:bài|threads|nội dung)\b",a["action"].lower()) for a in actions)
+    if outside_posts < 2:
+        raise ValueError("lacks_nonposting_growth_actions")
     summaries=result.get("role_summaries")
     if not isinstance(summaries,dict) or set(summaries)!={"analyst","strategist","operator"}:
         raise ValueError("role_summaries_invalid")
@@ -203,7 +251,7 @@ def upgrade(task, evidence, model_call=call_model):
         "request":task["request_text"],
         "evidence":evidence,
         "direct_answer":reply["direct_answer"],
-        "verified_findings":reply["verified_findings"],
+        "verified_findings":verified_facts(evidence),
         "action_plan":reply["actions"],
         "unknowns":reply["unknowns"],
         "roles":[{"role":role,"status":"completed","summary":reply["role_summaries"][role],
