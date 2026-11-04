@@ -58,6 +58,7 @@ jobs:
           ENNA_HEAL_ISSUE: ${{ github.event.issue.number }}
         run: python -m growth.companion_autorecover
       - name: Evaluate this one owner-selected Threads post
+        if: github.event_name != 'issue_comment' || github.event.comment.body != '/enna heal'
         env:
           ENNA_OWNER_SELECTED_DIRECT_REPLY_TRIAL: 'true'
         run: python -m growth.companion_selected_reply
