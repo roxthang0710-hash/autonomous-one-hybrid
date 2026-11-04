@@ -66,7 +66,17 @@ def load_snapshot(db):
 def summarize(kind, snapshot):
     f = snapshot["followers"]
     last = next((x for x in f if type(x.get("followers")) is int), None)
-    metric = (str(last["followers"]) + " follower (" + str(last["measured_on"]) + ")") if last else "chưa có số liệu xác minh"
+    metric = "chưa có số liệu xác minh"
+    if last:
+        metric = str(last["followers"]) + " follower (" + str(last["measured_on"]) + ")"
+        try:
+            measured = datetime.fromisoformat(str(last["measured_on"])).date()
+            local_today = datetime.now(timezone.utc).astimezone(
+                __import__("zoneinfo").ZoneInfo("Asia/Ho_Chi_Minh")).date()
+            if (local_today - measured).days > 1:
+                metric += " — DỮ LIỆU CŨ, cần đồng bộ Meta/Metricool"
+        except (ValueError, TypeError):
+            metric += " — chưa xác minh thời điểm đo"
     content = snapshot["content"]
     queued = sum(x.get("status") == "queued" for x in content)
     external = sum(x.get("status") == "scheduled_external" for x in content)
@@ -152,7 +162,7 @@ def response(kind, request, stats, tailored=None):
         "- Follower: " + stats["metrics"],
         "- Threads (mẫu tối đa 60): " + str(stats["posted_in_sample"]) + " ghi nhận đã đăng, " +
           str(stats["queued"]) + " chờ API, " + str(stats["scheduled_external"]) + " đặt lịch ngoài.",
-        "- Topic native đã ghi nhận trong mẫu: " + str(stats["native_topics_verified_in_ledger"]),
+        "- Bài đăng có yêu cầu native Topic trong mẫu: " + str(stats["native_topics_verified_in_ledger"]) + " (chưa xác minh nhãn Topic hiển thị ngoài Threads)",
         "- Meme gốc sẵn sàng: " + str(stats["ready_memes"]) + "; video hoàn chỉnh: " + str(stats["ready_videos"]),
         "- Lỗi gần đây: " + (", ".join(stats["recent_failed_codes"]) or "không thấy trong mẫu 18 sự kiện"),
         "",
