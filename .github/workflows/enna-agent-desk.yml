@@ -1,0 +1,45 @@
+name: Enna — Direct Agent Desk
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: enna-desk-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  answer:
+    if: >-
+      github.event.issue.user.login == github.repository_owner &&
+      github.event.sender.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'enna-task:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Test request authentication and formatting
+        run: python -m unittest discover -s tests -p 'test_agent_desk.py' -v
+      - name: Prepare Enna's evidence-based answer
+        run: python -m growth.agent_desk > "$RUNNER_TEMP/enna_answer.md"
+      - name: Return answer to owner-selected issue
+        run: gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/enna_answer.md"
+      - name: Explain safety limits
+        if: always()
+        run: |
+          echo 'Enna Desk only reads bounded Supabase status and replies to the owner-created GitHub Issue.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No Meta social write, extension click, purchase, or secret content is performed here.' >> "$GITHUB_STEP_SUMMARY"
