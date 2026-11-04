@@ -115,19 +115,28 @@ function sessionUi(){
  const logged=!!session;
  $("sign-in").hidden=logged;$("sign-out").hidden=!logged;
  $("submit").disabled=!logged;
+ $("sign-in-hero").hidden=logged;
+ $("hero-auth").classList.toggle("connected",logged);
  $("research-submit").disabled=!logged;
  $("session-label").textContent=logged?"Đã xác thực chủ Enna":"Chưa đăng nhập";
  if(!logged){clearInterval(currentTimer);currentTimer=null;status("Chờ chủ dự án đăng nhập",false);$("task-list").replaceChildren(el("p","Vui lòng đăng nhập để giao việc.","muted"));return;}
  refresh(true);
  if(!currentTimer)currentTimer=setInterval(()=>{if(!document.hidden)refresh();},30000);
 }
-$("sign-in").addEventListener("click",async()=>{
- error("");try{
+async function beginOwnerSignIn(){
+ error("");
+ try{
   const next=location.origin+location.pathname;
+  status("Đang mở GitHub để kết nối Enna...",false);
   const {error:e}=await supabase.auth.signInWithOAuth({provider:"github",options:{redirectTo:next,scopes:"read:user"}});
   if(e)throw e;
- }catch(e){error("Không thể mở GitHub OAuth: "+e.message);}
-});
+ }catch(e){
+   status("Chưa kết nối được với GitHub",false);
+   error("Không mở được đăng nhập GitHub: "+(e?.message||"Không rõ lỗi")+". Kiểm tra trình duyệt có chặn chuyển hướng không.");
+ }
+}
+$("sign-in").addEventListener("click",beginOwnerSignIn);
+$("sign-in-hero").addEventListener("click",beginOwnerSignIn);
 $("sign-out").addEventListener("click",async()=>{await supabase.auth.signOut();session=null;sessionUi();});
 $("refresh").addEventListener("click",()=>refresh(true));
 $("research-form").addEventListener("submit",async e=>{
