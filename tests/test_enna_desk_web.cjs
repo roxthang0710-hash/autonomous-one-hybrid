@@ -12,11 +12,15 @@ test("Owner desk is reachable from public Enna dashboard",()=>{
  assert.match(home,/href="desk\.html"/);
  assert.match(html,/<script type="module" src="\.\/desk\.js"/);
  assert.match(html,/id="task-form"/);
+ assert.match(html,/id="research-form"/);
+ assert.match(html,/id="research-list"/);
 });
 test("Desk supports independent signed-in task submission",()=>{
  assert.match(js,/supabase\.auth\.signInWithOAuth/);
  assert.match(js,/provider:"github"/);
  assert.match(js,/request_key:key/);
+ assert.match(js,/action:"run_research"/);
+ assert.match(js,/renderResearch\(\)/);
  assert.match(js,/functions\/v1\/enna-desk/);
  assert.doesNotMatch(js,/REQUEST_BASE64URL|issues\/new|github-actions\[bot\]/);
 });
