@@ -72,6 +72,11 @@ jobs:
             assert.equal(r.status,200,'Enna Pages must respond 200');
             assert.match(contentType,/text\/html/i,'Browser must render HTML, not raw text source');
             assert.match(html,/id="sign-in-hero"/,'Owner sign-in button must be visible');
+            assert.match(html,/id="copy-profile-bio"/,'Published Enna Desk must show bio optimization action');
+            const links=await fetch('https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/links/',{signal:AbortSignal.timeout(18000),cache:'no-store'});
+            assert.equal(links.status,200,'Published link-in-bio must be accessible');
+            assert.match(links.headers.get('content-type')||'',/text\/html/i);
+            assert.match(await links.text(),/Theo dõi Đồ Hay Đi Làm trên Threads/,'Published link-in-bio must invite real follower growth');
             const js=await fetch(new URL('desk.js',page),{signal:AbortSignal.timeout(18000)});
             const scriptType=js.headers.get('content-type')||'';
             const body=await js.text();
