@@ -146,6 +146,25 @@ class SelfHealingTests(unittest.TestCase):
         self.assertEqual(outcome["issue"],48)
         gh.comments.assert_called_once_with(48)
 
+    def test_model_failures_use_source_factual_joke_not_fake_work_ethic(self):
+        """A nonposting fall-back keeps the author's real last-line twist."""
+        source=("Một sinh viên xin nghỉ bên pizza vì đã dùng hết mã "
+                "giảm giá để ăn và muốn chuyển chỗ làm mới.")
+        target={"username":"example",
+                "url":"https://www.threads.com/@example/post/DfSTHg2k_oi"}
+        with patch("growth.companion_autorecover.decode_issue_body",
+                   return_value=(target,source,{"niche":"hài hước"})):
+            failed_writer=MagicMock(side_effect=ValueError("model JSON"))
+            result=make_recovery_draft(sample_issue(),
+                 propose=lambda *a,**kw:[],
+                 writer=failed_writer,
+                 reviewer=lambda original,reply: True)
+        self.assertIsNotNone(result)
+        self.assertIn("mã giảm giá",result["draft"])
+        self.assertNotIn("chăm chỉ",result["draft"])
+        self.assertIn("cv",result["draft"].lower())
+        self.assertEqual(result["model"],"fact_grounded_fallback")
+
     def test_groq_schema_failure_cannot_cause_meta_post(self):
         # Wrongly shaped issue is rejected locally, not sent to an API.
         with self.assertRaises(ValueError):
