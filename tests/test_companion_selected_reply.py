@@ -14,15 +14,14 @@ KNOWN_ID="3989132369199067993"
 TEXT=("Một bảng tính Excel dùng chung mà mỗi đồng nghiệp ghi một trạng thái "
       "khác nhau khiến mọi người khó theo dõi công việc và deadline mỗi tuần. "
       "Có cách nào để cả nhóm làm chung cho rõ ràng không?")
-ANSWER=("Với bảng tính dùng chung, thử tạo danh sách chọn trạng thái và "
-        "thống nhất ai cập nhật từng việc trước hạn chót. "
-        "Đỡ cảnh cùng một việc mà ai cũng hiểu một kiểu.")
+ANSWER=("Bảng tính dùng chung mà mỗi người ghi một trạng thái thì rối thật. "
+        "Chốt vài trạng thái cố định là đỡ đoán ý nhau.")
 URL="https://www.threads.com/@nguoi_demo/post/"+KNOWN_CODE
 LIFE_TEXT=("Cuối tuần cả nhóm đi chơi, bất ngờ thấy một chú chó nằm ngủ ngon lành "
            "ở quán cà phê. Ai cũng bật cười vì chú chó trông còn thư thái "
            "hơn cả chúng tôi. Một khoảnh khắc vui khiến ngày dài dễ chịu hơn.")
-LIFE_REPLY=("Chú chó ngủ ngon lành giữa quán cà phê đúng là chuyên gia nghỉ ngơi! "
-            "Cả nhóm bật cười vì gặp một khoảnh khắc nhỏ mà dễ thương thật.")
+LIFE_REPLY=("Chú chó nằm ở quán cà phê mà thư thái hơn cả hội đi chơi. "
+            "Chắc bí quyết là không có lịch hẹn.")
 
 
 
@@ -178,9 +177,8 @@ class SelectionTests(unittest.TestCase):
                  "để trước cửa phòng rồi đi. Tối đó cháu mở YouTube "
                  "và thấy lịch sử tìm kiếm cách nấu cháo không bị khét. "
                  "Một chuyện nhỏ nhưng làm cả nhà xúc động.")
-        reply = ("Chú để tô cháo trước cửa đã ấm lòng rồi, mà lịch sử "
-                 "tìm kiếm cách nấu cháo không bị khét còn dễ thương hơn. "
-                 "Quan tâm đôi khi lặng lẽ vậy đó.")
+        reply = ("Lịch sử tìm kiếm cách nấu cháo không bị khét mới là chi tiết "
+                 "đắt giá. Quan tâm âm thầm vậy mới thương.")
         self.assertEqual(assess_selected(story)["state"],"candidate")
         self.assertTrue(can_send(reply,story,target=parse_threads_url(URL)))
 
@@ -375,9 +373,8 @@ class SelectionTests(unittest.TestCase):
         unrelated=("Chỉ cần một chút nụ cười, có thể làm thay đổi cả ngày "
                    "làm việc của ai đó. Một lời khen ngọt ngào cũng đủ "
                    "làm thoải mái tâm hồn.")
-        grounded=("Giờ nghỉ trưa mà bàn phím vẫn cạch cạch rồi còn kéo "
-                  "ghế liên tục thì đúng là khó ngủ nổi. Mong mọi người "
-                  "tôn trọng giờ nghỉ của nhau chút.")
+        grounded=("Giờ nghỉ trưa còn nghe bàn phím cạch cạch với kéo ghế "
+                  "liên tục thì ai chợp mắt nổi.")
         self.assertFalse(can_send(unrelated,selected,target=parse_threads_url(URL)))
         off_target=("Đúng là lúc cần một chút yên, nhưng bạn có thể "
                     "nhắc nhẹ nhàng rồi thử nghỉ ngơi vài phút, "
@@ -392,9 +389,8 @@ class SelectionTests(unittest.TestCase):
         copied=("Gõ bàn phím cạch cạch, đập chuột, mang vòng cẩm thạch "
                 "chạm vào bàn phát ra tiếng. Ngày nào như ngày nấy.")
         self.assertFalse(can_send(copied,source,target=parse_threads_url(URL)))
-        novel=("Nghỉ trưa mà bàn phím cứ cạch cạch rồi còn đập chuột "
-               "liên tục thì đúng là mất cả giờ yên tĩnh. Đã nhắc rồi "
-               "mà không thay đổi mới khiến người ta mệt.")
+        novel=("Nghỉ trưa mà bàn phím cạch cạch với đập chuột liên tục "
+               "thì đúng là báo thức bất đắc dĩ.")
         context=("Đang giờ nghỉ trưa thì người cùng phòng gõ bàn phím "
                  "cạch cạch, đập chuột ầm ầm. Đã nhắc nhở mà ngày nào "
                  "cũng vậy, ảnh hưởng cả phòng.")
@@ -410,9 +406,8 @@ class SelectionTests(unittest.TestCase):
                       "và thêm điểm nhấn thú vị cho giờ nghỉ trưa.")
         self.assertTrue(user_is_frustrated(src))
         self.assertFalse(can_send(false_praise,src,target=parse_threads_url(URL)))
-        useful=("Nghỉ trưa mà bàn phím cứ cạch cạch rồi còn đập chuột "
-                "thì đúng là một ca thử thách sự bình tĩnh. "
-                "Đã nhắc rồi mà vẫn ồn mới mệt.")
+        useful=("Giờ nghỉ trưa còn nghe bàn phím cạch cạch với đập chuột "
+                "thì khó chịu thật. Đã nhắc rồi mà vẫn vậy mới mệt.")
         self.assertTrue(can_send(useful,src,target=parse_threads_url(URL)))
 
     def test_gen_z_decor_post_can_get_grounded_playful_reply(self):
@@ -420,16 +415,13 @@ class SelectionTests(unittest.TestCase):
               "bắt đầu mang đồ để decor bàn làm việc rồi. "
               "Này là dấu hiệu ẻm sẽ gắn bó lâu dài với công ty "
               "đúng không mọi người? Chắc ẻm không nghỉ việc sớm đâu nhỉ?")
-        reply=("Mới vào đã mang đồ decor bàn làm việc thì ít nhất "
-               "ẻm đang có kế hoạch gắn bó với chiếc bàn trước đã 😂 "
-               "Còn có ở lâu với công ty hay không chắc phải chờ "
-               "qua vài đợt deadline mới biết.")
+        reply=("Mới vào đã decor bàn làm việc thì gắn bó với chiếc bàn "
+               "trước rồi, công ty còn phải xem đã 😄")
         self.assertTrue(can_send(reply,post,target=parse_threads_url(URL)))
 
     def test_semantic_judge_allows_grounded_paraphrase_only_in_draft_test(self):
-        text=("Thử thống nhất cách ghi tình trạng của từng nhiệm vụ, có tên "
-              "người phụ trách và mốc chốt cụ thể. Nhìn danh sách là thấy "
-              "việc nào còn vướng, khỏi phải đoán ý nhau.")
+        text=("Mỗi nhiệm vụ nên có tên người nhận và mốc hẹn cụ thể. "
+              "Nhìn vào là biết ai đang chờ ai, khỏi mất công đoán.")
         self.assertFalse(can_send(text,TEXT,target=parse_threads_url(URL)))
         self.assertTrue(can_send(text,TEXT,target=parse_threads_url(URL),
                                  semantic_override=True))
@@ -525,9 +517,8 @@ class SelectionTests(unittest.TestCase):
         model_bad=("Bè Gen Z đang làm đồ decor bàn làm việc thật đáng yêu! "
                    "Có vẻ như anh ấy sẽ gắn bó lâu dài rồi, "
                    "không phải nghỉ việc sớm đâu. 😄")
-        better=("Mang đồ decor bàn làm việc là đặt cọc tinh thần với "
-                "chiếc bàn thôi 😂 Còn gắn bó lâu dài hay không "
-                "chắc phải xem đồng nghiệp và văn hóa công ty nữa.")
+        better=("Decor bàn làm việc là cắm cờ nhận chỗ trước thôi. "
+                "Gắn bó với công ty còn phải xem nhiều thứ.")
         self.assertFalse(can_send(model_bad,original,target=parse_threads_url(URL)))
         self.assertTrue(can_send(better,original,target=parse_threads_url(URL)))
 
