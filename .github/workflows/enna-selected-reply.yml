@@ -48,6 +48,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_companion_selected_reply.py' -v
           python -m unittest discover -s tests -p 'test_companion_autorecover.py' -v
+          python -m unittest discover -s tests -p 'test_companion_verify_uncertain.py' -v
       - name: Report safely if pre-publish tests fail
         if: failure()
         run: |
