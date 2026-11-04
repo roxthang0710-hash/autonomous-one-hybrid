@@ -228,7 +228,10 @@ def can_send(text, selected, *, target, semantic_override=False):
     source_pairs=set(zip(source_tokens,source_tokens[1:]))
     novelty=sum(word not in source_words for word in reply_tokens)/max(1,len(reply_tokens))
     copied_pairs=sum(pair in source_pairs for pair in zip(reply_tokens,reply_tokens[1:]))/max(1,len(reply_tokens)-1)
-    if novelty < 0.33 or copied_pairs > 0.38:
+    # One-sentence answers naturally reuse topic words; don't force filler
+    # merely to hit an arbitrary proportion of new vocabulary.
+    minimum_novelty = 0.23 if len(normalized) <= 140 else 0.33
+    if novelty < minimum_novelty or copied_pairs > 0.38:
         return False
     # An open question about another person's future is not evidence of their
     # intention or gender. Don't invent certainty about employment tenure.
