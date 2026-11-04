@@ -27,12 +27,35 @@ function renderStats(s){
  $("followers").textContent=s.follower_count==null?"—":s.follower_count.toLocaleString("vi-VN");
  const percentage=Math.min(100,100*(s.follower_count||0)/1000);
  $("follower-progress").style.width=percentage+"%";
- $("follower-date").textContent=s.follower_count==null?"Chưa có dữ liệu xác minh.":"Đo ngày "+(s.follower_day||"không rõ")+(s.follower_stale?" · DỮ LIỆU CŨ":" · gần nhất trong hệ thống");
+ $("follower-date").textContent=s.follower_count==null?"Chưa có dữ liệu xác minh.":"Đo ngày "+(s.follower_day||"không rõ")+(s.follower_stale?" · DỮ LIỆU CŨ":" · "+(s.follower_source==="meta_official"?"Meta chính thức":"Metricool đã lưu"));
  $("post-count").textContent=String(s.published_threads_in_sample??"—");
  $("topic-count").textContent=String(s.native_topic_requested??"—");
  $("meme-count").textContent=String(s.original_memes_ready??"—");
  $("video-count").textContent=String(s.original_videos_ready??"—");
  $("stats-caveat").textContent=s.caveat||"";
+}
+function renderSprint(sprint){
+ const parent=$("growth-sprint");parent.replaceChildren();
+ if(!sprint){parent.append(el("p","Chưa có thử nghiệm tăng trưởng đã ghi nhận.","muted"));return;}
+ const meta=sprint.latest_observation||{};
+ const proof=sprint.execution_proof||{};
+ const h=el("div",null,"sprint-summary");
+ h.append(el("strong",sprint.focus==="practical_follow_value"?"Thử nghiệm: nội dung thực dụng có ích":"Thử nghiệm: điều chỉnh phân phối"));
+ h.append(el("p",sprint.status==="running"?"Đang chạy · Đánh giá ngày "+sprint.evaluation_due:"Trạng thái: "+sprint.status));
+ const proofText=proof.policy_applied?
+   (proof.actual_change?"Enna đã tự thay đổi chính sách biên tập cho các bản nháp tương lai.":"Chính sách phù hợp đã có sẵn; Enna không chỉnh sửa lại.") :
+   "Chưa xác minh được thao tác thay đổi chính sách.";
+ h.append(el("p",proofText));
+ if(typeof meta.baseline_followers==="number")h.append(el("p",
+   "Mốc ban đầu: "+meta.baseline_followers+" follower, "+(meta.baseline_profile_views??"—")+
+   " lượt xem hồ sơ (mẫu Metricool)."));
+ if(sprint.status==="completed"){
+   const o=meta;
+   h.append(el("p","Kết quả đánh giá: "+(sprint.decision||"chưa xác minh")+
+     (typeof o.observed_net_change==="number"?" · Biến động follower: "+o.observed_net_change:"")));
+ }
+ h.append(el("p","Không tự coi sự thay đổi follower là hiệu quả do thử nghiệm gây ra. Enna không sửa bài Metricool đã lên lịch.","muted"));
+ parent.append(h);
 }
 function renderTasks(){
  const parent=$("task-list");parent.replaceChildren();
@@ -137,7 +160,7 @@ async function refresh(force=false){
   tasks=Array.isArray(data.tasks)?data.tasks:[];
   research=Array.isArray(data.research)?data.research:[];
   notes=Array.isArray(data.notifications)?data.notifications:[];
-  renderStats(data.stats||{});renderTasks();renderNotes();renderResearch();
+  renderStats(data.stats||{});renderSprint(data.growth_sprint||null);renderTasks();renderNotes();renderResearch();
   status("Enna đã đồng bộ • "+new Intl.DateTimeFormat("vi-VN",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Ho_Chi_Minh"}).format(new Date()),true);
   if(force)error("");
  }catch(e){status("Chưa đồng bộ: "+e.message,false);if(force)error(e.message);}
