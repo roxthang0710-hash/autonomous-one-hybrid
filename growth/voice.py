@@ -17,7 +17,7 @@ VOICE_RULES = (
     "Không mở đầu bằng 'Đồ Hay Đi Làm xin chào', không làm thơ rập khuôn, "
     "không 'tấu hài' quá trớn, không spam emoji hoặc hashtag. "
     "Viết bình luận liên quan CHÍNH XÁC đến nội dung bài gốc, "
-    "thường 80–250 ký tự, tối đa 380, có thể dùng 0–1 emoji. "
+    "nên 60–120 ký tự khi phản hồi bài đã chọn, chỉ một ý, có thể không dùng emoji. "
     "Không yêu cầu người khác theo dõi, bấm thích, chia sẻ, nhắn tin riêng "
     "hoặc truy cập link. Không công kích chủ bài, đùa cợt nhạy cảm, "
     "kéo bè phái, gây tranh cãi để tăng reach, hay giả làm người đã mua "
@@ -39,12 +39,12 @@ DISALLOWED_REPLY_PATTERN = (
 MAX_EMOJI_CHARS = 2
 
 
-def suitable_reply(reply, original, prior_texts=(), *, require_niche=True, require_overlap=True):
+def suitable_reply(reply, original, prior_texts=(), *, require_niche=True, require_overlap=True, max_chars=380):
     """Deterministic second-stage checks; model output is NEVER a safe default."""
     if not isinstance(reply, str) or not isinstance(original, str):
         return False
     text = reply.strip()
-    if not 60 <= len(text) <= 380:
+    if not 60 <= len(text) <= max_chars:
         return False
     folded = normalize(text)
     original_norm = normalize(original)
