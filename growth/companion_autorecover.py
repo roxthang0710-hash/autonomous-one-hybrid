@@ -12,7 +12,7 @@ import re
 import requests
 from growth.companion_editor import compose_selected_options, compose_selected
 from growth.companion_judge import judge_selected
-from growth.companion_quality import punchline_grounded
+from growth.companion_quality import punchline_grounded, tightly_grounded_fallbacks
 from growth.companion_selected_reply import (
     can_send, clean_selected_excerpt, decode_issue_body,
 )
@@ -180,6 +180,15 @@ def make_recovery_draft(issue, *, propose=compose_selected_options,
             os.environ.pop("GROQ_MODEL",None)
         else:
             os.environ["GROQ_MODEL"]=saved_model
+    # If models hallucinate a person's motivation or return invalid JSON,
+    # use only narrowly factual, context-verified backup suggestions.
+    # Still require normal safety AND independent review; never force a post.
+    for suggestion in tightly_grounded_fallbacks(selected):
+        if (can_send(suggestion,selected,target=target,semantic_override=True)
+            and reviewer(selected,suggestion)):
+            return {"draft":suggestion,
+                    "model":"fact_grounded_fallback",
+                    "target":target["url"]}
     return None
 
 
