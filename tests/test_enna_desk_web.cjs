@@ -15,6 +15,9 @@ test("Owner desk is reachable from public Enna dashboard",()=>{
  assert.match(html,/id="sign-in-hero"/);
  assert.match(html,/KẾT NỐI ENNA BẰNG GITHUB/);
  assert.match(html,/id="research-form"/);
+ assert.match(html,/id="growth-sprint"/);
+ assert.match(js,/renderSprint/);
+ assert.match(js,/follower_source/);
  assert.match(html,/id="research-list"/);
 });
 test("Desk supports independent signed-in task submission",()=>{
