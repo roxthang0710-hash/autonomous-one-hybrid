@@ -18,7 +18,7 @@ from growth.companion_selected_reply import (
 )
 
 MARKER = "<!-- ENNA_SELFHEAL_V1"
-MAX_ATTEMPTS = 3
+MAX_ATTEMPTS = 5  # bounded quality fixes, never unbounded loops
 WINDOW_HOURS = 72
 MIN_INTERVAL_MINUTES = 45
 HARD_STOP = ("✅ Enna đã nhận xác nhận phản hồi từ Meta.",
@@ -91,7 +91,7 @@ def eligible(issue, comments, *, owner, now=None):
     if not when or not dt.timedelta(0)<=now-when<=dt.timedelta(hours=WINDOW_HOURS):
         return False
     progress=state_marker(comments)
-    if progress["attempts"]>=MAX_ATTEMPTS:
+    if progress["status"]=="needs_attention" or progress["attempts"]>=MAX_ATTEMPTS:
         return False
     invalid_old_repair=(progress["status"]=="repaired"
                         and not recovered_draft_still_grounded(issue,progress))
