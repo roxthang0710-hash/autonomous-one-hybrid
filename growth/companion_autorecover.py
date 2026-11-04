@@ -25,7 +25,8 @@ HARD_STOP = ("✅ Enna đã nhận xác nhận phản hồi từ Meta.",
              "Meta từ chối tạo bình luận",
              "Không tự thử lại")
 DRAFT_DONE = ("🧪 KIỂM THỬ NỘI DUNG", "Enna đã soạn bình luận nhưng Meta")
-FAILURE_WORDS = ("không bám đủ sát", "bản nháp AI không đạt",
+FAILURE_WORDS = ("không bám đủ sát", "không thấy bình luận bám đủ sát",
+                 "bản nháp AI không đạt",
                  "dịch vụ tạo nội dung chưa phản hồi", "no_safe_draft",
                  "chưa tạo được bản nháp", "chưa phản hồi thành công",
                  "không có cách bình luận", "ai_reply_not_contextual_enough",
