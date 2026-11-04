@@ -83,6 +83,20 @@ jobs:
           })().catch(e=>{console.error(e);process.exitCode=1});
           NODE
 
+      - name: Verify old Enna Desk URL redirects away from raw source
+        run: |
+          node - <<'NODE'
+          const assert=require('node:assert/strict');
+          (async()=>{
+            const url='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-site/';
+            const r=await fetch(url,{redirect:'manual',signal:AbortSignal.timeout(18000),cache:'no-store'});
+            const target=r.headers.get('location')||'';
+            console.log('Legacy Enna URL:',r.status,'redirect to:',target);
+            assert.ok([301,302,303,307,308].includes(r.status),'Legacy URL must redirect, never show raw HTML');
+            assert.equal(target,'https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/desk.html');
+          })().catch(e=>{console.error(e);process.exitCode=1});
+          NODE
+
       - name: Check public Enna activity feed response
         run: |
           node - <<'NODE'
