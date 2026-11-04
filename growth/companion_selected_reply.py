@@ -274,7 +274,9 @@ def can_send(text, selected, *, target, semantic_override=False):
         "cuoc song doi khi", "ban that tuyet voi",
         "rat dang tran trong", "co ve dang", "co ve ho",
         "dang tim cam hung", "tin hieu tich cuc",
-        "san sang decor", "truyen nang luong")):
+        "san sang decor", "truyen nang luong",
+        "tin hieu", "nhiet huyet", "hy vong se o lau",
+        "home office rieng", "tim duoc goc", "co ve se o")):
         return False
     return ((semantic_override or has_concrete_overlap(text, selected))
             and suitable_reply(text, selected, require_niche=False,
