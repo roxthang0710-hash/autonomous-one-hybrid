@@ -45,10 +45,14 @@ jobs:
             }
             assert.match(html,/id="task-form"/,'Live Enna Desk must render task form');
             assert.match(html,/id="research-form"/,'Live Enna Desk must expose research execution');
+            assert.match(html,/id="sign-in-hero"/,'Owner connection button must be visible in live hero');
+            assert.match(html,/KẾT NỐI ENNA BẰNG GITHUB/,'Live page must show explicit GitHub connection CTA');
             const scriptResponse=await fetch(page+'desk.js',{signal:AbortSignal.timeout(12000)});
             assert.equal(scriptResponse.status,200,'Live Enna Desk script must exist');
             const js=await scriptResponse.text();
             assert.match(js,/run_research/,'Live Enna Desk script must support research execution');
+            assert.match(js,/sign-in-hero/,'Live JS must bind prominent GitHub connection button');
+            assert.match(js,/signInWithOAuth/,'Live JS must initiate GitHub OAuth');
             const api=await fetch(endpoint,{signal:AbortSignal.timeout(12000)});
             assert.ok([401,403].includes(api.status),'Unauthenticated desk API must refuse access');
             console.log('Live Enna Desk accessible; private API blocked unauthenticated requests');
