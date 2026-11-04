@@ -100,12 +100,23 @@ def decode_issue_body(body):
     return target, text, verdict
 
 
-def clean_selected_excerpt(text):
-    """Remove incidental Threads UI controls, never infer or rewrite the story."""
+def clean_selected_excerpt(text, *, author=None):
+    """Strip Threads navigation, counters, attribution and reply UI.
+
+    The author's actual story and final punchline must remain intact.
+    """
     lines = []
     for item in str(text or "").splitlines():
         line = item.strip()
         if not line:
+            continue
+        if author and not lines and line.lstrip("@").casefold()==author.casefold():
+            continue
+        if re.fullmatch(r"(Hàng đầu|Xem hoạt động|Xem thêm|Xem bản dịch|Ẩn|Xem câu trả lời|Top|Recent|View activity|Translate)",line,flags=re.IGNORECASE):
+            continue
+        if re.fullmatch(r"Trả lời\s+@[a-zA-Z0-9_.]{2,35}\s*\.*|Trả lời\s+[a-zA-Z0-9_.]{2,35}\s*\.*|Reply to\s+@[a-zA-Z0-9_.]{2,35}\s*\.*",line,flags=re.IGNORECASE):
+            continue
+        if line in ("/","•","·"):
             continue
         if "✳ Gửi Enna" in line:
             # The injected button is NOT part of the author's post.
@@ -316,7 +327,7 @@ def process(event, *, db=None, read=thread_request, create=compose_selected,
         return {"state":"title_target_mismatch"}
     # Do not let Chrome's UI button or isolated engagement counts pollute the
     # AI context. This works even with the existing v0.3/v0.4 extension.
-    selected = clean_selected_excerpt(selected)
+    selected = clean_selected_excerpt(selected, author=target["username"])
     if assess_selected(selected)["state"] != "candidate":
         return {"state":"insufficient_clean_context"}
 
