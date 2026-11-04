@@ -648,6 +648,16 @@ class SelectionTests(unittest.TestCase):
         self.assertFalse(can_send("Mua ngay giảm giá siêu sốc ở link bio nhé!",original,
                                   target=parse_threads_url(URL)))
 
+    def test_live_issue_49_false_recovery_rejected(self):
+        original=("Em định nghỉ bên pizza vì đã dùng hết mã giảm giá "
+                  "để ăn rồi, nên em qua bên mình ứng tuyển làm thêm.")
+        bad=("Thì ra mã giảm giá còn là điểm cộng khi tuyển dụng, "
+             "em chắc đang tính toán lợi nhuận ăn uống rồi đấy!")
+        self.assertFalse(can_send(bad,original,target=parse_threads_url(URL)))
+        good=("Hết mã giảm giá là em cập nhật CV luôn, "
+              "lịch nhảy việc chạy theo voucher mất rồi =)))")
+        self.assertTrue(can_send(good,original,target=parse_threads_url(URL)))
+
     def test_generic_promotional_comment_rejected(self):
         self.assertFalse(can_send("Theo dõi kênh và mua ngay!",TEXT,target=parse_threads_url(URL)))
 
