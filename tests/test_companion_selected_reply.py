@@ -177,8 +177,8 @@ class SelectionTests(unittest.TestCase):
                  "để trước cửa phòng rồi đi. Tối đó cháu mở YouTube "
                  "và thấy lịch sử tìm kiếm cách nấu cháo không bị khét. "
                  "Một chuyện nhỏ nhưng làm cả nhà xúc động.")
-        reply = ("Lịch sử tìm kiếm cách nấu cháo không bị khét mới là chi tiết "
-                 "đắt giá. Quan tâm âm thầm vậy mới thương.")
+        reply = ("Chú lo tới mức phải tra cách nấu cháo cho ngon, "
+                 "thương cháu kiểu này đúng là nói ít làm nhiều.")
         self.assertEqual(assess_selected(story)["state"],"candidate")
         self.assertTrue(can_send(reply,story,target=parse_threads_url(URL)))
 
@@ -373,8 +373,8 @@ class SelectionTests(unittest.TestCase):
         unrelated=("Chỉ cần một chút nụ cười, có thể làm thay đổi cả ngày "
                    "làm việc của ai đó. Một lời khen ngọt ngào cũng đủ "
                    "làm thoải mái tâm hồn.")
-        grounded=("Giờ nghỉ trưa còn nghe bàn phím cạch cạch với kéo ghế "
-                  "liên tục thì ai chợp mắt nổi.")
+        grounded=("Giờ nghỉ trưa mà bàn phím cạch cạch liên tục "
+                  "thì đúng là có báo thức miễn phí.")
         self.assertFalse(can_send(unrelated,selected,target=parse_threads_url(URL)))
         off_target=("Đúng là lúc cần một chút yên, nhưng bạn có thể "
                     "nhắc nhẹ nhàng rồi thử nghỉ ngơi vài phút, "
