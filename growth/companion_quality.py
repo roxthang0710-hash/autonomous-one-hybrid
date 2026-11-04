@@ -12,7 +12,10 @@ def is_coupon_job_change_story(source):
     return (
         "ma giam gia" in s
         and any(x in s for x in ("dung het", "het ma", "het code", "het voucher"))
-        and any(x in s for x in ("nghi ben", "qua ben", "doi viec", "chuyen viec"))
+        and any(x in s for x in (
+            "nghi ben", "qua ben", "doi viec", "chuyen viec",
+            "chuyen cho lam", "chuyen noi lam", "ung tuyen", "xin lam"
+        ))
     )
 
 
