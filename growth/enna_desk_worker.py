@@ -89,6 +89,7 @@ def verified_facts(evidence):
 def eligible(row):
     return (isinstance(row, dict) and row.get("model_used") in QUEUED_MODELS and
             row.get("status") in ("running", "completed") and
+            int(row.get("analysis_attempts") or 0)<3 and
             isinstance(row.get("request_text"), str) and
             8 <= len(row["request_text"]) <= 1200)
 
@@ -267,7 +268,7 @@ def run(db=None):
         return "groq_key_unavailable"
     db=db or Database()
     pending=db.request("GET","/enna_desk_tasks",params={
-        "select":"id,kind,request_text,status,response,model_used",
+        "select":"id,kind,request_text,status,response,model_used,analysis_attempts,analysis_last_attempt_at",
         "model_used":"in.(awaiting_model_v2,rule_based_multi_role,groq_multi_role_partial)",
         "order":"created_at.asc","limit":"3"})
     if not isinstance(pending,list) or not pending:
@@ -276,22 +277,41 @@ def run(db=None):
     for task in pending:
         if not eligible(task):
             continue
+        last=task.get("analysis_last_attempt_at")
+        if last:
+            try:
+                last_time=datetime.fromisoformat(str(last).replace("Z","+00:00"))
+                if (datetime.now(timezone.utc)-last_time).total_seconds()<180:
+                    continue
+            except (ValueError,TypeError):
+                pass
         try:
             evidence=evidence_snapshot(db,task)
             answer=upgrade(task,evidence)
         except (requests.RequestException,ValueError,KeyError,TypeError,RuntimeError) as error:
             # Never falsely report completed or replace a prior response with a template.
-            print("Enna model response not verified:",type(error).__name__)
-            if task.get("model_used")=="awaiting_model_v2":
-                db.request("PATCH","/enna_desk_tasks",
-                    params={"id":"eq."+str(task["id"]),"model_used":"eq.awaiting_model_v2"},
-                    payload={"error_code":"ai_response_unavailable"})
+            attempts=int(task.get("analysis_attempts") or 0)+1
+            reason="ai_quality_rejected" if isinstance(error,ValueError) else "ai_backend_unavailable"
+            print("Enna model response not verified:",reason,"attempt",attempts)
+            failed=attempts>=3
+            db.request("PATCH","/enna_desk_tasks",params={
+                "id":"eq."+str(task["id"]),"model_used":"eq."+str(task["model_used"])},
+                payload={
+                    "status":"failed" if failed else "running",
+                    "model_used":"model_quality_failed" if failed else "awaiting_model_v2",
+                    "analysis_attempts":attempts,
+                    "analysis_last_attempt_at":datetime.now(timezone.utc).isoformat(),
+                    "error_code":reason,
+                    **({"finished_at":datetime.now(timezone.utc).isoformat()} if failed else {})
+                })
             continue
         changed=db.request("PATCH","/enna_desk_tasks",
             params={"id":"eq."+str(task["id"]),"model_used":"eq."+str(task["model_used"])},
             payload={
                 "status":"completed","response":answer,
                 "model_used":"groq_task_specific_v2","error_code":None,
+                "analysis_attempts":int(task.get("analysis_attempts") or 0)+1,
+                "analysis_last_attempt_at":datetime.now(timezone.utc).isoformat(),
                 "finished_at":datetime.now(timezone.utc).isoformat(),
             },prefer="return=representation")
         if changed:
