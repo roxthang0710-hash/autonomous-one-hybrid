@@ -1,0 +1,31 @@
+name: Enna — Native Threads Topic Regression
+
+on:
+  push:
+    paths:
+      - 'threads/publisher.py'
+      - 'tests/test_threads_publisher.py'
+      - '.github/workflows/enna-topic-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-topic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install minimal test dependencies
+        run: pip install -r requirements.txt
+      - name: Verify native Threads topic_tag and no duplicate posting
+        run: python -m unittest discover -s tests -p 'test_threads_publisher.py' -v
+      - name: Publish scope summary
+        if: always()
+        run: |
+          echo 'Unit tests use mocks only. No Threads post is published by this workflow.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Metricool scheduled posts cannot be assumed to have native Topic tags from hashtag text.' >> "$GITHUB_STEP_SUMMARY"
