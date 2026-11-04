@@ -4,6 +4,15 @@ on:
     # 09:40, 14:40, 19:40 Vietnam time (UTC+7). Best effort.
     - cron: '40 2,7,12 * * *'
   workflow_dispatch:
+  # Re-run VISUAL asset creation after repairing media code or safety tests.
+  # Do not add an unsolicited audience-reply run on these engineering pushes.
+  push:
+    paths:
+      - 'growth/community_care.py'
+      - 'growth/media_scout.py'
+      - 'growth/meme_renderer.py'
+      - 'tests/test_community_media.py'
+      - '.github/workflows/enna-community-media.yml'
 
 permissions:
   contents: read
@@ -14,6 +23,7 @@ concurrency:
 
 jobs:
   community:
+    if: github.event_name != 'push'
     name: Genuine own-audience questions
     runs-on: ubuntu-latest
     timeout-minutes: 7
