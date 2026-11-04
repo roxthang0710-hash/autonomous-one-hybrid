@@ -34,7 +34,7 @@ jobs:
         run: |
           node - <<'NODE'
           const assert=require('node:assert/strict');
-          const page='https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/desk.html';
+          const page='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-site/';
           const endpoint='https://gjdvdohylvsauphhkutw.supabase.co/functions/v1/enna-desk';
           (async()=>{
             let html='';
@@ -45,7 +45,7 @@ jobs:
             }
             assert.match(html,/id="task-form"/,'Live Enna Desk must render task form');
             assert.match(html,/id="research-form"/,'Live Enna Desk must expose research execution');
-            const scriptResponse=await fetch(page.replace('desk.html','desk.js'),{signal:AbortSignal.timeout(12000)});
+            const scriptResponse=await fetch(page+'desk.js',{signal:AbortSignal.timeout(12000)});
             assert.equal(scriptResponse.status,200,'Live Enna Desk script must exist');
             const js=await scriptResponse.text();
             assert.match(js,/run_research/,'Live Enna Desk script must support research execution');
