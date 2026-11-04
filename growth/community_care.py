@@ -73,9 +73,26 @@ def validate_answer(answer,question,post_text):
     if text.count("#")>0 or text.count("@")>0:
         return False
     # Prevent context-free boilerplate or relayed user instructions.
+    # Vietnamese concepts often use short compound words ("báo cáo",
+    # "bộ lọc"). Requiring two individual words >=5 chars wrongly rejects
+    # genuinely on-topic answers. Accept two DISTINCT specific source phrases
+    # instead, but never generic filler or arbitrary single-word overlap.
     terms=set(normalize(question+" "+post_text).split())
     meaningful={x for x in terms if len(x)>=5}
-    if len(meaningful & set(normalize(text).split()))<2:
+    source_words=set(normalize(text).split())
+    def anchored_pairs(value):
+        words=normalize(value).split()
+        common={"voi","cua","trong","chung","minh","ban","cho","nhe",
+                "mot","nguoi","theo","trong","phai","nen","duoc",
+                "thay","dung","lam","giup","tiep","tinh","cach"}
+        return {tuple(words[i:i+2]) for i in range(len(words)-1)
+                if len(words[i])>=2 and len(words[i+1])>=2
+                and any(len(w)>=3 and w not in common
+                        for w in words[i:i+2])}
+    source_pairs=(anchored_pairs(question)|anchored_pairs(post_text))
+    reply_pairs=anchored_pairs(text)
+    if (len(meaningful & source_words)<2
+            and len(source_pairs & reply_pairs)<2):
         return False
     return True
 
