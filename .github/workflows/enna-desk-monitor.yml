@@ -4,6 +4,8 @@ on:
     # Vietnam 07:23, 13:23, 19:23, 01:23
     - cron: '23 0,6,12,18 * * *'
   workflow_dispatch:
+  issues:
+    types: [opened]
 
 permissions:
   contents: read
@@ -14,6 +16,7 @@ concurrency:
 
 jobs:
   monitor:
+    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'desk-monitor:'))
     runs-on: ubuntu-latest
     timeout-minutes: 7
     env:
