@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light">
+<title>Enna Desk · AI Agent</title>
+<link rel="stylesheet" href="./desk.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="./">🐑 <span>ENNA</span></a>
+  <span class="toplabel">Bàn điều hành Agent</span>
+  <div class="session"><span id="session-label">Chưa đăng nhập</span><button id="sign-in" type="button">Kết nối GitHub</button><button id="sign-out" type="button" hidden>Đăng xuất</button></div>
+</header>
+<main>
+<section class="hero">
+  <div class="sheep-wrap" aria-hidden="true">
+    <svg class="mascot" viewBox="0 0 220 208" role="img">
+      <ellipse cx="110" cy="176" rx="92" ry="23" fill="#eaded0"/>
+      <rect x="65" y="124" width="92" height="66" rx="13" fill="#9db4c1"/><rect x="74" y="132" width="74" height="46" rx="6" fill="#38586a"/>
+      <circle cx="45" cy="77" r="22" fill="#b98f7f"/><circle cx="177" cy="77" r="22" fill="#b98f7f"/>
+      <path d="M59 77 C37 57 45 37 68 33 C70 12 102 7 111 25 C134 1 166 20 158 41 C189 46 187 78 167 91 C175 120 145 132 124 119 C98 140 64 124 66 102 C40 98 37 89 59 77" fill="#fff8ed" stroke="#ddccbc" stroke-width="4"/>
+      <ellipse cx="109" cy="85" rx="51" ry="45" fill="#f5d8c2"/>
+      <ellipse cx="90" cy="80" rx="5" ry="7" fill="#473b35"/><ellipse cx="129" cy="80" rx="5" ry="7" fill="#473b35"/>
+      <ellipse cx="109" cy="96" rx="10" ry="7" fill="#a97570"/>
+      <path d="M99 109 Q109 117 119 109" stroke="#97675f" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path class="arm left" d="M64 136 Q58 156 84 164" stroke="#e5bda7" stroke-width="13" fill="none" stroke-linecap="round"/>
+      <path class="arm right" d="M153 134 Q161 159 136 165" stroke="#e5bda7" stroke-width="13" fill="none" stroke-linecap="round"/>
+      <rect x="53" y="168" width="112" height="12" rx="5" fill="#f4d8a7"/>
+      <g class="spark"><circle cx="187" cy="37" r="5" fill="#90bd7d"/><path d="M187 20 V28 M187 46 V54 M171 37 H179 M195 37 H203" stroke="#90bd7d" stroke-width="3" stroke-linecap="round"/></g>
+    </svg>
+  </div>
+  <div class="hero-copy">
+    <span class="eyebrow">ENNA · MULTI-AGENT DESK</span>
+    <h1>Mình là Enna.<br><em>Hôm nay chúng ta làm gì?</em></h1>
+    <p>Giao việc trực tiếp, theo dõi ba chuyên trách phân tích – chiến lược – kỹ thuật và nhận báo cáo từ dữ liệu thực. Không phải gửi GitHub Issue mỗi lần.</p>
+    <p class="live-line"><span id="pulse" class="pulse"></span><span id="connection">Đang khởi tạo Enna...</span></p>
+  </div>
+</section>
+<div class="layout">
+  <section class="maincol">
+    <section class="pane">
+      <div class="section-heading"><h2>Giao nhiệm vụ mới</h2><small>Đăng nhập GitHub một lần để kích hoạt</small></div>
+      <form id="task-form">
+        <div class="chips" id="task-types">
+          <label><input type="radio" name="kind" value="warroom" checked><span>🧭 Phòng điều hành</span></label>
+          <label><input type="radio" name="kind" value="report"><span>📊 Báo cáo</span></label>
+          <label><input type="radio" name="kind" value="plan"><span>🧠 Chiến lược</span></label>
+          <label><input type="radio" name="kind" value="diagnose"><span>🔧 Chẩn đoán</span></label>
+          <label><input type="radio" name="kind" value="ideas"><span>✨ Ý tưởng</span></label>
+        </div>
+        <textarea id="prompt" rows="4" minlength="8" maxlength="1200" required placeholder="Ví dụ: Phân tích vì sao follower không tăng, đưa 3 thử nghiệm để cải thiện trước ngày 07/11 và báo rõ những gì Enna tự làm được."></textarea>
+        <div class="composer-foot"><span>Không nhập mật khẩu, OTP, token hoặc dữ liệu riêng tư.</span><button id="submit" class="primary" type="submit" disabled>Giao Enna xử lý <span aria-hidden="true">→</span></button></div>
+      </form>
+      <p id="task-error" class="error" role="alert" hidden></p>
+    </section>
+    <section class="pane">
+      <div class="section-heading"><h2>Nhật ký nhiệm vụ</h2><button id="refresh" type="button" class="light">Làm mới</button></div>
+      <div id="task-list" class="task-list"><p class="muted">Đăng nhập để xem nhiệm vụ riêng.</p></div>
+    </section>
+  </section>
+  <aside class="sidecol">
+    <section class="pane stats"><h2>Tiến độ thực tế</h2><div class="metric"><strong id="followers">—</strong><span>follower (mốc 1.000)</span></div><div class="bar"><div id="follower-progress"></div></div><p id="follower-date" class="muted">Chưa xác minh số liệu.</p><div class="mini-grid"><div><strong id="post-count">—</strong><small>Bài Threads trong ledger</small></div><div><strong id="topic-count">—</strong><small>Bài yêu cầu native Topic</small></div><div><strong id="meme-count">—</strong><small>Meme gốc sẵn sàng</small></div><div><strong id="video-count">—</strong><small>Video hoàn chỉnh</small></div></div><p class="muted" id="stats-caveat"></p></section>
+    <section class="pane"><div class="section-heading"><h2>Enna chủ động đề xuất</h2><small id="notification-count"></small></div><div id="notification-list" class="notifications"><p class="muted">Đang chờ dữ liệu.</p></div></section>
+    <section class="pane team"><h2>Đồng đội của Enna</h2><div>📈 <span>Phân tích tăng trưởng</span></div><div>💡 <span>Chiến lược nội dung</span></div><div>🛠️ <span>Vận hành &amp; chẩn đoán</span></div><p class="muted">Ba vai trò AI phân tích song song trên từng yêu cầu; chưa được cấp quyền tự đăng bài hoặc thay đổi hệ thống qua Desk.</p></section>
+  </aside>
+</div>
+<footer>Enna Desk · Ưu tiên dữ liệu xác minh · Không sử dụng follower ảo, spam hay thao tác ngoài quyền đã cấp.</footer>
+</main>
+<script type="module" src="./desk.js"></script>
+</body>
+</html>
