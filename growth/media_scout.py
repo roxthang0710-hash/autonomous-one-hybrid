@@ -165,7 +165,7 @@ def commons_candidates(query, *, fetch=requests.get):
         resp=fetch("https://commons.wikimedia.org/w/api.php",
             headers={"User-Agent":"EnnaContentScout/1.0 (original media research; account: @dohay_dilam)"},
             params={"action":"query","format":"json","generator":"search",
-               "gsrsearch":query+" filetype:bitmap","gsrnamespace":6,"gsrlimit":12,
+               "gsrsearch":query,"gsrnamespace":6,"gsrlimit":12,
                "prop":"imageinfo","iiprop":"url|extmetadata|mime"},
             timeout=15)
         resp.raise_for_status()
@@ -250,7 +250,7 @@ def run(db=None, *, now=None, enable_public_assets=None):
     now=now or datetime.now(timezone.utc)
     today=now.astimezone(VN).date()
     existing=db.request("GET","/enna_media_ideas",params={
-        "select":"id,idea_key,status,media_type,created_at,title,creative_brief,hook_text,pillar,source_url",
+        "select":"id,idea_key,status,media_type,created_at,title,creative_brief,hook_text,pillar,source_url,source_provider,license_code,evidence",
         "order":"created_at.desc","limit":"140"})
     if not isinstance(existing,list):
         raise RuntimeError("Media idea source unavailable")
@@ -303,7 +303,7 @@ def run(db=None, *, now=None, enable_public_assets=None):
             except Exception:
                 pass
 
-    if ready<MAX_READY_ORIGINAL and original_today<1:
+    # Typography-only cards are a rare fallback, not the main visual library.\n    if ready<MAX_READY_ORIGINAL and original_today<1 and today.toordinal()%3==0:
         from growth.meme_ideas import generate as invent
         past=[x.get("creative_brief") for x in existing
               if x.get("media_type")=="original_meme" and x.get("creative_brief")]
@@ -364,10 +364,25 @@ def run(db=None, *, now=None, enable_public_assets=None):
     research_count=sum(x.get("status")=="needs_review" for x in existing)
     new_sources=0
     archived_sources=0
+    # Backfill already catalogued licensed references before scouting more.
+    for older in existing:
+        if archived_sources>=2:break
+        evidence=older.get("evidence") or {}
+        if (older.get("media_type")!="licensed_meme_source"
+            or evidence.get("archive_url") or older.get("status")!="needs_review"):
+            continue
+        archived_url=archive_commons_image(older)
+        if not archived_url:continue
+        db.request("PATCH","/enna_media_ideas",
+                   params={"id":"eq."+str(older["id"]),"status":"eq.needs_review"},
+                   payload={"evidence":{**evidence,"archive_url":archived_url,
+                       "archived_for_review":True,"not_auto_publishable":True}},
+                   prefer="return=minimal")
+        archived_sources+=1
     if research_count<MAX_RESEARCH:
         query=COMMONS_QUERIES[today.toordinal()%len(COMMONS_QUERIES)]
         for item in commons_candidates(query):
-            archived_url=archive_commons_image(item)
+            archived_url=archive_commons_image(item) if archived_sources<2 else None
             if archived_url:
                 item["evidence"]={**item["evidence"],"archive_url":archived_url,
                                   "archived_for_review":True,"not_auto_publishable":True}
