@@ -14,7 +14,7 @@ from agent import Database
 
 import requests
 
-MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 QUEUED_MODELS = ("awaiting_model_v2", "rule_based_multi_role", "groq_multi_role_partial")
 SCHEMA = {
     "type": "object", "additionalProperties": False,
@@ -254,7 +254,7 @@ def call_model(task, evidence, *, api=requests.post):
     resp=api("https://api.groq.com/openai/v1/chat/completions",
              headers=headers,json=body,timeout=55)
     # One bounded fallback only for an unsupported-model/payload HTTP 400.
-    if getattr(resp,"status_code",200)==400 and MODEL!="openai/gpt-oss-20b":
+    if getattr(resp,"status_code",200) in (400,404) and MODEL!="openai/gpt-oss-20b":
         body={"model":"openai/gpt-oss-20b","temperature":0.3,
               "max_completion_tokens":2350,"reasoning_effort":"low",
               "response_format":{"type":"json_object"},"messages":messages}
