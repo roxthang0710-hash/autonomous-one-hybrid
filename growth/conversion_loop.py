@@ -81,6 +81,30 @@ def measure(sprint, rows, today):
             "caveat":"Aggregate association, not evidence that the content-policy change caused follows."}
 
 
+def measure_official(sprint, snapshots, today):
+    """Fallback to same-provider follower counts; never invent profile visits."""
+    valid={}
+    baseline=date.fromisoformat(str(sprint["baseline_day"]))
+    for r in snapshots or []:
+        try:
+            d=date.fromisoformat(str(r.get("local_day")))
+            n=r.get("followers")
+            if baseline < d <= today and type(n) is int and n>=0:
+                valid[d]=n
+        except (ValueError,TypeError,AttributeError):
+            continue
+    observed=sorted(valid.items())
+    if len(observed)<2 or (observed[-1][0]-observed[0][0]).days<2:
+        return {"status":"awaiting_two_day_meta_span","provider":"meta_official"}
+    delta=observed[-1][1]-observed[0][1]
+    return {"status":"measured","source":"meta_official",
+        "first_day":observed[0][0].isoformat(),"last_day":observed[-1][0].isoformat(),
+        "first_followers":observed[0][1],"last_followers":observed[-1][1],
+        "observed_net_change":delta,
+        "decision":"retain_trial" if delta>0 else "return_balanced",
+        "caveat":"Same-provider follower change only; cannot attribute growth or loss to this trial."}
+
+
 def notify(db, code, title, detail, action, *,severity="info"):
     owners=db.request("GET","/enna_desk_owners",params={"select":"user_id","limit":"5"})
     if not isinstance(owners,list) or not owners:
@@ -116,6 +140,13 @@ def run(db=None,*,now=None):
         if today<date.fromisoformat(sprint["evaluation_due"]):
             return {"status":"experiment_running","sprint_key":sprint["sprint_key"]}
         outcome=measure(sprint,data,today)
+        if outcome["status"]!="measured":
+            official=db.request("GET","/enna_threads_account_snapshots",params={
+                "select":"local_day,followers",
+                "brand_key":"eq."+BRAND_KEY,
+                "order":"local_day.asc","limit":"14"})
+            if isinstance(official,list):
+                outcome=measure_official(sprint,official,today)
         if outcome["status"]!="measured":
             # Do not invent an outcome because the provider has no new data.
             return {"status":"outcome_pending","reason":outcome["status"]}
