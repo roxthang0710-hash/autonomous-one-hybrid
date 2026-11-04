@@ -30,7 +30,8 @@ FAILURE_WORDS = ("không bám đủ sát", "không thấy bình luận bám đ�
                  "dịch vụ tạo nội dung chưa phản hồi", "no_safe_draft",
                  "chưa tạo được bản nháp", "chưa phản hồi thành công",
                  "không có cách bình luận", "ai_reply_not_contextual_enough",
-                 "không thấy cách bình luận")
+                 "không thấy cách bình luận",
+                 "bộ kiểm thử biên tập chưa đạt")
 
 
 def utcnow():
