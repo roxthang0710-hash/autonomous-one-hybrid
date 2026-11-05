@@ -61,6 +61,7 @@ def generate_variant(source, *, request=requests.post):
     """
     secret=os.environ.get("GROQ_API_KEY","").strip()
     if not secret:
+        print("visual_humor: no_model_key_using_curated_copy")
         return None
     allowed={k:source.get(k) for k in ("id","visual_hint","headline","punchline","topic")}
     prompt={
@@ -68,13 +69,14 @@ def generate_variant(source, *, request=requests.post):
       "source_is_photographic":True,
       "brand":"Đồ Hay Đi Làm",
       "original_caption":allowed["headline"]+" / "+allowed["punchline"],
-      "task":"Viết câu hài công sở thuần Việt có một tình huống cụ thể và kết bất ngờ; dùng ảnh làm minh họa, KHÔNG nhận ảnh kể chuyện thật. Ngắn, có duyên, không nhắc AI, không dùng câu CTA, không meme có bản quyền.",
+      "task":"Viết như một đồng nghiệp Việt Nam duyên ngầm, có bối cảnh rất cụ thể và cú bẻ cuối thật đời thường. Không giảng đạo lý, không khoe năng suất, không câu chữ quảng cáo. Dùng ảnh làm minh họa, không khẳng định có sự kiện thật. Không dùng CTA, không nhắc AI hoặc người nổi tiếng.",
       "limits":"headline 12-66 ký tự, punchline 18-100 ký tự, không đưa nhân vật hoặc diễn biến không có trong ảnh, không nói người trong ảnh đã làm gì; tránh sáo rỗng.",
       "examples_to_avoid":[*GENERIC[:6]],
     }
     body={
       "model":os.getenv("GROQ_MODEL","openai/gpt-oss-20b"),
-      "temperature":0.72,"max_completion_tokens":380,
+      "temperature":0.75,"max_completion_tokens":800,
+      "reasoning_effort":"low","include_reasoning":False,
       "response_format":{"type":"json_schema","json_schema":{
         "name":"enna_photo_humor","strict":True,
         "schema":{"type":"object","additionalProperties":False,
@@ -90,6 +92,12 @@ def generate_variant(source, *, request=requests.post):
             json=body,timeout=25)
         result.raise_for_status()
         data=json.loads(result.json()["choices"][0]["message"]["content"])
-    except (requests.RequestException,ValueError,KeyError,IndexError,TypeError):
+    except requests.HTTPError as exc:
+        print("visual_humor: model_http_"+str(getattr(exc.response,"status_code","unknown")))
         return None
-    return check_copy(source,data)
+    except (requests.RequestException,ValueError,KeyError,IndexError,TypeError) as exc:
+        print("visual_humor: model_failure_"+type(exc).__name__)
+        return None
+    accepted=check_copy(source,data)
+    print("visual_humor: "+("accepted_guarded_draft" if accepted else "rejected_by_editorial_gate"))
+    return accepted
