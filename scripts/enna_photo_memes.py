@@ -16,7 +16,7 @@ IDEAS=[
  ("chuyen-doi-so","split",["keyboard","tray"],"8:30 — “TỪ NAY MÌNH SỐ HÓA!”","16:59 — MÁY IN: “GIẤY ĐÂU RỒI?”")]
 def trusted(url):
  p=urlparse(str(url))
- return p.scheme=="https" and p.hostname=="upload.wikimedia.org" and p.path.startswith("/wikipedia/commons/") and not p.query and not p.fragment
+ return p.scheme=="https" and p.hostname in ("upload.wikimedia.org","thumb.wikimedia.org") and p.path.startswith("/wikipedia/commons/") and (not p.query or p.hostname=="thumb.wikimedia.org") and not p.fragment and not p.username and not p.password
 def cc0(info):
  if not isinstance(info,dict) or info.get("mime") not in ("image/jpeg","image/png"):return False
  ext=info.get("extmetadata") or {}
@@ -40,7 +40,7 @@ def fetch_photo(item,req=requests):
   raise ValueError("unsafe-media-url scheme="+p.scheme+" host="+str(p.hostname)+" path_prefix="+p.path[:45]+" query_present="+str(bool(p.query)))
  reply=req.get(url,headers=UA,timeout=25,stream=True)
  reply.raise_for_status()
- if urlparse(reply.url).hostname!="upload.wikimedia.org":raise ValueError("offsite-redirect")
+ if urlparse(reply.url).hostname not in ("upload.wikimedia.org","thumb.wikimedia.org"):raise ValueError("offsite-redirect")
  data=bytearray()
  for chunk in reply.iter_content(chunk_size=65536):
   data.extend(chunk)
