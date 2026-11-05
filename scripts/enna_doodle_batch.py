@@ -57,7 +57,7 @@ def panel(d,box,fill="#FFFFFF",seed=0):
 def drawing(d,scene):
     if scene=="keyboard":
         sketch_laptop(d,540,506,scale=1.65)
-        for i,code in enumerate(["Win + V","Ctrl + Shift + T","Win + Shift + S"]):
+        for i,code in enumerate(["Ctrl + Shift + Esc","Win + E","Win + L"]):
             x=120+(i%2)*410;y=835+(i//2)*125
             panel(d,(x,y,x+370,y+100),fill=["#C4EFFF","#FFE6A1","#C6F5C6"][i],seed=21+i)
             note(d,code,x+19,y+23,size=26,width=330,max_lines=2)
