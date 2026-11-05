@@ -28,6 +28,17 @@ class DeskMonitorTests(unittest.TestCase):
         rows=build_notifications(OWNERS,[],[],
           [{"media_type":"original_video","status":"ready","source_url":None}],[],now=NOW)
         self.assertTrue(any(x["category"]=="media" for x in rows))
+    def test_uploaded_photo_drafts_trigger_review_alert_not_published_claim(self):
+        asset={"media_type":"licensed_photo","status":"needs_review",
+               "source_url":"https://gjdvdohylvsauphhkutw.supabase.co/storage/v1/object/public/enna-original-media/visual-review/aa/example.png"}
+        result=build_notifications(OWNERS,[],[],[asset],[],now=NOW)
+        self.assertTrue(any(x["title"]=="Enna có ảnh thật mới chờ duyệt" for x in result))
+        self.assertFalse(any("đã đăng thành công" in x["details"].lower() for x in result))
+        # Unreviewed external images are never treated as Enna's own finished drafts.
+        asset["source_url"]="https://malicious.example/photo.png"
+        result=build_notifications(OWNERS,[],[],[asset],[],now=NOW)
+        self.assertFalse(any(x["title"]=="Enna có ảnh thật mới chờ duyệt" for x in result))
+
     def test_recent_error_emits_system_alert(self):
         rows=build_notifications(OWNERS,[],[],[],[
           {"status":"failed","code":"ops_failed","occurred_at":"2026-11-05T02:00:00Z"}],now=NOW)
