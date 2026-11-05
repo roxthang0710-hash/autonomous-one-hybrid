@@ -22,7 +22,8 @@ VN = ZoneInfo("Asia/Ho_Chi_Minh")
 
 def local_day():
     return datetime.now(VN).date()
-ALLOWED_FORMATS = frozenset({"full_photo", "polaroid", "minimal"})
+ALLOWED_FORMATS = frozenset({"full_photo", "polaroid", "minimal", "reaction", "contrast", "chat"})
+COMEDY_MECHANICS = frozenset({"time_escalation", "outer_inner_contrast", "expectation_reversal", "escalating_circularity", "object_personification", "visual_reaction", "role_reversal"})
 
 def load_bank(path):
     """Fail closed on malformed manifests; model text cannot introduce URLs."""
@@ -39,11 +40,15 @@ def load_bank(path):
         if (not isinstance(ident, str) or not ident.replace("-", "").isalnum()
                 or not isinstance(title, str) or not title.startswith("File:")
                 or not title.lower().endswith(".jpg")
-                or src.get("format") not in ALLOWED_FORMATS):
+                or src.get("format") not in ALLOWED_FORMATS
+                or src.get("comic_device") not in COMEDY_MECHANICS):
             raise ValueError("source-unapproved")
         if any(not isinstance(src.get(k), str) or not 8 <= len(src[k]) <= 140
-               for k in ("headline", "punchline", "visual_hint")):
+               for k in ("headline", "punchline", "visual_hint", "scene")):
             raise ValueError("missing-human-creative-brief")
+        if src.get("format")=="chat" and (not isinstance(src.get("chat_lines"),list)
+           or len(src["chat_lines"])!=2 or any(not isinstance(line,str) or not 16<=len(line)<=100 for line in src["chat_lines"])):
+            raise ValueError("invalid-fictional-chat")
         ids.append(ident)
     if len(set(ids)) != len(ids) or len(set(s["title"] for s in sources)) != len(sources):
         raise ValueError("duplicated-source")
@@ -130,6 +135,44 @@ def compose(source, photo, copy=None):
         _write(d,title,77,85,900,48,"#191919",max_lines=1)
         d.rectangle((0,1095,1080,1350),fill="#f5db58")
         _write(d,punch,56,1147,966,45,"#1a1a1a",max_lines=3)
+    elif layout == "reaction":
+        # Meme-native reaction: large genuine photograph, intentionally little polish.
+        _cover(canvas,(0,0,1080,1040),photo)
+        d=ImageDraw.Draw(canvas)
+        d.rounded_rectangle((27,26,1053,199),radius=15,fill="#111111")
+        _write(d,title,64,73,960,48,"#ffffff",max_lines=2)
+        d.rectangle((0,1020,1080,1350),fill="#fff9ef")
+        d.rectangle((0,1015,1080,1040),fill="#f6d542")
+        _write(d,punch,55,1090,975,48,"#141414",max_lines=3)
+    elif layout == "contrast":
+        # Narrative jump in two labels, photo is the ironic middle beat.
+        d=ImageDraw.Draw(canvas)
+        d.rectangle((0,0,1080,230),fill="#161616")
+        _write(d,title,57,72,965,49,"#ffffff",max_lines=2)
+        _cover(canvas,(0,215,1080,1090),photo)
+        d=ImageDraw.Draw(canvas)
+        d.rectangle((0,1060,1080,1350),fill="#f3db51")
+        _write(d,punch,53,1110,978,46,"#171717",max_lines=3)
+    elif layout == "chat":
+        lines=source.get("chat_lines") or []
+        if len(lines)!=2:
+            raise ValueError("chat-scenario-required")
+        d=ImageDraw.Draw(canvas)
+        d.rounded_rectangle((34,34,1046,177),radius=24,fill="#e6eced")
+        _write(d,title,55,70,961,40,"#202020",max_lines=2)
+        d.text((64,188),"ĐOẠN CHAT GIẢ LẬP · KHÔNG PHẢI TIN NHẮN THẬT",
+               font=_font(18),fill="#454545")
+        for i,line in enumerate(lines):
+            top=241+i*162
+            left=52 if i==0 else 116
+            right=994 if i==0 else 1030
+            d.rounded_rectangle((left,top,right,top+134),radius=26,
+               fill=("#e6eee1" if i==0 else "#f3dc68"))
+            _write(d,line,left+28,top+23,right-left-58,31,"#202020",max_lines=3)
+        _cover(canvas,(0,566,1080,1170),photo)
+        d=ImageDraw.Draw(canvas)
+        d.rectangle((0,1128,1080,1350),fill="#171717")
+        _write(d,punch,49,1172,980,41,"#ffffff",max_lines=3)
     else:
         raise ValueError("unknown-visual-layout")
     return canvas
@@ -182,6 +225,8 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             "image_sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
             "visual_hint":source["visual_hint"],
             "format":source["format"],
+            "comic_device":source["comic_device"],
+            "scene":source["scene"],
             "headline":(proposal or {}).get("headline") or source["headline"],
             "punchline":(proposal or {}).get("punchline") or source["punchline"],
             "copy_origin":"guarded_ai_variant" if proposal else "human_curated",
