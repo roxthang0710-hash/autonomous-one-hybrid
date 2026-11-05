@@ -15,6 +15,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageEnhance
 import requests
 from scripts.enna_photo_memes import fetch_photo
+from scripts.enna_doodle_composer import render_doodle
 from growth.visual_comedy_gate import signals
 
 SIZE = (1080, 1350)
@@ -135,6 +136,11 @@ def compose(source, photo, copy=None):
     if not (8<=len(title)<=85 and 12<=len(punch)<=110):
         raise ValueError("invalid-creative-length")
     layout=source["format"]
+    # Real coffee and fictional chat are original hand-drawn meme scenes.
+    # The photographic CAT reaction branch is deliberately unchanged.
+    doodle=render_doodle(source,photo,_write,_font)
+    if doodle is not None:
+        return doodle
     canvas=Image.new("RGB",SIZE,"#fff8ed")
     if layout == "full_photo":
         _cover(canvas,(0,0,1080,1200),photo)
@@ -272,6 +278,7 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             "visual_hint":source["visual_hint"],
             "format":source["format"],
             "visual_tone_version":VISUAL_TONE_VERSION,
+            "visual_rendering":"hand_drawn_doodle" if source["format"]=="chat" or (source["format"]=="contrast" and "cà phê" in source.get("topic","").casefold()) else "authentic_photo",
             "visual_palette":PALETTES.get(source["format"]),
             "comic_device":source["comic_device"],
             "comedy_structure_gate":signals(source,source),
