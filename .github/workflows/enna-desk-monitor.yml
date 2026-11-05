@@ -31,10 +31,15 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Test non-fabricating proactive rules
         run: python -m unittest discover -s tests -p 'test_enna_desk_monitor.py' -v
+      - name: Test photo-rollout evidence and guardrails
+        run: python -m unittest discover -s tests -p 'test_visual_rollout_monitor.py' -v
+      - name: Audit visual-rollout scheduled-versus-verified evidence (read-only)
+        run: python -m growth.visual_rollout_monitor
       - name: Build and store owner-only proactive notifications
         run: python -m growth.enna_desk_monitor
       - name: Safety summary
         if: always()
         run: |
           echo 'Enna Desk monitors only existing verified social metrics and operation codes.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Photo-rollout monitor flags due-but-unverified content, never retries publication.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No public posts, replies, paid actions or OAuth writes.' >> "$GITHUB_STEP_SUMMARY"
