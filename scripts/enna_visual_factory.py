@@ -12,12 +12,23 @@ from datetime import date, datetime
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageEnhance
 import requests
 from scripts.enna_photo_memes import fetch_photo
 from growth.visual_comedy_gate import signals
 
 SIZE = (1080, 1350)
+# ENNA Visual Tone 3.0 — punchy, recognizable colors rather than beige posters.
+# Native photo memes use vivid framing, not fabricated image contents.
+VISUAL_TONE_VERSION = "3.0"
+PALETTES = {
+    "reaction": {"primary": "#FFD400", "accent": "#FF5A36", "ink": "#111111",
+                 "paper": "#FFFFFF", "highlight": "#64E8FE"},
+    "chat": {"primary": "#DCEBFF", "accent": "#D8F5B7", "ink": "#252525",
+             "paper": "#FFFFFF", "highlight": "#FF5D9E"},
+    "contrast": {"primary": "#FF6B3D", "accent": "#FFE34D", "ink": "#141414",
+                 "paper": "#FFFFFF", "highlight": "#3BE7C5"},
+}
 MAX_PHOTOS_PER_BATCH = 3
 VN = ZoneInfo("Asia/Ho_Chi_Minh")
 
@@ -110,6 +121,9 @@ def _write(draw, label, x, y, width, size, fill, max_lines=2):
 def _cover(img, area, original_photo):
     photo = ImageOps.fit(original_photo.convert("RGB"),(area[2]-area[0],area[3]-area[1]),
                          method=Image.Resampling.LANCZOS)
+    # A modest pop in real photo color; no fake subject, masks or AI stylization.
+    photo = ImageEnhance.Color(photo).enhance(1.16)
+    photo = ImageEnhance.Contrast(photo).enhance(1.07)
     img.paste(photo, (area[0],area[1]))
 
 def compose(source, photo, copy=None):
@@ -146,43 +160,56 @@ def compose(source, photo, copy=None):
         d.rectangle((0,1095,1080,1350),fill="#f5db58")
         _write(d,punch,56,1147,966,45,"#1a1a1a",max_lines=3)
     elif layout == "reaction":
-        # Meme-native reaction: large genuine photograph, intentionally little polish.
-        _cover(canvas,(0,0,1080,1040),photo)
+        # An intentionally bold, screenshot-friendly reaction meme. Bright
+        # yellow top bar + teal bottom bar, not an editorial black/beige card.
+        colors=PALETTES["reaction"]
+        _cover(canvas,(0,214,1080,1055),photo)
         d=ImageDraw.Draw(canvas)
-        d.rounded_rectangle((27,26,1053,199),radius=15,fill="#111111")
-        _write(d,title,64,73,960,48,"#ffffff",max_lines=2)
-        d.rectangle((0,1020,1080,1350),fill="#fff9ef")
-        d.rectangle((0,1015,1080,1040),fill="#f6d542")
-        _write(d,punch,55,1090,975,48,"#141414",max_lines=3)
+        d.rectangle((0,0,1080,229),fill=colors["primary"])
+        _write(d,title,52,70,965,51,colors["ink"],max_lines=2)
+        d.rounded_rectangle((850,238,1030,306),radius=20,fill=colors["accent"])
+        d.text((889,254),"POV",font=_font(31),fill=colors["paper"])
+        d.rectangle((0,1030,1080,1350),fill=colors["highlight"])
+        d.rectangle((0,1021,1080,1041),fill=colors["accent"])
+        _write(d,punch,54,1090,970,49,colors["ink"],max_lines=3)
     elif layout == "contrast":
-        # Narrative jump in two labels, photo is the ironic middle beat.
+        # High-energy time/expectation contrast: orange vs yellow and a real
+        # photo in between. Colors give the twist a playful visual rhythm.
+        colors=PALETTES["contrast"]
+        _cover(canvas,(0,220,1080,1095),photo)
         d=ImageDraw.Draw(canvas)
-        d.rectangle((0,0,1080,230),fill="#161616")
-        _write(d,title,57,72,965,49,"#ffffff",max_lines=2)
-        _cover(canvas,(0,215,1080,1090),photo)
-        d=ImageDraw.Draw(canvas)
-        d.rectangle((0,1060,1080,1350),fill="#f3db51")
-        _write(d,punch,53,1110,978,46,"#171717",max_lines=3)
+        d.rectangle((0,0,1080,235),fill=colors["primary"])
+        _write(d,title,50,67,976,51,colors["ink"],max_lines=2)
+        d.rectangle((0,229,1080,243),fill=colors["highlight"])
+        d.rounded_rectangle((54,954,306,1026),radius=14,fill=colors["highlight"])
+        d.text((85,976),"KỲ VẬY?",font=_font(29),fill=colors["ink"])
+        d.rectangle((0,1060,1080,1350),fill=colors["accent"])
+        _write(d,punch,52,1112,976,48,colors["ink"],max_lines=3)
     elif layout == "chat":
+        # Fictional chat, clearly labeled, with casual bubbles and
+        # approachable pastel BLUE/GREEN rather than corporate beige.
         lines=source.get("chat_lines") or []
         if len(lines)!=2:
             raise ValueError("chat-scenario-required")
+        colors=PALETTES["chat"]
         d=ImageDraw.Draw(canvas)
-        d.rounded_rectangle((34,34,1046,177),radius=24,fill="#e6eced")
-        _write(d,title,55,70,961,40,"#202020",max_lines=2)
-        d.text((64,188),"ĐOẠN CHAT GIẢ LẬP · KHÔNG PHẢI TIN NHẮN THẬT",
-               font=_font(18),fill="#454545")
+        d.rectangle((0,0,1080,583),fill=colors["primary"])
+        d.rounded_rectangle((36,31,1044,166),radius=30,fill=colors["paper"])
+        _write(d,title,57,71,962,40,colors["ink"],max_lines=2)
+        d.text((62,181),"ĐOẠN CHAT GIẢ LẬP · KHÔNG PHẢI TIN NHẮN THẬT",
+               font=_font(18),fill=colors["ink"])
         for i,line in enumerate(lines):
-            top=241+i*162
-            left=52 if i==0 else 116
-            right=994 if i==0 else 1030
-            d.rounded_rectangle((left,top,right,top+134),radius=26,
-               fill=("#e6eee1" if i==0 else "#f3dc68"))
-            _write(d,line,left+28,top+23,right-left-58,31,"#202020",max_lines=3)
-        _cover(canvas,(0,566,1080,1170),photo)
+            top=242+i*162
+            left=50 if i==0 else 122
+            right=991 if i==0 else 1030
+            d.rounded_rectangle((left,top,right,top+134),radius=29,
+               fill=(colors["paper"] if i==0 else colors["accent"]),
+               outline="#66758A",width=2)
+            _write(d,line,left+28,top+25,right-left-60,31,colors["ink"],max_lines=3)
+        _cover(canvas,(0,572,1080,1178),photo)
         d=ImageDraw.Draw(canvas)
-        d.rectangle((0,1128,1080,1350),fill="#171717")
-        _write(d,punch,49,1172,980,41,"#ffffff",max_lines=3)
+        d.rectangle((0,1134,1080,1350),fill=colors["highlight"])
+        _write(d,punch,49,1172,975,43,colors["ink"],max_lines=3)
     else:
         raise ValueError("unknown-visual-layout")
     return canvas
@@ -244,6 +271,8 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             "image_sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
             "visual_hint":source["visual_hint"],
             "format":source["format"],
+            "visual_tone_version":VISUAL_TONE_VERSION,
+            "visual_palette":PALETTES.get(source["format"]),
             "comic_device":source["comic_device"],
             "comedy_structure_gate":signals(source,source),
             "ai_suggestion":proposal,
