@@ -42,7 +42,11 @@ jobs:
           python -m unittest discover -s tests -p 'test_enna_visual_factory.py' -v
           python -m unittest discover -s tests -p 'test_enna_photo_memes.py' -v
           python -m unittest discover -s tests -p 'test_visual_review_catalog.py' -v
-      - name: Create new office-photo drafts from CC0 sources
+      - name: Engineering push — generate deterministic images without LLM calls
+        if: github.event_name == 'push'
+        run: python -m scripts.enna_visual_factory --output visual-factory-drafts
+      - name: Scheduled or manually dispatched production — guarded AI humor
+        if: github.event_name != 'push'
         run: python -m scripts.enna_visual_factory --ai-copy --output visual-factory-drafts
       - name: Verify every output includes rights evidence and original photography
         run: |
@@ -72,6 +76,7 @@ jobs:
           path: visual-factory-drafts/
           retention-days: 14
       - name: Register only review-required photo drafts in existing Supabase media library
+        if: github.event_name != 'push'
         run: python -m growth.visual_review_catalog --directory visual-factory-drafts
       - name: Evidence summary
         if: always()
