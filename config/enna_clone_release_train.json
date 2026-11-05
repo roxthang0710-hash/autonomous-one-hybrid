@@ -1,0 +1,161 @@
+{
+  "brand": "Đồ Hay Đi Làm",
+  "product": "Enna Clone",
+  "content_series": "Tự làm đồng nghiệp AI",
+  "distribution_rule": "Never announce capabilities not end-to-end verified and unlocked for the intended audience. One user-value feature per Threads update.",
+  "internal_only": true,
+  "created_on": "2026-11-06",
+  "current_public_release": "0.1",
+  "stages": [
+    {
+      "version": "0.1",
+      "title": "Một prompt, một đồng nghiệp mới",
+      "features": [
+        "browser prompt builder",
+        "editable offline instructions",
+        "local Markdown download"
+      ],
+      "status": "released",
+      "audience": "public",
+      "hook": "Thử tự tạo một đồng nghiệp AI biết nghe lời bằng 3 bước.",
+      "example": "Dùng Enna Clone Lite tạo trợ lý nhắc việc theo mẫu; sao chép sang ứng dụng AI người dùng chọn.",
+      "cta": "Thử bản miễn phí trong link bio.",
+      "metric": "landing visits only after privacy-safe measurement is configured"
+    },
+    {
+      "version": "0.2",
+      "title": "Enna biết trò chuyện thật",
+      "features": [
+        "accounts",
+        "live_chat",
+        "private chat history",
+        "daily AI cost caps"
+      ],
+      "status": "private_beta_backend_built",
+      "audience": "invite_only",
+      "hook": "Hồi trước Enna chỉ giúp viết prompt. Bây giờ nó trả lời được một việc thật.",
+      "example": "Nhập ghi chú họp giả lập → nhận bảng việc + chỗ chưa xác nhận.",
+      "cta": "Đăng ký suất thử beta theo thông báo chính thức.",
+      "release_gates": [
+        "At least 2 externally verified live user chats",
+        "CORS and auth email flow end-to-end",
+        "RLS cross-account negative test",
+        "server-side provider key verified",
+        "quota and global budget verified"
+      ],
+      "metric": "successful distinct testers, messages used, valid replies, errors"
+    },
+    {
+      "version": "0.3",
+      "title": "Enna nhớ đúng thứ bạn chọn",
+      "features": [
+        "private_memory",
+        "document_workspace",
+        "agent_builder"
+      ],
+      "status": "private_beta_backend_built",
+      "audience": "invite_only",
+      "hook": "Lần nào nhờ viết email cũng phải nhắc ‘đừng dài dòng’? Cho Enna nhớ một lần.",
+      "example": "Lưu sở thích email 70 từ, chọn tài liệu mẫu, tạo trợ lý viết email không bịa deadline.",
+      "cta": "Lưu một sở thích rồi thử giao một email có điều kiện.",
+      "release_gates": [
+        "2-account memory isolation verified",
+        "create/delete and deletion persistence verified",
+        "documents never auto-attached",
+        "no auto-memory extraction"
+      ],
+      "metric": "repeat usage and user-selected memory success"
+    },
+    {
+      "version": "0.4",
+      "title": "Enna có lịch làm việc riêng",
+      "features": [
+        "schedules",
+        "private task runs",
+        "clear failure states"
+      ],
+      "status": "backend_built_gate_closed",
+      "audience": "invite_only",
+      "hook": "Bạn giao một lần. Enna tự chuẩn bị bản nháp theo lịch, nhưng không tự gửi lung tung.",
+      "example": "Mỗi sáng chuẩn bị checklist ba việc ưu tiên từ đầu vào người dùng chọn; tự xem trong lịch sử.",
+      "cta": "Tạo nhiệm vụ hằng ngày và duyệt kết quả.",
+      "release_gates": [
+        "5 private scheduled jobs verified",
+        "zero duplicate executions in concurrency test",
+        "quota respects global spending",
+        "no action beyond draft creation",
+        "job timing caveat clearly disclosed"
+      ],
+      "metric": "successful scheduled runs and error rate"
+    },
+    {
+      "version": "0.5",
+      "title": "Enna tự đề xuất cách làm tốt hơn",
+      "features": [
+        "proactive_suggestions",
+        "human feedback"
+      ],
+      "status": "backend_built_gate_closed",
+      "audience": "invite_only",
+      "hook": "Không chỉ trả việc. Enna còn chỉ ra quy trình nào có thể làm tốt hơn.",
+      "example": "Sau bản nháp tổng hợp họp, Enna đề xuất thêm tiêu chí nghiệm thu và bước kiểm quyết định.",
+      "cta": "Thử hai đề xuất và bấm chấp nhận hoặc bỏ qua.",
+      "release_gates": [
+        "20%+ suggestion acceptance from opted-in trials",
+        "no generic repeated suggestion across 5 cases",
+        "no self-modifying source code",
+        "extra AI calls count against quotas"
+      ],
+      "metric": "suggestion acceptance, usefulness feedback, cost per suggestion"
+    },
+    {
+      "version": "0.6",
+      "title": "Enna làm cùng công cụ bạn đã cho phép",
+      "features": [
+        "external_connectors"
+      ],
+      "status": "requires_external_provider_oauth",
+      "audience": "not_released",
+      "hook": "Từ bản nháp tới công việc có dữ liệu thật — chỉ sau khi bạn cấp quyền.",
+      "example": "Đọc tài liệu đã được người dùng cấp quyền; không tự truy cập hộp thư hay đăng mạng xã hội.",
+      "cta": "Chỉ kết nối ứng dụng khi quyền và phạm vi được công bố rõ.",
+      "release_gates": [
+        "each connector has real provider OAuth",
+        "scoped read-only permissions verified",
+        "token vault isolated per owner",
+        "revocation proven",
+        "App Review and provider consent complete"
+      ],
+      "metric": "authorized connections, revocations, real workflow success"
+    },
+    {
+      "version": "1.0",
+      "title": "Cộng đồng tự xây Enna của mình",
+      "features": [
+        "shared templates",
+        "challenge library",
+        "privacy safe traffic reporting"
+      ],
+      "status": "content_platform_prepared",
+      "audience": "not_released",
+      "hook": "Một Enna cho một người. Cả cộng đồng thì bao nhiêu bài toán công sở có thể giải?",
+      "example": "Người dùng chia sẻ mẫu giả lập, nhận góp ý cải tiến prompt và template được duyệt.",
+      "cta": "Đưa một tình huống giả lập lên cộng đồng, không cần đăng dữ liệu công ty.",
+      "release_gates": [
+        "public feedback channel moderated",
+        "starter end-to-end verified by real external user",
+        "clear contribution and moderation rules",
+        "privacy-safe conversion measurement configured"
+      ],
+      "metric": "accepted challenges, active contributors, returning visitors"
+    }
+  ],
+  "principles": [
+    "Never pretend success based on GitHub CI alone",
+    "Don't publish all version notes simultaneously",
+    "Real and original Người Tròn artwork for every visual post",
+    "Protect original Enna credentials",
+    "Do not auto-post unreleased updates",
+    "No promises of entirely free external API calls"
+  ]
+}
