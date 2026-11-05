@@ -21,7 +21,7 @@ class CloneWorker:
     def __init__(self, url=None, service_key=None, groq_key=None, model=None):
         self.url=(url or os.getenv("SUPABASE_URL","")).rstrip("/")
         self.key=service_key or os.getenv("DB_SERVICE_KEY","")
-        self.groq=groq_key or os.getenv("GROQ_API_KEY","")
+        self.groq=groq_key or os.getenv("ENNA_CLONE_GROQ_API_KEY","")
         self.model=model or os.getenv("GROQ_MODEL",MODEL)
         if not self.url.startswith("https://") or not self.key:
             raise ValueError("Missing trusted server database configuration")
