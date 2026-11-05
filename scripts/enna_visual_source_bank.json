@@ -1,5 +1,5 @@
 {
-  "catalog_version": "2026-11-06.5-visual-truth",
+  "catalog_version": "2026-11-06.6-no-orphan",
   "policy": "Original Vietnamese office parody with photographed, live-revalidated Wikimedia Commons CC0 source. Mechanism: reaction, chat, contrast, surprise, exaggeration. Curated photo illustrates a fictional situation and never identifies a real actor. Human review before any social publication.",
   "sources": [
     {
@@ -102,7 +102,7 @@
       "visual_hint": "mèo thật ngồi chắn bàn phím laptop, quay lưng về phía người xem",
       "series": "phan-ung-cong-so",
       "headline": "SẾP: SAO CHƯA GỬI FILE?",
-      "punchline": "DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN Ạ.",
+      "punchline": "DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN.",
       "format": "reaction",
       "comic_device": "visual_reaction",
       "scene": "Mèo thật ngồi chắn bàn phím, nhân viên không thể gửi tệp; câu đùa phải nhắc đúng hành động chặn bàn phím",
