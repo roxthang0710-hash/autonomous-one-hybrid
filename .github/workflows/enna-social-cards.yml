@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  actions: read
 concurrency:
   group: enna-social-cards
   cancel-in-progress: false
@@ -39,11 +40,49 @@ jobs:
               assert c.stat().st_size < 8000000,("Image too large",c)
           print('Validated',len(cards),'static Instagram cards')
           PY
+      - name: Restore the previously verified image-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: enna-photo-memes-preview
+          run-id: 42063963142
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          path: photo-meme-pilot
+      - name: Validate CC0 provenance and stage static images
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,shutil
+          from PIL import Image
+          source=Path('photo-meme-pilot')
+          target=Path('docs/enna/media/photo-meme')
+          target.mkdir(parents=True,exist_ok=True)
+          expected={'kiem-tra-tien-do','luu-file-lan-thu-17','chuyen-doi-so'}
+          assert {p.stem for p in source.glob('*.png')}==expected
+          for stem in sorted(expected):
+            photo=source/(stem+'.png')
+            meta=source/(stem+'.rights.json')
+            assert photo.is_file() and meta.is_file(),stem
+            rights=json.loads(meta.read_text(encoding='utf-8'))
+            assert rights['published'] is False
+            assert rights['status']=='DRAFT_REQUIRES_HUMAN_REVIEW'
+            assert rights['output_sha256']==hashlib.sha256(photo.read_bytes()).hexdigest()
+            assert rights['source_media'] and all(
+              x.get('license')=='CC0 1.0' and
+              x.get('source_page','').startswith('https://commons.wikimedia.org/wiki/File:')
+              for x in rights['source_media'])
+            with Image.open(photo) as im:
+              assert im.size==(1080,1350) and im.format=='PNG'
+            assert photo.stat().st_size<=7_000_000
+            shutil.copy2(photo,target/photo.name)
+            shutil.copy2(meta,target/meta.name)
+          print('Photo assets staged; no social publication performed')
+          PY
       - name: Publish static assets via existing GitHub Pages directory
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/enna/media/*.png
+          git add docs/enna/media/*.png docs/enna/media/photo-meme/*.png docs/enna/media/photo-meme/*.json
           if ! git diff --cached --quiet; then
             git commit -m "Publish Enna original social image assets"
             git push
