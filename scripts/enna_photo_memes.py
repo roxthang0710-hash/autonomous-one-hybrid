@@ -35,7 +35,9 @@ def fetch_photo(item,req=requests):
  info=(page.get("imageinfo") or [None])[0]
  if not cc0(info):raise ValueError("license-not-verified-CC0")
  url=info.get("thumburl") or info.get("url")
- if not trusted(url):raise ValueError("unsafe-media-url")
+ if not trusted(url):
+  p=urlparse(str(url))
+  raise ValueError("unsafe-media-url scheme="+p.scheme+" host="+str(p.hostname)+" path_prefix="+p.path[:45]+" query_present="+str(bool(p.query)))
  reply=req.get(url,headers=UA,timeout=25,stream=True)
  reply.raise_for_status()
  if urlparse(reply.url).hostname!="upload.wikimedia.org":raise ValueError("offsite-redirect")
