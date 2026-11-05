@@ -196,21 +196,17 @@ def as_tech_brief(idea):
         "app":"ai", "category":"ai_"+idea["lane"],
         "source":idea["source"], "visual_style_id":STYLE,
         "prompt":(
-            "Tuyến nội dung độc quyền 'AI — Đồng nghiệp thứ hai' của Đồ Hay Đi Làm. "
-            "Chỉ khai thác MỘT tình huống cụ thể: "+idea["task"]+". "
-            "Hook có thể tham khảo: "+idea["hook"]+" "
-            "Viết tiếng Việt tự nhiên, vui nhẹ và cực dễ áp dụng, "
-            "không gây ảo tưởng AI tự hành động ngoài chat. "
-            "Đưa một PROMPT MẪU thật ngắn có thể sao chép, gợi từ: "+
-            idea["copy_prompt"]+" "
-            "Giữ 1 lưu ý quan trọng: "+idea["risk"]+" "
-            "Không khoe tiết kiệm thời gian bằng số không có nguồn, "
-            "không khẳng định AI đã xem file, email, lịch hoặc dữ liệu nào "
-            "khi chưa được cấp. Người dùng tự kiểm kết quả. "
-            "Nếu minh họa, dùng nhân vật Người Tròn duy nhất, "
-            "nét vẽ tay nguệch ngoạc, tình huống riêng: "+idea["visual"]+" "
-            "Không dùng poster chia ba ô cứng hoặc minh họa robot AI chung chung. "
-            "Không đòi đăng bài ngay và không tự chỉnh lịch Metricool."
+            "Tuyến AI — Đồng nghiệp thứ hai. MỘT tình huống: "+
+            idea["task"]+". Hook: "+idea["hook"]+
+            " Đưa một prompt mẫu ngắn, dùng được ngay, dựa trên: "+
+            idea["copy_prompt"]+" Lưu ý: "+idea["risk"]+
+            " Viết tiếng Việt tự nhiên, hài nhẹ, một vấn đề/bài. "
+            "Không bịa số liệu, trải nghiệm đã thử, quyền đọc tệp/email, "
+            "tự động thực hiện tác vụ hay độ chính xác tuyệt đối. "
+            "Nhắc người đọc kiểm tra lại kết quả. "
+            "Minh họa Người Tròn vẽ tay, tình huống riêng: "+
+            idea["visual"]+
+            " Không dùng poster ba ô lặp lại. Không tự đăng."
         ),
         "example_prompt":idea["copy_prompt"],
         "visual_scene":idea["visual"],
