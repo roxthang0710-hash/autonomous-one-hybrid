@@ -4,10 +4,10 @@ import os
 import unittest
 from unittest.mock import Mock,patch
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from growth.visual_comedy_gate import signals
 from growth.visual_humor_editor import generate_variant
-from scripts.enna_visual_factory import load_bank, compose
+from scripts.enna_visual_factory import load_bank, compose, _wrapped
 
 BANK="scripts/enna_visual_source_bank.json"
 
@@ -36,6 +36,12 @@ class VisualComedyTests(unittest.TestCase):
                 art=compose(src,photo)
                 self.assertEqual(art.size,(1080,1350))
                 self.assertEqual(art.mode,"RGB")
+
+    def test_no_orphan_letter_on_comedy_punchline(self):
+        draw=ImageDraw.Draw(Image.new("RGB",(1080,1350)))
+        _,parts,_=_wrapped(draw,"DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN Ạ.",
+                           width=975,size=48,max_lines=3)
+        self.assertTrue(len(parts)==1 or len(parts[-1].strip())>3)
 
     def test_image_caption_cannot_claim_an_unseen_yawn(self):
         photo=next(x for x in load_bank(BANK) if x["id"]=="cat-yawning")
