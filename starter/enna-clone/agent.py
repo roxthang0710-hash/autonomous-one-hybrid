@@ -104,7 +104,7 @@ def request_model(messages: list[dict[str,str]], *, api_key: str, model: str) ->
                  "Content-Type":"application/json"},
         method="POST",
     )
-    # Never retry automatically. No unlimited loop, subprocess or tools.
+    # One bounded request, no retries, child processes, or external tool actions.
     with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as response:
         payload = json.loads(response.read(320000).decode("utf-8"))
     choices = payload.get("choices") if isinstance(payload,dict) else None
