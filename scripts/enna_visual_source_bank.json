@@ -108,7 +108,12 @@
       "scene": "Mèo thật ngồi chắn bàn phím, nhân viên không thể gửi tệp; câu đùa phải nhắc đúng hành động chặn bàn phím",
       "featured_rank": 1,
       "observed_visual_notes": "Verified from actual 2026-11-06 artifact: cat is sitting across laptop keyboard with back to camera; yawning NOT visible. Joke must not claim yawning.",
-      "visual_checked_on": "2026-11-06"
+      "visual_checked_on": "2026-11-06",
+      "not_visually_supported": [
+        "ngáp",
+        "há miệng",
+        "ngáp ngủ"
+      ]
     },
     {
       "id": "shop-cat",
