@@ -102,13 +102,28 @@ class CloneWorker:
                 # Owner-controlled feature gate; suggests revisions, not code changes.
                 enabled=self.db("enna_clone_feature_flags?select=enabled,audience&feature=eq.proactive_suggestions&limit=1")
                 if status=="complete" and enabled and enabled[0].get("enabled") and enabled[0].get("audience")!="closed":
-                    suggestion=("Nếu nhiệm vụ này được lặp lại, hãy bổ sung một ví dụ đầu vào, "
-                                "tiêu chí nghiệm thu và điểm cần người dùng xác nhận "
-                                "để bản nháp tiếp theo nhất quán hơn.")
-                    self.db("enna_clone_suggestions","POST",{
-                      "owner_id":owner,"run_id":run_id,"suggestion":suggestion,
-                      "status":"pending"
+                    # A separate billed AI call is explicitly quota-gated.
+                    # No automatic edits, online browsing or permissions change.
+                    extra=self.db("rpc/enna_clone_reserve_request","POST",{
+                        "p_owner":owner,"p_daily_limit":4,"p_global_limit":40
                     })
+                    if extra is True:
+                        try:
+                            suggestion=self.model_reply(
+                                "Bạn đang giúp một người dùng cải tiến QUY TRÌNH, không được sửa mã "
+                                "hoặc tự thực hiện việc gì. Từ tác vụ: "+
+                                prompt[:700]+"; và kết quả nháp: "+summary[:1000]+
+                                ". Đề xuất HAI cải tiến thực dụng và RIÊNG cho tình huống này, "
+                                "mỗi ý nêu vì sao và cách kiểm chứng. "
+                                "Viết tối đa 180 từ tiếng Việt, không lời khuyên sáo rỗng, "
+                                "không tự bịa dữ kiện, không xin quyền truy cập mới.")
+                            self.db("enna_clone_suggestions","POST",{
+                                "owner_id":owner,"run_id":run_id,
+                                "suggestion":suggestion[:1000],"status":"pending"
+                            })
+                        except (HTTPError,URLError,OSError,ValueError,RuntimeError,KeyError,IndexError):
+                            pass  # Completed task remains complete, no repeated retries.
+
             except (HTTPError,URLError,OSError,ValueError,KeyError,IndexError):
                 status="failed" # Fail closed, no secret or private message in console.
             results.append({"status":status,"task_processed":True})
