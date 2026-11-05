@@ -56,7 +56,7 @@ def choose_batch(sources, day, count=MAX_PHOTOS_PER_BATCH):
     count = min(len(sources), count)
     # For a 6-source catalog, alternate disjoint blocks of three instead of
     # pulling the same desk photograph on every invocation.
-    start = ((day.toordinal() % ((len(sources)+count-1)//count)) * count) % len(sources)
+    start = (day.toordinal() * count) % len(sources)
     return [sources[(start + i) % len(sources)] for i in range(count)]
 
 def _font(size, bold=True):
