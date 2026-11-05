@@ -54,6 +54,20 @@ class CloudCloneSafetyTests(unittest.TestCase):
         self.assertNotIn("<script src='http",html)
         self.assertIn("PRIVATE BETA",html)
 
+    def test_lost_response_recovery_precedes_new_chat_and_quota(self):
+        # Offline regression: same request must replay a completed answer without billing.
+        server=CODE.read_text(encoding="utf-8")
+        frontend=JS.read_text(encoding="utf-8")
+        chat=server[server.index("async function chat("):server.index("async function action(")]
+        self.assertLess(chat.index('request_id=eq.'),chat.index('createRow("enna_clone_conversations"'))
+        self.assertLess(chat.index('if (completed) return json('),chat.index('await reserve(owner)'))
+        self.assertIn('replayed:true',chat)
+        self.assertIn('original.content!==content',chat)
+        self.assertIn('body.conversation_id!==original.conversation_id',chat)
+        self.assertIn('const requestId=same?pending.request_id:crypto.randomUUID()',frontend)
+        self.assertIn('state.pendingChat=null;',frontend)
+        self.assertIn('try{\n     await refresh();',frontend)
+
     def test_worker_has_no_social_access_or_unbounded_proposals(self):
         src=WORKER.read_text(encoding="utf-8")
         flow=WORKFLOW.read_text(encoding="utf-8")
