@@ -131,14 +131,67 @@ TECH_BRIEFS = (
 )
 
 
-def choose_tech_brief(post_count):
-    """Offer one sourced technical angle per three newly created posts.
+# Mix Windows, Excel and PowerPoint rather than repeating a Windows-only tip.
+# The older Win+V/Snip ideas remain documented above but are NOT proposed as
+# new posts while the channel has recently exhausted those combinations.
+from datetime import date
+from threads.shortcut_diversity import (
+    WINDOWS_IDEAS, EXCEL_IDEAS, POWERPOINT_IDEAS, make_brief,
+    is_repeated, is_present,
+)
 
-    Return None on other cycles. Does not alter any existing scheduled row.
-    Production publisher still independently controls publication eligibility.
+_OLD_TOOL_BRIEFS = tuple(
+    brief for brief in TECH_BRIEFS
+    if brief["key"] not in ("windows_clipboard", "windows_snip")
+)
+
+def _balanced_briefs():
+    lanes = {
+      "windows": [make_brief(x) for x in WINDOWS_IDEAS],
+      "excel": [make_brief(x) for x in EXCEL_IDEAS],
+      "powerpoint": [make_brief(x) for x in POWERPOINT_IDEAS],
+      "other": list(_OLD_TOOL_BRIEFS),
+    }
+    result=[]
+    # Two Windows angles, one Excel, one PowerPoint and one general office tip
+    # within each complete five-slot mini-cycle. No repeated key in one pool.
+    pattern=("windows", "excel", "windows", "powerpoint", "other")
+    while any(lanes.values()):
+        for tag in pattern:
+            if lanes[tag]:
+                result.append(lanes[tag].pop(0))
+    return tuple(result)
+
+TECH_BRIEFS = _balanced_briefs()
+
+def choose_tech_brief(post_count, previous_texts=(), *, today=None):
+    """Provide one new well-sourced tool tip for every third editorial post.
+
+    Never repeat the exact Windows combo seen in recent own posts or Nov 3–6
+    baseline, and do not confuse Windows-wide shortcuts with Office-only keys.
+    Fail closed to a non-shortcut brief instead of giving a stale recycled one.
     """
-    if not isinstance(post_count, int) or post_count < 0:
+    if not isinstance(post_count,int) or isinstance(post_count,bool) or post_count<0:
         raise ValueError("post_count must be a nonnegative integer")
-    if post_count % 3 != 0:
+    if post_count%3:
         return None
-    return TECH_BRIEFS[(post_count // 3) % len(TECH_BRIEFS)]
+    if not isinstance(previous_texts,(list,tuple)):
+        raise ValueError("previous_texts must be a list or tuple")
+    today=today or date.today()
+    start=(post_count//3)%len(TECH_BRIEFS)
+    ordered=TECH_BRIEFS[start:]+TECH_BRIEFS[:start]
+    for brief in ordered:
+        combo=brief.get("shortcut")
+        if combo and is_repeated(combo,previous_texts,today=today):
+            continue
+        # A past Windows article with the same use-case headline does not
+        # count as new simply because a different CTA was attached.
+        category=brief.get("category")
+        if category and any(
+            str(brief.get("key","")).replace("_"," ") in str(t).casefold()
+            for t in previous_texts[:24]
+        ):
+            continue
+        return brief
+    # No unique angle available: skip. Do not force a quota with repeats.
+    return None
