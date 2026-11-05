@@ -98,6 +98,19 @@ class VisualFactoryTests(unittest.TestCase):
         self.assertIsNone(check_copy(row,{"headline":"BÁO CÁO CUỐI NGÀY","punchline":"Link http://untrusted.example mua ngay nhé."}))
         self.assertIsNone(check_copy(row,{"headline":row["headline"],"punchline":row["punchline"]}))
 
+    def test_oversized_ai_word_falls_back_to_human_caption(self):
+        photo=Image.effect_noise((1280,960),22).convert("RGB")
+        def fake_fetch(row):
+            return photo, {"source_page":"https://commons.wikimedia.org/wiki/"+row[1].replace(" ","_"),
+                "photographer":row[2],"file":row[1],"photo_sha256":"a"*64}
+        def bad_ai(_):
+            return {"headline":"G"*58,"punchline":"Laptop và sổ đây, sao chưa làm xong?"}
+        with tempfile.TemporaryDirectory() as folder:
+            rows=render(BANK,folder,day=date(2026,11,6),
+                        fetch=fake_fetch,rewrite=bad_ai)
+            self.assertEqual(len(rows),3)
+            self.assertTrue(all(x["copy_origin"]=="human_curated" for x in rows))
+
     def test_no_groq_key_keeps_human_written_caption(self):
         with patch.dict("os.environ",{"GROQ_API_KEY":""}):
             self.assertIsNone(generate_variant(load_bank(BANK)[0],request=Mock()))
