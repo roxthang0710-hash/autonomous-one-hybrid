@@ -11,7 +11,8 @@ STALE=("hãy cùng","các bạn hãy","khám phá ngay","truyền cảm hứng",
        "năng suất làm việc","tăng hiệu quả","đừng quên","cùng nhau",
        "bạn có bao giờ","làm việc chăm chỉ","văn phòng hiện đại",
        "một ngày thú vị","những điều tuyệt vời","kỷ niệm khó quên",
-       "đầy năng lượng","mang lại giá trị","tích cực mỗi ngày")
+       "đầy năng lượng","mang lại giá trị","tích cực mỗi ngày",
+       "đúng rồi","cả team","của cả team","giúp bạn thành công")
 PUNCTUATION=(":","?","!", "…","—","-")
 TOOLS=("máy","họp","sếp","bàn","việc","file","tệp","cà phê","ngáp",
        "tải xuống","thư mục","lịch","laptop","màn hình","văn phòng",
@@ -42,6 +43,14 @@ def signals(source, copy):
         reasons.append("unobserved-photo-action")
     if not any(t in combined for t in TOOLS):
         reasons.append("not-anchored-in-office-life")
+    anchors=source.get("twist_anchor_any") or []
+    if not isinstance(anchors,list) or not anchors:
+        reasons.append("missing-source-specific-twist-anchors")
+    elif not any(isinstance(a,str) and a.casefold() in p.casefold() for a in anchors):
+        reasons.append("no-recognizable-payoff")
+    if p.count("'")%2 or p.count('"')%2:
+        reasons.append("broken-dialogue-quoting")
+
     if h.casefold()==p.casefold() or SequenceMatcher(None,h.casefold(),p.casefold()).ratio()>.82:
         reasons.append("repeated-setup")
     device=source.get("comic_device")
