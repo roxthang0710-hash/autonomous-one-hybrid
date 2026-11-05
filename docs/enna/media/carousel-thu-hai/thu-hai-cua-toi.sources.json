@@ -1,0 +1,48 @@
+{
+  "type": "carousel",
+  "status": "DRAFT_REQUIRES_HUMAN_REVIEW",
+  "published": false,
+  "size": [
+    1080,
+    1350
+  ],
+  "slides": [
+    {
+      "file": "thu-hai-cua-toi-01.png",
+      "sha256": "9b7bbfd0d710c3f1902943efb05c4dfb7d5da8c214e343f41a4b6b3958425a37"
+    },
+    {
+      "file": "thu-hai-cua-toi-02.png",
+      "sha256": "4fc8aa80cbfb446c1b707b9fb3603ef5ff2d33d066e2eafb3018297386e51a59"
+    },
+    {
+      "file": "thu-hai-cua-toi-03.png",
+      "sha256": "b26e1bec4c850b8d3c4f1be0c64879b0e6b7d19d55cae71a57812a8138d099ec"
+    },
+    {
+      "file": "thu-hai-cua-toi-04.png",
+      "sha256": "3972f8129b203f0128c5dcd409875c5708a5d181c1b6d247910958a3811d4b67"
+    },
+    {
+      "file": "thu-hai-cua-toi-05.png",
+      "sha256": "2609859779b53a7e999952bb6d064a4b84d0c67908c50c3c6af2ec958e202158"
+    }
+  ],
+  "sources": [
+    {
+      "file": "File:Cat Sleeping on Keyboard.jpg",
+      "photographer": "Panini!",
+      "license": "CC0 1.0"
+    },
+    {
+      "file": "File:Keyboard close-up.jpg",
+      "photographer": "Jiafei Slay Queen",
+      "license": "CC0 1.0"
+    },
+    {
+      "file": "File:Lack of paper documents.jpg",
+      "photographer": "Ірина Бучнєва",
+      "license": "CC0 1.0"
+    }
+  ]
+}
