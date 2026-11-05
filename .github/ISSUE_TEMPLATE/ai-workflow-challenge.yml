@@ -1,0 +1,66 @@
+name: "🟡 Thử thách AI công sở — Enna Clone"
+description: "Chia sẻ một tình huống GIẢ LẬP để cộng đồng cùng thực hành prompt/Agent an toàn."
+title: "[AI thử thách] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cộng đồng Đồ Hay Đi Làm: chỉ chia sẻ tình huống giả lập, không đăng dữ liệu công ty, khách hàng, email, mật khẩu, mã API hoặc ảnh chụp màn hình nội bộ.
+        GitHub Issues là công khai. Đây là hộp góp ý cho cộng đồng, KHÔNG phải tổng đài hỗ trợ tức thì và KHÔNG tự kích hoạt Enna gốc.
+  - type: dropdown
+    id: level
+    attributes:
+      label: Tầng đang thử
+      options:
+        - "Tầng 1: prompt nhỏ dùng ngay"
+        - "Tầng 2: quy trình AI nhiều bước"
+        - "Tầng 3: Enna Clone Starter"
+    validations:
+      required: true
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Chủ đề
+      options:
+        - "Viết prompt"
+        - "Email và trao đổi công việc"
+        - "Họp và quản lý công việc"
+        - "Excel / bảng tính"
+        - "PowerPoint / thuyết trình"
+        - "Agent và tự động hóa"
+        - "Chủ đề khác"
+    validations:
+      required: true
+  - type: textarea
+    id: situation
+    attributes:
+      label: Tình huống giả lập (không dùng dữ liệu thật)
+      description: "Mô tả một việc trong công sở có thể học chung bằng dữ liệu giả."
+      placeholder: "Ví dụ: Sau buổi họp giả định, nhóm có ba việc nhưng chưa ghi rõ người phụ trách."
+    validations:
+      required: true
+  - type: textarea
+    id: sample-prompt
+    attributes:
+      label: Prompt đã thử hoặc muốn mọi người cùng thử
+      description: "Không đăng link riêng tư, token, thông tin người thật."
+      placeholder: "Từ ghi chú họp mẫu..., hãy tạo bảng..."
+    validations:
+      required: false
+  - type: textarea
+    id: desired-outcome
+    attributes:
+      label: Bạn muốn đầu ra có giá trị gì?
+      placeholder: "Bảng việc rõ người/giờ, không bịa hoặc tự giao nhiệm vụ..."
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Xác nhận trước khi chia sẻ công khai
+      options:
+        - label: "Tôi chỉ đăng ví dụ giả/được phép chia sẻ, không có dữ liệu cá nhân, bí mật công ty, OTP hoặc API key."
+          required: true
+        - label: "Tôi hiểu đây là trao đổi cộng đồng công khai, không phải quyền sử dụng Enna gốc hay công cụ gửi dữ liệu tự động."
+          required: true
