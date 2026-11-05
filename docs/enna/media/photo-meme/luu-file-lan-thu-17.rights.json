@@ -1,0 +1,16 @@
+{
+  "status": "DRAFT_REQUIRES_HUMAN_REVIEW",
+  "published": false,
+  "fictional_humor": true,
+  "layout": "editorial",
+  "source_media": [
+    {
+      "file": "File:Keyboard close-up.jpg",
+      "photographer": "Jiafei Slay Queen",
+      "license": "CC0 1.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Keyboard_close-up.jpg",
+      "photo_sha256": "8181428274eeb603ad366c9237efcefcc0389a7fe51b7282ca83be101c59728e"
+    }
+  ],
+  "output_sha256": "6580143276a45e823736adbad185e071e16b0b1317ce1d1d07fc3e2bc343a771"
+}

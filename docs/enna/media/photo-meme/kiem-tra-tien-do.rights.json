@@ -1,0 +1,16 @@
+{
+  "status": "DRAFT_REQUIRES_HUMAN_REVIEW",
+  "published": false,
+  "fictional_humor": true,
+  "layout": "chat",
+  "source_media": [
+    {
+      "file": "File:Cat Sleeping on Keyboard.jpg",
+      "photographer": "Panini!",
+      "license": "CC0 1.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Cat_Sleeping_on_Keyboard.jpg",
+      "photo_sha256": "ec5005b646833fd84df8a1b7fd6aea6cc07464808d20767c3c78c9f35846ebe7"
+    }
+  ],
+  "output_sha256": "640b571a6f14e75b3eaaaa7bb4e37017fcc0f39451d557049171e34980504bcc"
+}

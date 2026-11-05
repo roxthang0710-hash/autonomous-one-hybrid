@@ -1,0 +1,23 @@
+{
+  "status": "DRAFT_REQUIRES_HUMAN_REVIEW",
+  "published": false,
+  "fictional_humor": true,
+  "layout": "split",
+  "source_media": [
+    {
+      "file": "File:Keyboard close-up.jpg",
+      "photographer": "Jiafei Slay Queen",
+      "license": "CC0 1.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Keyboard_close-up.jpg",
+      "photo_sha256": "8181428274eeb603ad366c9237efcefcc0389a7fe51b7282ca83be101c59728e"
+    },
+    {
+      "file": "File:Lack of paper documents.jpg",
+      "photographer": "Ірина Бучнєва",
+      "license": "CC0 1.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Lack_of_paper_documents.jpg",
+      "photo_sha256": "05951a5346a605d142d2f9da6303ae4a857e834fbe5340df34855c735dce41f1"
+    }
+  ],
+  "output_sha256": "84e49e882fabc0b28208583455b5fa9aa311021bee70af0efd8c2fee46f5cc15"
+}
