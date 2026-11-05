@@ -9,6 +9,7 @@ import os
 import re
 from difflib import SequenceMatcher
 import requests
+from growth.visual_comedy_gate import signals
 
 GENERIC = ("bạn có bao giờ", "phiên bản tốt nhất", "cố gắng mỗi ngày",
            "cùng nhau lan tỏa", "hãy cùng", "truyền cảm hứng",
@@ -69,21 +70,26 @@ def generate_variant(source, *, request=requests.post):
       "source_is_photographic":True,
       "brand":"Đồ Hay Đi Làm",
       "original_caption":allowed["headline"]+" / "+allowed["punchline"],
-      "task":"Viết như một đồng nghiệp Việt Nam duyên ngầm, có bối cảnh rất cụ thể và cú bẻ cuối thật đời thường. Không giảng đạo lý, không khoe năng suất, không câu chữ quảng cáo. Dùng ảnh làm minh họa, không khẳng định có sự kiện thật. Không dùng CTA, không nhắc AI hoặc người nổi tiếng.",
+      "task":"Nghĩ 3 kịch bản meme NGẮN, mỗi bản có mở đầu và cú bẻ gây cười khác nhau, không chỉ miêu tả ảnh. Dùng một trong: sự đối lập, phóng đại có căn cứ, ảnh phản ứng, đối thoại châm biếm nhẹ. Câu chữ như bạn đồng nghiệp Việt Nam tự làm meme, không phải tài khoản truyền thông. Xếp bản đáng gửi cho đồng nghiệp nhất ở đầu. Không gán lời nói/hành vi của người chụp ảnh, không nhận tình huống có thật.",
+      "comic_mechanism":source.get("comic_device"),
+      "specific_fictional_scene":source.get("scene"),
       "limits":"headline 12-66 ký tự, punchline 18-100 ký tự, không đưa nhân vật hoặc diễn biến không có trong ảnh, không nói người trong ảnh đã làm gì; tránh sáo rỗng.",
       "examples_to_avoid":[*GENERIC[:6]],
     }
     body={
       "model":os.getenv("GROQ_MODEL","openai/gpt-oss-20b"),
-      "temperature":0.75,"max_completion_tokens":800,
+      "temperature":0.78,"max_completion_tokens":1150,
       "reasoning_effort":"low","include_reasoning":False,
       "response_format":{"type":"json_schema","json_schema":{
-        "name":"enna_photo_humor","strict":True,
+        "name":"enna_photo_humor_candidates","strict":True,
         "schema":{"type":"object","additionalProperties":False,
-           "properties":{"headline":{"type":"string"},"punchline":{"type":"string"}},
-           "required":["headline","punchline"]}}},
+           "properties":{"candidates":{"type":"array","items":{"type":"object",
+              "additionalProperties":False,
+              "properties":{"headline":{"type":"string"},"punchline":{"type":"string"}},
+              "required":["headline","punchline"]}}},
+           "required":["candidates"]}}},
       "messages":[
-        {"role":"system","content":"Bạn là biên tập viên hài hước tiếng Việt về đời sống văn phòng. Chỉ đề xuất 1 tiêu đề ngắn và 1 câu kết hóm hỉnh trong JSON. Hình ảnh là tư liệu minh họa, không phải bằng chứng sự kiện. Không bịa lời thoại của người thật hay dùng bất cứ thương hiệu nào."},
+        {"role":"system","content":"Bạn là người biên tập meme công sở Việt Nam, không phải copywriter. Tạo đúng 3 ứng viên khác nhau, mỗi ứng viên có setup và cú bẻ; tránh hài gượng, câu chuyện chung chung, câu chốt làm văn và bất kỳ CTA nào. Phải cụ thể, gọn và đáng gửi cho đồng nghiệp. Chỉ trả JSON. Ảnh thật chỉ là minh họa cho tình huống hư cấu, không phải bằng chứng."},
         {"role":"user","content":json.dumps(prompt,ensure_ascii=False)}
       ]}
     try:
@@ -98,6 +104,26 @@ def generate_variant(source, *, request=requests.post):
     except (requests.RequestException,ValueError,KeyError,IndexError,TypeError) as exc:
         print("visual_humor: model_failure_"+type(exc).__name__)
         return None
-    accepted=check_copy(source,data)
-    print("visual_humor: "+("accepted_guarded_draft" if accepted else "rejected_by_editorial_gate"))
-    return accepted
+    variants=data.get("candidates") if isinstance(data,dict) else None
+    if not isinstance(variants,list):
+        print("visual_humor: missing_candidate_list_using_curated")
+        return None
+    viable=[]
+    for variant in variants[:3]:
+        safe=check_copy(source,variant)
+        if not safe:
+            continue
+        structural=signals(source,safe)
+        if not structural["pass"]:
+            continue
+        # A slight preference for concise, concrete humor. This is NOT a
+        # measure of funniness or a substitute for human approval.
+        combined=safe["headline"]+" "+safe["punchline"]
+        priority=(int(any(ch.isdigit() for ch in combined)), -len(safe["punchline"]),
+                  -len(safe["headline"]))
+        viable.append((priority,safe))
+    winner=max(viable,key=lambda x:x[0])[1] if viable else None
+    print("visual_humor: candidates="+str(len(variants[:3]))+
+          " structure_passed="+str(len(viable))+
+          " result="+("guarded_draft" if winner else "curated_fallback"))
+    return winner
