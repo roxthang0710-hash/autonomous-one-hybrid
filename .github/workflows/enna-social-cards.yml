@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - scripts/generate_enna_cards.py
+      - scripts/enna_visual_carousel.py
       - .github/workflows/enna-social-cards.yml
   workflow_dispatch:
 permissions:
@@ -78,11 +79,30 @@ jobs:
             shutil.copy2(meta,target/meta.name)
           print('Photo assets staged; no social publication performed')
           PY
+      - name: Render five-slide licensed-photo Instagram carousel
+        run: python -m scripts.enna_visual_carousel --sources docs/enna/media/photo-meme --output docs/enna/media/carousel-thu-hai
+      - name: Validate media-carousel sources and slide integrity
+        run: |
+          python - <<'PY'
+          import json,hashlib
+          from pathlib import Path
+          from PIL import Image
+          p=Path('docs/enna/media/carousel-thu-hai')
+          m=json.loads((p/'thu-hai-cua-toi.sources.json').read_text(encoding='utf-8'))
+          assert len(m['slides'])==5 and m['published'] is False
+          assert m['status']=='DRAFT_REQUIRES_HUMAN_REVIEW'
+          assert len(m['sources'])==3 and all(x['license']=='CC0 1.0' for x in m['sources'])
+          for slide in m['slides']:
+            f=p/slide['file']
+            with Image.open(f) as im: assert im.size==(1080,1350) and im.format=='PNG'
+            assert hashlib.sha256(f.read_bytes()).hexdigest()==slide['sha256']
+          print('Five different carousel slides have verified hashes and source records')
+          PY
       - name: Publish static assets via existing GitHub Pages directory
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/enna/media/*.png docs/enna/media/photo-meme/*.png docs/enna/media/photo-meme/*.json
+          git add docs/enna/media/*.png docs/enna/media/photo-meme/*.png docs/enna/media/photo-meme/*.json docs/enna/media/carousel-thu-hai/*.png docs/enna/media/carousel-thu-hai/*.json
           if ! git diff --cached --quiet; then
             git commit -m "Publish Enna original social image assets"
             git push
