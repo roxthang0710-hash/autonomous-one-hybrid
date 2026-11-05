@@ -10,6 +10,8 @@ on:
     branches: [main]
     paths:
       - 'scripts/enna_visual_factory.py'
+      - 'scripts/enna_doodle_composer.py'
+      - 'tests/test_enna_doodle_composer.py'
       - 'scripts/enna_visual_source_bank.json'
       - 'growth/visual_humor_editor.py'
       - 'growth/visual_comedy_gate.py'
@@ -49,6 +51,7 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_enna_visual_factory.py' -v
           python -m unittest discover -s tests -p 'test_enna_visual_comedy.py' -v
+          python -m unittest discover -s tests -p 'test_enna_doodle_composer.py' -v
           python -m unittest discover -s tests -p 'test_enna_photo_memes.py' -v
           python -m unittest discover -s tests -p 'test_visual_review_catalog.py' -v
       - name: Engineering push — generate deterministic images without LLM calls
@@ -57,7 +60,7 @@ jobs:
       - name: Scheduled or manually dispatched production — guarded AI humor
         if: github.event_name != 'push'
         run: python -m scripts.enna_visual_factory --ai-copy --output visual-factory-drafts
-      - name: Verify every output includes rights evidence and original photography
+      - name: Verify each doodle and original cat photo has source evidence
         run: |
           python - <<'PY'
           import hashlib,json
@@ -90,6 +93,6 @@ jobs:
       - name: Evidence summary
         if: always()
         run: |
-          echo 'Photo-first drafts use live-verified Wikimedia CC0 photos. Groq may rewrite captions, but only after strict filters.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Hand-drawn original coffee/chat memes; cat reaction remains authentic photo. Commons CC0 photos re-verified as tiny scrapbook sources.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Media is archived as an artifact and Supabase review-required records. There is NO automatic social publication.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Human must review actual visual, captions, person/brand rights before scheduling. No Meta POST, no spending, no OAuth change.' >> "$GITHUB_STEP_SUMMARY"
