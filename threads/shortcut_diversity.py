@@ -98,12 +98,16 @@ def recent_combos(posts, limit=65):
     if not isinstance(posts,(tuple,list)):
         raise ValueError("recent_posts_must_be_list")
     result=set()
+    # Check retired high-frequency combinations too: they must remain
+    # detectable after their initial fixed 30-day cooldown has expired.
+    keys={canonical(row["shortcut"]) for row in ALL_SHORTCUTS}
+    keys.update(RECENTLY_FEATURED)
     for post in posts[:limit]:
         if not isinstance(post,str):
             continue
-        for row in ALL_SHORTCUTS:
-            if is_present(post,row["shortcut"]):
-                result.add(canonical(row["shortcut"]))
+        for key in keys:
+            if is_present(post,key):
+                result.add(key)
     return result
 
 def is_repeated(shortcut, posts=(), *, today=None):
