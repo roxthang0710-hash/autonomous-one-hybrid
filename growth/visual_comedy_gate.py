@@ -39,6 +39,10 @@ def signals(source, copy):
         reasons.append("unsafe-or-linebreak")
     if any(x in combined for x in STALE):
         reasons.append("generic-ad-copy")
+    if re.search(r"\b(vs|team)\b",combined) or "ngừng ngơi" in combined:
+        reasons.append("stilted-language-or-unwanted-english")
+    if p.count(".")>1:
+        reasons.append("long-explanatory-punchline")
     if any(str(x).casefold() in combined for x in source.get("not_visually_supported",[]) if isinstance(x,str)):
         reasons.append("unobserved-photo-action")
     if not any(t in combined for t in TOOLS):
