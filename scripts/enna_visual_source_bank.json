@@ -1,0 +1,72 @@
+{
+  "catalog_version": "2026-11-06.1",
+  "policy": "Human-curated Wikimedia Commons photo shortlist. Each use re-checks live CC0 file metadata; all output DRAFT only. Do not imply photo subject has performed a fictional act.",
+  "sources": [
+    {
+      "id": "laptop-desk",
+      "title": "File:Laptop on a desk.jpg",
+      "author": "Radek Grzybowski",
+      "topic": "bàn làm việc có máy tính xách tay",
+      "visual_hint": "laptop đặt trên bàn làm việc",
+      "series": "chuyen-cong-so",
+      "headline": "MỞ MÁY TỪ 8 GIỜ",
+      "punchline": "8 giờ 45, tôi vẫn đang nhớ mình mở máy để làm gì.",
+      "format": "full_photo"
+    },
+    {
+      "id": "desk-unsplash",
+      "title": "File:Laptop on a desk (Unsplash).jpg",
+      "author": "Aleksi Tappura",
+      "topic": "góc bàn làm việc",
+      "visual_hint": "góc bàn có laptop",
+      "series": "chuyen-cong-so",
+      "headline": "GÓC LÀM VIỆC RẤT GỌN",
+      "punchline": "Còn thư mục Tải xuống thì không ai dám mở.",
+      "format": "polaroid"
+    },
+    {
+      "id": "ruler-desk",
+      "title": "File:Ruler and laptop on a desk (Unsplash).jpg",
+      "author": "Oli Dale",
+      "topic": "bàn có sổ, thước và laptop",
+      "visual_hint": "góc bàn có sổ, thước và laptop",
+      "series": "do-dung-di-lam",
+      "headline": "DỤNG CỤ ĐÃ ĐỦ",
+      "punchline": "Còn động lực đi làm đang kẹt ở vòng gửi xe.",
+      "format": "full_photo"
+    },
+    {
+      "id": "laptop-notepad",
+      "title": "File:Laptop picture with notepad.jpg",
+      "author": "Eric Bailey",
+      "topic": "máy tính và sổ ghi chú",
+      "visual_hint": "máy tính và sổ ghi chú",
+      "series": "chuyen-cong-so",
+      "headline": "KẾ HOẠCH HÔM NAY: BA VIỆC",
+      "punchline": "Việc thứ tư: họp để giải thích sao ba việc kia chưa xong.",
+      "format": "polaroid"
+    },
+    {
+      "id": "coffee-table",
+      "title": "File:Coffee Cup on Modern Table.jpg",
+      "author": "Genaro35",
+      "topic": "cốc cà phê trên bàn",
+      "visual_hint": "một cốc cà phê trên mặt bàn",
+      "series": "ca-phe-cong-so",
+      "headline": "CÀ PHÊ ĐẦU GIỜ",
+      "punchline": "Chưa kịp nhấp một ngụm, lịch họp đã réo tên.",
+      "format": "minimal"
+    },
+    {
+      "id": "coffee-bean",
+      "title": "File:Coffee cup and coffee bean.jpg",
+      "author": "mcfoodie",
+      "topic": "cốc cà phê và hạt cà phê",
+      "visual_hint": "cốc cà phê và hạt cà phê",
+      "series": "ca-phe-cong-so",
+      "headline": "MỚI 9 GIỜ SÁNG",
+      "punchline": "Lịch họp đã cần nhiều cà phê hơn cả tôi.",
+      "format": "minimal"
+    }
+  ]
+}
