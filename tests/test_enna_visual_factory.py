@@ -16,8 +16,8 @@ BANK = "scripts/enna_visual_source_bank.json"
 class VisualFactoryTests(unittest.TestCase):
     def test_bank_has_distinct_human_curated_sources(self):
         rows=load_bank(BANK)
-        self.assertEqual(len(rows),6)
-        self.assertEqual(len({r["id"] for r in rows}),6)
+        self.assertEqual(len(rows),8)
+        self.assertEqual(len({r["id"] for r in rows}),8)
         self.assertTrue(all(r["title"].startswith("File:") for r in rows))
 
     def test_rotation_does_not_repeat_next_day(self):
