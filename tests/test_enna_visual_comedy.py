@@ -53,6 +53,36 @@ class VisualComedyTests(unittest.TestCase):
                 self.assertFalse(verdict["pass"])
                 self.assertIn("no-recognizable-payoff",verdict["reasons"])
 
+    def test_real_second_smoke_rejects_stilted_coffee_ai(self):
+        coffee=next(x for x in load_bank(BANK) if x["id"]=="coffee-table")
+        weak={"headline":"Thời gian cà phê vs thời gian làm việc",
+              "punchline":"Đúng lúc 8:59, cà phê còn nóng. 10:30, cà phê đã ngừng ngơi. Đôi khi, cà phê cũng muốn nghỉ việc."}
+        verdict=signals(coffee,weak)
+        self.assertFalse(verdict["pass"])
+        self.assertIn("stilted-language-or-unwanted-english",verdict["reasons"])
+        self.assertIn("long-explanatory-punchline",verdict["reasons"])
+
+    def test_ai_alternative_is_review_only_and_never_auto_overwrites(self):
+        import tempfile
+        from pathlib import Path
+        from datetime import date
+        from scripts.enna_visual_factory import render
+        pic=Image.effect_noise((1280,960),30).convert("RGB")
+        def fetch(row):
+            return pic,{"source_page":"https://commons.wikimedia.org/wiki/"+row[1].replace(" ","_"),
+                        "photographer":row[2],"file":row[1],"photo_sha256":"a"*64}
+        def ai(src):
+            return {"headline":src["headline"],"punchline":src["punchline"]}
+        with tempfile.TemporaryDirectory() as folder:
+            result=render(BANK,folder,day=date(2026,11,6),fetch=fetch,rewrite=ai)
+            self.assertEqual(len(result),3)
+            self.assertTrue(all(row["copy_origin"]=="human_curated" for row in result))
+            self.assertTrue(all(row["ai_suggestion_status"]=="requires_human_editorial_review"
+                                for row in result))
+            self.assertTrue(all(row["headline"]==next(s for s in load_bank(BANK)
+                                         if s["title"]==row["commons_filename"])["headline"]
+                                for row in result))
+
     def test_no_orphan_letter_on_comedy_punchline(self):
         draw=ImageDraw.Draw(Image.new("RGB",(1080,1350)))
         _,parts,_=_wrapped(draw,"DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN Ạ.",
