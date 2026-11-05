@@ -31,7 +31,7 @@ def font(size, bold=True):
     return ImageFont.truetype(name+("-Bold" if bold else "")+".ttf",size)
 
 def wrap(draw, message, max_px, size, maximum=3):
-    while size>=28:
+    while size>=min(24,size):
         f=font(size)
         chunks=[];one=""
         for word in message.split():
