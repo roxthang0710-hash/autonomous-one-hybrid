@@ -129,7 +129,7 @@ def run(mode: str, task: str, context: str, *, api_key: str, model: str) -> str:
         api_key=api_key,model=model,
     )
     return (
-        "# ENNA CLONE STARTER — BẢN NHÁP CẦN DUYỆT\n\n" +
+        "# ENNA CLONE STARTER — DỰ THẢO CẦN DUYỆT\n\n" +
         review + "\n\n---\n"
         "Chưa có email, file, lịch, bài đăng hay dữ liệu nào được hệ thống tự thay đổi.\n"
         "Tự kiểm lại mọi số liệu và dữ kiện quan trọng trước khi sử dụng.\n"
