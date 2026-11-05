@@ -1,0 +1,47 @@
+name: Enna Clone — Private Beta Security & Compile Gate
+on:
+  push:
+    paths:
+      - 'docs/enna/clone/**'
+      - 'supabase/functions/enna-clone-api/**'
+      - 'growth/enna_clone_worker.py'
+      - 'config/enna_clone_release_train.json'
+      - 'tests/test_enna_clone_cloud.py'
+      - '.github/workflows/enna-clone-cloud-ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compile-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit tests with no API calls or private credentials
+        run: python -m unittest discover -s tests -p 'test_enna_clone_cloud.py' -v
+      - name: Check browser JavaScript syntax without bundling external code
+        run: node --check docs/enna/clone/beta/app.js
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Typecheck Supabase Edge Function offline
+        run: deno check supabase/functions/enna-clone-api/index.ts
+      - name: Ensure public website stays Lite and beta remains unadvertised
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          live=Path('docs/enna/clone/index.html').read_text()
+          assert 'Bộ công cụ miễn phí' in live
+          assert '/clone/beta' not in live
+          assert 'Enna Clone' in live
+          print('Private beta is not announced or linked from the public Lite page.')
+          PY
+      - name: Safety manifest
+        if: always()
+        run: |
+          echo 'This is an isolated source/compile test, NOT a live authentication/Groq test.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No Google, Meta, email or third-party tokens are used in Clone beta builds.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Private beta release requires RLS cross-account tests and verified user session.' >> "$GITHUB_STEP_SUMMARY"
