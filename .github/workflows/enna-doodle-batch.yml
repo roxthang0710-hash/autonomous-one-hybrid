@@ -58,8 +58,8 @@ jobs:
             assert hashlib.sha256(f.read_bytes()).hexdigest()==entry['sha256']
           print('14 unique hand-drawn memes with verified hashes, zero social posts')
           PY
-      - name: Save approved-source originals in Supabase review queue
-        if: github.event_name != 'push'
+      - name: Retired legacy poster delivery — blocked by new Người Tròn identity
+        if: false # owner rejected this repetitive 14-card style on 2026-11-06
         run: python -m growth.enna_doodle_batch_upload --folder enna-doodle-queue
       - uses: actions/upload-artifact@v4
         with:
@@ -69,6 +69,6 @@ jobs:
       - name: Editorial safety and next action
         if: always()
         run: |
-          echo 'Original hand-drawn 1080x1350 doodles. Uploaded only on deliberate issue/manual trigger.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'ARCHIVED GENERATOR: rigid-card doodles are NOT part of the owner-approved Người Tròn visual identity. No media-library upload.' >> "$GITHUB_STEP_SUMMARY"
           echo 'User requested social schedule upgrades: only update Metricool after actual image review; workflow does NO Meta social writes.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Cat/reaction photos and their current schedule are unaffected.' >> "$GITHUB_STEP_SUMMARY"
