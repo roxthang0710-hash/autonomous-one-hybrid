@@ -5,7 +5,7 @@ It does NOT publish, alter booked posts, shop, pay or manufacture metrics.
 Its database table is private to the GitHub service worker.
 """
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from statistics import median
 from zoneinfo import ZoneInfo
 
@@ -126,8 +126,18 @@ def run(db=None, *, now=None):
                 "observed_posts":evidence["observed_posts"],
                 "evidence_status":evidence["status"]}
     week_key = monday.isoformat()
-    used_week = [x.get("idea_key") for x in plans if x.get("week_start") == week_key]
-    choices = select_briefs(TECH_BRIEFS,used_week,
+    # Prevent last week's same tool/shortcut from resurfacing just because
+    # its week_start differs. Parked and ready ideas count as already offered.
+    cutoff=monday-timedelta(days=30)
+    used_recent=[]
+    for row in plans:
+        try:
+            week=date.fromisoformat(str(row.get("week_start")))
+        except (TypeError,ValueError):
+            continue
+        if cutoff <= week <= monday and row.get("idea_key"):
+            used_recent.append(row["idea_key"])
+    choices = select_briefs(TECH_BRIEFS,used_recent,
         week_number=monday.toordinal()//7,
         favored=evidence["preferred_pillar"],limit=remaining)
     inserted = 0
