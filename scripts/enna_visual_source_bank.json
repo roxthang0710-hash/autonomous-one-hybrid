@@ -1,6 +1,6 @@
 {
-  "catalog_version": "2026-11-06.2",
-  "policy": "Human-curated Wikimedia Commons photo shortlist. Each use re-checks live CC0 file metadata; all output DRAFT only. Do not imply photo subject has performed a fictional act.",
+  "catalog_version": "2026-11-06.3-comedy-mechanics",
+  "policy": "Original Vietnamese office parody with photographed, live-revalidated Wikimedia Commons CC0 source. Mechanism: reaction, chat, contrast, surprise, exaggeration. Curated photo illustrates a fictional situation and never identifies a real actor. Human review before any social publication.",
   "sources": [
     {
       "id": "laptop-desk",
@@ -9,9 +9,15 @@
       "topic": "bàn làm việc có máy tính xách tay",
       "visual_hint": "laptop đặt trên bàn làm việc",
       "series": "chuyen-cong-so",
-      "headline": "MỞ MÁY TỪ 8 GIỜ",
-      "punchline": "8 giờ 45, tôi vẫn đang nhớ mình mở máy để làm gì.",
-      "format": "full_photo"
+      "headline": "SẾP: HỌP 5 PHÚT THÔI NHÉ",
+      "punchline": "1 TIẾNG 47 PHÚT SAU: “CÒN AI MUỐN BỔ SUNG GÌ KHÔNG?”",
+      "format": "chat",
+      "comic_device": "time_escalation",
+      "scene": "Cuộc họp 5 phút kéo dài phi lý",
+      "chat_lines": [
+        "09:00 · SẾP: Họp nhanh 5 phút nhé",
+        "10:47 · LỊCH: Có cuộc họp chốt lại cuộc họp"
+      ]
     },
     {
       "id": "desk-unsplash",
@@ -20,9 +26,11 @@
       "topic": "góc bàn làm việc",
       "visual_hint": "góc bàn có laptop",
       "series": "chuyen-cong-so",
-      "headline": "GÓC LÀM VIỆC RẤT GỌN",
-      "punchline": "Còn thư mục Tải xuống thì không ai dám mở.",
-      "format": "polaroid"
+      "headline": "MẶT BÀN: SẠCH SẼ 10/10",
+      "punchline": "THƯ MỤC TẢI XUỐNG: FINAL_FINAL_CHỐT_LẦN_9",
+      "format": "contrast",
+      "comic_device": "outer_inner_contrast",
+      "scene": "Bàn gọn nhưng file hỗn loạn"
     },
     {
       "id": "ruler-desk",
@@ -31,9 +39,11 @@
       "topic": "bàn có sổ, thước và laptop",
       "visual_hint": "góc bàn có sổ, thước và laptop",
       "series": "do-dung-di-lam",
-      "headline": "DỤNG CỤ ĐÃ ĐỦ",
-      "punchline": "Còn động lực đi làm đang kẹt ở vòng gửi xe.",
-      "format": "full_photo"
+      "headline": "ĐI LÀM MANG ĐỦ ĐỒ",
+      "punchline": "TRỪ TINH THẦN ĐI LÀM.",
+      "format": "reaction",
+      "comic_device": "expectation_reversal",
+      "scene": "Đầy đủ văn phòng phẩm, thiếu năng lượng"
     },
     {
       "id": "laptop-notepad",
@@ -42,9 +52,15 @@
       "topic": "máy tính và sổ ghi chú",
       "visual_hint": "máy tính và sổ ghi chú",
       "series": "chuyen-cong-so",
-      "headline": "KẾ HOẠCH HÔM NAY: BA VIỆC",
-      "punchline": "Việc thứ tư: họp để giải thích sao ba việc kia chưa xong.",
-      "format": "polaroid"
+      "headline": "KẾ HOẠCH: LÀM ĐÚNG 3 VIỆC",
+      "punchline": "VIỆC THỨ 4: HỌP GIẢI THÍCH TẠI SAO 3 VIỆC CHƯA XONG.",
+      "format": "chat",
+      "comic_device": "escalating_circularity",
+      "scene": "Danh sách công việc phát sinh họp",
+      "chat_lines": [
+        "08:30 · TÔI: Nay chốt đúng 3 đầu việc!",
+        "16:30 · SẾP: 5 giờ họp báo cáo 3 việc nha"
+      ]
     },
     {
       "id": "coffee-table",
@@ -53,9 +69,11 @@
       "topic": "cốc cà phê trên bàn",
       "visual_hint": "một cốc cà phê trên mặt bàn",
       "series": "ca-phe-cong-so",
-      "headline": "CÀ PHÊ ĐẦU GIỜ",
-      "punchline": "Chưa kịp nhấp một ngụm, lịch họp đã réo tên.",
-      "format": "minimal"
+      "headline": "08:59 — CÀ PHÊ CÒN NÓNG",
+      "punchline": "09:01 — HỌP 90 PHÚT. CÀ PHÊ TỰ NGUỘI.",
+      "format": "contrast",
+      "comic_device": "time_escalation",
+      "scene": "Cà phê vừa pha phải chờ họp"
     },
     {
       "id": "coffee-bean",
@@ -64,9 +82,11 @@
       "topic": "cốc cà phê và hạt cà phê",
       "visual_hint": "cốc cà phê và hạt cà phê",
       "series": "ca-phe-cong-so",
-      "headline": "MỚI 9 GIỜ SÁNG",
-      "punchline": "Lịch họp đã cần nhiều cà phê hơn cả tôi.",
-      "format": "minimal"
+      "headline": "TÔI: UỐNG CÀ PHÊ ĐỂ TỈNH",
+      "punchline": "MÁY IN: TỈNH RỒI THÌ SỬA TUI LUÔN NHA.",
+      "format": "reaction",
+      "comic_device": "object_personification",
+      "scene": "Máy in hỏng trùng giờ uống cà phê"
     },
     {
       "id": "cat-yawning",
@@ -75,9 +95,11 @@
       "topic": "mèo ngáp khi ngồi trên máy tính xách tay",
       "visual_hint": "mèo thật đang ngáp trên laptop",
       "series": "phan-ung-cong-so",
-      "headline": "ĐẾN PHẦN BÁO CÁO TIẾN ĐỘ",
-      "punchline": "Bộ phận kiểm tra chất lượng ngáp hộ cả phòng.",
-      "format": "full_photo"
+      "headline": "SẾP: AI MUỐN ĐÓNG GÓP KHÔNG?",
+      "punchline": "TÔI ĐÃ BẬT MIC. TIẾNG NGÁP LÀ PHẦN ĐÓNG GÓP.",
+      "format": "reaction",
+      "comic_device": "visual_reaction",
+      "scene": "Mèo thật ngáp như nhân viên mệt vì họp"
     },
     {
       "id": "shop-cat",
@@ -86,9 +108,11 @@
       "topic": "mèo trong văn phòng",
       "visual_hint": "mèo thật tại văn phòng kinh doanh",
       "series": "phan-ung-cong-so",
-      "headline": "NHÂN VIÊN XUẤT SẮC THÁNG NÀY",
-      "punchline": "Chưa thấy tham gia họp, nhưng ngày nào cũng có mặt.",
-      "format": "polaroid"
+      "headline": "NHÂN VIÊN ĐI LÀM SỚM NHẤT",
+      "punchline": "CŨNG LÀ NGƯỜI NGỦ TRƯA TỪ 9 GIỜ.",
+      "format": "contrast",
+      "comic_device": "role_reversal",
+      "scene": "Mèo trong văn phòng phản ứng như nhân viên đi làm"
     }
   ]
 }
