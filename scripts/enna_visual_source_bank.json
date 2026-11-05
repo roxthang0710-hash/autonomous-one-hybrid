@@ -1,5 +1,5 @@
 {
-  "catalog_version": "2026-11-06.4-reaction-priority",
+  "catalog_version": "2026-11-06.5-visual-truth",
   "policy": "Original Vietnamese office parody with photographed, live-revalidated Wikimedia Commons CC0 source. Mechanism: reaction, chat, contrast, surprise, exaggeration. Curated photo illustrates a fictional situation and never identifies a real actor. Human review before any social publication.",
   "sources": [
     {
@@ -99,14 +99,16 @@
       "title": "File:Cat on laptop yawning.jpg",
       "author": "acebrand",
       "topic": "mèo ngáp khi ngồi trên máy tính xách tay",
-      "visual_hint": "mèo thật đang ngáp trên laptop",
+      "visual_hint": "mèo thật ngồi chắn bàn phím laptop, quay lưng về phía người xem",
       "series": "phan-ung-cong-so",
-      "headline": "SẾP: AI MUỐN ĐÓNG GÓP KHÔNG?",
-      "punchline": "TÔI BẬT MIC. TIẾNG NGÁP CÓ ĐƯỢC TÍNH KHÔNG Ạ?",
+      "headline": "SẾP: SAO CHƯA GỬI FILE?",
+      "punchline": "DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN Ạ.",
       "format": "reaction",
       "comic_device": "visual_reaction",
-      "scene": "Mèo thật ngáp như nhân viên mệt vì họp",
-      "featured_rank": 1
+      "scene": "Mèo thật ngồi chắn bàn phím, nhân viên không thể gửi tệp; câu đùa phải nhắc đúng hành động chặn bàn phím",
+      "featured_rank": 1,
+      "observed_visual_notes": "Verified from actual 2026-11-06 artifact: cat is sitting across laptop keyboard with back to camera; yawning NOT visible. Joke must not claim yawning.",
+      "visual_checked_on": "2026-11-06"
     },
     {
       "id": "shop-cat",
