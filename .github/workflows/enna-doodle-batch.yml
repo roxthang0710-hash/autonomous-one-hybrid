@@ -1,0 +1,74 @@
+name: Enna — 14 Hand-Drawn Meme Images for Upcoming Calendar
+on:
+  workflow_dispatch:
+  issues:
+    types: [opened]
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/enna_doodle_batch.py'
+      - 'growth/enna_doodle_batch_upload.py'
+      - 'tests/test_enna_doodle_batch.py'
+      - '.github/workflows/enna-doodle-batch.yml'
+permissions:
+  contents: read
+concurrency:
+  group: enna-14-original-doodles
+  cancel-in-progress: false
+jobs:
+  render-and-stage:
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.issue.user.login == github.repository_owner &&
+       startsWith(github.event.issue.title, 'doodle-batch:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install pinned Python requirements
+        run: pip install -r requirements.txt
+      - name: Test meme illustrations and upload evidence
+        run: python -m unittest discover -s tests -p 'test_enna_doodle_batch.py' -v
+      - name: Generate 14 hand-drawn original meme PNGs
+        run: python -m scripts.enna_doodle_batch --output enna-doodle-queue
+      - name: Confirm all art is original, properly sized and review only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          from PIL import Image
+          p=Path('enna-doodle-queue')
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['count']==14 and m['social_published']==0
+          assert len({x['id'] for x in m['items']})==14
+          for entry in m['items']:
+            f=p/entry['file']
+            with Image.open(f) as im:
+              assert im.format=='PNG' and im.size==(1080,1350)
+            proof=json.loads((p/(f.name+'.rights.json')).read_text())
+            assert proof['published'] is False
+            assert proof['source']=='enna_original_drawing_no_third_party_art'
+            assert hashlib.sha256(f.read_bytes()).hexdigest()==entry['sha256']
+          print('14 unique hand-drawn memes with verified hashes, zero social posts')
+          PY
+      - name: Save approved-source originals in Supabase review queue
+        if: github.event_name != 'push'
+        run: python -m growth.enna_doodle_batch_upload --folder enna-doodle-queue
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enna-upcoming-doodle-memes-14
+          path: enna-doodle-queue/
+          retention-days: 14
+      - name: Editorial safety and next action
+        if: always()
+        run: |
+          echo 'Original hand-drawn 1080x1350 doodles. Uploaded only on deliberate issue/manual trigger.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'User requested social schedule upgrades: only update Metricool after actual image review; workflow does NO Meta social writes.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Cat/reaction photos and their current schedule are unaffected.' >> "$GITHUB_STEP_SUMMARY"
