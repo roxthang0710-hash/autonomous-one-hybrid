@@ -130,6 +130,26 @@ async function chat(owner:string, body:Payload):Promise<Response> {
   const content=input(body.message,4000);
   if (!ident(body.request_id)) throw new Error("Thiếu mã yêu cầu chống trùng.");
   const requestId=body.request_id;
+  // Resolve a previous request BEFORE creating a conversation or reserving quota.
+  // A browser retry after a lost response must not generate an empty conversation
+  // or call a paid model again. The unique (owner, request_id, role) DB guard remains.
+  const prior=await rest("enna_clone_messages?select=role,content,conversation_id&"+
+    userFilter(owner)+"&request_id=eq."+q(String(requestId))+"&limit=2");
+  if (prior?.length) {
+    const original=prior.find((m:RecordData)=>m.role==="user");
+    const completed=prior.find((m:RecordData)=>m.role==="assistant");
+    if (!original || original.content!==content ||
+        (body.conversation_id && body.conversation_id!==original.conversation_id))
+      return error("Mã yêu cầu đã được sử dụng cho nội dung khác.",409);
+    if (completed) return json({
+      ok:true,conversation_id:original.conversation_id,reply:completed.content,replayed:true,
+      notice:"Đã khôi phục câu trả lời trước đó, không gọi AI hoặc tính thêm lượt."
+    });
+    return error(
+      "Yêu cầu trước chưa có kết quả xác minh. Không tự gửi lại để tránh tính thêm lượt.",
+      409
+    );
+  }
   let conversation:RecordData|null=null;
   if (body.conversation_id) {
     conversation=await owned("enna_clone_conversations",owner,String(body.conversation_id));
@@ -140,10 +160,6 @@ async function chat(owner:string, body:Payload):Promise<Response> {
     });
   }
   const convId=conversation!.id as string;
-  // Treat a repeated request ID as a retry; never bill/execute it twice.
-  const prior=await rest("enna_clone_messages?select=role,content&"+
-     userFilter(owner)+"&request_id=eq."+q(String(requestId))+"&limit=2");
-  if (prior?.length) return error("Yêu cầu này đã được tiếp nhận trước đó. Tải lại lịch sử thay vì gửi lại.",409);
   const recentMessages=(await rest(
     "enna_clone_messages?select=role,content&"+userFilter(owner)+
     "&conversation_id=eq."+q(convId)+"&order=created_at.desc&limit=12"
