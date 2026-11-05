@@ -81,7 +81,13 @@ def canonical(combo):
     return re.sub(r"\s+","",s)
 
 def is_present(text,combo):
-    clean=canonical(text)
+    # Strip spaces only inside explicit key combinations, not whole sentences.
+    # Otherwise 'Win + V mở' wrongly becomes 'WIN+VMỞ' and hides duplicates.
+    if not isinstance(text,str):
+        return False
+    clean=text.upper().replace("WINDOWS","WIN").replace("CONTROL","CTRL")
+    clean=clean.replace("→","RIGHT").replace("←","LEFT").replace("↑","UP").replace("↓","DOWN")
+    clean=re.sub(r"\\s*\\+\\s*", "+", clean)
     key=canonical(combo)
     if len(key)<2:
         return False
