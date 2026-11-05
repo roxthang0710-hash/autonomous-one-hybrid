@@ -96,6 +96,8 @@ def catalog_row(proof,digest,source_url):
          "draft_image_sha256":digest,
          "visual_layout":proof["format"],
          "copy_origin":proof["copy_origin"],
+         "ai_copy_suggestion":proof.get("ai_suggestion"),
+         "ai_copy_suggestion_status":proof.get("ai_suggestion_status","none"),
          "human_visual_approval":False,
          "not_a_real_life_claim":True
       }
