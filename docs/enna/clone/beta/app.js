@@ -188,24 +188,45 @@ async function loadConversation(){
 async function send(e){
  e.preventDefault();if(state.busy)return;
  const content=el("message").value.trim();if(!content)return;
+ // Preserve an uncertain request ID within this tab for an exact, safe retry.
+ // Never silently create a new ID and charge the same request a second time.
+ const conversationId=el("conversation").value;
+ const agentId=el("chatagent").value,documentId=el("chatdoc").value;
+ const pending=state.pendingChat;
+ const same=!!pending&&pending.message===content&&
+   pending.conversation_id===conversationId&&pending.agent_id===agentId&&
+   pending.document_id===documentId;
+ const requestId=same?pending.request_id:crypto.randomUUID();
+ const payload={
+   action:"chat",request_id:requestId,message:content,
+   ...(conversationId?{conversation_id:conversationId}:{}),
+   ...(agentId?{agent_id:agentId}:{}),
+   ...(documentId?{document_id:documentId}:{})
+ };
+ state.pendingChat={request_id:requestId,message:content,
+   conversation_id:conversationId,agent_id:agentId,document_id:documentId};
  state.busy=true;el("send").disabled=true;
- if(el("chatlog").querySelector(".empty"))el("chatlog").replaceChildren();
- appendMessage("user",content);el("message").value="";
+ if(!same){
+   if(el("chatlog").querySelector(".empty"))el("chatlog").replaceChildren();
+   appendMessage("user",content);
+ }
  try{
-   const data=await api({
-     action:"chat",request_id:crypto.randomUUID(),
-     message:content,
-     ...(el("conversation").value?{conversation_id:el("conversation").value}:{}),
-     ...(el("chatagent").value?{agent_id:el("chatagent").value}:{}),
-     ...(el("chatdoc").value?{document_id:el("chatdoc").value}:{})
-   });
+   const data=await api(payload);
+   state.pendingChat=null;
    appendMessage("assistant",data.reply);
-   await refresh();
+   el("message").value="";
+   // A successful reply is still a success if refreshing the sidebar fails.
    el("conversation").value=data.conversation_id;
    status(data.notice||"Đã hoàn thành bản nháp.");
+   try{
+     await refresh();
+     el("conversation").value=data.conversation_id;
+   }catch{
+     status("Đã nhận câu trả lời. Lịch sử chưa đồng bộ; có thể tải lại trang.");
+   }
  }catch(err){
-   appendMessage("assistant","Không tạo được phản hồi: "+err.message);
-   status("Yêu cầu chưa hoàn thành; có thể tính một lượt thử nếu đã gọi máy chủ.");
+   status("Không xác nhận được kết quả: "+err.message+
+     " Nếu kết nối bị ngắt, gửi lại nguyên văn để tra cứu cùng mã yêu cầu; không tự gọi AI lần hai.");
  }finally{state.busy=false;el("send").disabled=false;}
 }
 function bindForm(formId,action,fields,after){
