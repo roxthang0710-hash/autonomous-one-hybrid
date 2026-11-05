@@ -7,7 +7,8 @@ limitations must be disclosed when relevant.
 Do not attach visual assets or publish any post from this module.
 """
 import re
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 MS_WINDOWS="https://support.microsoft.com/vi-vn/accessibility/windows/keyboard-shortcuts-in-windows"
 MS_INPUT="https://support.microsoft.com/en-us/accessibility/windows/use-voice-typing-to-talk-instead-of-type-on-your-pc"
@@ -106,7 +107,7 @@ def recent_combos(posts, limit=65):
     return result
 
 def is_repeated(shortcut, posts=(), *, today=None):
-    today=today or date.today()
+    today=today or datetime.now(ZoneInfo('Asia/Ho_Chi_Minh')).date()
     key=canonical(shortcut)
     if key in recent_combos(list(posts)):
         return True
@@ -135,3 +136,16 @@ def make_brief(row):
            "thật thay vì poster ba ô."
         ),
     }
+
+
+def repeated_combos_in_draft(candidate, previous_texts=(), *, today=None):
+    """Exact normalized shortcut overlap. Does not blacklist the broad word Windows."""
+    if not isinstance(candidate,str):
+        return []
+    all_keys={canonical(row["shortcut"]):row["shortcut"] for row in ALL_SHORTCUTS}
+    for old in RECENTLY_FEATURED:
+        all_keys.setdefault(old,old)
+    return sorted({
+       short for token,short in all_keys.items()
+       if is_present(candidate,token) and is_repeated(short,previous_texts,today=today)
+    })
