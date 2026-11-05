@@ -1,0 +1,41 @@
+name: Enna — Đồ Hay Đi Làm Approved Visual Identity Guard
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'config/dohay_dilam_visual_identity.json'
+      - 'docs/enna/DOHAY_DILAM_VISUAL_IDENTITY.md'
+      - 'scripts/enna_roundhead_brief.py'
+      - 'tests/test_dohay_dilam_visual_identity.py'
+      - '.github/workflows/enna-doodle-batch.yml'
+      - '.github/workflows/enna-visual-factory.yml'
+      - '.github/workflows/enna-roundhead-style-guard.yml'
+permissions:
+  contents: read
+jobs:
+  enforce-owner-style:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify Người Tròn identity is active and retired posters cannot enter media library
+        run: python -m unittest discover -s tests -p 'test_dohay_dilam_visual_identity.py' -v
+      - name: Create one deterministic creative brief smoke test
+        run: |
+          python -m scripts.enna_roundhead_brief \
+            --scene 'Sếp nhắn GẤP đúng lúc nghỉ trưa' \
+            --setup 'CẢ PHÒNG ĐỀU BẢO GẤP' \
+            --payoff 'ỦA THẾ AI LÀM TRƯỚC?' \
+            --composition 'Character centered on a chaotic stack of chat bubbles, asymmetrical' \
+            --emotion 'wide-eyed yellow round head sweating' > /tmp/enna-roundhead-brief.json
+          python - <<'PY'
+          import json
+          data=json.load(open('/tmp/enna-roundhead-brief.json',encoding='utf-8'))
+          assert data['visual_style_id']=='dohay_roundhead_doodle_v4'
+          assert data['social_published'] is False
+          print('Owner style locked; creative brief only, no social post.')
+          PY
