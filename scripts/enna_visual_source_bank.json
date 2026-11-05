@@ -1,5 +1,5 @@
 {
-  "catalog_version": "2026-11-06.1",
+  "catalog_version": "2026-11-06.2",
   "policy": "Human-curated Wikimedia Commons photo shortlist. Each use re-checks live CC0 file metadata; all output DRAFT only. Do not imply photo subject has performed a fictional act.",
   "sources": [
     {
@@ -67,6 +67,28 @@
       "headline": "MỚI 9 GIỜ SÁNG",
       "punchline": "Lịch họp đã cần nhiều cà phê hơn cả tôi.",
       "format": "minimal"
+    },
+    {
+      "id": "cat-yawning",
+      "title": "File:Cat on laptop yawning.jpg",
+      "author": "acebrand",
+      "topic": "mèo ngáp khi ngồi trên máy tính xách tay",
+      "visual_hint": "mèo thật đang ngáp trên laptop",
+      "series": "phan-ung-cong-so",
+      "headline": "ĐẾN PHẦN BÁO CÁO TIẾN ĐỘ",
+      "punchline": "Bộ phận kiểm tra chất lượng ngáp hộ cả phòng.",
+      "format": "full_photo"
+    },
+    {
+      "id": "shop-cat",
+      "title": "File:Shop cat in a real estate agent office.jpg",
+      "author": "Andy Li",
+      "topic": "mèo trong văn phòng",
+      "visual_hint": "mèo thật tại văn phòng kinh doanh",
+      "series": "phan-ung-cong-so",
+      "headline": "NHÂN VIÊN XUẤT SẮC THÁNG NÀY",
+      "punchline": "Chưa thấy tham gia họp, nhưng ngày nào cũng có mặt.",
+      "format": "polaroid"
     }
   ]
 }
