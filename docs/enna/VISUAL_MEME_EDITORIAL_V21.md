@@ -29,3 +29,18 @@ Do not transplant other creators' photographs, punchlines, celebrity likenesses,
 - `growth/visual_comedy_gate.py`: minimum contrast/specificity and rejected unobserved actions.
 - `growth/visual_humor_editor.py`: Groq candidates + safety/structural filter; no spending outside existing credentials.
 - `.github/workflows/enna-visual-factory.yml`: push CI produces drafts, scheduled workflows can register **review-only** media in Supabase; no social posts.
+
+
+## Production-path quality incident, 06 November 2026
+
+An authenticated Groq smoke test produced three captions that passed the initial *mechanical* checks but failed human visual review. Notable failures were broken cat dialogue, nonsensical coffee anthropomorphism, and generic scheduling copy using the English word "team". All three were marked `rejected` in Supabase media library; **none was published**.
+
+Lessons now encoded as hard regression fixtures:
+- `growth/visual_comedy_gate.py` requires each punchline to preserve an explicit source-specific twist anchor, not merely mention coffee, office, or meetings.
+- Broken quotation marks, certain generic AI filler and claims about unseen photo actions are rejected.
+- `tests/test_enna_visual_comedy.py` includes the *actual failed outputs*, so a refactor cannot silently weaken these controls.
+- A structurally acceptable copy is still not proof of human humor or Gen Z social engagement. Where the model fails, the curated human baseline is kept.
+
+Three useful contrasts: **the cat actually blocks the keyboard** → file is "held hostage"; **a morning coffee** → the drink "resigns" before the employee; **three planned tasks** → the 09:00 meeting consumes the time needed to complete them. These are fictional jokes, not real incidents.
+
+Publishing remains human-review-only; Metricool schedule is unaffected by this engineering QA.
