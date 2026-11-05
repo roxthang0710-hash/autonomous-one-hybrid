@@ -111,6 +111,25 @@ def publish_review_drafts(directory, *, upload=storage_upload, db=None):
     for file in files:
         proof,digest,bytes_=verify_draft(file)
         path="visual-review/"+digest[:2]+"/"+digest+".png"
+        idea_key="visual-cc0-"+digest[:28]
+        prior=db.request("GET","/enna_media_ideas",params={
+            "select":"idea_key,status,rights_status,source_url,media_type,evidence",
+            "idea_key":"eq."+idea_key,"limit":"1"})
+        if not isinstance(prior,list):
+            raise RuntimeError("existing-review-lookup-unavailable")
+        if prior:
+            old=prior[0]
+            expected_end="/"+path
+            if not (old.get("status")=="needs_review"
+                and old.get("rights_status")=="review_required"
+                and old.get("media_type")=="licensed_photo"
+                and str(old.get("source_url","")).endswith(expected_end)
+                and (old.get("evidence") or {}).get("draft_image_sha256")==digest):
+                raise RuntimeError("existing-review-entry-conflict")
+            result.append({"idea_key":idea_key,"status":"needs_review",
+                           "source_photo":proof["commons_filename"],
+                           "image_url":old["source_url"],"reused":True})
+            continue
         url=upload(path,bytes_)
         row=catalog_row(proof,digest,url)
         db.request("POST","/enna_media_ideas",
@@ -127,7 +146,7 @@ def publish_review_drafts(directory, *, upload=storage_upload, db=None):
                 and stored[0].get("source_url")==url):
             raise RuntimeError("review-registration-not-confirmed")
         result.append({"idea_key":row["idea_key"],"status":"needs_review",
-                       "source_photo":proof["commons_filename"],"image_url":url})
+                       "source_photo":proof["commons_filename"],"image_url":url,"reused":False})
     return result
 
 if __name__=="__main__":
@@ -136,6 +155,6 @@ if __name__=="__main__":
     a.add_argument("--directory",default="visual-factory-drafts")
     args=a.parse_args()
     items=publish_review_drafts(args.directory)
-    print(json.dumps({"registered_review_only":len(items),"social_posts":0,
+    print(json.dumps({"registered_review_only":len(items),"reused_existing":sum(i.get("reused",False) for i in items),"social_posts":0,
                       "items":[{"idea_key":i["idea_key"],"status":i["status"]} for i in items]},
                      ensure_ascii=False))
