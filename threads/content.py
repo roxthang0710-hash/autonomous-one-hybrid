@@ -14,7 +14,7 @@ from threads.brand import BRAND_KEY
 from growth.scoring import normalize
 from threads.planner import SEEDS, VN, check_post, planned_seed_rows, scheduled_start
 from threads.tech_editorial import choose_tech_brief
-from threads.shortcut_diversity import repeated_combos_in_draft, is_repeated
+from threads.shortcut_diversity import repeated_combos_in_draft, is_present
 
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 SCHEMA = {
@@ -307,12 +307,9 @@ def plan_next(db, *, low_watermark=6, force=False):
             # shortcut as a Windows-wide command.
             original_failure = "recycled_keyboard_shortcut"
             continue
-        if (tech_brief and current_topic == tech_brief["prompt"] and
-            tech_brief.get("shortcut") and
-            not is_repeated(tech_brief["shortcut"], (), today=None)
-            and not any(
-                x in candidate["post_text"].upper().replace(" ", "")
-                for x in (tech_brief["shortcut"].upper().replace(" ", ""),))):
+        if (tech_brief and current_topic == tech_brief["prompt"]
+                and tech_brief.get("shortcut") and
+                not is_present(candidate["post_text"], tech_brief["shortcut"])):
             original_failure = "technical_tip_missing_target_combo"
             continue
         normalized_new = normalize(candidate["post_text"])
