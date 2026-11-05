@@ -39,7 +39,7 @@ class GrowthConversionTests(unittest.TestCase):
              "post_views":2376,"published_posts":5},
         ]
         out=detect_surge(days,now=datetime(2026,11,5,21,tzinfo=timezone.utc))
-        self.assertEqual(out["status"],"insufficient_comparison")
+        self.assertEqual(out["status"],"insufficient_complete_days")
         self.assertEqual(detect_surge(days,now=datetime(2026,11,8,1,tzinfo=timezone.utc))["status"],"stale_data")
 
     def test_surge_does_not_notify_on_flat_growth(self):
