@@ -34,6 +34,10 @@ MEMES = [
 ]
 
 def note(draw,title,x,y,size=30,fill=BLACK,max_lines=2,width=680):
+    if size<22:
+        # Decorative micro-labels stay outside the guarded main-caption wrapper.
+        draw.text((x,y),title,font=_font(size),fill=fill)
+        return y+size
     return _write(draw,title,x,y,width,size,fill,max_lines=max_lines)
 
 def sketch_laptop(d,cx,cy,scale=1):
