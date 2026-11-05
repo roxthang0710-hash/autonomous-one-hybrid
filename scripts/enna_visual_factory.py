@@ -21,7 +21,7 @@ from growth.visual_comedy_gate import signals
 SIZE = (1080, 1350)
 # ENNA Visual Tone 3.0 — punchy, recognizable colors rather than beige posters.
 # Native photo memes use vivid framing, not fabricated image contents.
-VISUAL_TONE_VERSION = "3.0"
+VISUAL_TONE_VERSION = "3.1"
 PALETTES = {
     "reaction": {"primary": "#FFD400", "accent": "#FF5A36", "ink": "#111111",
                  "paper": "#FFFFFF", "highlight": "#64E8FE"},
