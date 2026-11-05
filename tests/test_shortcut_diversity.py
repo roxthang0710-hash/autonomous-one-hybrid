@@ -32,7 +32,8 @@ class ShortcutDiversityTests(unittest.TestCase):
         self.assertTrue(is_present("Thử Windows + Z để chia cửa sổ","Win+Z"))
         self.assertFalse(is_present("Windows có rất nhiều tổ hợp phím", "Win+V"))
         self.assertFalse(is_present("Ctrl+Shift+Tab chuyển tab", "Ctrl+Shift+T"))
-        self.assertFalse(is_present("Win+Enter khác với Win+E","Win+E") is False) # actual Win+E is present
+        self.assertFalse(is_present("Win+Enter mở tiện ích khác","Win+E"))
+        self.assertTrue(is_present("Win+Enter khác với Win+E","Win+E"))
         self.assertFalse(is_present("Mẹo bàn phím sẽ tới vào thứ Tư", "Alt+Tab"))
         self.assertTrue(is_present("Win + Ctrl + ← để chuyển desktop","Win+Ctrl+←"))
 
