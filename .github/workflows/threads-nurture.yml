@@ -57,6 +57,9 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test before any publishing action
         run: python -m unittest discover -s tests -v
+      - name: Check externally scheduled Threads captions near the 500-character limit
+        run: python -m growth.threads_external_length_guard
+        continue-on-error: true
       - name: Log verified worker start (private)
         run: python -m growth.activity_log publisher started publisher_started
       - name: Generate drafts, publish only after OAuth, and collect real insights
