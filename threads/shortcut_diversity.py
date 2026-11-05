@@ -90,7 +90,7 @@ def is_present(text,combo):
     clean=clean.replace("→","RIGHT").replace("←","LEFT").replace("↑","UP").replace("↓","DOWN")
     clean=re.sub(r"\s*\+\s*", "+", clean)
     key=canonical(combo)
-    if len(key)<2:
+    if len(key)<2 and key not in {"B"}:
         return False
     return re.search(r"(?<![A-Z0-9])"+re.escape(key)+r"(?![A-Z0-9])",clean) is not None
 
