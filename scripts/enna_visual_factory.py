@@ -93,8 +93,9 @@ def _wrapped(draw, label, *, size=46, width=950, max_lines=2):
                 one = trial
         if one:
             lines.append(one)
-        if len(lines) <= max_lines and all(
-                draw.textbbox((0,0),ln,font=font)[2]<=width for ln in lines):
+        if (len(lines) <= max_lines and
+            not (len(lines)>1 and len(lines[-1].strip())<=3) and all(
+                draw.textbbox((0,0),ln,font=font)[2]<=width for ln in lines)):
             return font, lines, size
         size -= 2
     raise ValueError("copy-overflows-image")
