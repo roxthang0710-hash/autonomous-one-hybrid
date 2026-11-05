@@ -37,6 +37,22 @@ class VisualComedyTests(unittest.TestCase):
                 self.assertEqual(art.size,(1080,1350))
                 self.assertEqual(art.mode,"RGB")
 
+    def test_image_caption_cannot_claim_an_unseen_yawn(self):
+        photo=next(x for x in load_bank(BANK) if x["id"]=="cat-yawning")
+        self.assertTrue(signals(photo,photo)["pass"])
+        made_up={"headline":"SẾP: SAO CHƯA GỬI FILE?",
+                 "punchline":"TÔI ĐANG NGÁP NGỦ TRÊN BÀN PHÍM ĐÂY."}
+        verdict=signals(photo,made_up)
+        self.assertFalse(verdict["pass"])
+        self.assertIn("unobserved-photo-action",verdict["reasons"])
+
+    def test_each_sample_includes_a_visual_reaction_not_only_stock_desks(self):
+        from datetime import date
+        from scripts.enna_visual_factory import choose_batch
+        for day in (date(2026,11,6),date(2026,11,7)):
+            b=choose_batch(load_bank(BANK),day)
+            self.assertEqual({x["format"] for x in b},{"chat","reaction","contrast"})
+
     def test_groq_one_request_three_candidates_selects_non_generic(self):
         src=load_bank(BANK)[0]
         response=Mock()
