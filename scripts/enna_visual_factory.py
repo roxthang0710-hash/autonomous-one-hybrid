@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
+import requests
 from scripts.enna_photo_memes import fetch_photo
 
 SIZE = (1080, 1350)
@@ -132,11 +133,21 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
     sources=load_bank(bank)
     day=day or date.today()
     selected=choose_batch(sources,day,count)
+    # Only other pre-curated files may replace an unavailable photo.
+    backups=[src for src in sources if src['id'] not in {x['id'] for x in selected}]
     target=Path(output)
     target.mkdir(parents=True,exist_ok=True)
     results=[]
-    for source in selected:
-        original, attribution = fetch((source["id"],source["title"],source["author"]))
+    problems=[]
+    for source in selected+backups:
+        if len(results)>=count:
+            break
+        try:
+            original, attribution = fetch((source["id"],source["title"],source["author"]))
+        except (requests.RequestException,ValueError,OSError,KeyError,TypeError) as exc:
+            # Never weaken rights checks or fetch a third-party site on failure.
+            problems.append({"source_id":source["id"],"error_class":type(exc).__name__})
+            continue
         proposal = rewrite(source) if rewrite else None
         if proposal is not None and not isinstance(proposal,dict):
             raise ValueError("unsafe-copy-override")
@@ -169,9 +180,12 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
     (target/"manifest.json").write_text(json.dumps({
         "date":day.isoformat(),"status":"DRAFT_REQUIRES_HUMAN_REVIEW",
         "no_social_actions":True,"source_count":len(results),
+        "source_failures":problems,
         "results":[{"file":x["file"],"license":x["license"],"format":x["format"],
                     "copy_origin":x["copy_origin"]} for x in results]
     },ensure_ascii=False,indent=2),encoding="utf-8")
+    if len(results)!=count:
+        raise RuntimeError("insufficient_live_verified_cc0_sources")
     return results
 
 def main():
