@@ -56,5 +56,24 @@
   ],
   "deprecated_generator": "scripts/enna_doodle_batch.py",
   "deprecated_reason": "Prior 14-image batch was framed/repetitive and rejected as the brand's primary style.",
-  "preferred_creative_workflow": "Concept and Vietnamese joke -> consistent roundhead character illustration -> visual human review -> match an existing scheduled slot -> provider verification -> performance tracking"
+  "preferred_creative_workflow": "Concept and Vietnamese joke -> consistent roundhead character illustration -> visual human review -> match an existing scheduled slot -> provider verification -> performance tracking",
+  "approved_visual_reference": {
+    "confirmed_by_owner_on": "2026-11-06",
+    "status": "confirmed",
+    "source": "original images already saved in Enna project Library; not generic web-image examples",
+    "reference_images": [
+      {
+        "filename": "image-gen-1(1).png",
+        "scene": "BÀN GỌN 10/10 — BÚT ƠI?",
+        "purpose": "reference for recurring yellow round-head character, hand-drawn black outlines, office props, expressive reaction and pastel colors"
+      },
+      {
+        "filename": "image-gen-3(1).png",
+        "scene": "CHỦ NHẬT 18:30 — MAI MẶC GÌ?",
+        "purpose": "reference for visual storytelling, yellow round-head character, light square-grid paper, expressive hand-drawn humorous office scene"
+      }
+    ],
+    "creative_rule": "Use the approved images as visual source of truth for future Người Tròn drawings; preserve character design, hand-marker line quality, graph-paper texture, pastel accents and Vietnamese comic typography. Vary scenes, acting and punchlines rather than cloning composition. Do not replace this with web search inspirations, generic stock art or the deprecated 14-image batch.",
+    "caution": "Only metadata is stored here; the Library images have not been checked into this repository."
+  }
 }
