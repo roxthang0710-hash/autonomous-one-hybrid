@@ -36,6 +36,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Test that ambiguous posts are never automatically retried
         run: python -m unittest discover -s tests -p 'test_metricool_failed_post_audit.py' -v
+      - name: Check all imminent external Threads captions for length risks
+        run: python -m growth.threads_external_length_guard
       - name: Read live Meta feed and reconcile only an exact unique existing post
         run: python -m growth.metricool_failed_post_audit
       - name: Safety summary
