@@ -37,6 +37,22 @@ class VisualComedyTests(unittest.TestCase):
                 self.assertEqual(art.size,(1080,1350))
                 self.assertEqual(art.mode,"RGB")
 
+    def test_real_groq_smoke_rejections_are_regression_fixtures(self):
+        bank={s["id"]:s for s in load_bank(BANK)}
+        failed=[
+          ("cat-yawning",{"headline":"Mèo ngồi chắn bàn phím",
+                           "punchline":"Nhân viên: 'Gửi file chưa? Mèo: 'Đang giữ lại cho mình.'"}),
+          ("coffee-table",{"headline":"Cà phê “đi làm” nhanh hơn tôi",
+                           "punchline":"Đúng rồi, cà phê đã làm việc 10:30 mà tôi còn chưa có mặt!"}),
+          ("laptop-notepad",{"headline":"Tôi đã sắp xếp 3 nhiệm vụ",
+                             "punchline":"Nhưng 3 nhiệm vụ này lại quyết định lịch họp của cả team."})
+        ]
+        for source_id,copy in failed:
+            with self.subTest(source=source_id):
+                verdict=signals(bank[source_id],copy)
+                self.assertFalse(verdict["pass"])
+                self.assertIn("no-recognizable-payoff",verdict["reasons"])
+
     def test_no_orphan_letter_on_comedy_punchline(self):
         draw=ImageDraw.Draw(Image.new("RGB",(1080,1350)))
         _,parts,_=_wrapped(draw,"DẠ FILE ĐANG BỊ GIỮ LÀM CON TIN Ạ.",
