@@ -55,7 +55,12 @@ class VisualCatalogTests(unittest.TestCase):
             file=self.make_file(f)
             db=Mock()
             url="https://example.test/review.png"
+            calls={"get":0}
             def fake_request(method,route,**kwargs):
+                if method=="GET":
+                    calls["get"]+=1
+                    if calls["get"]==1:
+                        return []
                 if method=="POST":
                     self.assertEqual(kwargs["payload"]["status"],"needs_review")
                     self.assertEqual(kwargs["payload"]["media_type"],"licensed_photo")
@@ -67,15 +72,32 @@ class VisualCatalogTests(unittest.TestCase):
             db.request.side_effect=fake_request
             output=publish_review_drafts(f,upload=lambda *args:url,db=db)
             self.assertEqual(len(output),1)
-            self.assertEqual(db.request.call_count,2)
+            self.assertEqual(db.request.call_count,3)
 
     def test_conflicting_registration_is_not_confirmed(self):
         with tempfile.TemporaryDirectory() as f:
             self.make_file(f)
             db=Mock()
-            db.request.side_effect=[[{"ok":True}],[{"status":"ready","rights_status":"original"}]]
-            with self.assertRaisesRegex(RuntimeError,"review-registration-not-confirmed"):
+            db.request.side_effect=[[{"status":"ready","rights_status":"original"}]]
+            with self.assertRaisesRegex(RuntimeError,"existing-review-entry-conflict"):
                 publish_review_drafts(f,upload=lambda *args:"https://example.test/x.png",db=db)
+
+    def test_exact_existing_draft_is_reused_without_any_storage_write(self):
+        with tempfile.TemporaryDirectory() as folder:
+            file=self.make_file(folder)
+            proof,digest,_=verify_draft(file)
+            url="https://test.supabase.co/storage/v1/object/public/enna-original-media/visual-review/"+digest[:2]+"/"+digest+".png"
+            db=Mock()
+            db.request.return_value=[{"idea_key":"visual-cc0-"+digest[:28],
+                "status":"needs_review","rights_status":"review_required",
+                "source_url":url,"media_type":"licensed_photo",
+                "evidence":{"draft_image_sha256":digest}}]
+            def should_never_upload(*args):
+                raise AssertionError("Duplicate storage POST attempted")
+            result=publish_review_drafts(folder,upload=should_never_upload,db=db)
+            self.assertEqual(result[0]["image_url"],url)
+            self.assertTrue(result[0]["reused"])
+            self.assertEqual(db.request.call_count,1)
 
     def test_409_only_succeeds_if_public_file_is_a_png(self):
         response=Mock(status_code=409)
