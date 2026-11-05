@@ -16,7 +16,7 @@ IDEAS=[
  ("chuyen-doi-so","split",["keyboard","tray"],"8:30 — “TỪ NAY MÌNH SỐ HÓA!”","16:59 — MÁY IN: “GIẤY ĐÂU RỒI?”")]
 def trusted(url):
  p=urlparse(str(url))
- return p.scheme=="https" and p.hostname in ("upload.wikimedia.org","thumb.wikimedia.org") and p.path.startswith("/wikipedia/commons/") and (not p.query or p.hostname=="thumb.wikimedia.org") and not p.fragment and not p.username and not p.password
+ return p.scheme=="https" and p.hostname in ("upload.wikimedia.org","thumb.wikimedia.org") and p.path.startswith("/wikipedia/commons/") and len(p.query)<256 and not p.fragment and not p.username and not p.password
 def cc0(info):
  if not isinstance(info,dict) or info.get("mime") not in ("image/jpeg","image/png"):return False
  ext=info.get("extmetadata") or {}
