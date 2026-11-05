@@ -236,6 +236,19 @@ document.addEventListener("DOMContentLoaded",async()=>{
  el("conversation").addEventListener("change",loadConversation);
  el("newchat").addEventListener("click",()=>{el("conversation").value="";void loadConversation();});
  el("chatform").addEventListener("submit",send);
+ el("docFile").addEventListener("change",async()=>{
+   const file=el("docFile").files?.[0];if(!file)return;
+   if(!/\.(txt|csv|tsv|md)$/i.test(file.name)||file.size>12000){
+     status("Chỉ hỗ trợ tệp TXT/CSV/TSV/MD dưới 12 KB, không đọc file Excel .xlsx.");return;
+   }
+   try{
+     const content=await file.text();
+     if(content.length>12000)throw new Error("Nội dung vượt 12.000 ký tự");
+     el("documentTitle").value=file.name.slice(0,120);
+     el("documentContent").value=content;
+     status("Đã đọc cục bộ. Hãy kiểm tra dữ liệu và bấm Lưu tài liệu để đưa vào kho riêng.");
+   }catch{status("Không đọc được file văn bản này.");}
+ });
  bindForm("memoryform","memory_add",{note:"memoryInput"});
  bindForm("documentform","document_add",{title:"documentTitle",content:"documentContent"});
  bindForm("agentform","agent_create",{name:"agentName",instructions:"agentInstructions"});
