@@ -24,6 +24,8 @@ class CloudCloneSafetyTests(unittest.TestCase):
         self.assertIn("enna_clone_beta_access",code)
         self.assertIn("owner_id=eq.",code)
         self.assertIn("enna_clone_reserve_request",code)
+        self.assertIn('Deno.env.get("ENNA_CLONE_GROQ_API_KEY")',code)
+        self.assertNotIn('Deno.env.get("GROQ_API_KEY")',code)
         self.assertIn("p_daily_limit:4",code)
         self.assertIn("p_global_limit:40",code)
         self.assertIn('await assertFeature(owner,"live_chat")',code)
@@ -66,6 +68,9 @@ class CloudCloneSafetyTests(unittest.TestCase):
         self.assertNotIn("subprocess",src)
         self.assertNotIn("while True",src)
         self.assertIn("concurrency:",flow)
+        self.assertIn("ENNA_CLONE_GROQ_API_KEY",flow)
+        self.assertNotIn("secrets.GROQ_API_KEY",flow)
+        self.assertIn('os.getenv("ENNA_CLONE_GROQ_API_KEY"',src)
         self.assertIn("CLONE_WORKER_ENABLED: 'true'",flow)
         self.assertNotIn("THREADS_APP_SECRET",flow)
 
