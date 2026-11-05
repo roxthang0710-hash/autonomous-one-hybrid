@@ -44,3 +44,12 @@ Lessons now encoded as hard regression fixtures:
 Three useful contrasts: **the cat actually blocks the keyboard** → file is "held hostage"; **a morning coffee** → the drink "resigns" before the employee; **three planned tasks** → the 09:00 meeting consumes the time needed to complete them. These are fictional jokes, not real incidents.
 
 Publishing remains human-review-only; Metricool schedule is unaffected by this engineering QA.
+
+
+## Additional live test and stricter default
+
+A second official-credentials smoke test confirmed the model could produce more than one candidate, but one accepted coffee variant still said "ngừng ngơi" and contained several explanatory sentences. That image was marked `rejected` in Supabase. This demonstrates why keyword-level humor checks alone cannot establish creative quality.
+
+The factory now **always renders the human-curated, photo-verified story**. Optional Groq variants are saved as **unapproved, private review suggestions** in rights evidence, never automatically replacing the visible meme or being scheduled. This remains true if they pass keyword and structure tests. Multiple sentences, awkward English `vs/team` and known stilted language are rejected before review. Future use of an AI option requires separate human editorial approval.
+
+Latest proof is the GitHub Actions draft artifact; no Threads, Facebook or Instagram posts are caused by these smoke tests.
