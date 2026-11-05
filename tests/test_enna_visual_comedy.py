@@ -32,6 +32,9 @@ class VisualComedyTests(unittest.TestCase):
         self.assertEqual(PALETTES["contrast"]["accent"],"#FFE34D")
         image=Image.effect_noise((1400,1000),35).convert("RGB")
         source_map={row["format"]:row for row in load_bank(BANK) if row["format"] in PALETTES}
+        # Contrast has both stock-photo and newly illustrated concepts;
+        # the coffee gag is the hand-drawn one explicitly requested.
+        source_map["contrast"]=next(row for row in load_bank(BANK) if row["id"]=="coffee-table")
         # Inspect actual pixels in rendered social PNGs, not mere config strings.
         reaction=compose(source_map["reaction"],image)
         contrast=compose(source_map["contrast"],image)
