@@ -217,15 +217,17 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
         if proposal is not None and not signals(source,proposal)["pass"]:
             print("visual_factory: ai_copy_failed_comedy_structure_using_curated_copy")
             proposal=None
-        try:
-            artwork=compose(source,original,proposal)
-        except ValueError:
-            if proposal is None:
-                raise
-            # A generated joke can be appropriate but still impossible to fit.
-            print("visual_factory: ai_copy_does_not_fit_using_curated_copy")
-            proposal=None
-            artwork=compose(source,original,None)
+        if proposal is not None:
+            try:
+                # Validate it can render, but do NOT auto-approve a generated
+                # joke based only on heuristics: actual Groq smoke tests showed
+                # structurally passing yet unfunny Vietnamese captions.
+                compose(source,original,proposal)
+            except ValueError:
+                print("visual_factory: ai_copy_does_not_fit_discarded")
+                proposal=None
+        # Only the human-curated and verified-photo story becomes a preview.
+        artwork=compose(source,original,None)
         file=target/(day.isoformat()+"-"+source["id"]+".png")
         artwork.save(file,format="PNG",optimize=True)
         if not 20000 < file.stat().st_size < 9_000_000:
@@ -243,12 +245,14 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             "visual_hint":source["visual_hint"],
             "format":source["format"],
             "comic_device":source["comic_device"],
-            "comedy_structure_gate":signals(source,proposal or source),
+            "comedy_structure_gate":signals(source,source),
+            "ai_suggestion":proposal,
+            "ai_suggestion_status":"requires_human_editorial_review" if proposal else "none",
             "humor_rating_by_real_people":None,
             "scene":source["scene"],
-            "headline":(proposal or {}).get("headline") or source["headline"],
-            "punchline":(proposal or {}).get("punchline") or source["punchline"],
-            "copy_origin":"guarded_ai_variant" if proposal else "human_curated",
+            "headline":source["headline"],
+            "punchline":source["punchline"],
+            "copy_origin":"human_curated",
             "fictional_joke_not_factual_claim":True,
             "next_step":"review visual fit, photo rights, copy and Vietnamese text before scheduling"
         }
@@ -281,7 +285,8 @@ def main():
     items=render(args.bank,args.output,day=day,rewrite=rewrite)
     print(json.dumps({"status":"drafts_only","created":len(items),
                       "files":[s["file"] for s in items],
-                      "ai_copy_used":sum(s["copy_origin"]=="guarded_ai_variant" for s in items)},
+                      "ai_copy_used":0,
+                      "ai_suggestions_pending_review":sum(bool(s["ai_suggestion"]) for s in items)},
                      ensure_ascii=False))
 if __name__=="__main__":
     main()
