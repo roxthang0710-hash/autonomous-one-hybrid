@@ -129,9 +129,8 @@ def make_brief(row):
            {"windows":"Windows","excel":"Excel trên Windows","powerpoint":"PowerPoint trên Windows"}[row["app"]]+
            ": "+row["effect"]+". Tình huống duy nhất: "+scene+
            caveat+" Viết tiếng Việt ngắn, vui nhẹ, đúng tác dụng. "
-           "Không bổ sung các tổ hợp Win+V, Win+L, Ctrl+Shift+T, "
-           "Win+Shift+S, Win+E hay Ctrl+Shift+Esc từng đăng; "
-           "không liệt kê ba phím cũ dưới tiêu đề mới. "
+           "Tuyệt đối không nhắc lại tổ hợp phím cũ đã xuất bản "
+           "hoặc biến một mẹo thành danh sách ba phím quen thuộc. "
            "Khi làm ảnh, dùng style Người Tròn, minh họa thao tác "
            "thật thay vì poster ba ô."
         ),
