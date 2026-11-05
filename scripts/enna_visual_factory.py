@@ -8,7 +8,8 @@ pass a live CC0 metadata check before the image is downloaded.
 import argparse
 import hashlib
 import json
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -17,6 +18,10 @@ from scripts.enna_photo_memes import fetch_photo
 
 SIZE = (1080, 1350)
 MAX_PHOTOS_PER_BATCH = 3
+VN = ZoneInfo("Asia/Ho_Chi_Minh")
+
+def local_day():
+    return datetime.now(VN).date()
 ALLOWED_FORMATS = frozenset({"full_photo", "polaroid", "minimal"})
 
 def load_bank(path):
@@ -131,7 +136,7 @@ def compose(source, photo, copy=None):
 
 def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
     sources=load_bank(bank)
-    day=day or date.today()
+    day=day or local_day()
     selected=choose_batch(sources,day,count)
     # Only other pre-curated files may replace an unavailable photo.
     backups=[src for src in sources if src['id'] not in {x['id'] for x in selected}]
@@ -195,7 +200,7 @@ def main():
     parser.add_argument("--date",default=None)
     parser.add_argument("--ai-copy",action="store_true")
     args=parser.parse_args()
-    day=date.fromisoformat(args.date) if args.date else date.today()
+    day=date.fromisoformat(args.date) if args.date else local_day()
     rewrite=None
     if args.ai_copy:
         from growth.visual_humor_editor import generate_variant
