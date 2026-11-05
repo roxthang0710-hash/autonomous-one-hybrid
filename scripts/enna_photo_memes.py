@@ -26,7 +26,7 @@ def cc0(info):
 def fetch_photo(item,req=requests):
  sid,title,author=item
  res=req.get(API,params={"action":"query","format":"json","titles":title,"prop":"imageinfo",
-   "iiprop":"url|size|mime|extmetadata","iiurlwidth":1600},headers=UA,timeout=20)
+   "iiprop":"url|size|mime|extmetadata","iiurlwidth":1280},headers=UA,timeout=20)
  res.raise_for_status()
  pages=(res.json().get("query") or {}).get("pages") or {}
  if len(pages)!=1:raise ValueError("ambiguous-Commons-metadata")
