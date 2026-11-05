@@ -5,7 +5,7 @@
 const PROJECT = Deno.env.get("SUPABASE_URL") || "";
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 const PUBLIC_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "";
-const GROQ_KEY = Deno.env.get("GROQ_API_KEY") || "";
+const GROQ_KEY = Deno.env.get("ENNA_CLONE_GROQ_API_KEY") || "";
 const CHAT_MODEL = Deno.env.get("GROQ_MODEL") || "openai/gpt-oss-20b";
 const ORIGIN = "https://roxthang0710-hash.github.io";
 const JSON_HEADER = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
