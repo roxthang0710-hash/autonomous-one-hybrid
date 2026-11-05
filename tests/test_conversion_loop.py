@@ -2,7 +2,7 @@
 import unittest
 from datetime import datetime,timezone
 from unittest.mock import MagicMock
-from growth.conversion_loop import clean_days,select_policy,measure,measure_official,run
+from growth.conversion_loop import clean_days,select_policy,measure,measure_official,detect_surge,run
 
 NOW=datetime(2026,11,5,2,tzinfo=timezone.utc)
 ROWS=[
@@ -11,6 +11,48 @@ ROWS=[
 ]
 
 class GrowthConversionTests(unittest.TestCase):
+    def test_verified_daily_surge_triggers_noncausal_content_alert(self):
+        days=[
+            {"measured_on":"2026-11-05","followers":21,"new_followers":15,
+             "post_views":4854,"published_posts":4},
+            {"measured_on":"2026-11-04","followers":6,"new_followers":1,
+             "post_views":585,"published_posts":6},
+            {"measured_on":"2026-11-03","followers":5,"new_followers":2,
+             "post_views":2376,"published_posts":5},
+        ]
+        out=detect_surge(days,now=datetime(2026,11,5,21,tzinfo=timezone.utc))
+        self.assertEqual(out["status"],"surge_detected")
+        self.assertEqual(out["net_new_followers"],15)
+        self.assertGreater(out["vs_recent_daily_per_post_median"],2)
+        self.assertIn("not per-post attribution",out["caveat"])
+        self.assertEqual(out["source"],"metricool_daily_aggregate")
+
+    def test_surge_cannot_use_today_partial_or_missing_count_as_zero(self):
+        days=[
+            {"measured_on":"2026-11-06","followers":40,"new_followers":19,
+             "post_views":999999,"published_posts":1},
+            {"measured_on":"2026-11-05","followers":21,"new_followers":15,
+             "post_views":4854,"published_posts":4},
+            {"measured_on":"2026-11-04","followers":6,"new_followers":1,
+             "post_views":None,"published_posts":6},
+            {"measured_on":"2026-11-03","followers":5,"new_followers":2,
+             "post_views":2376,"published_posts":5},
+        ]
+        out=detect_surge(days,now=datetime(2026,11,5,21,tzinfo=timezone.utc))
+        self.assertEqual(out["status"],"insufficient_comparison")
+        self.assertEqual(detect_surge(days,now=datetime(2026,11,8,1,tzinfo=timezone.utc))["status"],"stale_data")
+
+    def test_surge_does_not_notify_on_flat_growth(self):
+        days=[
+            {"measured_on":"2026-11-05","followers":7,"new_followers":1,
+             "post_views":600,"published_posts":4},
+            {"measured_on":"2026-11-04","followers":6,"new_followers":1,
+             "post_views":585,"published_posts":4},
+            {"measured_on":"2026-11-03","followers":5,"new_followers":2,
+             "post_views":700,"published_posts":5},
+        ]
+        self.assertEqual(detect_surge(days,now=datetime(2026,11,5,21,tzinfo=timezone.utc))["status"],"no_surge")
+
     def test_observed_proxy_not_claimed_causal(self):
         s=select_policy(ROWS,now=NOW)
         self.assertEqual(s["status"],"ready")
