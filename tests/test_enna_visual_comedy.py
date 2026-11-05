@@ -38,19 +38,26 @@ class VisualComedyTests(unittest.TestCase):
         chat=compose(source_map["chat"],image)
         self.assertEqual(reaction.getpixel((6,6)),(255,212,0))
         self.assertEqual(reaction.getpixel((6,1200)),(100,232,254))
-        self.assertEqual(contrast.getpixel((6,6)),(255,107,61))
-        self.assertEqual(contrast.getpixel((6,1200)),(255,227,77))
-        self.assertEqual(chat.getpixel((6,6)),(220,235,255))
-        self.assertEqual(chat.getpixel((6,1200)),(255,93,158))
+        # Chat and coffee no longer display a corporate-style photo card:
+        # these are notebook-paper doodles with wobbly boxes and hand-drawn objects.
+        self.assertNotEqual(contrast.getpixel((6,6)),(255,107,61))
+        self.assertNotEqual(chat.getpixel((6,6)),(220,235,255))
+        self.assertNotEqual(contrast.getpixel((6,1200)),(255,227,77))
+        self.assertNotEqual(chat.getpixel((6,1200)),(255,93,158))
 
     def test_photos_still_occupy_central_region_for_meme(self):
         picture=Image.new("RGB",(1400,1000),(89,120,151))
         for source in load_bank(BANK):
-            if source["format"] in PALETTES:
+            if source["format"]=="reaction":
                 image=compose(source,picture)
                 r,g,b=image.getpixel((500,750))
                 self.assertTrue(abs(r-89)<12 and abs(g-120)<12 and abs(b-151)<12,
-                                source["id"]+" lost authentic photograph region")
+                                source["id"]+" lost authentic cat reaction photograph")
+            elif source["format"]=="chat" or (
+                  source["format"]=="contrast" and "cà phê" in source.get("topic","").casefold()):
+                image=compose(source,picture)
+                self.assertNotEqual(image.getpixel((500,750)),(89,120,151),
+                                    source["id"]+" should be drawn, not a stock photo")
 
     def test_generic_encouragement_is_not_comedy(self):
         src=load_bank(BANK)[0]
