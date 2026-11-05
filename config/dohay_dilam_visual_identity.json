@@ -1,0 +1,59 @@
+{
+  "brand": "Đồ Hay Đi Làm",
+  "handle": "@dohay_dilam",
+  "visual_style_id": "dohay_roundhead_doodle_v4",
+  "visual_style_name": "Người Tròn — Doodle Công Sở",
+  "status": "owner_selected_primary",
+  "selected_on": "2026-11-06",
+  "primary_use": [
+    "Threads visual",
+    "Facebook meme",
+    "Instagram static post and carousel"
+  ],
+  "style_contract": {
+    "recurring_character": "One expressive cute round yellow-headed office worker, small simple stick body, sometimes tie, sweat, confused eyes or a tiny crown/hat; consistent recognizable proportions. Use not on every single frame if an object character is the better joke.",
+    "linework": "Thick imperfect black hand-marker outlines, scribbled motion lines, casual uneven borders, hand-drawn asymmetry; not smooth vector-perfect.",
+    "paper": "White or very light blue square graph notebook paper, subtle grid.",
+    "colors": "Flexible pastel pink, pale yellow, sky blue, soft green and lavender accents; do not use a rigid palette per channel.",
+    "composition": "Scene-led comedy. Characters and props interacting or reacting; speech/thought clouds used only when joke needs them. No repetitive three-panel boxes or uniform rectangles.",
+    "typography": "Vietnamese handwritten comic lettering, sparse readable captions. Correct Vietnamese accents; a short setup and a sharp payoff.",
+    "humor": "Office-life irony, escalating urgent tasks, deadline panic, lost stationery, work trip mishaps, practical tips with an unexpected twist. Image must deliver part of the joke, not just decorate copy.",
+    "photo_exception": "Keep effective authentic animal/cat reaction photos photographic; do not redraw them in cartoon style.",
+    "provenance": "Create original drawings and original jokes; do not copy branded characters, creators' meme graphics, actual private chat screenshots or unlicensed photos."
+  },
+  "negative_prompt": [
+    "rigid tiled poster layouts",
+    "same card rectangles in every image",
+    "generic stock illustrations",
+    "uniform infographic grids",
+    "generic AI vector characters",
+    "shiny 3D render",
+    "corporate marketing poster",
+    "beige editorial card",
+    "excessive text",
+    "lifeless symbols without character acting",
+    "copy-pasted composition across posts"
+  ],
+  "delivery": {
+    "aspect_ratio": "4:5",
+    "width": 1080,
+    "height": 1350,
+    "review_required": true,
+    "min_variation": [
+      "scene staging",
+      "character gesture",
+      "prop interaction",
+      "joke mechanism"
+    ],
+    "automatic_social_publish_on_creation": false
+  },
+  "approved_reference_examples": [
+    "Round-head office worker searching for a missing pen on a tidy desk",
+    "Round-head worker relaxing on Saturday while Monday deadline invades thought bubble",
+    "Round-head worker casting outfits for Monday on Sunday",
+    "Round-head worker reacting to a pile of urgent messages"
+  ],
+  "deprecated_generator": "scripts/enna_doodle_batch.py",
+  "deprecated_reason": "Prior 14-image batch was framed/repetitive and rejected as the brand's primary style.",
+  "preferred_creative_workflow": "Concept and Vietnamese joke -> consistent roundhead character illustration -> visual human review -> match an existing scheduled slot -> provider verification -> performance tracking"
+}
