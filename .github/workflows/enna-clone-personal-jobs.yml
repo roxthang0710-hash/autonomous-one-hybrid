@@ -1,0 +1,46 @@
+name: Enna Clone — Bounded Personal Tasks (Private Beta)
+on:
+  schedule:
+    # Best effort every 2 hours UTC; NOT minute-accurate.
+    - cron: '14 */2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: enna-clone-isolated-scheduler
+  cancel-in-progress: false
+jobs:
+  clone-jobs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+      CLONE_WORKER_ENABLED: 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run isolated offline safety check
+        run: python -m growth.enna_clone_worker --dry-run
+      - name: Check controlled release gate and secret setup
+        id: config
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$DB_SERVICE_KEY" ] || [ -z "$GROQ_API_KEY" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Clone private scheduler disabled: missing configured secrets." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Claim at most four due personal jobs
+        if: steps.config.outputs.ready == 'true'
+        run: python -m growth.enna_clone_worker
+      - name: Safety statement
+        if: always()
+        run: |
+          echo "Enna Clone isolated: does not use original social Enna workflows, accounts, Threads OAuth, Meta tokens or permissions." >> "$GITHUB_STEP_SUMMARY"
+          echo "Tasks are disabled by default in DB; only beta access and feature release can open scheduling." >> "$GITHUB_STEP_SUMMARY"
+          echo "Job outputs are written privately per user, never sent to external mail or social accounts." >> "$GITHUB_STEP_SUMMARY"
