@@ -7,7 +7,7 @@ from unittest.mock import Mock,patch
 from PIL import Image, ImageDraw
 from growth.visual_comedy_gate import signals
 from growth.visual_humor_editor import generate_variant
-from scripts.enna_visual_factory import load_bank, compose, _wrapped
+from scripts.enna_visual_factory import load_bank, compose, _wrapped, PALETTES, VISUAL_TONE_VERSION
 
 BANK="scripts/enna_visual_source_bank.json"
 
@@ -21,6 +21,36 @@ class VisualComedyTests(unittest.TestCase):
             verdict=signals(source,source)
             self.assertTrue(verdict["pass"],source["id"]+" "+str(verdict["reasons"]))
             self.assertIsNone(verdict["human_funny_rating"])
+
+    def test_visual_tone_3_uses_bright_distinct_palettes(self):
+        self.assertEqual(VISUAL_TONE_VERSION,"3.0")
+        self.assertEqual(PALETTES["reaction"]["primary"],"#FFD400")
+        self.assertEqual(PALETTES["reaction"]["highlight"],"#64E8FE")
+        self.assertEqual(PALETTES["chat"]["accent"],"#D8F5B7")
+        self.assertEqual(PALETTES["chat"]["highlight"],"#FF5D9E")
+        self.assertEqual(PALETTES["contrast"]["primary"],"#FF6B3D")
+        self.assertEqual(PALETTES["contrast"]["accent"],"#FFE34D")
+        image=Image.effect_noise((1400,1000),35).convert("RGB")
+        source_map={row["format"]:row for row in load_bank(BANK) if row["format"] in PALETTES}
+        # Inspect actual pixels in rendered social PNGs, not mere config strings.
+        reaction=compose(source_map["reaction"],image)
+        contrast=compose(source_map["contrast"],image)
+        chat=compose(source_map["chat"],image)
+        self.assertEqual(reaction.getpixel((6,6)),(255,212,0))
+        self.assertEqual(reaction.getpixel((6,1200)),(100,232,254))
+        self.assertEqual(contrast.getpixel((6,6)),(255,107,61))
+        self.assertEqual(contrast.getpixel((6,1200)),(255,227,77))
+        self.assertEqual(chat.getpixel((6,6)),(220,235,255))
+        self.assertEqual(chat.getpixel((6,1200)),(255,93,158))
+
+    def test_photos_still_occupy_central_region_for_meme(self):
+        picture=Image.new("RGB",(1400,1000),(89,120,151))
+        for source in load_bank(BANK):
+            if source["format"] in PALETTES:
+                image=compose(source,picture)
+                r,g,b=image.getpixel((500,750))
+                self.assertTrue(abs(r-89)<12 and abs(g-120)<12 and abs(b-151)<12,
+                                source["id"]+" lost authentic photograph region")
 
     def test_generic_encouragement_is_not_comedy(self):
         src=load_bank(BANK)[0]
