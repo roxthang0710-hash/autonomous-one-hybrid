@@ -139,10 +139,11 @@ from threads.shortcut_diversity import (
     WINDOWS_IDEAS, EXCEL_IDEAS, POWERPOINT_IDEAS, make_brief,
     is_repeated, is_present,
 )
+from threads.ai_workmate_editorial import ai_briefs
 
 _OLD_TOOL_BRIEFS = tuple(
     brief for brief in TECH_BRIEFS
-    if brief["key"] not in ("windows_clipboard", "windows_snip")
+    if brief["key"] not in ("windows_clipboard", "windows_snip", "ai_safe_prompt")
 )
 
 def _balanced_briefs():
@@ -150,12 +151,15 @@ def _balanced_briefs():
       "windows": [make_brief(x) for x in WINDOWS_IDEAS],
       "excel": [make_brief(x) for x in EXCEL_IDEAS],
       "powerpoint": [make_brief(x) for x in POWERPOINT_IDEAS],
+      "ai": list(ai_briefs()),
       "other": list(_OLD_TOOL_BRIEFS),
     }
     result=[]
-    # Two Windows angles, one Excel, one PowerPoint and one general office tip
-    # within each complete five-slot mini-cycle. No repeated key in one pool.
-    pattern=("windows", "excel", "windows", "powerpoint", "other")
+    # Add an AI workmate lane without dropping Windows/Excel/PowerPoint.
+    # Each cycle deliberately alternates topics: 2 Windows, 1 Excel,
+    # 1 PowerPoint, 2 *different* AI office workflows, 1 other work tip.
+    # No copied AI prompt gimmicks or same-window-shortcut floods.
+    pattern=("windows", "ai", "excel", "windows", "powerpoint", "other", "ai")
     while any(lanes.values()):
         for tag in pattern:
             if lanes[tag]:
