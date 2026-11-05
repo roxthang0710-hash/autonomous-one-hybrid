@@ -1,0 +1,45 @@
+name: Enna — Authentic Photo Meme Pilot
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/enna_photo_memes.py','tests/test_enna_photo_memes.py','.github/workflows/enna-photo-meme-pilot.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: Test 3 photographic compositions without network
+        run: python -m unittest discover -s tests -p test_enna_photo_memes.py -v
+      - name: Download only CC0 verified Wikimedia photos and render 3 PNG drafts
+        run: python -m scripts.enna_photo_memes --render --output photo-meme-pilot
+      - name: Verify PNGs and provenance records exist
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          from PIL import Image
+          a=list(Path('photo-meme-pilot').glob('*.png'))
+          assert len(a)==3, f"Need 3 real photo drafts, got {len(a)}"
+          for f in a:
+            with Image.open(f) as image:
+              assert image.size==(1080,1350) and image.format=='PNG'
+            r=json.loads(f.with_suffix('.rights.json').read_text())
+            assert r['status']=='DRAFT_REQUIRES_HUMAN_REVIEW'
+            assert not r['published']
+            assert all(s['license']=='CC0 1.0' for s in r['source_media'])
+          print('3 licensed-image drafts validated; no social publication.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enna-photo-memes-preview
+          path: photo-meme-pilot/
+          retention-days: 10
+      - run: echo 'Drafts only; no Threads, Metricool, Meta or public Storage action.' >> "$GITHUB_STEP_SUMMARY"
