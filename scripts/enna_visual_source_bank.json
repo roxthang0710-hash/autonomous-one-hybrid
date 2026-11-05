@@ -1,5 +1,5 @@
 {
-  "catalog_version": "2026-11-06.6-no-orphan",
+  "catalog_version": "2026-11-06.7-twist-anchors",
   "policy": "Original Vietnamese office parody with photographed, live-revalidated Wikimedia Commons CC0 source. Mechanism: reaction, chat, contrast, surprise, exaggeration. Curated photo illustrates a fictional situation and never identifies a real actor. Human review before any social publication.",
   "sources": [
     {
@@ -18,7 +18,12 @@
         "09:00 · SẾP: Họp nhanh 5 phút nhé",
         "10:47 · LỊCH: Có cuộc họp chốt lại cuộc họp"
       ],
-      "featured_rank": 2
+      "featured_rank": 2,
+      "twist_anchor_any": [
+        "bổ sung",
+        "họp tiếp",
+        "1 tiếng"
+      ]
     },
     {
       "id": "desk-unsplash",
@@ -32,7 +37,12 @@
       "format": "contrast",
       "comic_device": "outer_inner_contrast",
       "scene": "Bàn gọn nhưng file hỗn loạn",
-      "featured_rank": 2
+      "featured_rank": 2,
+      "twist_anchor_any": [
+        "final",
+        "tải xuống",
+        "lần_9"
+      ]
     },
     {
       "id": "ruler-desk",
@@ -46,7 +56,12 @@
       "format": "reaction",
       "comic_device": "expectation_reversal",
       "scene": "Đầy đủ văn phòng phẩm, thiếu năng lượng",
-      "featured_rank": 2
+      "featured_rank": 2,
+      "twist_anchor_any": [
+        "tinh thần",
+        "não",
+        "động lực"
+      ]
     },
     {
       "id": "laptop-notepad",
@@ -64,7 +79,13 @@
         "08:30 · TÔI: Hôm nay làm 3 việc nhé!",
         "08:35 · SẾP: 9h họp về 3 việc đó nha."
       ],
-      "featured_rank": 1
+      "featured_rank": 1,
+      "twist_anchor_any": [
+        "làm trong giờ họp",
+        "lúc nào làm",
+        "làm lúc nào",
+        "họp để làm"
+      ]
     },
     {
       "id": "coffee-table",
@@ -78,7 +99,12 @@
       "format": "contrast",
       "comic_device": "time_escalation",
       "scene": "Cà phê vừa pha phải chờ họp",
-      "featured_rank": 1
+      "featured_rank": 1,
+      "twist_anchor_any": [
+        "nghỉ việc",
+        "nguội",
+        "xin nghỉ"
+      ]
     },
     {
       "id": "coffee-bean",
@@ -92,7 +118,12 @@
       "format": "reaction",
       "comic_device": "object_personification",
       "scene": "Máy in hỏng trùng giờ uống cà phê",
-      "featured_rank": 3
+      "featured_rank": 3,
+      "twist_anchor_any": [
+        "sửa tui",
+        "sửa máy",
+        "sửa luôn"
+      ]
     },
     {
       "id": "cat-yawning",
@@ -113,6 +144,11 @@
         "ngáp",
         "há miệng",
         "ngáp ngủ"
+      ],
+      "twist_anchor_any": [
+        "con tin",
+        "bắt cóc",
+        "file bị giữ"
       ]
     },
     {
@@ -127,7 +163,12 @@
       "format": "contrast",
       "comic_device": "role_reversal",
       "scene": "Mèo trong văn phòng phản ứng như nhân viên đi làm",
-      "featured_rank": 3
+      "featured_rank": 3,
+      "twist_anchor_any": [
+        "ngủ trưa",
+        "ngủ từ",
+        "nằm ngủ"
+      ]
     }
   ]
 }
