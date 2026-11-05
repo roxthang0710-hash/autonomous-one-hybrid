@@ -23,7 +23,7 @@ class VisualComedyTests(unittest.TestCase):
             self.assertIsNone(verdict["human_funny_rating"])
 
     def test_visual_tone_3_uses_bright_distinct_palettes(self):
-        self.assertEqual(VISUAL_TONE_VERSION,"3.0")
+        self.assertEqual(VISUAL_TONE_VERSION,"3.1")
         self.assertEqual(PALETTES["reaction"]["primary"],"#FFD400")
         self.assertEqual(PALETTES["reaction"]["highlight"],"#64E8FE")
         self.assertEqual(PALETTES["chat"]["accent"],"#D8F5B7")
