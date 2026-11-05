@@ -1,0 +1,73 @@
+name: Enna — Autonomous Photo-First Visual Factory
+on:
+  schedule:
+    # Monday and Thursday, 09:15 Vietnam (UTC+7). Best effort, not guaranteed.
+    - cron: '15 2 * * 1,4'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/enna_visual_factory.py'
+      - 'scripts/enna_visual_source_bank.json'
+      - 'growth/visual_humor_editor.py'
+      - 'tests/test_enna_visual_factory.py'
+      - '.github/workflows/enna-visual-factory.yml'
+permissions:
+  contents: read
+concurrency:
+  group: enna-photo-factory-draft-only
+  cancel-in-progress: false
+jobs:
+  draft-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: openai/gpt-oss-20b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install pinned dependencies
+        run: pip install -r requirements.txt
+      - name: Test copyright, humor and image rendering safeguards
+        run: |
+          python -m unittest discover -s tests -p 'test_enna_visual_factory.py' -v
+          python -m unittest discover -s tests -p 'test_enna_photo_memes.py' -v
+      - name: Create new office-photo drafts from CC0 sources
+        run: python -m scripts.enna_visual_factory --ai-copy --output visual-factory-drafts
+      - name: Verify every output includes rights evidence and original photography
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from PIL import Image
+          folder=Path('visual-factory-drafts')
+          files=list(folder.glob('*.png'))
+          assert len(files)==3, f'Expected 3 new photographic images, found {len(files)}'
+          manifest=json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
+          assert manifest['source_count']==3 and manifest['no_social_actions'] is True
+          for file in files:
+            with Image.open(file) as im:
+              assert im.format=='PNG' and im.size==(1080,1350)
+            meta=json.loads(file.with_suffix('.rights.json').read_text(encoding='utf-8'))
+            assert meta['status']=='DRAFT_REQUIRES_HUMAN_REVIEW' and meta['published'] is False
+            assert meta['license']=='CC0 1.0'
+            assert meta['visual_source_page'].startswith('https://commons.wikimedia.org/wiki/File:')
+            assert hashlib.sha256(file.read_bytes()).hexdigest()==meta['image_sha256']
+          assert len({json.loads(f.with_suffix('.rights.json').read_text())['commons_filename'] for f in files})==3
+          print('Verified 3 photo-heavy drafts from 3 distinct Commons files; zero social writes.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enna-visual-factory-photo-drafts
+          path: visual-factory-drafts/
+          retention-days: 14
+      - name: Evidence summary
+        if: always()
+        run: |
+          echo 'Photo-first drafts use live-verified Wikimedia CC0 photos. Groq may rewrite captions, but only after strict filters.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'All media stays GitHub Actions artifact, NOT automatically published to Threads/Facebook/Instagram.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Human must review actual visual, captions, person/brand rights before scheduling. No Meta POST, no spending, no OAuth change.' >> "$GITHUB_STEP_SUMMARY"
