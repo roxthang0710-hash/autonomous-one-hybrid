@@ -156,7 +156,16 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
         proposal = rewrite(source) if rewrite else None
         if proposal is not None and not isinstance(proposal,dict):
             raise ValueError("unsafe-copy-override")
-        artwork=compose(source,original,proposal)
+        try:
+            artwork=compose(source,original,proposal)
+        except ValueError:
+            if proposal is None:
+                raise
+            # An AI caption may pass language checks but still not fit the photo.
+            # Never publish clipped typography; fall back to the reviewed seed.
+            print("visual_factory: ai_copy_does_not_fit_using_curated_copy")
+            proposal=None
+            artwork=compose(source,original,None)
         file=target/(day.isoformat()+"-"+source["id"]+".png")
         artwork.save(file,format="PNG",optimize=True)
         if not 20000 < file.stat().st_size < 9_000_000:
