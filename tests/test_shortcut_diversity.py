@@ -35,6 +35,10 @@ class ShortcutDiversityTests(unittest.TestCase):
         self.assertFalse(is_present("Win+Enter mở tiện ích khác","Win+E"))
         self.assertTrue(is_present("Win+Enter khác với Win+E","Win+E"))
         self.assertFalse(is_present("Mẹo bàn phím sẽ tới vào thứ Tư", "Alt+Tab"))
+        self.assertFalse(repeated_combos_in_draft(
+            "Bàn làm việc đầy dây sạc nhưng mẹo này chẳng nhắc phím nào.",
+            [],today=TODAY))
+        self.assertFalse(is_present("Bàn làm việc, văn phòng", "B"))
         self.assertTrue(is_present("Win + Ctrl + ← để chuyển desktop","Win+Ctrl+←"))
 
     def test_old_frequent_shortcuts_are_cooled_down_for_30_days(self):
