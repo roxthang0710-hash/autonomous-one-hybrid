@@ -22,7 +22,7 @@ MACHINES={
  "expectation_reversal":("trừ","nhưng","còn","thiếu","hóa ra"),
  "escalating_circularity":("việc thứ","họp","giải thích","lần","chưa xong"),
  "object_personification":("máy","cà phê","tui","tôi","gọi","sửa"),
- "visual_reaction":("ngáp","mic","mặt","nhìn","tắt","phản ứng"),
+ "visual_reaction":("ngáp","mic","mặt","nhìn","tắt","phản ứng","giữ","bàn phím","con tin"),
  "role_reversal":("nhân viên","ngủ","đi làm","sớm","9 giờ","trưa"),
 }
 def signals(source, copy):
