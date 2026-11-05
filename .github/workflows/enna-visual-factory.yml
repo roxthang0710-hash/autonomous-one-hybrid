@@ -87,12 +87,12 @@ jobs:
           name: enna-visual-factory-photo-drafts
           path: visual-factory-drafts/
           retention-days: 14
-      - name: Register only review-required photo drafts in existing Supabase media library
-        if: github.event_name != 'push'
+      - name: Retired old coffee/chat cards — do not add to brand media library
+        if: false # must first meet dohay_roundhead_doodle_v4 contract
         run: python -m growth.visual_review_catalog --directory visual-factory-drafts
       - name: Evidence summary
         if: always()
         run: |
           echo 'Hand-drawn original coffee/chat memes; cat reaction remains authentic photo. Commons CC0 photos re-verified as tiny scrapbook sources.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Media is archived as an artifact and Supabase review-required records. There is NO automatic social publication.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Legacy draft files are archived for QA ONLY. No new Supabase media records; use owner-approved Người Tròn identity for future brand graphics.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Human must review actual visual, captions, person/brand rights before scheduling. No Meta POST, no spending, no OAuth change.' >> "$GITHUB_STEP_SUMMARY"
