@@ -15,6 +15,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import requests
 from scripts.enna_photo_memes import fetch_photo
+from growth.visual_comedy_gate import signals
 
 SIZE = (1080, 1350)
 MAX_PHOTOS_PER_BATCH = 3
@@ -196,16 +197,23 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             # Never weaken rights checks or fetch a third-party site on failure.
             problems.append({"source_id":source["id"],"error_class":type(exc).__name__})
             continue
+        baseline=signals(source,source)
+        if not baseline["pass"]:
+            problems.append({"source_id":source["id"],"error_class":"UnfunnyBaselineStructure",
+                             "reasons":baseline["reasons"]})
+            continue
         proposal = rewrite(source) if rewrite else None
         if proposal is not None and not isinstance(proposal,dict):
             raise ValueError("unsafe-copy-override")
+        if proposal is not None and not signals(source,proposal)["pass"]:
+            print("visual_factory: ai_copy_failed_comedy_structure_using_curated_copy")
+            proposal=None
         try:
             artwork=compose(source,original,proposal)
         except ValueError:
             if proposal is None:
                 raise
-            # An AI caption may pass language checks but still not fit the photo.
-            # Never publish clipped typography; fall back to the reviewed seed.
+            # A generated joke can be appropriate but still impossible to fit.
             print("visual_factory: ai_copy_does_not_fit_using_curated_copy")
             proposal=None
             artwork=compose(source,original,None)
@@ -226,6 +234,8 @@ def render(bank, output, *, day=None, fetch=fetch_photo, rewrite=None, count=3):
             "visual_hint":source["visual_hint"],
             "format":source["format"],
             "comic_device":source["comic_device"],
+            "comedy_structure_gate":signals(source,proposal or source),
+            "humor_rating_by_real_people":None,
             "scene":source["scene"],
             "headline":(proposal or {}).get("headline") or source["headline"],
             "punchline":(proposal or {}).get("punchline") or source["punchline"],
