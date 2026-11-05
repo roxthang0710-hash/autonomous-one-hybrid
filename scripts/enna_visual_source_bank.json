@@ -1,5 +1,5 @@
 {
-  "catalog_version": "2026-11-06.3-comedy-mechanics",
+  "catalog_version": "2026-11-06.4-reaction-priority",
   "policy": "Original Vietnamese office parody with photographed, live-revalidated Wikimedia Commons CC0 source. Mechanism: reaction, chat, contrast, surprise, exaggeration. Curated photo illustrates a fictional situation and never identifies a real actor. Human review before any social publication.",
   "sources": [
     {
@@ -17,7 +17,8 @@
       "chat_lines": [
         "09:00 · SẾP: Họp nhanh 5 phút nhé",
         "10:47 · LỊCH: Có cuộc họp chốt lại cuộc họp"
-      ]
+      ],
+      "featured_rank": 2
     },
     {
       "id": "desk-unsplash",
@@ -30,7 +31,8 @@
       "punchline": "THƯ MỤC TẢI XUỐNG: FINAL_FINAL_CHỐT_LẦN_9",
       "format": "contrast",
       "comic_device": "outer_inner_contrast",
-      "scene": "Bàn gọn nhưng file hỗn loạn"
+      "scene": "Bàn gọn nhưng file hỗn loạn",
+      "featured_rank": 2
     },
     {
       "id": "ruler-desk",
@@ -43,7 +45,8 @@
       "punchline": "TRỪ TINH THẦN ĐI LÀM.",
       "format": "reaction",
       "comic_device": "expectation_reversal",
-      "scene": "Đầy đủ văn phòng phẩm, thiếu năng lượng"
+      "scene": "Đầy đủ văn phòng phẩm, thiếu năng lượng",
+      "featured_rank": 2
     },
     {
       "id": "laptop-notepad",
@@ -52,15 +55,16 @@
       "topic": "máy tính và sổ ghi chú",
       "visual_hint": "máy tính và sổ ghi chú",
       "series": "chuyen-cong-so",
-      "headline": "KẾ HOẠCH: LÀM ĐÚNG 3 VIỆC",
-      "punchline": "VIỆC THỨ 4: HỌP GIẢI THÍCH TẠI SAO 3 VIỆC CHƯA XONG.",
+      "headline": "TÔI: HÔM NAY CHỐT 3 ĐẦU VIỆC",
+      "punchline": "ỦA RỒI 3 VIỆC ĐÓ LÀM VÀO KHUNG GIỜ NÀO Ạ?",
       "format": "chat",
       "comic_device": "escalating_circularity",
       "scene": "Danh sách công việc phát sinh họp",
       "chat_lines": [
-        "08:30 · TÔI: Nay chốt đúng 3 đầu việc!",
-        "16:30 · SẾP: 5 giờ họp báo cáo 3 việc nha"
-      ]
+        "08:30 · TÔI: Hôm nay làm 3 việc nhé!",
+        "08:35 · SẾP: 9h họp về 3 việc đó nha."
+      ],
+      "featured_rank": 1
     },
     {
       "id": "coffee-table",
@@ -70,10 +74,11 @@
       "visual_hint": "một cốc cà phê trên mặt bàn",
       "series": "ca-phe-cong-so",
       "headline": "08:59 — CÀ PHÊ CÒN NÓNG",
-      "punchline": "09:01 — HỌP 90 PHÚT. CÀ PHÊ TỰ NGUỘI.",
+      "punchline": "10:30 — CÀ PHÊ XIN NGHỈ VIỆC TRƯỚC TÔI.",
       "format": "contrast",
       "comic_device": "time_escalation",
-      "scene": "Cà phê vừa pha phải chờ họp"
+      "scene": "Cà phê vừa pha phải chờ họp",
+      "featured_rank": 1
     },
     {
       "id": "coffee-bean",
@@ -86,7 +91,8 @@
       "punchline": "MÁY IN: TỈNH RỒI THÌ SỬA TUI LUÔN NHA.",
       "format": "reaction",
       "comic_device": "object_personification",
-      "scene": "Máy in hỏng trùng giờ uống cà phê"
+      "scene": "Máy in hỏng trùng giờ uống cà phê",
+      "featured_rank": 3
     },
     {
       "id": "cat-yawning",
@@ -96,10 +102,11 @@
       "visual_hint": "mèo thật đang ngáp trên laptop",
       "series": "phan-ung-cong-so",
       "headline": "SẾP: AI MUỐN ĐÓNG GÓP KHÔNG?",
-      "punchline": "TÔI ĐÃ BẬT MIC. TIẾNG NGÁP LÀ PHẦN ĐÓNG GÓP.",
+      "punchline": "TÔI BẬT MIC. TIẾNG NGÁP CÓ ĐƯỢC TÍNH KHÔNG Ạ?",
       "format": "reaction",
       "comic_device": "visual_reaction",
-      "scene": "Mèo thật ngáp như nhân viên mệt vì họp"
+      "scene": "Mèo thật ngáp như nhân viên mệt vì họp",
+      "featured_rank": 1
     },
     {
       "id": "shop-cat",
@@ -112,7 +119,8 @@
       "punchline": "CŨNG LÀ NGƯỜI NGỦ TRƯA TỪ 9 GIỜ.",
       "format": "contrast",
       "comic_device": "role_reversal",
-      "scene": "Mèo trong văn phòng phản ứng như nhân viên đi làm"
+      "scene": "Mèo trong văn phòng phản ứng như nhân viên đi làm",
+      "featured_rank": 3
     }
   ]
 }
