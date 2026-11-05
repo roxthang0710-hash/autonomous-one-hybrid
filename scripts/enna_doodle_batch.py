@@ -178,7 +178,9 @@ def draw_one(info):
     _box(d,23,23,1057,193,fill=info["accent"],seed=13,stroke=7)
     _write(d,info["hook"],57,73,955,44,BLACK,max_lines=2)
     _box(d,51,212,970,281,fill="#FFFFFF",seed=33,stroke=5)
-    _write(d,info["label"],76,231,865,21,BLACK,max_lines=1)
+    # Tiny decorative labels use a 21px font directly; the shared text
+    # wrapper intentionally rejects sizes under 22px.
+    d.text((76,231),info["label"],font=_font(21),fill=BLACK)
     drawing(d,info["scene"])
     _box(d,30,1093,1050,1310,fill=info["accent"],seed=81,stroke=8)
     _write(d,info["punch"],62,1161,963,40,BLACK,max_lines=3)
