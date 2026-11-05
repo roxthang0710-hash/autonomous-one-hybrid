@@ -1,0 +1,46 @@
+name: Enna — Metricool Publication Error Audit
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-failed-metricool-post-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.issue.user.login == github.repository_owner &&
+       startsWith(github.event.issue.title, 'audit:metricool-failure-416708580'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_PUBLISH_ENABLED: "false"
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+      METRICOOL_ERROR_POST_ID: "416708580"
+      METRICOOL_ERROR_LEDGER_ID: "c652568c-1b96-4cd3-8644-344e74c5e8f5"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Test that ambiguous posts are never automatically retried
+        run: python -m unittest discover -s tests -p 'test_metricool_failed_post_audit.py' -v
+      - name: Read live Meta feed and reconcile only an exact unique existing post
+        run: python -m growth.metricool_failed_post_audit
+      - name: Safety summary
+        if: always()
+        run: |
+          echo '## Metricool failed-post investigation' >> "$GITHUB_STEP_SUMMARY"
+          echo 'This workflow reads the official owner Threads feed and writes private status evidence only.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'It never creates a media container or repeats an ambiguous platform publish request.' >> "$GITHUB_STEP_SUMMARY"
