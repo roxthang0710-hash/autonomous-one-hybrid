@@ -4,6 +4,8 @@ on:
     # Monday and Thursday, 09:15 Vietnam (UTC+7). Best effort, not guaranteed.
     - cron: '15 2 * * 1,4'
   workflow_dispatch:
+  issues:
+    types: [opened]
   push:
     branches: [main]
     paths:
@@ -24,6 +26,10 @@ concurrency:
   cancel-in-progress: false
 jobs:
   draft-assets:
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.issue.user.login == github.repository_owner &&
+      startsWith(github.event.issue.title, 'visual-comedy:'))
     runs-on: ubuntu-latest
     timeout-minutes: 12
     env:
