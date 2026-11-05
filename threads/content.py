@@ -301,6 +301,11 @@ def plan_next(db, *, low_watermark=6, force=False):
         if candidate["post_text"] in history_texts:
             original_failure = "duplicate_generated"
             continue
+        normalized_new = normalize(candidate["post_text"])
+        if any(SequenceMatcher(None, normalized_new, previous).ratio() >= 0.84
+               for previous in normalized_history if previous):
+            original_failure = "near_duplicate_generated"
+            continue
         if repeated_combos_in_draft(candidate["post_text"], history_texts):
             # Do not let the model reinsert a recently published shortcut
             # into an otherwise fresh story, or mislabel an Office-specific
@@ -311,11 +316,6 @@ def plan_next(db, *, low_watermark=6, force=False):
                 and tech_brief.get("shortcut") and
                 not is_present(candidate["post_text"], tech_brief["shortcut"])):
             original_failure = "technical_tip_missing_target_combo"
-            continue
-        normalized_new = normalize(candidate["post_text"])
-        if any(SequenceMatcher(None, normalized_new, previous).ratio() >= 0.84
-               for previous in normalized_history if previous):
-            original_failure = "near_duplicate_generated"
             continue
         result, chosen_trend = candidate, current_trend
         primary_angle_used = current_pillar == pillar and current_topic == topic
