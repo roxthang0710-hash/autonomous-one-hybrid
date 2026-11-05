@@ -60,8 +60,16 @@ def choose_batch(sources, day, count=MAX_PHOTOS_PER_BATCH):
     if count < 1 or count > MAX_PHOTOS_PER_BATCH:
         raise ValueError("unsupported-batch-size")
     count = min(len(sources), count)
-    # For a 6-source catalog, alternate disjoint blocks of three instead of
-    # pulling the same desk photograph on every invocation.
+    # Default batch intentionally mixes: fictional chat + expressive
+    # photographic reaction + real-life visual contradiction. Prioritise the
+    # reaction photo over three tasteful yet static workplace stock photos.
+    if count==3:
+        buckets={style:sorted((s for s in sources if s["format"]==style),
+                             key=lambda item:item.get("featured_rank",99))
+                 for style in ("chat","reaction","contrast")}
+        if all(buckets.values()):
+            return [bucket[day.toordinal()%len(bucket)]
+                    for bucket in buckets.values()]
     start = (day.toordinal() * count) % len(sources)
     return [sources[(start + i) % len(sources)] for i in range(count)]
 
