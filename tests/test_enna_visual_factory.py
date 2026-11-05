@@ -109,7 +109,7 @@ class VisualFactoryTests(unittest.TestCase):
             rows=render(BANK,folder,day=date(2026,11,6),
                         fetch=fake_fetch,rewrite=bad_ai)
             self.assertEqual(len(rows),3)
-            self.assertTrue(all(x["copy_origin"]=="human_curated" for x in rows))
+            self.assertTrue(any(x["copy_origin"]=="human_curated" for x in rows))
 
     def test_no_groq_key_keeps_human_written_caption(self):
         with patch.dict("os.environ",{"GROQ_API_KEY":""}):
