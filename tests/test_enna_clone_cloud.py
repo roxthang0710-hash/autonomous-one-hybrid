@@ -27,7 +27,7 @@ class CloudCloneSafetyTests(unittest.TestCase):
         self.assertIn("p_daily_limit:4",code)
         self.assertIn("p_global_limit:40",code)
         self.assertIn('await assertFeature(owner,"live_chat")',code)
-        self.assertIn('"conversation_id"',code)
+        self.assertIn("conversation_id=eq.",code)
         self.assertIn('request_id=eq.',code)
         self.assertIn('role:"assistant"',code)
         self.assertIn("Không có công cụ gửi email",code)
