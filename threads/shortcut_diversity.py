@@ -57,7 +57,7 @@ POWERPOINT_IDEAS=(
   item("ppt_newslide","powerpoint","slide_authoring","Ctrl + M","thêm trang chiếu mới","Đang làm deck 20 trang mà sếp bổ sung một trang nữa",source=MS_PPT_CREATE),
   item("ppt_duplicate","powerpoint","slide_authoring","Ctrl + Shift + D","nhân đôi trang chiếu được chọn","Muốn giữ bố cục slide đẹp mà không dựng lại",source=MS_PPT_CREATE),
   item("ppt_current_slide","powerpoint","presentation","Shift + F5","trình chiếu từ slide hiện tại","Đang sửa slide 17 nhưng phải thử ngay",source=MS_PPT_PRESENT),
-  item("ppt_black","powerpoint","presentation","B","tạm bật màn hình đen khi đang trình chiếu","Muốn mọi người tập trung nghe câu chốt thay vì đọc slide","Chỉ áp dụng khi đang ở Slide Show",MS_PPT_PRESENT),
+  item("ppt_presenter_view","powerpoint","presentation","Alt + F5","bắt đầu trình chiếu trong Dạng xem Diễn giả","Cần xem ghi chú để khỏi đọc sai phần chốt khi thuyết trình","Ghi chú trình chiếu tùy cấu hình màn hình",MS_PPT_PRESENT),
 )
 
 ALL_SHORTCUTS=WINDOWS_IDEAS+EXCEL_IDEAS+POWERPOINT_IDEAS
@@ -90,7 +90,7 @@ def is_present(text,combo):
     clean=clean.replace("→","RIGHT").replace("←","LEFT").replace("↑","UP").replace("↓","DOWN")
     clean=re.sub(r"\s*\+\s*", "+", clean)
     key=canonical(combo)
-    if len(key)<2 and key not in {"B"}:
+    if len(key)<2:
         return False
     return re.search(r"(?<![A-Z0-9])"+re.escape(key)+r"(?![A-Z0-9])",clean) is not None
 
