@@ -53,6 +53,16 @@ def build_notifications(owners, growth, posts, media, events, now=None):
         relevant.append(("media", "info", "Chưa có video hoàn chỉnh trong thư viện",
             "Kho media chỉ ghi nhận video nghiên cứu hoặc kịch bản, chưa có tệp video ready.",
             "Ưu tiên hoàn thiện 1 video nguyên bản ngắn; duyệt quyền sử dụng trước khi đăng."))
+    # These are real uploaded draft PNGs, NOT verified published posts.
+    visual_drafts=[m for m in media
+      if m.get("media_type")=="licensed_photo"
+      and m.get("status")=="needs_review"
+      and str(m.get("source_url") or "").startswith(
+        "https://gjdvdohylvsauphhkutw.supabase.co/storage/v1/object/public/enna-original-media/visual-review/")]
+    if visual_drafts:
+        relevant.append(("media", "info", "Enna có ảnh thật mới chờ duyệt",
+            f"Kho media ghi nhận {len(visual_drafts)} ảnh chụp thật đã dựng, có nguồn và tệp PNG; tất cả đang ở trạng thái needs_review, chưa chứng minh đã đăng.",
+            "Xem các ảnh trong thư viện Enna và đối chiếu nguồn, câu đùa, bố cục trước khi đưa vào lịch. Không tự coi review là đăng thành công."))
     recent_errors = []
     for e in events:
         try:
