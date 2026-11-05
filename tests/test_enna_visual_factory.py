@@ -51,6 +51,36 @@ class VisualFactoryTests(unittest.TestCase):
             self.assertTrue(manifest["no_social_actions"])
             self.assertEqual(manifest["source_count"],3)
 
+    def test_rate_limited_one_source_uses_only_curated_backup(self):
+        import requests
+        photo=Image.effect_noise((1280,960),29).convert("RGB")
+        seen=[]
+        def simulated_fetch(entry):
+            seen.append(entry[1])
+            if len(seen)==1:
+                raise requests.HTTPError("429 rate limit")
+            return photo, {"source_page":"https://commons.wikimedia.org/wiki/"+entry[1].replace(" ","_"),
+                "photographer":entry[2],"file":entry[1],"photo_sha256":"a"*64}
+        with tempfile.TemporaryDirectory() as folder:
+            items=render(BANK,folder,day=date(2026,11,6),fetch=simulated_fetch)
+            self.assertEqual(len(items),3)
+            self.assertEqual(len(seen),4)
+            report=json.loads((Path(folder)/"manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(report["source_failures"]),1)
+            self.assertEqual(report["source_failures"][0]["error_class"],"HTTPError")
+            known={x["title"] for x in load_bank(BANK)}
+            self.assertTrue(all(x["commons_filename"] in known for x in items))
+
+    def test_no_unlicensed_image_fallback(self):
+        with tempfile.TemporaryDirectory() as folder:
+            def prohibited(_):
+                raise ValueError("license-not-verified-CC0")
+            with self.assertRaisesRegex(RuntimeError,"insufficient_live_verified_cc0_sources"):
+                render(BANK,folder,day=date(2026,11,6),fetch=prohibited)
+            report=json.loads((Path(folder)/"manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(report["source_count"],0)
+            self.assertFalse(report["no_social_actions"] is False)
+
     def test_unsafe_creative_input_rejected_before_output(self):
         rows=load_bank(BANK)
         pic=Image.new("RGB",(1200,800))
