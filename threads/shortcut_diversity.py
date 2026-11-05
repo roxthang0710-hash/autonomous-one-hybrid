@@ -87,7 +87,7 @@ def is_present(text,combo):
         return False
     clean=text.upper().replace("WINDOWS","WIN").replace("CONTROL","CTRL")
     clean=clean.replace("→","RIGHT").replace("←","LEFT").replace("↑","UP").replace("↓","DOWN")
-    clean=re.sub(r"\\s*\\+\\s*", "+", clean)
+    clean=re.sub(r"\s*\+\s*", "+", clean)
     key=canonical(combo)
     if len(key)<2:
         return False
