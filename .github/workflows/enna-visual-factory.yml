@@ -10,6 +10,8 @@ on:
       - 'scripts/enna_visual_factory.py'
       - 'scripts/enna_visual_source_bank.json'
       - 'growth/visual_humor_editor.py'
+      - 'growth/visual_comedy_gate.py'
+      - 'tests/test_enna_visual_comedy.py'
       - 'tests/test_enna_visual_factory.py'
       - 'growth/visual_review_catalog.py'
       - 'tests/test_visual_review_catalog.py'
@@ -40,6 +42,7 @@ jobs:
       - name: Test copyright, humor and image rendering safeguards
         run: |
           python -m unittest discover -s tests -p 'test_enna_visual_factory.py' -v
+          python -m unittest discover -s tests -p 'test_enna_visual_comedy.py' -v
           python -m unittest discover -s tests -p 'test_enna_photo_memes.py' -v
           python -m unittest discover -s tests -p 'test_visual_review_catalog.py' -v
       - name: Engineering push — generate deterministic images without LLM calls
