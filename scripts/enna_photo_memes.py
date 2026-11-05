@@ -12,7 +12,7 @@ SRC=[
  ("tray","File:Lack of paper documents.jpg","Ірина Бучнєва")]
 IDEAS=[
  ("kiem-tra-tien-do","chat",["cat"],"PHÒNG KIỂM TRA TIẾN ĐỘ ĐÃ VÀO CA.","Mới 9 giờ mà đã có người nằm chặn bàn phím."),
- ("luu-file-lan-thu-17","editorial",["keyboard"],"“FILE ĐÃ LƯU CHƯA EM?”","Tôi: bấm Ctrl + S lần thứ 17 để chắc ăn."),
+ ("luu-file-lan-thu-17","editorial",["keyboard"],"“LƯU FILE CHƯA EM?”","Tôi: bấm Ctrl + S lần thứ 17 để chắc ăn."),
  ("chuyen-doi-so","split",["keyboard","tray"],"8:30 — “TỪ NAY MÌNH SỐ HÓA!”","16:59 — MÁY IN: “GIẤY ĐÂU RỒI?”")]
 def trusted(url):
  p=urlparse(str(url))
