@@ -14,6 +14,7 @@ from threads.brand import BRAND_KEY
 from growth.scoring import normalize
 from threads.planner import SEEDS, VN, check_post, planned_seed_rows, scheduled_start
 from threads.tech_editorial import choose_tech_brief
+from threads.shortcut_diversity import repeated_combos_in_draft, is_repeated
 
 MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 SCHEMA = {
@@ -209,7 +210,8 @@ def plan_next(db, *, low_watermark=6, force=False):
     media_ref = None
     media_url = None
     media_alt = None
-    tech_brief = choose_tech_brief(len(history))
+    history_texts = [r["text_content"] for r in history if r.get("text_content")]
+    tech_brief = choose_tech_brief(len(history), previous_texts=history_texts)
     selected_plan_id = None
     if tech_brief is not None:
         pillar, topic = tech_brief["pillar"], tech_brief["prompt"]
@@ -224,7 +226,9 @@ def plan_next(db, *, low_watermark=6, force=False):
             if (isinstance(planned, list) and planned
                     and planned[0].get("pillar") in ("work", "travel", "organize", "conversation")
                     and isinstance(planned[0].get("topic_prompt"), str)
-                    and len(planned[0]["topic_prompt"]) <= 1000):
+                    and len(planned[0]["topic_prompt"]) <= 1000
+                    and not repeated_combos_in_draft(
+                       planned[0]["topic_prompt"], history_texts)):
                 pillar, topic = planned[0]["pillar"], planned[0]["topic_prompt"]
                 selected_plan_id = planned[0].get("id")
         except Exception:
@@ -273,7 +277,6 @@ def plan_next(db, *, low_watermark=6, force=False):
         if trend is not None:
             pillar, topic = trend["pillar"], trend["topic"]
 
-    history_texts = [r["text_content"] for r in history if r.get("text_content")]
     normalized_history = [normalize(x) for x in history_texts[:60]]
     # A rejected Groq draft should not stall the calendar indefinitely.
     # Try at most two DIFFERENT evergreen editorial angles after the first
@@ -297,6 +300,20 @@ def plan_next(db, *, low_watermark=6, force=False):
             continue
         if candidate["post_text"] in history_texts:
             original_failure = "duplicate_generated"
+            continue
+        if repeated_combos_in_draft(candidate["post_text"], history_texts):
+            # Do not let the model reinsert a recently published shortcut
+            # into an otherwise fresh story, or mislabel an Office-specific
+            # shortcut as a Windows-wide command.
+            original_failure = "recycled_keyboard_shortcut"
+            continue
+        if (tech_brief and current_topic == tech_brief["prompt"] and
+            tech_brief.get("shortcut") and
+            not is_repeated(tech_brief["shortcut"], (), today=None)
+            and not any(
+                x in candidate["post_text"].upper().replace(" ", "")
+                for x in (tech_brief["shortcut"].upper().replace(" ", ""),))):
+            original_failure = "technical_tip_missing_target_combo"
             continue
         normalized_new = normalize(candidate["post_text"])
         if any(SequenceMatcher(None, normalized_new, previous).ratio() >= 0.84
