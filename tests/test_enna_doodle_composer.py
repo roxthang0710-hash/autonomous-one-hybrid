@@ -39,8 +39,13 @@ class EnnaDoodleTests(unittest.TestCase):
         source=next(s for s in self.photos if s["id"]=="cat-yawning")
         a=compose(source,self.dark)
         b=compose(source,self.light)
-        self.assertEqual(a.getpixel((520,760)),(35,77,120))
-        self.assertEqual(b.getpixel((520,760)),(225,174,81))
+        # The existing photo branch mildly enhances saturation/contrast;
+        # it should keep the real photo, not preserve raw RGB byte-for-byte.
+        one=a.getpixel((520,760))
+        two=b.getpixel((520,760))
+        self.assertNotEqual(one,two)
+        self.assertTrue(all(abs(v-ref)<26 for v,ref in zip(one,(35,77,120))))
+        self.assertTrue(all(abs(v-ref)<35 for v,ref in zip(two,(225,174,81))))
         self.assertEqual(a.getpixel((6,6)),(255,212,0))
 
     def test_visible_doodle_scene_contains_no_platform_imitation(self):
