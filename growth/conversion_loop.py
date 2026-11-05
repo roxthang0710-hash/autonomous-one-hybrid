@@ -34,6 +34,66 @@ def clean_days(rows, today):
     return [found[d] for d in sorted(found,reverse=True)]
 
 
+
+def detect_surge(rows, *, now=None):
+    """Spot a short-lived audience surge from COMPLETE Metricool daily counts.
+
+    This is a prompt to investigate and adapt ONE future topic, not a verdict
+    about which post caused growth or a permission to auto-publish.
+    """
+    from statistics import median
+    now=now or datetime.now(timezone.utc)
+    today=now.astimezone(VN).date()
+    observed={}
+    for r in rows or []:
+        if not isinstance(r,dict):
+            continue
+        try:
+            day=date.fromisoformat(str(r.get("measured_on")))
+            views=r.get("post_views")
+            posts=r.get("published_posts")
+            followers=r.get("followers")
+            gained=r.get("new_followers")
+            if not (today-timedelta(days=7)<=day<today
+                    and type(views) is int and views>=0
+                    and type(posts) is int and posts>0
+                    and type(followers) is int and followers>=0
+                    and type(gained) is int):
+                continue
+            observed[day]=(views,posts,followers,gained)
+        except (TypeError,ValueError,AttributeError):
+            continue
+    if len(observed)<3:
+        return {"status":"insufficient_complete_days"}
+    latest=max(observed)
+    if (today-latest).days!=1:
+        return {"status":"stale_data"}
+    previous=[(d,v) for d,v in observed.items()
+              if latest-timedelta(days=6)<=d<latest]
+    if len(previous)<2:
+        return {"status":"insufficient_comparison"}
+    previous.sort(reverse=True)
+    samples=previous[:4]
+    baseline=median(v[0]/v[1] for _,v in samples)
+    if baseline<=0:
+        return {"status":"zero_baseline"}
+    view_count,post_count,followers,gained=observed[latest]
+    ratio=(view_count/post_count)/baseline
+    if ratio<2.0 or view_count<1000 or gained<5:
+        return {"status":"no_surge"}
+    return {
+        "status":"surge_detected",
+        "local_day":latest.isoformat(),
+        "post_views":view_count,
+        "published_posts":post_count,
+        "net_new_followers":gained,
+        "views_per_published_post":round(view_count/post_count,1),
+        "vs_recent_daily_per_post_median":round(ratio,2),
+        "comparison_days":len(samples),
+        "source":"metricool_daily_aggregate",
+        "caveat":"This is not per-post attribution or a verified conversion rate.",
+    }
+
 def select_policy(rows,*,now=None):
     """Tiny-sample exploratory test, not an inference of actual conversion."""
     now=now or datetime.now(timezone.utc)
@@ -124,7 +184,7 @@ def run(db=None,*,now=None):
     now=now or datetime.now(timezone.utc)
     today=now.astimezone(VN).date()
     data=db.request("GET","/growth_metricool_daily",params={
-        "select":"measured_on,followers,new_followers,profile_views",
+        "select":"measured_on,followers,new_followers,profile_views,post_views,published_posts",
         "metricool_brand_id":"eq.7803567",
         "order":"measured_on.desc","limit":"12"})
     if not isinstance(data,list):
@@ -135,6 +195,22 @@ def run(db=None,*,now=None):
         "order":"started_at.desc","limit":"1"})
     if not isinstance(active,list):
         return {"status":"sprint_state_unavailable"}
+    # Idempotent owner-only signal: do not change booked posts or make
+    # a causal claim from a two-day performance spike.
+    surge=detect_surge(data,now=now)
+    if surge["status"]=="surge_detected":
+        notify(db,"metricool-surge:"+surge["local_day"],
+               "Enna phát hiện đà tăng trưởng mới trên Threads",
+               ("Metricool "+surge["local_day"]+": "+
+                str(surge["post_views"])+" lượt xem bài, "+
+                str(surge["net_new_followers"])+" follower ròng; "+
+                str(surge["vs_recent_daily_per_post_median"])+
+                " lần lượt xem/bài so với trung vị các ngày gần đây. "+
+                "Đây là tín hiệu tổng hợp, KHÔNG xác định được bài gây tăng trưởng."),
+               "Mở Metricool tìm bài có hiệu quả cao, thử MỘT phiên bản tiếp nối "
+               "có giá trị mới và CTA theo dõi/tài nguyên miễn phí. "
+               "Không nhân bản bài, không tự thêm lịch hay link affiliate.",
+               severity="info")
     if active and active[0]["status"] in ("running","measuring"):
         sprint=active[0]
         if today<date.fromisoformat(sprint["evaluation_due"]):
