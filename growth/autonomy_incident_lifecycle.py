@@ -82,6 +82,11 @@ def active_candidates(followers, provider_rows, now):
             "reason_code": "awaiting_fresh_official_meta_snapshot",
         })
     candidates.sort(key=lambda x: (-x["priority"], x["incident_key"]))
+    # Do not hide the follower-recovery incident behind several old
+    # publisher errors: it is the one issue we CAN verify autonomously.
+    follower = next((x for x in candidates if x["incident_key"] == FOLLOWER_KEY), None)
+    if follower and follower not in candidates[:MAX_OBSERVED]:
+        return candidates[:MAX_OBSERVED - 1] + [follower]
     return candidates[:MAX_OBSERVED]
 
 
@@ -97,18 +102,36 @@ def plan_actions(candidates, prior, followers, now):
             actions.append(("insert", issue["incident_key"], issue))
             continue
         if previous["state"] == "resolved":
-            # Re-open only on NEW evidence observed after verified resolution.
-            # An old cached ERROR must never resurrect a resolved case.
-            observed = issue.get("evidence_at")
-            resolved_evidence = previous.get("resolution_evidence_at")
-            if observed and resolved_evidence:
+            # A previously closed follower issue may recur 12h after the
+            # latest official reading; this is a NEW episode.
+            if issue["incident_key"] == FOLLOWER_KEY:
+                try:
+                    last_proof = aware_time(previous["resolution_evidence_at"])
+                    if now - last_proof <= STALE_HORIZON:
+                        continue
+                except (KeyError, ValueError, TypeError, OverflowError):
+                    continue
+            else:
+                # A cached Metricool ERROR observed before the LAST verified
+                # provider resolution MUST NOT reopen the old case.
+                observed = issue.get("evidence_at")
+                resolved_evidence = previous.get("resolution_evidence_at")
+                if not observed or not resolved_evidence:
+                    continue
                 try:
                     if aware_time(observed) <= aware_time(resolved_evidence):
                         continue
                 except (TypeError, ValueError, OverflowError):
                     continue
-            else:
+            actions.append(("reopen", issue["incident_key"], issue))
+            continue
+        # Never regress a source evidence timestamp to an older version.
+        try:
+            if (previous.get("evidence_at") and issue.get("evidence_at")
+                    and aware_time(issue["evidence_at"]) < aware_time(previous["evidence_at"])):
                 continue
+        except (TypeError, ValueError, OverflowError):
+            continue
         actions.append(("observe", issue["incident_key"], issue))
 
     official = fresh_official_snapshot(followers, now)
@@ -146,11 +169,14 @@ def verified_write(db, method, key, payload, now):
             params={"on_conflict": "brand_key,incident_key"},
             payload=value,
             prefer="resolution=ignore-duplicates,return=representation")
-    elif method in ("observe", "resolve"):
-        if method == "observe":
+    elif method in ("observe", "reopen", "resolve"):
+        if method in ("observe", "reopen"):
             value = {**payload, "last_seen_at": now.isoformat(),
                      "resolved_at": None, "resolution_source": None,
                      "resolution_evidence_at": None}
+            if method == "reopen":
+                value["first_seen_at"] = now.isoformat()
+                params["state"] = "eq.resolved"
         else:
             value = payload
             params["state"] = "in.(open,blocked)"
