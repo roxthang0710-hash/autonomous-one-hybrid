@@ -7,7 +7,7 @@ from pathlib import Path
 
 from growth.metricool_threads_bridge import (
     BRAND, COPY, SNAPSHOT, canonical, date, make_seed,
-    match_pairs, seed, reconcile,
+    match_pairs, seed, reconcile, overdue_diagnostics, notify_overdue,
 )
 
 NOW=datetime(2026,11,6,15,0,tzinfo=timezone.utc)
@@ -168,6 +168,50 @@ class BridgeTests(unittest.TestCase):
         self.assertEqual(out["hash_time_matches"],1)
         self.assertEqual(out["legacy_ledger_repaired"],0)
         self.assertEqual(db.legacy["internal-uuid"]["status"],"scheduled_external")
+
+    def test_overdue_pending_creates_review_case_only_when_official_feed_is_fresh(self):
+        old=NOW-timedelta(hours=3)
+        pending=link(status="PENDING",posted_url=None,sha="a"*64,at=old)
+        fresh=official(sha="b"*64,at=NOW-timedelta(hours=1))
+        fresh["last_observed_at"]=NOW.isoformat()
+        issues=overdue_diagnostics([pending],[fresh],now=NOW)
+        self.assertEqual(len(issues),1)
+        self.assertEqual(issues[0]["reason"],"not_identified_in_recent_official_sample")
+        self.assertIn("KHÔNG phải bằng chứng bài chưa đăng",issues[0]["details"])
+        stale=dict(fresh,last_observed_at=(NOW-timedelta(hours=2)).isoformat())
+        self.assertEqual(overdue_diagnostics([pending],[stale],now=NOW),[])
+        self.assertEqual(overdue_diagnostics([link(status="PENDING",posted_url=None,
+                            sha="a"*64,at=NOW+timedelta(hours=1))],[fresh],now=NOW),[])
+
+    def test_diagnostics_notice_does_not_write_social_post_and_is_deduplicated(self):
+        notices=[]
+        class NoticeDb(MemoryDb):
+            def request(self,method,path,params=None,payload=None,prefer=None):
+                if method=="GET" and path=="/enna_desk_owners":
+                    return [{"user_id":"owner-test"}]
+                if method=="POST" and path=="/enna_desk_notifications":
+                    new=[]
+                    for item in payload:
+                        if item["source_key"] not in {x["source_key"] for x in notices}:
+                            notices.append(deepcopy(item))
+                            new.append(item)
+                    return new
+                return super().request(method,path,params=params,payload=payload,prefer=prefer)
+        old=NOW-timedelta(hours=3)
+        pending=link(status="PENDING",posted_url=None,sha="f"*64,at=old)
+        meta=official(sha="0"*64)
+        meta["last_observed_at"]=NOW.isoformat()
+        db=NoticeDb(links=[pending],obs=[meta])
+        first=reconcile(db,now=NOW)
+        second=reconcile(db,now=NOW)
+        self.assertEqual(first["due_unmatched_needing_review"],1)
+        self.assertEqual(first["new_private_review_alerts"],1)
+        self.assertEqual(second["new_private_review_alerts"],0)
+        self.assertEqual(len(notices),1)
+        self.assertEqual(notices[0]["severity"],"warning")
+        self.assertIn("không tự đăng bù",notices[0]["suggested_action"].lower())
+        self.assertFalse(any(c[1] in ("/threads_publish","/me/threads_publish")
+                              for c in db.calls))
 
     def test_missing_official_source_does_not_claim_success(self):
         class BrokenDb(MemoryDb):
