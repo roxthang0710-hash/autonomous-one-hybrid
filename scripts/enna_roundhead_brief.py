@@ -28,15 +28,26 @@ def load_contract(path=STYLE_FILE):
         raise ValueError("missing-visual-identity-requirement")
     if len(data.get("negative_prompt", [])) < 5:
         raise ValueError("visual-identity-negative-constraints-missing")
+    if data.get("style_revision") != "v4.1_clean_chat_balance":
+        raise ValueError("visual-composition-revision-missing")
+    modes = data.get("approved_composition_modes") or {}
+    if set(modes) != {"scene_doodle", "clean_chat", "practical_ui_tip"}:
+        raise ValueError("visual-layout-modes-invalid")
+    if not data.get("visual_rules", {}).get("no_repeated_frame"):
+        raise ValueError("visual-decoration-guard-missing")
     return data
 
 
-def build_image_brief(scene, setup, payoff, *, composition, character_emotion, path=STYLE_FILE):
+def build_image_brief(scene, setup, payoff, *, composition, character_emotion,
+                      layout_mode="scene_doodle", path=STYLE_FILE):
     data = load_contract(path)
     values = [scene, setup, payoff, composition, character_emotion]
     if any(not isinstance(s, str) or not s.strip() or len(s) > 360 for s in values):
         raise ValueError("invalid-meme-creative-brief")
+    if layout_mode not in data["approved_composition_modes"]:
+        raise ValueError("unsupported-approved-visual-layout")
     profile = data["style_contract"]
+    mode = data["approved_composition_modes"][layout_mode]
     instructions = [
         f"Draw an ORIGINAL Vietnamese social meme for '{data['brand']}', "
         f"style_id='{ACTIVE_STYLE}'.",
@@ -44,6 +55,11 @@ def build_image_brief(scene, setup, payoff, *, composition, character_emotion, p
         f"Lines and surfaces: {profile['linework']} {profile['paper']}",
         f"Color usage: {profile['colors']}",
         f"Composition: {profile['composition']}",
+        f"OWNER-APPROVED layout mode: {layout_mode}",
+        f"Layout instructions: {mode['layout']}",
+        f"Border/decor restraint: {mode['decorative_border_limit']}",
+        f"Safety and quality: {data['visual_rules']['chat_safety']} {data['visual_rules']['practical_accuracy']}",
+        f"Avoid repeated layouts: {data['visual_rules']['no_repeated_frame']}",
         f"Writing and typography: {profile['typography']}",
         f"Comedy mechanism: {profile['humor']}",
         f"New unique scene: {scene.strip()}",
@@ -63,6 +79,8 @@ def build_image_brief(scene, setup, payoff, *, composition, character_emotion, p
     return {
         "brand": data["brand"],
         "visual_style_id": ACTIVE_STYLE,
+        "style_revision": data["style_revision"],
+        "layout_mode": layout_mode,
         "kind": "creative_brief_not_rendered_asset",
         "requires_human_visual_review": True,
         "social_published": False,
@@ -78,10 +96,12 @@ def main():
     parser.add_argument("--payoff", required=True)
     parser.add_argument("--composition", required=True)
     parser.add_argument("--emotion", required=True)
+    parser.add_argument("--layout", choices=("scene_doodle", "clean_chat", "practical_ui_tip"), default="scene_doodle")
     args = parser.parse_args()
     brief = build_image_brief(
         args.scene, args.setup, args.payoff,
-        composition=args.composition, character_emotion=args.emotion
+        composition=args.composition, character_emotion=args.emotion,
+        layout_mode=args.layout
     )
     print(json.dumps(brief, ensure_ascii=False, indent=2))
 
