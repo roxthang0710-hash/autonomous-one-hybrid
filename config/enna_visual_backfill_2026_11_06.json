@@ -1,0 +1,466 @@
+{
+  "brand": "Đồ Hay Đi Làm",
+  "owner_style_revision": "v4.1_clean_chat_balance",
+  "audited_at": "2026-11-06 15:40 Asia/Ho_Chi_Minh",
+  "source": "live Metricool scheduled posts; this is a snapshot not a promise of current provider status",
+  "inventory": {
+    "total": 31,
+    "without_media": 13,
+    "with_media": 18
+  },
+  "changes_to_existing_posts": 0,
+  "approved_rendered_images_added": 0,
+  "instructions": "For each missing-media slot, use scripts/enna_roundhead_brief.py with matching layout_mode and brief. Review the actual rendered artwork and Vietnamese spelling; do not change scheduled copy, date or current media without verifying matching post ID and provider readback. Existing photographic cat/reaction media remain photographs. No affiliate links or monetization claims.",
+  "slots": [
+    {
+      "metricool_post_id": "413220406",
+      "local_scheduled_at": "2026-11-15T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "normal",
+      "brief": {
+        "scene": "Dọn bàn mà không mua thêm đồ",
+        "setup": "DỌN BÀN KHÔNG CẦN MUA THÊM",
+        "payoff": "BỚT GIẤY — GOM DÂY — GIỮ MÓN HAY DÙNG",
+        "composition": "Clear before/after desk with practical differences and one yellow roundhead putting away papers; no generic ad.",
+        "character_emotion": "satisfied"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "413220480",
+      "local_scheduled_at": "2026-11-16T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "normal",
+      "brief": {
+        "scene": "Chọn chỗ ở đi công tác theo ưu tiên",
+        "setup": "CÔNG TÁC: CHỌN CHỖ Ở THEO GÌ?",
+        "payoff": "BÀN — Ổ ĐIỆN — YÊN TĨNH — ĐƯỜNG ĐI",
+        "composition": "Small clear room diagram and four short checklist items, not a photo or an invented hotel claim.",
+        "character_emotion": "focused"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "413220570",
+      "local_scheduled_at": "2026-11-17T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "normal",
+      "brief": {
+        "scene": "Checklist mang đồ khi di chuyển làm việc",
+        "setup": "MANG GÌ KHI ĐỔI CHỖ LÀM VIỆC?",
+        "payoff": "DÙNG THẬT HẴNG GIỮ",
+        "composition": "Cute roundhead holding a short portable-gear list, crossing off a rarely used item, no product promotion.",
+        "character_emotion": "curious"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "413958802",
+      "local_scheduled_at": "2026-11-07T17:40:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "scene_doodle",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Balo có 37 ngăn nhưng không thấy chìa khoá",
+        "setup": "37 NGĂN ĐỂ LÀM GÌ?",
+        "payoff": "CHÌA KHÓA VẪN MẤT TÍCH",
+        "composition": "Roundhead rummaging through a giant bag with one small key hiding in a dedicated zip pocket.",
+        "character_emotion": "exasperated panic"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "413958963",
+      "local_scheduled_at": "2026-11-08T22:00:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Thói quen nhỏ trước thứ Hai",
+        "setup": "THỨ HAI KHÔNG CẦN 200%",
+        "payoff": "CHỌN MỘT VIỆC NHỎ THÔI",
+        "composition": "One handwritten three-choice mini checklist with plenty of whitespace and roundhead pointing to one item.",
+        "character_emotion": "calm"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "414054278",
+      "local_scheduled_at": "2026-11-08T19:15:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "clean_chat",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Sếp hỏi chuyện nghỉ cuối tuần",
+        "setup": "HÔM QUA EM ĐI CHƠI À?",
+        "payoff": "DẠ, HÔM QUA LÀ NGÀY NGHỈ",
+        "composition": "Short clearly fictional exchange, screen with simple straight edges and a tiny surprised yellow roundhead.",
+        "character_emotion": "surprised but composed"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "414054358",
+      "local_scheduled_at": "2026-11-09T18:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "scene_doodle",
+      "priority": "normal",
+      "brief": {
+        "scene": "Chuyên môn giỏi và kỹ năng quản lý khác nhau",
+        "setup": "AI NÊN LÀM TRƯỞNG NHÓM?",
+        "payoff": "GIỎI VIỆC VÀ GIỎI DẪN DẮT KHÁC NHAU",
+        "composition": "Minimal office scene comparing specialist problem-solving and coordination without endorsing one person.",
+        "character_emotion": "thoughtful"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "414266848",
+      "local_scheduled_at": "2026-11-09T01:10:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "scene_doodle",
+      "priority": "normal",
+      "brief": {
+        "scene": "1:10 sáng lên kế hoạch ngủ sớm",
+        "setup": "1:10 SÁNG LÊN KẾ HOẠCH SỐNG KỶ LUẬT",
+        "payoff": "1:37 SÁNG: NGỦ BÙ",
+        "composition": "Roundhead still awake beside a clock and a planned morning routine becoming nap time.",
+        "character_emotion": "sleepy and sheepish"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "416708356",
+      "local_scheduled_at": "2026-11-06T19:15:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "clean_chat",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Hội nhóm nhắn sau giờ làm",
+        "setup": "Mọi người xác nhận đã đọc nhé!",
+        "payoff": "8:00 sáng hôm sau mới thả 👍",
+        "composition": "A faux office work chat with a late-night notification and a distinct next-day reaction; no real profile photos.",
+        "character_emotion": "confused, uneasy yellow roundhead"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "416708468",
+      "local_scheduled_at": "2026-11-07T21:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "scene_doodle",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Hòa đồng không nhất thiết đi ăn sau giờ làm",
+        "setup": "TÂN KHÔNG ĐI NHẬU",
+        "payoff": "NHƯNG LÀ NGƯỜI GIÚP LÚC CẦN",
+        "composition": "Two tiny workplace scenes with expressive characters; no real identities, no text claiming actual events.",
+        "character_emotion": "quiet yet kind"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417359295",
+      "local_scheduled_at": "2026-11-06T22:00:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Cuối tuần học 5 phút",
+        "setup": "1 TRANG — 1 Ý — 1 THAO TÁC",
+        "payoff": "NHỎ NHƯNG ĐỀU",
+        "composition": "A tiny notebook, one highlighted actionable step and an expressive roundhead with weekend books; minimal border.",
+        "character_emotion": "relaxed and curious"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417394065",
+      "local_scheduled_at": "2026-11-07T12:20:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "scene_doodle",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Món đồ bàn làm việc có ích hay chỉ đẹp",
+        "setup": "MÓN NÀY CÓ DÙNG THƯỜNG XUYÊN KHÔNG?",
+        "payoff": "HAY CHỈ ĐỂ NGẮM?",
+        "composition": "Two visually distinct desk items, one actually used and one gathering dust; sparse handwritten props.",
+        "character_emotion": "skeptical"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417475772",
+      "local_scheduled_at": "2026-11-08T12:20:00",
+      "channel": "threads",
+      "media_count_at_audit": 0,
+      "action": "render_and_review_proposed_illustration",
+      "status": "pending_manual_visual_review",
+      "layout_mode": "practical_ui_tip",
+      "priority": "near_term",
+      "brief": {
+        "scene": "Checklist trưa chủ nhật chỉ 5 phút",
+        "setup": "5 PHÚT CHUẨN BỊ",
+        "payoff": "RỒI CHO NÃO NGHỈ",
+        "composition": "Single clean to-do checklist with four compact actions next to a rested yellow roundhead; no giant bottom strip.",
+        "character_emotion": "relieved"
+      },
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417966050",
+      "local_scheduled_at": "2026-11-06T18:15:00",
+      "channel": "facebook",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417966455",
+      "local_scheduled_at": "2026-11-07T12:45:00",
+      "channel": "instagram",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417966731",
+      "local_scheduled_at": "2026-11-07T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417971322",
+      "local_scheduled_at": "2026-11-09T12:45:00",
+      "channel": "instagram",
+      "media_count_at_audit": 5,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "417972160",
+      "local_scheduled_at": "2026-11-09T18:20:00",
+      "channel": "facebook",
+      "media_count_at_audit": 5,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418027338",
+      "local_scheduled_at": "2026-11-10T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418127959",
+      "local_scheduled_at": "2026-11-06T19:20:00",
+      "channel": "instagram",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418128126",
+      "local_scheduled_at": "2026-11-07T00:55:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418128280",
+      "local_scheduled_at": "2026-11-07T18:10:00",
+      "channel": "facebook",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418128406",
+      "local_scheduled_at": "2026-11-08T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418128520",
+      "local_scheduled_at": "2026-11-08T18:30:00",
+      "channel": "facebook",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418128775",
+      "local_scheduled_at": "2026-11-08T19:20:00",
+      "channel": "instagram",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418129263",
+      "local_scheduled_at": "2026-11-09T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418129397",
+      "local_scheduled_at": "2026-11-09T12:20:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418129562",
+      "local_scheduled_at": "2026-11-11T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418129851",
+      "local_scheduled_at": "2026-11-12T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418130009",
+      "local_scheduled_at": "2026-11-13T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    },
+    {
+      "metricool_post_id": "418130177",
+      "local_scheduled_at": "2026-11-14T09:30:00",
+      "channel": "threads",
+      "media_count_at_audit": 1,
+      "action": "audit_existing_media",
+      "status": "pending_manual_visual_review",
+      "layout_mode": null,
+      "priority": "audit_before_replacement",
+      "brief": null,
+      "proposed_only": true
+    }
+  ]
+}
