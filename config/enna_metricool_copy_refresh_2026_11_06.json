@@ -1,0 +1,181 @@
+{
+  "brand_id": 7803567,
+  "as_of": "2026-11-06",
+  "timezone": "Asia/Saigon",
+  "scope": "PENDING_ONLY",
+  "purpose": "Owner requested stronger authentic, funny, useful captions, without replacing images or rescheduling",
+  "intended_updates": 27,
+  "source": "Live Metricool published/unpublished audit",
+  "rules": [
+    "preserve_uuid_media_schedule_alt_text_carousel_people_tags_provider_data",
+    "never_edit_published_or_error",
+    "no_generic_follow_cta_every_post",
+    "fictional_office_narratives_not_real_person_claims",
+    "no_new_affiliate_links",
+    "no_photo_is_rendered_claim"
+  ],
+  "items": [
+    {
+      "metricool_uuid": "3789343337836527932",
+      "revised_text": "Bàn làm việc sau khi dọn: 10/10.\nMở ngăn kéo: 37 tờ giấy “để hôm nào xem lại”, 4 sợi cáp không biết của ai. 😭\n\nThử dọn ngược: bỏ giấy không cần giữ, gom dây theo thiết bị, để đúng một khoảng trống cho tay làm việc.\n\nGọn bàn chưa chắc gọn deadline, nhưng ít nhất tìm được cây bút trong 3 giây.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "6118891971809005254",
+      "revised_text": "Đi công tác, mình có thể chịu được phòng không có view đẹp.\n\nNhưng 23:40 cần sửa slide mà ổ điện ở tận đầu giường, bàn thì nhỏ vừa đủ đặt... một ly nước. 🥲\n\nLần tới đặt phòng, thử soi 4 thứ trước ảnh decor: bàn làm việc, ổ điện, tiếng ồn, đường đến điểm hẹn.\n\nView đẹp không cứu được file gửi lúc nửa đêm.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "4337530691617440581",
+      "revised_text": "Sáng làm ở văn phòng, chiều đổi sang quán cà phê.\nVừa ngồi xuống đã phát hiện: mang 3 dây sạc, quên đúng cái đầu chuyển cần dùng.\n\nBalô 5kg. Khả năng làm việc: 0%. 🫠\n\nThử ghi lại những món dùng thật sau 3 lần đổi chỗ: máy, sạc đúng chuẩn, tai nghe và món bắt buộc riêng của bạn.\n\nĐồ dự phòng tốt nhất là thứ mình biết chắc sẽ cần.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "1877673435670924709",
+      "revised_text": "Balô có 37 ngăn.\nChìa khóa nằm ở ngăn thứ 38: ... túi quần hôm qua. 🥲\n\nCó lúc mua thêm ngăn chỉ để có thêm nơi đánh mất đồ.\n\nMẹo nhỏ: chọn MỘT ngăn cố định cho chìa khóa, thẻ xe, tai nghe. Về nhà cũng trả chúng về đúng chỗ.\n\nĐỡ cảnh đứng trước cửa lục balô như đang thi giải mật mã.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "1275231947345906233",
+      "revised_text": "22:00 Chủ nhật.\n\nNgười ta mở phim thư giãn.\nMình mở lịch tuần sau và thấy thứ Hai đã gửi lời mời họp từ xa. 🫠\n\nNếu đầu óc cứ chạy trước một ngày, ghi ra đúng 1 việc quan trọng nhất sáng mai và giờ bắt đầu. Xong thì đóng lịch.\n\nViệc của sáng thứ Hai chưa cần tăng ca trong đầu từ tối Chủ nhật.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-3618252653683389257",
+      "revised_text": "Chủ nhật, Vy đăng ảnh đi dã ngoại.\nThứ Hai, sếp mở đầu cuộc họp bằng: “Hôm qua em đi chơi vui nhỉ?”\n\nVy tưởng được hỏi thăm.\nCâu tiếp theo: “Thế sao không hỗ trợ nhóm chút?”\n\nMột bức ảnh đi chơi bỗng trở thành phụ lục của bảng phân công công việc. 🫠\n\nNếu có ca trực cuối tuần thì nên phân công rõ từ trước. Chứ story cá nhân đâu phải nút bật chế độ sẵn sàng 24/7.\n\nHồ sơ công sở · 6/7",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "8338802447764899812",
+      "revised_text": "Phòng chọn trưởng nhóm mới.\n\nMai xử lý file khó nhanh nhất phòng.\nQuân không phải người làm file nhanh nhất, nhưng cả nhóm hỏi việc gì cũng biết ai đang làm, vướng ở đâu, cần gỡ chỗ nào.\n\nSếp chọn Quân.\nMai buồn. Quân cũng áp lực.\n\nHóa ra “giỏi việc mình” và “giúp cả nhóm chạy được” là hai bài kiểm tra khác nhau.\nƯớc gì sếp nói tiêu chí này TRƯỚC khi mọi người âm thầm thi tuyển bằng Excel. 🫠\n\nHồ sơ công sở · 7/7",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-5995937614946744250",
+      "revised_text": "01:10. Hạ quyết tâm làm lại cuộc đời.\n\n01:18: lập lịch dậy 5:30.\n01:25: lên thực đơn eat clean.\n01:32: thiết kế bảng theo dõi thói quen có 6 màu.\n\n01:37: nhìn đồng hồ.\nMục tiêu số một của ngày mai được đổi thành “ngủ bù”. 💀\n\nĐôi khi bước đầu của một kế hoạch năng suất là... thôi lập kế hoạch lúc 1 giờ sáng.\n\nCông sở sau 0 giờ",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "8022565364356631507",
+      "revised_text": "Tân đi làm đúng giờ, deadline không trượt, ai hỏi việc cũng giúp.\n\nNhưng 3 lần được rủ ăn sau giờ làm, Tân đều bảo có việc.\nĐến lần thứ tư, có người kết luận: “Bạn này khó hòa đồng.”\n\nTân nghe xong chỉ biết nhìn lịch: hóa ra làm đồng nghiệp tốt còn có KPI... ăn lẩu. 🥲\n\nĐi làm tử tế với nhau đã là một kiểu hòa đồng rồi. Đi ăn chung vui thì tốt, nhưng đâu nên thành bài thi bắt buộc.\n\nHồ sơ công sở · 5/7",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "8845254336701810914",
+      "revised_text": "Trưởng thành ở công sở là lúc thấy món decor bàn cực xinh...\n\nNão: “Mua đi!”\nVí: “Còn nhớ cây kẹp giấy 79k mua về để ngắm không?” 🫠\n\nTrước khi bấm mua, thử hỏi: món này giải quyết chuyện gì, tuần dùng mấy lần, bàn có chỗ chưa?\n\nMình vẫn mê đồ đẹp. Chỉ là giờ muốn đồ đẹp... có ca làm việc rõ ràng.\n\nTheo dõi Đồ Hay Đi Làm nếu bạn thích mấy mẹo vừa tỉnh táo vừa hơi vô tri.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-2794949330212466970",
+      "revised_text": "Trưa Chủ nhật, checklist 5 phút trước thứ Hai:\n\n✓ Xem giờ hẹn đầu tuần.\n✓ Sạc thứ cần mang đi.\n✓ Kiểm tra chìa khóa/thẻ xe.\n✓ Ghi 1 việc quan trọng nhất sáng mai.\n\nXong thì... đừng mở thêm bảng kế hoạch 27 cột nữa. 😭\n\nChecklist sinh ra để mình yên tâm nghỉ, không phải để biến Chủ nhật thành buổi họp với chính mình.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "5037196619724113601",
+      "revised_text": "Đây là đồng nghiệp được cấp quyền nghỉ thứ Bảy toàn phần. 🐈\n\nKhông nhận email.\nKhông nghe “em ơi, xíu thôi”.\nCũng không cần đặt trạng thái Away vì đang... nằm đè lên bàn phím.\n\nMình học được một điều từ con mèo: nghỉ thì cứ nghỉ cho ra nghỉ. Chỉ đừng nằm lên laptop công ty theo đúng nghĩa đen. 😂\n\nAi còn bị não nhắc deadline giữa cuối tuần, giơ tay bằng emoji 🫠\n\n#DoHayDiLam #CuoiTuan #MeoCongSo",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "2776797035247257281",
+      "revised_text": "SẾP: “File cuối đâu em?”\n\nMÌNH: bấm Ctrl + S lần thứ 17.\nCũng mình: nhìn thư mục có 9 file tên final. 💀\n\nCtrl + S cứu file chưa lưu. Nó không cứu nổi cái tên “final_chot_that_lan_2.xlsx”.\n\nĐặt tên theo NGÀY_DỰ ÁN_PHIÊN BẢN, ví dụ 2026-11-07_BaoCao_V03.xlsx. Lần sau tìm đỡ phải gọi cả phòng họp.\n\nLưu bài này cho đồng nghiệp có bộ sưu tập file final. Theo dõi Đồ Hay Đi Làm để nhặt thêm mẹo dùng máy tính bớt khổ.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-6493267767124734332",
+      "revised_text": "THỨ HAI, VĂN PHÒNG CÓ 3 HỆ. 🫠\n\n⌨️ Hệ “Ctrl + S trước, tỉnh sau”.\n🖨️ Hệ chưa kịp uống cà phê đã nhận nhiệm vụ đàm phán với máy in.\n🐈 Hệ chấm công bằng thân xác, còn tâm trí xin phép ngủ thêm 15 phút.\n\nVuốt 5 ảnh xem bạn đang thuộc hệ nào. Riêng hội máy in, chúc mọi người hôm nay không nghe câu “nó kẹt giấy nữa rồi”.\n\nMột tuần mới, cố gắng vừa đủ thôi.\n\n#DoHayDiLam #DanVanPhong #ThuHai",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "4597514497163608468",
+      "revised_text": "BÁO CÁO THỨ HAI: 3 HỆ NGƯỜI TRONG VĂN PHÒNG.\n\nHệ 1: Ctrl + S liên tục dù file còn chưa đặt tên.\nHệ 2: Sáng chưa kịp ngồi, máy in đã cần hỗ trợ tâm lý.\nHệ 3: Laptop mở rồi, não vẫn hiển thị “đang khởi động...”.\n\nBộ ảnh hôm nay là cuộc họp toàn thể mà không cần đặt phòng. 😭\n\nMọi người xem hết rồi khai thật: hôm nay mình thuộc hệ nào? Riêng hội “máy in” chắc xứng đáng phụ cấp độc hại tinh thần.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "9029848080469148423",
+      "revised_text": "Bàn làm việc: sạch như showroom.\nThư mục Downloads: final, final_moi, final_chot, final_chot_that_2.\n\nĐồng nghiệp: “Em gửi anh bản cuối nhé?”\nMình: “Dạ, cho em 5 phút điều tra hiện trường.” 🕵️\n\nMẹo nhỏ: chốt một thư mục dự án và đặt phiên bản theo ngày, thay vì gửi bằng niềm tin.\n\nAi có file tên “final_cuoi_cung” thì kênh này là nơi an toàn để thú nhận.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-2242191102580667288",
+      "revised_text": "00:55. Não mở 12 tab.\n\n4 tab công việc.\n3 tab “lỡ nói hơi ngớ ngẩn trong cuộc họp”.\n4 tab không nhớ mở từ khi nào.\n1 tab quan trọng nhất: NGỦ — đang báo lỗi. 💀\n\nBan ngày mình quản lý công việc.\nBan đêm công việc tự đăng nhập để quản lý mình.\n\nHội cú đêm còn thức không? Thôi, đừng trả lời ngay. Đi ngủ trước đã. 🌙",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-639766684539597589",
+      "revised_text": "Thứ Bảy, laptop nằm im trên bàn.\n\nNhưng não cứ tự hiện thông báo:\n“Còn slide thứ Hai.”\n“Tin nhắn hôm qua đã thả tim chưa?”\n“Ủa mình đang nghỉ mà?”\n\nCứ mỗi lần muốn thư giãn, đầu lại mở một cuộc họp không có thư ký. 🫠\n\nMẹo nhỏ: ghi một dòng nhắc cho thứ Hai rồi đóng ghi chú. Không phải ý nghĩ nào xuất hiện cuối tuần cũng cần xử lý ngay.\n\nChúc cả nhà cuối tuần thật sự có nút Tắt.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-8569019919648210208",
+      "revised_text": "Đi công tác, checklist đủ hết:\nLaptop ✓\nSạc ✓\nLịch hẹn ✓\nTai nghe ... đang ở nhà giữ cửa. 😭\n\nChỉ một món nhỏ mà cả chuyến đi thành bài kiểm tra khả năng nói chuyện giữa nơi ồn.\n\nMình để một túi phụ kiện cố định, trước khi đi chỉ soát: sạc đúng loại, tai nghe, giấy tờ/thẻ cần thiết.\n\nBalô gọn không quan trọng bằng balô mang ĐÚNG đồ.\n\nFollow Đồ Hay Đi Làm để nhặt thêm mẹo công tác đỡ quên trước quên sau.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-2179202125705492576",
+      "revised_text": "18:30 Chủ nhật.\n\nCó người đã ủi xong đồ cho sáng thứ Hai.\nCó người đang chờ máy giặt quay nốt.\nCó người mặc pijama từ sáng và quyết định “ngày mai tính”. 🥲\n\nVà có một hệ đặc biệt: chuẩn bị rất kỹ nhưng sáng ra vẫn đi tìm đúng một chiếc tất.\n\nChọn trước vài món cho sáng mai là đủ. Tối Chủ nhật không cần tổ chức thêm cuộc họp khẩn về cuộc đời mình.\n\nTeam chuẩn bị trước hay team “mai tới đâu hay tới đó”?",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "6312388424356349699",
+      "revised_text": "TỐI CHỦ NHẬT. NÃO BẮT ĐẦU TỰ HỌP. 🫠\n\n19:00: mai có việc gì?\n19:15: file nào chưa xong?\n19:30: có cần trả lời tin nhắn nhóm không?\n19:45: ủa hôm nay mình được nghỉ mà?\n\nChưa vào ca mà trong đầu đã mở ba cuộc họp.\n\nThử ghi 1 việc ưu tiên cho sáng mai, chuẩn bị vài món cần mang, rồi trả Chủ nhật về đúng chức năng của nó: nghỉ.\n\nFollow Đồ Hay Đi Làm để có hội nhắc nhau... thôi nghĩ việc một chút. 🌙\n\n#DoHayDiLam #ChuNhat #DanVanPhong",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-8911964076213057691",
+      "revised_text": "Ở văn phòng có người giữ lại cái hộp laptop từ 2022.\n\nHỏi để làm gì, bạn ấy bảo: “Biết đâu sau này cần.”\nBa năm sau, thứ dùng thường xuyên nhất là... câu trả lời đó. 🥲\n\nThử chia đồ bàn thành ba nhóm: dùng mỗi ngày, cất nơi khác, có thể bỏ/tái chế. Đừng vứt tài liệu cần lưu nhé.\n\nBàn sạch thêm một chút. Tâm lý “để dành” thì chắc phải dọn theo quý.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-705734222378480858",
+      "revised_text": "Còn 10 phút trước cuộc họp.\n\nNgười ta mở 2 tài liệu.\nMình mở 12 tab và quên mất họp về chuyện gì. 💀\n\nCứ thử chuẩn bị đúng 3 dòng:\n1. Cuộc họp cần chốt gì?\n2. Hai câu mình phải hỏi?\n3. Việc/đầu ra nào cần ghi lại?\n\nHọp xong chưa chắc bớt deadline. Nhưng ít nhất không ra khỏi phòng với câu “ủa nãy mình vừa thống nhất cái gì?”.\n\nLưu lại để lần họp sau đỡ cuống. Theo dõi Đồ Hay Đi Làm để nhặt thêm mẹo thực dụng.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-4609536453140724294",
+      "revised_text": "Đi chuyến ngắn có 3 hệ đóng đồ:\n\n1. Cuộn quần áo: gọn, nhưng phải nhớ món nào cuộn ở đâu.\n2. Gấp phẳng: nhìn rõ hơn, song đồ dễ xô nếu túi rộng.\n3. Nhét tất cả vào rồi cầu nguyện: tốc độ cao, hậu quả tự chịu. 😭\n\nMuốn giữa chuyến lấy nhanh, thử chia theo nhóm: đồ thay, phụ kiện, giấy tờ.\n\nCách xếp nào cũng được, miễn lúc cần không phải đổ cả balô ra sàn.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "3596593620645728090",
+      "revised_text": "Món đồ trên bàn nhìn rất “năng suất”.\nMua về 3 ngày, công dụng chính: đứng đẹp trong ảnh. 🫠\n\nTrước khi thêm phụ kiện mới, hỏi nhanh:\n- Nó giải quyết rắc rối nào?\n- Mình dùng bao nhiêu lần/tuần?\n- Có món đang có làm được việc ấy không?\n\nĐồ đẹp thì vẫn có quyền được đẹp. Chỉ đừng nhầm cảm giác sắm đồ với tiến độ hoàn thành việc.\n\nMuốn xem tiếp mẹo chọn đồ công sở không phí tiền, theo dõi Đồ Hay Đi Làm nhé.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "5717249331600641898",
+      "revised_text": "Balo đi làm có:\n3 dây USB-C,\n2 dây cũ không nhớ dùng cho máy gì,\n1 đầu chuyển “phòng khi cần”.\n\nĐến lúc cần sạc, thiếu đúng sợi cáp ngắn vừa đủ. 🥲\n\nMẹo nhỏ: gom dây theo THIẾT BỊ chứ đừng theo “độ tiếc”. Mỗi món giữ dây đúng chuẩn, kiểm tra đầu cắm trước khi đi.\n\nĐống cáp nhìn như mì trộn chỉ nên xuất hiện trong tranh meme.",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    },
+    {
+      "metricool_uuid": "-6235659805054909144",
+      "revised_text": "Thử thách bàn làm việc: chỉ giữ 5 món thật sự dùng mỗi ngày.\n\nLaptop. Bút. Sổ. Điện thoại. Và một món thứ năm tự chọn.\n\nMình định chọn cây đèn.\nĐồng nghiệp chọn... cốc cà phê vì “thiếu nó không khởi động được hệ điều hành”. ☕😭\n\nKhông cần biến bàn thành phòng trưng bày đồ tối giản. Chỉ thử xem món nào đang chiếm chỗ mà chẳng giúp mình làm việc.\n\nMón thứ 5 của bạn là gì?",
+      "editorial_status": "copy_approved_for_existing_schedule_only",
+      "image_status": "preserve_existing_media_no_new_image_claims"
+    }
+  ]
+}
