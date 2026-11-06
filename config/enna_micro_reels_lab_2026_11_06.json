@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0",
+  "brand": "Đồ Hay Đi Làm",
+  "handle": "@dohay_dilam",
+  "phase": "research_original_micro_reel_prototypes_no_render_or_publish",
+  "reference": {
+    "url": "https://www.instagram.com/reel/DfVfdVARQxb/",
+    "creator": "threesingsters",
+    "posted_date": "2026-11-04",
+    "caption": "let it be someone else's problem 😂",
+    "approximate_public_likes": "570K",
+    "approximate_public_comments": 7226,
+    "access_status": "caption_and_public_engagement_metadata_only",
+    "video_playback_verified": false,
+    "duration_verified": false,
+    "shots_verified": false,
+    "twist_verified": false,
+    "no_copying_original_scenes_or_audio": true,
+    "note": "Instagram required login to play video, so no analysis of actual shot order, duration or twist is claimed. User reports the format is very short. Experiments are new hypotheses, not reverse-engineered copies."
+  },
+  "research_hypotheses": [
+    "Single everyday conflict visible in first second",
+    "Physical reaction instead of dialogue/explanation",
+    "One unexpected comic reversal delivered before 8 seconds",
+    "Simple cut and sound beat with returnable last frame",
+    "Relatable enough to share with a specific coworker",
+    "No CTA interrupting punchline; optional subtle profile follow in caption only"
+  ],
+  "production_spec": {
+    "aspect_ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "shortest_seconds": 6,
+    "longest_seconds": 10,
+    "hard_limits": {
+      "locations": 1,
+      "performers": 2,
+      "onscreen_overlay_cards": 2,
+      "overlay_chars_each": 52,
+      "beats_max": 5
+    },
+    "audio": "original_or_properly_licensed",
+    "intro_logo": false,
+    "outro_logo": false,
+    "post_text_overlay_must_be_readable_on_phone": true,
+    "suggested_toolchain": "Phone-filmed original footage OR licensed stills + FFmpeg basic motion + Canva typography; no AI-video-credit dependency."
+  },
+  "release_gates": {
+    "owned_or_licensed_assets": true,
+    "original_story_and_prop": true,
+    "human_visual_humor_review": true,
+    "audio_rights_verified": true,
+    "confirm_actual_mp4_before_publication": true,
+    "keep_social_post_manual_approval": true,
+    "disable_commercial_links": true
+  },
+  "metrics": {
+    "baseline_status": "Metricool Instagram Reels analytics returned zero rows for 2026-10-01 through 2026-11-06; unknown historical format baseline",
+    "source": "Metricool organic Instagram Reels connector, after independent published post ID readback",
+    "fields": {
+      "views": "IGRE23",
+      "reach": "IGRE11",
+      "shares": "IGRE21",
+      "likes": "IGRE10",
+      "comments": "IGRE07",
+      "saves": "IGRE12",
+      "avg_watch_time": "IGRE24",
+      "retention": "IGRE27"
+    },
+    "snapshots_hours": [
+      24,
+      72,
+      168
+    ],
+    "primary": "shares_per_reached_account",
+    "supporting": [
+      "avg_watch_seconds_divided_by_video_duration",
+      "likes_per_reach",
+      "comments_per_reach",
+      "saves_per_reach",
+      "profile_to_follow_conversion_if_available"
+    ],
+    "compare_only_with_actual_reach": true,
+    "low_sample_warning": "Three pilots are exploratory, not a statistically powered A/B test.",
+    "trial_reels_optional": "Use native Instagram Trial Reels only if account UI confirms eligibility; do not assume Metricool supports scheduling trials or call it automatically.",
+    "do_not_report_unobserved_metric_as_zero": true
+  },
+  "variants": [
+    {
+      "id": "deadline_plant_shift",
+      "title": "17:59 — Chuyển ca",
+      "concept": "Một nhân viên chuyển chiếc laptop có việc gấp sang chậu cây kèm biển 'Trực ca'.",
+      "duration_ms": 8000,
+      "platform": [
+        "instagram_reels",
+        "facebook_reels"
+      ],
+      "comic_mechanism": "physical_role_transfer",
+      "share_trigger": "Gửi cho đồng nghiệp hay bị nhờ việc lúc sắp tan ca",
+      "format": "real_desk_one_visual_gag",
+      "performers": 1,
+      "locations": 1,
+      "caption": "Đến giờ này thì ai cũng có cách bàn giao riêng.",
+      "follow_cta": "none_in_video",
+      "overlays": [
+        {
+          "at_ms": 0,
+          "until_ms": 1300,
+          "text": "17:59 — xử lý gấp giúp chị"
+        }
+      ],
+      "beats": [
+        {
+          "start_ms": 0,
+          "end_ms": 1300,
+          "scene": "Bàn làm việc thật, điện thoại bật tin nhắn nhờ xử lý gấp. Ngón tay định đóng laptop.",
+          "sound": "single_original_notification",
+          "text": "17:59 — xử lý gấp giúp chị"
+        },
+        {
+          "start_ms": 1300,
+          "end_ms": 3000,
+          "scene": "Ngón tay bất động, camera giữ nguyên trong một nhịp im.",
+          "sound": "silent",
+          "text": ""
+        },
+        {
+          "start_ms": 3000,
+          "end_ms": 6100,
+          "scene": "Nhân viên từ tốn xoay laptop về chậu cây, đặt cạnh chậu tấm bìa tự làm ghi 'Trực ca'.",
+          "sound": "chair_turn_or_soft_swoosh_original",
+          "text": ""
+        },
+        {
+          "start_ms": 6100,
+          "end_ms": 8000,
+          "scene": "Điện thoại rung lần nữa cạnh chậu cây; góc sáng và chuyển động khớp đầu clip.",
+          "sound": "same_single_notification",
+          "text": ""
+        }
+      ],
+      "ending_loop": "Match-cut điện thoại rung về tư thế khung hình mở đầu.",
+      "asset_needs": [
+        "1 bàn làm việc thật",
+        "1 laptop",
+        "1 chậu cây",
+        "1 điện thoại với tin nhắn giả không có dữ liệu thật",
+        "1 tấm bảng giấy 'Trực ca'"
+      ],
+      "owners_qa_check": [
+        "Không sao chép cảnh/bố cục của reel tham khảo",
+        "Biểu cảm và hành động tự nhiên, không diễn quá lố",
+        "Chữ biển đọc được khi xem điện thoại"
+      ]
+    },
+    {
+      "id": "five_minutes_meeting",
+      "title": "Họp 5 phút",
+      "concept": "Một ly cà phê định được uống trước cuộc họp siêu ngắn; cắt sang gần hai giờ sau mà bàn tay vẫn chờ.",
+      "duration_ms": 7500,
+      "platform": [
+        "instagram_reels",
+        "facebook_reels"
+      ],
+      "comic_mechanism": "time_jump_expectation_reversal",
+      "share_trigger": "Gửi vào nhóm cứ họp '5 phút'",
+      "format": "one_location_match_cut",
+      "performers": 1,
+      "locations": 1,
+      "caption": "Chắc là 5 phút theo múi giờ khác.",
+      "follow_cta": "none_in_video",
+      "overlays": [
+        {
+          "at_ms": 0,
+          "until_ms": 1400,
+          "text": "Họp nhanh 5 phút nha"
+        }
+      ],
+      "beats": [
+        {
+          "start_ms": 0,
+          "end_ms": 1400,
+          "scene": "Bàn làm việc, tay đưa lên định cầm cà phê; popup lịch giả ghi 'Họp nhanh 5 phút'.",
+          "sound": "calendar_ping_original",
+          "text": "Họp nhanh 5 phút nha"
+        },
+        {
+          "start_ms": 1400,
+          "end_ms": 3300,
+          "scene": "Tay cầm ly dừng giữa không trung khi màn hình họp sáng; camera cố định.",
+          "sound": "room_tone",
+          "text": ""
+        },
+        {
+          "start_ms": 3300,
+          "end_ms": 5700,
+          "scene": "Match-cut cùng góc, đồng hồ bàn đã từ 16:55 sang 18:43, ly cà phê nguội; người vẫn tư thế chờ.",
+          "sound": "single_clock_click_original",
+          "text": ""
+        },
+        {
+          "start_ms": 5700,
+          "end_ms": 7500,
+          "scene": "Khung chat họp hiện đúng một tin 'Còn 5 phút nữa' rồi đóng vòng về popup đầu.",
+          "sound": "ping_matching_open",
+          "text": ""
+        }
+      ],
+      "ending_loop": "Popup 'Còn 5 phút nữa' khớp âm ping và vùng màn hình đầu video.",
+      "asset_needs": [
+        "1 bàn làm việc thật",
+        "1 ly cà phê",
+        "đồng hồ giả hoặc overlay thời gian",
+        "popup cuộc họp hư cấu"
+      ],
+      "owners_qa_check": [
+        "Chỉ một cú nhảy thời gian, không chèn ba đoạn giảng giải",
+        "Không giả mạo người thật hoặc công ty cụ thể"
+      ]
+    },
+    {
+      "id": "printer_on_leave",
+      "title": "Máy in xin nghỉ",
+      "concept": "Nhân viên đẩy trách nhiệm 'ai nhận việc' cho chiếc máy in; máy in trả ra đơn xin nghỉ phép.",
+      "duration_ms": 8500,
+      "platform": [
+        "instagram_reels",
+        "facebook_reels"
+      ],
+      "comic_mechanism": "object_personification_visual_twist",
+      "share_trigger": "Đồng nghiệp chuyên phân việc",
+      "format": "single_prop_unexpected_reply",
+      "performers": 1,
+      "locations": 1,
+      "caption": "Trong văn phòng này, máy móc cũng biết từ chối.",
+      "follow_cta": "none_in_video",
+      "overlays": [
+        {
+          "at_ms": 0,
+          "until_ms": 1200,
+          "text": "Việc này ai nhận?"
+        }
+      ],
+      "beats": [
+        {
+          "start_ms": 0,
+          "end_ms": 1200,
+          "scene": "Khung thông báo giả 'Việc này ai nhận?' hiện trên điện thoại đặt trên bàn cạnh máy in.",
+          "sound": "message_ping_original",
+          "text": "Việc này ai nhận?"
+        },
+        {
+          "start_ms": 1200,
+          "end_ms": 3100,
+          "scene": "Một bàn tay tự tin chỉ về phía máy in rồi bước khỏi khuôn hình.",
+          "sound": "quiet_room",
+          "text": ""
+        },
+        {
+          "start_ms": 3100,
+          "end_ms": 5900,
+          "scene": "Máy in bật sáng và bắt đầu đưa một tờ giấy ra với tiếng mô-tơ thật.",
+          "sound": "own_printer_motor",
+          "text": ""
+        },
+        {
+          "start_ms": 5900,
+          "end_ms": 8500,
+          "scene": "Cận tờ giấy tự làm: 'ĐƠN XIN NGHỈ PHÉP'. Camera lùi về vị trí ban đầu.",
+          "sound": "single_paper_pull",
+          "text": ""
+        }
+      ],
+      "ending_loop": "Camera quay về cùng khung bàn khi tiếng thông báo đầu video bắt đầu lại.",
+      "asset_needs": [
+        "1 máy in thật quay cảnh gốc",
+        "1 giấy in giả tự tạo",
+        "1 thông báo chat hư cấu"
+      ],
+      "owners_qa_check": [
+        "Không lấy video người khác về dựng lại",
+        "Không có logo hãng máy in hoặc tên công ty thật làm trò đùa"
+      ]
+    }
+  ],
+  "status": {
+    "original_storyboards_ready": true,
+    "actual_footage_recorded": false,
+    "mp4_rendered": false,
+    "human_visual_qa_completed": false,
+    "published": false,
+    "claim_of_viral_probability": false
+  }
+}
