@@ -142,6 +142,39 @@ def answer_question(question,post_text, *, call=requests.post):
         return None
 
 
+def discover_official_own_posts(token, read, *, now):
+    """Read recent owner posts from Meta, including Metricool-published posts.
+
+    The local threads_posts ledger only marks native publisher rows 'posted':
+    Metricool's independently published items remain 'scheduled_external'.
+    The public audience-care loop must not silently ignore those posts.
+    Fail closed on unverified authors, malformed payloads or timestamps.
+    This function only performs a GET and never sends a comment.
+    """
+    try:
+        payload=read("GET","/me/threads",token,params={
+            "fields":"id,text,timestamp,username,permalink",
+            "limit":35})
+    except (requests.RequestException, ValueError, TypeError, KeyError):
+        return []
+    if not isinstance(payload,dict) or not isinstance(payload.get("data"),list):
+        return []
+    found=[]
+    for row in payload["data"][:35]:
+        if not isinstance(row,dict):
+            continue
+        ident=str(row.get("id") or "")
+        author=str(row.get("username") or "").casefold().lstrip("@")
+        when=parse_time(row.get("timestamp"))
+        if (not ident.isdecimal() or author!=EXPECTED or not when
+                or not timedelta(0)<=now-when<=timedelta(days=7)):
+            continue
+        found.append({"platform_post_id":ident,
+                      "published_at":when.isoformat(),
+                      "text_content":str(row.get("text") or "")[:450]})
+    return found
+
+
 def scan(db=None, *, now=None, read=thread_request, generate=answer_question):
     db=db or Database()
     now=now or datetime.now(timezone.utc)
@@ -154,6 +187,17 @@ def scan(db=None, *, now=None, read=thread_request, generate=answer_question):
         "select":"id,platform_post_id,text_content,published_at,status",
         "status":"eq.posted","order":"published_at.desc","limit":"40"})
     if not isinstance(posts,list):return "source_unavailable"
+    # Prefer Meta's fresh list, which includes independently scheduled/published
+    # posts; retain native DB rows as a bounded fallback if this GET is denied.
+    official=discover_official_own_posts(token,read,now=now)
+    seen=set()
+    merged=[]
+    for own in official+posts:
+        ident=str(own.get("platform_post_id") or "")
+        if ident.isdecimal() and ident not in seen:
+            seen.add(ident)
+            merged.append(own)
+    posts=merged
     used=db.request("GET","/enna_community_attempts",params={
         "select":"target_reply_id,author_fingerprint",
         "order":"claimed_at.desc","limit":"120"})
