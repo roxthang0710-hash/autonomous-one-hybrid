@@ -1,0 +1,522 @@
+{
+  "title": "Enna 50 Resource Audit",
+  "as_of_date": "2026-11-06",
+  "sources_supplied": "50 resource titles and descriptions in owner's chat, no direct URLs or attached article/video files on this turn",
+  "scope_warning": "Catalog and publicly verified landing pages only. This is NOT evidence all 50 materials were fully read, watched, enrolled in, or licensed. Do not copy paid books/video or import third-party code without license review.",
+  "interpretation": "Title identity is uncertain for generic video and repo names. Related sources are not represented as identical originals.",
+  "duplicate_resource_ids": {
+    "13": 9,
+    "22": 5
+  },
+  "implementation_principles": [
+    "Goal -> observe with source timestamp -> plan with alternatives -> authorize tool -> act -> verify independent readback -> reflect",
+    "Prefer one bounded model-guided policy to an unbounded collection of framework-dependent agents",
+    "Record fail/stop decisions as valuable evaluation outcomes, not just green CI",
+    "Use official Meta/Metricool source provenance and genuine effects; never claim planner cache is live",
+    "Explicit action risk grading, OAuth/permission gates, idempotency, no automatically purchased or promoted products",
+    "Store only sanitized redacted traces, evaluate long-tail failures, do not log hidden model traces",
+    "For consumer social media: rank actual engagement, originality and utility, not frequency or synthetic vanity metrics"
+  ],
+  "items": [
+    {
+      "id": 1,
+      "category": "Video",
+      "title": "LLM Introduction",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 2,
+      "category": "Video",
+      "title": "LLMs from Scratch",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 3,
+      "category": "Video",
+      "title": "Agentic AI Overview (Stanford)",
+      "reference_url": null,
+      "identity_status": "related_source_only",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 4,
+      "category": "Video",
+      "title": "Building & Evaluating Agents",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "evaluation",
+      "priority": "high"
+    },
+    {
+      "id": 5,
+      "category": "Video",
+      "title": "Building Effective Agents",
+      "reference_url": "https://www.anthropic.com/research/building-effective-agents",
+      "identity_status": "verified_public_landing",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 6,
+      "category": "Video",
+      "title": "Building Agents with MCP",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "tools_security",
+      "priority": "high"
+    },
+    {
+      "id": 7,
+      "category": "Video",
+      "title": "Building an Agent from Scratch",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 8,
+      "category": "Video",
+      "title": "Philo Agents",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "video_not_verified_or_viewed",
+      "application": "agent_architecture",
+      "priority": "later"
+    },
+    {
+      "id": 9,
+      "category": "GitHub",
+      "title": "GenAI Agents",
+      "reference_url": "https://github.com/NirDiamant/GenAI_Agents",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "agent_architecture",
+      "priority": "medium"
+    },
+    {
+      "id": 10,
+      "category": "GitHub",
+      "title": "Microsoft AI Agents for Beginners",
+      "reference_url": "https://github.com/microsoft/ai-agents-for-beginners",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 11,
+      "category": "GitHub",
+      "title": "Prompt Engineering Guide",
+      "reference_url": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "prompt_context",
+      "priority": "medium"
+    },
+    {
+      "id": 12,
+      "category": "GitHub",
+      "title": "Hands-On Large Language Models",
+      "reference_url": "https://github.com/HandsOnLLM/Hands-On-Large-Language-Models",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 13,
+      "category": "GitHub",
+      "title": "GenAI Agents",
+      "reference_url": "https://github.com/NirDiamant/GenAI_Agents",
+      "identity_status": "duplicate_of_9",
+      "access_scope": "repository_overview_only",
+      "application": "agent_architecture",
+      "priority": "medium"
+    },
+    {
+      "id": 14,
+      "category": "GitHub",
+      "title": "Made with ML",
+      "reference_url": "https://github.com/GokuMohandas/Made-With-ML",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "reliability",
+      "priority": "medium"
+    },
+    {
+      "id": 15,
+      "category": "GitHub",
+      "title": "Hands-On AI Engineering",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "repository_overview_only",
+      "application": "reliability",
+      "priority": "medium"
+    },
+    {
+      "id": 16,
+      "category": "GitHub",
+      "title": "Awesome Generative AI Guide",
+      "reference_url": "https://github.com/aishwaryanr/awesome-generative-ai-guide",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "reliability",
+      "priority": "medium"
+    },
+    {
+      "id": 17,
+      "category": "GitHub",
+      "title": "Designing Machine Learning Systems",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "repository_overview_only",
+      "application": "reliability",
+      "priority": "later"
+    },
+    {
+      "id": 18,
+      "category": "GitHub",
+      "title": "Machine Learning for Beginners",
+      "reference_url": "https://github.com/microsoft/ML-For-Beginners",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 19,
+      "category": "GitHub",
+      "title": "LLM Course",
+      "reference_url": "https://github.com/mlabonne/llm-course",
+      "identity_status": "verified_public_landing",
+      "access_scope": "repository_overview_only",
+      "application": "foundations",
+      "priority": "medium"
+    },
+    {
+      "id": 20,
+      "category": "Guide",
+      "title": "Google's Agent Whitepaper",
+      "reference_url": "https://www.kaggle.com/whitepaper-agents",
+      "identity_status": "verified_public_landing",
+      "access_scope": "public_guide_landing_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 21,
+      "category": "Guide",
+      "title": "Google's Agent Companion",
+      "reference_url": "https://www.kaggle.com/whitepaper-agent-companion",
+      "identity_status": "verified_public_landing",
+      "access_scope": "public_guide_landing_only",
+      "application": "evaluation",
+      "priority": "high"
+    },
+    {
+      "id": 22,
+      "category": "Guide",
+      "title": "Building Effective Agents by Anthropic",
+      "reference_url": "https://www.anthropic.com/research/building-effective-agents",
+      "identity_status": "duplicate_of_5",
+      "access_scope": "public_guide_landing_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 23,
+      "category": "Guide",
+      "title": "Claude Code Agentic Coding Practices",
+      "reference_url": "https://www.anthropic.com/engineering/claude-code-best-practices",
+      "identity_status": "verified_public_landing",
+      "access_scope": "public_guide_landing_only",
+      "application": "self_upgrade",
+      "priority": "high"
+    },
+    {
+      "id": 24,
+      "category": "Guide",
+      "title": "OpenAI's Practical Guide to Building Agents",
+      "reference_url": "https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "public_guide_landing_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 25,
+      "category": "Book",
+      "title": "Understanding Deep Learning",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "publisher_preview_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 26,
+      "category": "Book",
+      "title": "Building an LLM from Scratch",
+      "reference_url": "https://sebastianraschka.com/llms-from-scratch/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "publisher_preview_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 27,
+      "category": "Book",
+      "title": "The LLM Engineering Handbook",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "publisher_preview_only",
+      "application": "reliability",
+      "priority": "medium"
+    },
+    {
+      "id": 28,
+      "category": "Book",
+      "title": "AI Agents: The Definitive Guide",
+      "reference_url": "https://www.oreilly.com/library/view/ai-agents-the/0642572247775/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "publisher_preview_only",
+      "application": "reliability",
+      "priority": "high"
+    },
+    {
+      "id": 29,
+      "category": "Book",
+      "title": "Building Applications with AI Agents",
+      "reference_url": "https://www.oreilly.com/library/view/building-applications-with/9781098176495/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "publisher_preview_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 30,
+      "category": "Book",
+      "title": "AI Agents with MCP",
+      "reference_url": "https://www.oreilly.com/library/view/ai-agents-with/9798341639546/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "publisher_preview_only",
+      "application": "tools_security",
+      "priority": "high"
+    },
+    {
+      "id": 31,
+      "category": "Book",
+      "title": "AI Engineering",
+      "reference_url": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "publisher_preview_only",
+      "application": "evaluation",
+      "priority": "high"
+    },
+    {
+      "id": 32,
+      "category": "Research",
+      "title": "ReAct",
+      "reference_url": "https://arxiv.org/abs/2210.03629",
+      "identity_status": "verified_public_landing",
+      "access_scope": "abstract_and_metadata_only",
+      "application": "agent_architecture",
+      "priority": "high"
+    },
+    {
+      "id": 33,
+      "category": "Research",
+      "title": "Generative Agents",
+      "reference_url": "https://arxiv.org/abs/2304.03442",
+      "identity_status": "verified_public_landing",
+      "access_scope": "abstract_and_metadata_only",
+      "application": "memory",
+      "priority": "high"
+    },
+    {
+      "id": 34,
+      "category": "Research",
+      "title": "Toolformer",
+      "reference_url": "https://arxiv.org/abs/2302.04761",
+      "identity_status": "verified_public_landing",
+      "access_scope": "abstract_and_metadata_only",
+      "application": "tools_security",
+      "priority": "medium"
+    },
+    {
+      "id": 35,
+      "category": "Research",
+      "title": "Chain-of-Thought Prompting",
+      "reference_url": "https://arxiv.org/abs/2201.11903",
+      "identity_status": "verified_public_landing",
+      "access_scope": "abstract_and_metadata_only",
+      "application": "prompt_context",
+      "priority": "medium"
+    },
+    {
+      "id": 36,
+      "category": "Course",
+      "title": "Meta Data Analyst Professional Certificate",
+      "reference_url": "https://www.coursera.org/professional-certificates/meta-data-analyst/",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    },
+    {
+      "id": 37,
+      "category": "Course",
+      "title": "Google Advanced Data Analytics Professional Certificate",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    },
+    {
+      "id": 38,
+      "category": "Course",
+      "title": "Microsoft Power BI Data Analyst Professional Certificate",
+      "reference_url": "https://www.coursera.org/professional-certificates/microsoft-power-bi-data-analyst",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "later"
+    },
+    {
+      "id": 39,
+      "category": "Course",
+      "title": "Google Data Analytics Professional Certificate",
+      "reference_url": "https://www.coursera.org/professional-certificates/google-data-analytics",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    },
+    {
+      "id": 40,
+      "category": "Course",
+      "title": "Introduction to Data Analytics",
+      "reference_url": "https://www.coursera.org/learn/introduction-to-data-analytics",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    },
+    {
+      "id": 41,
+      "category": "Course",
+      "title": "Machine Learning Specialization",
+      "reference_url": "https://www.coursera.org/specializations/machine-learning-introduction",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 42,
+      "category": "Course",
+      "title": "IBM Deep Learning with PyTorch, Keras and Tensorflow Professional Certificate",
+      "reference_url": "https://www.coursera.org/professional-certificates/ibm-deep-learning-with-pytorch-keras-tensorflow",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 43,
+      "category": "Course",
+      "title": "Deep Learning Specialization",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "foundations",
+      "priority": "later"
+    },
+    {
+      "id": 44,
+      "category": "Course",
+      "title": "Crash Course on Python",
+      "reference_url": "https://www.coursera.org/learn/python-crash-course",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "engineering",
+      "priority": "medium"
+    },
+    {
+      "id": 45,
+      "category": "Course",
+      "title": "Python for Data Science, AI & Development",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "engineering",
+      "priority": "medium"
+    },
+    {
+      "id": 46,
+      "category": "Course",
+      "title": "ChatGPT + Excel: AI-Enhanced Data Analysis & Insight Specialization",
+      "reference_url": "https://www.coursera.org/specializations/chatgpt-excel",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    },
+    {
+      "id": 47,
+      "category": "Course",
+      "title": "Work Smarter with Microsoft Excel",
+      "reference_url": "https://www.coursera.org/learn/microsoft-excel-work-smarter",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "later"
+    },
+    {
+      "id": 48,
+      "category": "Course",
+      "title": "Microsoft Excel Professional Certificate",
+      "reference_url": null,
+      "identity_status": "exact_source_unresolved",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "later"
+    },
+    {
+      "id": 49,
+      "category": "Course",
+      "title": "Excel Basics for Data Analysis",
+      "reference_url": "https://www.coursera.org/learn/excel-basics-data-analysis-ibm",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "later"
+    },
+    {
+      "id": 50,
+      "category": "Course",
+      "title": "SQL Foundations",
+      "reference_url": "https://www.coursera.org/learn/sql-foundations",
+      "identity_status": "verified_public_landing",
+      "access_scope": "catalog_or_public_syllabus_only",
+      "application": "analytics",
+      "priority": "medium"
+    }
+  ]
+}
