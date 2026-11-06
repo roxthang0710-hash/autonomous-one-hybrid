@@ -46,6 +46,7 @@ def review_episode(metadata: dict, policy: dict) -> dict:
         ("articulated_motion_verified", "slide_motion_or_unverified"),
         ("story_setup_action_payoff_verified", "missing_comedic_payoff"),
         ("rights_verified", "rights_unverified"),
+        ("original_copy_check_passed", "copy_check_missing"),
         ("owner_visual_approved", "owner_visual_approval_missing"),
     ):
         if metadata.get(key) is not True:
