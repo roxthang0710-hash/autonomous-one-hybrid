@@ -1,0 +1,52 @@
+name: Enna — Autonomy Controller A1 (Verified, No Social Writes)
+
+on:
+  schedule:
+    # Every two hours, best effort. UTC. Does not guarantee exact execution.
+    - cron: '37 */2 * * *'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-autonomy-controller-a1
+  cancel-in-progress: false
+
+jobs:
+  triage:
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.issue.user.login == github.repository_owner &&
+       startsWith(github.event.issue.title, 'autonomy-check:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+      THREADS_PUBLISH_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install pinned project dependencies
+        run: pip install -r requirements.txt
+      - name: Test autonomy proof, priority and safety
+        run: python -m unittest discover -s tests -p 'test_autonomy_controller.py' -v
+      - name: Choose one bounded recovery and record three highest incidents
+        run: python -m growth.autonomy_controller
+      - name: State actual capability boundary
+        if: always()
+        run: |
+          echo '## Enna A1 autonomous incident controller' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Reads the cached Meta follower evidence, performs ONE authorized Meta GET if stale, then RE-READS Supabase to verify new evidence.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Ranks cached Facebook/Instagram incidents and writes private, owner-scoped, deduplicated notifications.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Metricool states here are Supabase snapshots, NOT live Metricool confirmation.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Never publishes, retries, modifies any scheduled post, buys a plan, or changes permissions.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A1 is first autonomy milestone; A2 live provider integration, A4 external actions and A5 verified end-to-end execution remain separate.' >> "$GITHUB_STEP_SUMMARY"
