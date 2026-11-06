@@ -23,8 +23,7 @@ def _parse_date(value):
 
 def find_matches(drafts, meta_rows):
     """Returns only exact unique text matches near scheduled publication."""
-    match_rows = []
-    used = set()
+    candidates = []
     for draft in drafts:
         planned = _parse_date(draft.get("scheduled_at"))
         text = draft.get("text_content")
@@ -33,27 +32,27 @@ def find_matches(drafts, meta_rows):
         matches = []
         for meta in meta_rows:
             when = _parse_date(meta.get("timestamp"))
-            if (meta.get("text") == text and when is not None
-                    and abs((when - planned).total_seconds()) <= 36*3600
-                    and meta.get("id")):
-                matches.append((meta,when))
+            mid = str(meta.get("id") or "")
+            if (meta.get("text") == text and when is not None and mid.isdecimal()
+                    and abs((when - planned).total_seconds()) <= 36*3600):
+                matches.append((meta, when))
         if len(matches) != 1:
             continue
         entry, when = matches[0]
-        mid = str(entry["id"])
-        # Official Threads published media IDs are numeric. Never use a
-        # temporary container ID, malformed feed row, or a shared match.
-        if not mid.isdecimal() or mid in used:
-            continue
-        used.add(mid)
-        match_rows.append({
-            "id": draft["id"],
-            "platform_post_id": mid,
-            "permalink": entry.get("permalink") or None,
-            "published_at": when.astimezone(timezone.utc).isoformat(),
-        })
-    return match_rows
-
+        candidates.append((draft, entry, when))
+    # Ambiguous exact text/time across TWO planned records cannot be uniquely
+    # attributed to one real Meta media ID. Never mark either as posted.
+    per_meta = {}
+    for _, entry, _ in candidates:
+        ident = str(entry["id"])
+        per_meta[ident] = per_meta.get(ident, 0) + 1
+    return [{
+        "id": draft["id"],
+        "platform_post_id": str(entry["id"]),
+        "permalink": entry.get("permalink") or None,
+        "published_at": when.astimezone(timezone.utc).isoformat(),
+    } for draft, entry, when in candidates
+       if per_meta[str(entry["id"])] == 1]
 
 def reconcile(db=None, *, now=None, read=thread_request):
     """Read-only Meta verification; writes ONLY evidence to our own database.
