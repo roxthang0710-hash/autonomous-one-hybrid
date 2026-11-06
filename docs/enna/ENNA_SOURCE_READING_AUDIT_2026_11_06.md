@@ -74,3 +74,6 @@
 - The text of paid books, enrolled videos, member-only lesson transcripts and every nested GitHub source file was not available to read completely from the source landing pages. Access to a page is not access to the complete work.
 - Owner should supply original URLs for IDs 1, 2, 4, 6, 7, 8 and confirm candidates for 15, 17 and 27; confirm original Stanford video #3 and whether #5 had a distinct video. No passwords or protected content need be sent.
 - This journal records source coverage and application implications; it does not imply a new E3 production agent capability was completed.
+
+
+**2026-11-06 OWNER SOURCE UPDATE (16 URLs)**: Previous 38-linked/9-unresolved counts are superseded. The owner supplied 16 links: 8 videos/playlist, 2 GitHub repos, 2 book pages and 4 Coursera affiliate redirects. The [current catalog](../../config/enna_agent_learning_50_resources_2026_11_06.json) has source links for all 50 listed items and preserves affiliate redirects as references only. Source-specific access and 16 summaries: [16 Source Review](ENNA_OWNER_16_SOURCE_REVIEW_2026_11_06.md). #5 YouTube video is distinct from #22 Anthropic article; only #9/#13 share the same exact GitHub repository. Transcript unavailable ≠ full viewing; full paid book unavailable ≠ read.
