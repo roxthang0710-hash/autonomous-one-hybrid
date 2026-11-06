@@ -12,6 +12,7 @@ from datetime import datetime, timedelta, timezone
 
 from agent import Database
 from growth.agent_decision_policy import choose
+from growth.agent_failure_reflection import classify
 from growth.autonomy_controller import aware_time, fresh_official_snapshot
 from growth.account_followers import collect as official_followers
 from growth.official_threads_observations import collect as official_posts
@@ -55,6 +56,9 @@ def build_proposals(followers, feeds, history, now):
         observed=_recent_official(rows,key,now)
         if observed is None:
             continue
+        fallback=classify(history,action=action,observed_at=observed,now=now)
+        if not fallback['allow']:
+            continue
         recent=[x for x in history
           if isinstance(x,dict) and x.get("selected_action")==action
           and x.get("status") in ("blocked","unverified")]
@@ -85,7 +89,7 @@ def read_sources(db):
         "select":"source,last_observed_at",
         "brand_key":"eq."+BRAND,"order":"last_observed_at.desc","limit":"6"})
     history=db.request("GET",TABLE,params={
-        "select":"selected_action,status,finished_at",
+        "select":"selected_action,status,finished_at,result_code",
         "brand_key":"eq."+BRAND,"order":"started_at.desc","limit":"25"})
     return followers,feed,history
 
