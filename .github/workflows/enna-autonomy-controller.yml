@@ -41,6 +41,8 @@ jobs:
         run: |
           python -m growth.agent_decision_policy
           python -m unittest discover -s tests -p 'test_enna_agent_decision_policy.py' -v
+      - name: E3 regression - scoped fallback, evidence-age and failure reflection
+        run: python -m unittest discover -s tests -p 'test_enna_agent_failure_reflection.py' -v
       - name: Test one-action autonomous goal loop and proof
         run: python -m unittest discover -s tests -p 'test_enna_agent_goal_cycle.py' -v
       - name: Select ONE authorized agent objective and verify the result
