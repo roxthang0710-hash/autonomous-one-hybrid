@@ -41,6 +41,10 @@ jobs:
         run: |
           python -m growth.agent_decision_policy
           python -m unittest discover -s tests -p 'test_enna_agent_decision_policy.py' -v
+      - name: Test one-action autonomous goal loop and proof
+        run: python -m unittest discover -s tests -p 'test_enna_agent_goal_cycle.py' -v
+      - name: Select ONE authorized agent objective and verify the result
+        run: python -m growth.agent_goal_cycle
       - name: Test autonomy proof, priority and safety
         run: python -m unittest discover -s tests -p 'test_autonomy_controller.py' -v
       - name: Test A1.2 private incident lifecycle and Meta proof
@@ -58,3 +62,4 @@ jobs:
           echo 'Metricool states here are Supabase snapshots, NOT live Metricool confirmation.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Never publishes, retries, modifies any scheduled post, buys a plan, or changes permissions.' >> "$GITHUB_STEP_SUMMARY"
           echo 'A1.2 persists incident state and closes only verified newer official Meta evidence; cached Metricool errors stay blocked. A2 live provider integration remains separate.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'E2 chooses ONE safe official Meta refresh if source age/permissions/verified history justify it; otherwise logs no_safe_action; private DB claim + readback required.' >> "$GITHUB_STEP_SUMMARY"
