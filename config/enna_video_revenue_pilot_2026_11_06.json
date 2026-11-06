@@ -1,0 +1,267 @@
+{
+  "project": "Đồ Hay Đi Làm / Enna",
+  "as_of": "2026-11-06",
+  "phase": "research_original_video_drafts_only",
+  "owner_approval_required": true,
+  "commercial_links_allowed": false,
+  "brand_style": "dohay_roundhead_doodle_v4 / v4.1_clean_chat_balance",
+  "video_spec": {
+    "width": 1080,
+    "height": 1920,
+    "prototype_render_width": 540,
+    "prototype_render_height": 960,
+    "fps": 12,
+    "sound": "none_original_silent_preview",
+    "captions": "Vietnamese burned-in plus SRT",
+    "video_duration_seconds": 20
+  },
+  "commercial_tracks": [
+    {
+      "key": "shopee_koc",
+      "priority": 1,
+      "why": "lowest external follower threshold; actual acceptance, declared promotional channel and approved SKU required",
+      "status": "research_only",
+      "preconditions": [
+        "publisher_approved",
+        "channel_permission_verified",
+        "seller_product_verified",
+        "disclosure_ready",
+        "owner_review"
+      ],
+      "source": "https://help.shopee.vn/portal/10/article/122944"
+    },
+    {
+      "key": "digital_templates",
+      "priority": 2,
+      "why": "own IP and recurring usage; test demand with free kit before pricing",
+      "status": "validation_only",
+      "preconditions": [
+        "free_resource_used",
+        "specific_problem_validated",
+        "deliverable_tested",
+        "refund_terms",
+        "tax_and_checkout_review",
+        "owner_approval"
+      ],
+      "source": "https://roxthang0710-hash.github.io/autonomous-one-hybrid/enna/kit/"
+    },
+    {
+      "key": "brand_ugc",
+      "priority": 3,
+      "why": "demonstrate original short-form videos before B2B outreach",
+      "status": "portfolio_only",
+      "preconditions": [
+        "3_approved_video_samples",
+        "rights_and_claims_verified",
+        "brand_contract",
+        "label_ad",
+        "owner_approval"
+      ],
+      "source": "https://about.fb.com/news/2026/03/rewarding-original-creators-on-facebook/"
+    },
+    {
+      "key": "tiktok_shop",
+      "priority": 4,
+      "why": "normally 1000 followers for full affiliate; 200-999 may join limited Creator Adjustment Program if account qualifies",
+      "status": "conditional_research",
+      "preconditions": [
+        "native_tiktok_account",
+        "country_account_and_age_check",
+        "program_offered_in_app",
+        "product_permissions",
+        "owner_approval"
+      ],
+      "source": "https://seller-vn.tiktok.com/university/essay?identity=1&knowledge_id=2356948167771905&role=1"
+    },
+    {
+      "key": "youtube_ypp",
+      "priority": 5,
+      "why": "long-term; different thresholds for early fan features and full ad revenue",
+      "status": "future_only",
+      "preconditions": [
+        "original_library",
+        "eligible_country",
+        "channel_500_early_or_1000_ads",
+        "watch_time_or_short_views_verified",
+        "ypp_approval"
+      ],
+      "source": "https://support.google.com/youtube/answer/13429240?hl=vi"
+    },
+    {
+      "key": "facebook_content",
+      "priority": 6,
+      "why": "reels-first but content monetization is invite-only and account eligibility is not verified",
+      "status": "invitation_required",
+      "preconditions": [
+        "facebook_professional_dashboard_invite",
+        "original_content",
+        "eligible_views",
+        "owner_acceptance"
+      ],
+      "source": "https://about.fb.com/news/2026/03/creator-fast-track-grow-your-audience-earn-money-on-facebook/"
+    }
+  ],
+  "experiments": [
+    {
+      "id": "shortcuts",
+      "title": "3 phím tắt giúp đỡ một ngày đi làm",
+      "mode": "practical_ui_tip",
+      "target_platforms": [
+        "facebook_reels",
+        "instagram_reels",
+        "youtube_shorts"
+      ],
+      "length_seconds": 20,
+      "hook": "Hôm nay máy tính cứu mình 3 lần.",
+      "cta": "Theo dõi Đồ Hay Đi Làm để nhặt thêm mẹo gọn.",
+      "value": "3 phím tắt đúng, không làm giả màn hình ứng dụng",
+      "commercial": false,
+      "beats": [
+        {
+          "start": 0,
+          "end": 3,
+          "text": "Cứu một ngày làm việc, đôi khi chỉ cần 3 phím."
+        },
+        {
+          "start": 3,
+          "end": 7,
+          "text": "Win + Shift + S\nChụp đúng vùng cần gửi."
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "text": "Ctrl + Shift + T\nMở lại tab vừa đóng."
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "text": "Win + V\nMở lịch sử sao chép khi đã bật."
+        },
+        {
+          "start": 15,
+          "end": 20,
+          "text": "Lưu lại khi cần.\nFollow để có thêm mẹo gọn."
+        }
+      ]
+    },
+    {
+      "id": "chat_gap",
+      "title": "Tin nhắn xác nhận đã đọc lúc 22:47",
+      "mode": "clean_chat",
+      "target_platforms": [
+        "facebook_reels",
+        "instagram_reels",
+        "youtube_shorts"
+      ],
+      "length_seconds": 20,
+      "hook": "22:47. Nhóm công việc lại sáng đèn.",
+      "cta": "Follow Đồ Hay Đi Làm, đi làm đỡ cô đơn.",
+      "value": "hội thoại hư cấu, không mạo nhận tin nhắn thật",
+      "commercial": false,
+      "beats": [
+        {
+          "start": 0,
+          "end": 3,
+          "text": "22:47.\nNhóm công việc sáng đèn."
+        },
+        {
+          "start": 3,
+          "end": 7,
+          "text": "SẾP:\nMọi người xác nhận đã đọc nhé."
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "text": "MÌNH:\nDạ em đã đọc ạ."
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "text": "NÃO:\nỦa vậy giờ có phải làm luôn không?"
+        },
+        {
+          "start": 15,
+          "end": 20,
+          "text": "Nghe thông báo thôi mà\nhết cả tối. Follow để cười tiếp."
+        }
+      ]
+    },
+    {
+      "id": "meeting_actions",
+      "title": "Sau họp 3 dòng tránh trôi deadline",
+      "mode": "practical_ui_tip",
+      "target_platforms": [
+        "facebook_reels",
+        "instagram_reels",
+        "youtube_shorts"
+      ],
+      "length_seconds": 20,
+      "hook": "Họp xong ai cũng gật. Ai làm thì chưa rõ.",
+      "cta": "Mẫu checklist miễn phí ở link bio Enna Mini.",
+      "value": "nhấn vào công cụ miễn phí, chưa bán sản phẩm hay giả nhu cầu",
+      "commercial": false,
+      "beats": [
+        {
+          "start": 0,
+          "end": 3,
+          "text": "Họp xong cả phòng gật đầu.\nViệc vẫn còn mơ hồ."
+        },
+        {
+          "start": 3,
+          "end": 7,
+          "text": "1. VIỆC GÌ?\nViết đúng đầu việc."
+        },
+        {
+          "start": 7,
+          "end": 11,
+          "text": "2. AI LÀM?\nChốt một người phụ trách."
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "text": "3. KHI NÀO?\nChưa chốt thì ghi 'Chưa rõ'."
+        },
+        {
+          "start": 15,
+          "end": 20,
+          "text": "Thử Enna Mini miễn phí\nở link bio của kênh."
+        }
+      ]
+    }
+  ],
+  "release_gates": {
+    "manual_visual_review": true,
+    "verify_readable_vietnamese": true,
+    "brand_reference_comparison": true,
+    "original_sound_or_license": true,
+    "no_duplicate_recent_hook": true,
+    "no_trademark_real_chat_impersonation": true,
+    "verify_actual_post_id_after_publish": true,
+    "privacy_safe_metrics": true,
+    "any_paid_link_requires_full_separate_approval": true
+  },
+  "measures": [
+    "views_24h",
+    "three_second_view_rate_if_available",
+    "average_watch_time_if_available",
+    "completion_rate_if_available",
+    "saves_and_shares_if_available",
+    "follows_during_window_not_attributed",
+    "profile_visits",
+    "free_tool_visits_privacy_safe",
+    "inbound_questions",
+    "verified_orders",
+    "verified_received_vnd"
+  ],
+  "baseline_note": "No existing short-form video evidence or confirmed paid conversion in current Enna database; do not invent CTR, RPM, affiliate rates or follower attribution.",
+  "sources": [
+    "https://help.shopee.vn/portal/10/article/122944",
+    "https://seller-vn.tiktok.com/university/essay?identity=1&knowledge_id=2356948167771905&role=1",
+    "https://seller-vn.tiktok.com/university/essay?knowledge_id=6837793229817601",
+    "https://support.google.com/youtube/answer/13429240?hl=vi",
+    "https://about.fb.com/news/2026/03/creator-fast-track-grow-your-audience-earn-money-on-facebook/",
+    "https://support.google.com/youtube/answer/1311392?hl=vi",
+    "https://vanban.chinhphu.vn/?classid=1&docid=214561&pageid=27160",
+    "https://ads.tiktok.com/business/en/guides/video-advertising-guide"
+  ]
+}
