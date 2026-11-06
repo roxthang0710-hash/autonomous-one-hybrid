@@ -112,3 +112,6 @@
 - Mốc E1 chỉ kiểm tra quyết định từ các ca mô phỏng. **Không chứng minh** mô hình LLM tự lập kế hoạch ngoài kịch bản, không chứng minh một video được dựng hoặc bài đã đăng.
 - Không tự cài toàn bộ framework hoặc copy mã GitHub vì có thể có khác biệt giấy phép, phụ thuộc, dữ liệu và rủi ro bảo mật.
 - Sau khi có nguồn chính xác cho 14 mục chưa rõ, có thể tăng độ bao phủ nghiên cứu, nhưng không trì hoãn các cải tiến có bằng chứng từ nguồn chính thống.
+
+
+**2026-11-06 OWNER SOURCE UPDATE (16 URLs)**: The earlier count 38/9 reflected the first research pass. All 16 missing/confirmation links were supplied and recorded on 06/11/2026. For current 50 source links, read [catalog JSON](../../config/enna_agent_learning_50_resources_2026_11_06.json), and for true content depth read [16 source review](ENNA_OWNER_16_SOURCE_REVIEW_2026_11_06.md). Video #5 is not the same artifact as #22 article; paid full books/courses not read. See merged E3 PR #90 for actual code application.
