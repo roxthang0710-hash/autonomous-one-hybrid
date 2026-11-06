@@ -3,7 +3,7 @@ import unittest
 from datetime import datetime,timedelta,timezone
 from unittest.mock import MagicMock,patch
 
-from growth.community_care import eligible_question,validate_answer
+from growth.community_care import eligible_question,validate_answer,discover_official_own_posts,scan
 from growth.media_scout import inspect_commons,allowed_source_url,allowed_commons_binary,archive_commons_image,run
 from growth.meme_renderer import make_card
 from threads.publisher import do_publish
@@ -25,6 +25,48 @@ class CommunityTests(unittest.TestCase):
         self.assertFalse(eligible_question({**comment(),"has_replies":True},now=NOW))
         self.assertFalse(eligible_question({**comment(),"timestamp":
             (NOW-timedelta(days=5)).isoformat()},now=NOW))
+
+    def test_meta_get_discovers_metricool_owned_posts_and_excludes_other_authors(self):
+        reads=[]
+        def fake_read(method,path,token,params=None):
+            reads.append((method,path,params))
+            return {"data":[
+                {"id":"18000000000011111","username":"dohay_dilam",
+                 "text":"Bài Metricool đã đăng", "timestamp":NOW.isoformat()},
+                {"id":"18000000000022222","username":"other_user",
+                 "text":"Bài người khác", "timestamp":NOW.isoformat()},
+                {"id":"18000000000033333","username":"dohay_dilam",
+                 "text":"Bài rất cũ", "timestamp":(NOW-timedelta(days=9)).isoformat()},
+                {"id":"bad","username":"dohay_dilam","timestamp":NOW.isoformat()}
+            ]}
+        found=discover_official_own_posts("token",fake_read,now=NOW)
+        self.assertEqual([x["platform_post_id"] for x in found],["18000000000011111"])
+        self.assertEqual(reads[0][1],"/me/threads")
+        self.assertEqual(reads[0][0],"GET")
+
+    def test_failed_meta_list_does_not_fabricate_posts(self):
+        def denied(*args,**kwargs):
+            from requests import HTTPError
+            raise HTTPError("read scope denied")
+        self.assertEqual(discover_official_own_posts("token",denied,now=NOW),[])
+
+    @patch("growth.community_care.get_credentials",return_value=("token","dohay_dilam"))
+    @patch("growth.community_care.verify_meta_account")
+    def test_community_scan_reads_metricool_post_even_if_local_ledger_empty(self,verify,credentials):
+        db=MagicMock()
+        db.request.side_effect=[[],[],[]]
+        calls=[]
+        def fake_read(method,path,token,params=None):
+            calls.append(path)
+            if path=="/me/threads":
+                return {"data":[{"id":"18000000000011111","username":"dohay_dilam",
+                                "timestamp":NOW.isoformat(),"text":"Mẹo dùng bảng tính"}]}
+            if path=="/18000000000011111/replies":return {"data":[]}
+            raise AssertionError("unexpected Meta access: "+path)
+        outcome=scan(db,now=NOW,read=fake_read,generate=lambda *_:None)
+        self.assertEqual(outcome,"no_suitable_own_audience_question")
+        self.assertIn("/18000000000011111/replies",calls)
+        self.assertEqual(calls.count("/me/threads"),1)
 
     def test_private_or_spam_questions_do_not_trigger(self):
         self.assertFalse(eligible_question(comment(
