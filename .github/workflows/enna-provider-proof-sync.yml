@@ -21,7 +21,7 @@ jobs:
     if: >-
       github.event_name != 'issues' ||
       (github.event.issue.user.login == github.repository_owner &&
-       startsWith(github.event.issue.title, 'provider-proof:'))
+       (startsWith(github.event.issue.title, 'provider-proof:') || startsWith(github.event.issue.title, 'bridge-seed:')))
     runs-on: ubuntu-latest
     timeout-minutes: 7
     env:
@@ -42,9 +42,16 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_threads_reconcile.py' -v
       - name: Test provider feed provenance and private readback
         run: python -m unittest discover -s tests -p 'test_official_threads_observations.py' -v
+      - name: Test two-provider bridge and safe legacy repairs
+        run: python -m unittest discover -s tests -p 'test_metricool_threads_bridge.py' -v
+      - name: Bootstrap owner-authorized Metricool snapshot (one controlled issue)
+        if: github.event_name == 'issues' && startsWith(github.event.issue.title, 'bridge-seed:')
+        run: python -m growth.metricool_threads_bridge --seed
       - name: Capture official owner Threads post IDs independent of Metricool captions
         run: |
           python -m growth.official_threads_observations
+      - name: Reconcile old and future Metricool UUIDs against official Meta evidence
+        run: python -m growth.metricool_threads_bridge
       - name: Verify owner identity and reconcile ONLY uniquely matched existing Meta posts
         run: |
           python - <<'PY'
