@@ -1,6 +1,7 @@
 name: Enna — Publish OAuth Control Portal
 on:
   push:
+    branches: [main]
     paths:
       - 'docs/**'
       - 'starter/enna-clone/**'
@@ -17,7 +18,15 @@ concurrency:
   cancel-in-progress: true
 jobs:
   deploy:
-    if: github.event_name != 'issues' || (github.event.issue.user.login == github.repository_owner && startsWith(github.event.issue.title, 'oauth-pages:'))
+    if: >-
+      (
+        (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+        github.ref == 'refs/heads/main'
+      ) || (
+        github.event_name == 'issues' &&
+        github.event.issue.user.login == github.repository_owner &&
+        startsWith(github.event.issue.title, 'oauth-pages:')
+      )
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
