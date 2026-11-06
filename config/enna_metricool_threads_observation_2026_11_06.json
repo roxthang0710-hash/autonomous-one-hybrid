@@ -1,0 +1,277 @@
+{
+  "brand_key": "do_hay_di_lam",
+  "metricool_brand_id": "7803567",
+  "provider_source": "metricool_owner_connector_snapshot",
+  "observed_at_utc": "2026-11-06 14:10:22.258532+00",
+  "timezone": "Asia/Saigon",
+  "source_editorial_config": "config/enna_metricool_copy_refresh_2026_11_06.json",
+  "caveat": "Owner connector snapshot only, not a persistent Metricool API. Text SHA computed from approved current captions only for matching; never infer absence as failure.",
+  "posts": [
+    {
+      "metricool_uuid": "-3165066451430849150",
+      "metricool_post_id": "414010336",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-02T21:20:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfPggf8jSBc"
+    },
+    {
+      "metricool_uuid": "713478575916731557",
+      "metricool_post_id": "414348524",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-03T09:30:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfQ0DYZirX2"
+    },
+    {
+      "metricool_uuid": "3868110759527860700",
+      "metricool_post_id": "414348594",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-03T12:20:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfRHed5CpzL"
+    },
+    {
+      "metricool_uuid": "7575210084449208777",
+      "metricool_post_id": "414348652",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-03T17:40:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfRsHe3inIw"
+    },
+    {
+      "metricool_uuid": "-4318073557270575830",
+      "metricool_post_id": "414913452",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-03T21:30:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfSGgUXCg-6"
+    },
+    {
+      "metricool_uuid": "7252288734662117229",
+      "metricool_post_id": "414348793",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-04T00:50:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfSdTWfiMKF"
+    },
+    {
+      "metricool_uuid": "2944062366761110784",
+      "metricool_post_id": "414913485",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-04T09:30:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfTY2lxiGXh"
+    },
+    {
+      "metricool_uuid": "-5144304224738652649",
+      "metricool_post_id": "413958401",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-04T12:20:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfTsRiPDcmq"
+    },
+    {
+      "metricool_uuid": "352030527212681",
+      "metricool_post_id": "414054109",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-04T19:15:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfUbzmkikLX"
+    },
+    {
+      "metricool_uuid": "4545300296757757991",
+      "metricool_post_id": "413958454",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-04T22:00:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfUvWavCqSI"
+    },
+    {
+      "metricool_uuid": "8086630184103986022",
+      "metricool_post_id": "416708527",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-05T01:05:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfVEE0Kjadw"
+    },
+    {
+      "metricool_uuid": "-5779974466490186274",
+      "metricool_post_id": "416707648",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-05T09:30:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfV9pSaCiCK"
+    },
+    {
+      "metricool_uuid": "401802323882035823",
+      "metricool_post_id": "413958522",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-05T12:20:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfWREdmCJxu"
+    },
+    {
+      "metricool_uuid": "8595030504777599850",
+      "metricool_post_id": "418135116",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-06T09:30:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfYiccaignm"
+    },
+    {
+      "metricool_uuid": "2388644511915855276",
+      "metricool_post_id": "418127422",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-06T12:20:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfY13eniC2X"
+    },
+    {
+      "metricool_uuid": "2995429049785732260",
+      "metricool_post_id": "418849921",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-06T18:48:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfZksgcijFN"
+    },
+    {
+      "metricool_uuid": "4175547313325294751",
+      "metricool_post_id": "418850425",
+      "provider_status": "PUBLISHED",
+      "scheduled_local": "2026-11-06T19:00:00",
+      "provider_permalink": "https://www.threads.com/@dohay_dilam/post/DfZkzkyCvuK"
+    },
+    {
+      "metricool_uuid": "-2242191102580667288",
+      "metricool_post_id": "418858786",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-07T00:55:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "2776797035247257281",
+      "metricool_post_id": "418858839",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-07T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "8845254336701810914",
+      "metricool_post_id": "418858967",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-07T12:20:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "1877673435670924709",
+      "metricool_post_id": "418859091",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-07T17:40:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "8022565364356631507",
+      "metricool_post_id": "418859228",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-07T21:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-8569019919648210208",
+      "metricool_post_id": "418859318",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-08T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-2794949330212466970",
+      "metricool_post_id": "418859382",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-08T12:20:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-3618252653683389257",
+      "metricool_post_id": "418859546",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-08T19:15:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "1275231947345906233",
+      "metricool_post_id": "418860052",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-08T22:00:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-5995937614946744250",
+      "metricool_post_id": "418860233",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-09T01:10:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-8911964076213057691",
+      "metricool_post_id": "418860307",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-09T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-705734222378480858",
+      "metricool_post_id": "418860394",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-09T12:20:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "8338802447764899812",
+      "metricool_post_id": "418860589",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-09T18:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "9029848080469148423",
+      "metricool_post_id": "418860679",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-10T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-4609536453140724294",
+      "metricool_post_id": "418860728",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-11T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "3596593620645728090",
+      "metricool_post_id": "418860802",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-12T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "5717249331600641898",
+      "metricool_post_id": "418860874",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-13T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "-6235659805054909144",
+      "metricool_post_id": "418860939",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-14T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "3789343337836527932",
+      "metricool_post_id": "418860984",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-15T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "6118891971809005254",
+      "metricool_post_id": "418861063",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-16T09:30:00",
+      "provider_permalink": null
+    },
+    {
+      "metricool_uuid": "4337530691617440581",
+      "metricool_post_id": "418861168",
+      "provider_status": "PENDING",
+      "scheduled_local": "2026-11-17T09:30:00",
+      "provider_permalink": null
+    }
+  ]
+}
