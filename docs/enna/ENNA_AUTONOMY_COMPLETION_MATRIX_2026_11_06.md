@@ -39,9 +39,17 @@ Metricool API conditions (checked 2026-11-06): https://help.metricool.com/plans-
 
 Official Meta Threads OAuth permission reference (checked 2026-11-06): https://www.postman.com/meta/threads/documentation/dht3nzz/threads-api
 
+## A1.2.1 — live verified incident lifecycle (2026-11-06, 20:26 VN)
+- Database: `public.enna_autonomy_incidents` created with restrictive row-level security. Only the server-side `service_role` has table grants; `anon` and `authenticated` have none. RLS deliberately has **no public policies** and the related Supabase advisor informational notice is expected for a backend-private table. Source SQL tracked in `supabase/sql/enna_autonomy_incidents_a12.sql`; Supabase migration applied successfully. The table never stores OAuth secrets, comments, personal data or arbitrary raw prompts.
+- Code: `growth/autonomy_incident_lifecycle.py` persists bounded incident keys, records `open`, `blocked` and `resolved` state, checks timestamp provenance and reads the database again before claiming state changed. A cached Metricool ERROR cannot automatically become `resolved` or trigger a repeat post. A recurring error requires genuinely newer evidence than its last independent resolution; the first-seen timestamp resets when an issue reopens.
+- Tests: `tests/test_autonomy_incident_lifecycle.py` contains 11 passing cases for stale follower, official-source readback, recurrence, false provider reappearance, idempotency, owner notification isolation and provider nonwrites. Full repository CI also passed at `42225477361`.
+- Live: owner-authorized GitHub Issue #83 triggered run `42225542111` (SUCCESS). Log `ENNA_LIFECYCLE_RESULT` was `status=verified, active_candidates=1, transitions_attempted=1, transitions_verified=1, blocked_external=1, resolved_from_verified_meta=0, live_metricool_checked=false, social_writes=0`. Independently queried Supabase and saw `autonomy-v1:provider_error:facebook:407100825539987565` in state `blocked` with reason `needs_live_metricool_verification`.
+- **Exact boundary:** A1.2.1 proves real persistence and closed-loop readback; it does NOT prove that the Facebook post error was fixed. Meta follower reading remained fresh on the live run, so no real `resolved` transition was appropriate yet. That branch is an explicitly open milestone A1.2.2.
+- Recurring task remains `37 */2 * * *` UTC GitHub Actions, best effort; its success status alone does not grant social access. Completion metrics must come from actual log plus DB evidence, not merely notification creation.
+
 ## Work order — one proven stage at a time
 1. **A1.1 — DONE for triage:** safe controller, idempotency, private incident persisted, real workflow tested.
-2. **A1.2 — NEXT:** verify real stale-source follower recovery after TTL, add incident state transition and clear closed alerts only on newer verified source, never based on a repeated test.
+2. **A1.2.1 — VERIFIED in production:** private lifecycle table, state transitions, readback and 11/11 targeted tests. **A1.2.2 — STILL OPEN:** observe a naturally stale Meta snapshot and independently verify that a newer official refresh closes the follower-specific incident. Do not force API calls or treat mocked paths as live proof.
 3. **A2.1:** distinguish Metricool live state from cached DB in every dashboard; add bounded authorized read-only source sync or a clearly marked manual operator handoff while Starter is used.
 4. **A3.1:** standardized error-to-safe-runbook policy and test suite; automatic safe action only for exact allowlist.
 5. **A4.1 + A5.1:** verified owner-only Meta/Metricool workflow for one reversible operation, provider-side readback and no duplicate retry.
