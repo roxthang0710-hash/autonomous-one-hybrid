@@ -12,11 +12,11 @@
   ],
   "style_contract": {
     "recurring_character": "One expressive cute round yellow-headed office worker, small simple stick body, sometimes tie, sweat, confused eyes or a tiny crown/hat; consistent recognizable proportions. Use not on every single frame if an object character is the better joke.",
-    "linework": "Thick imperfect black hand-marker outlines, scribbled motion lines, casual uneven borders, hand-drawn asymmetry; not smooth vector-perfect.",
+    "linework": "Confident imperfect black hand-marker outlines with slight human jitter. Prioritize clear straight-ish lines for interface windows, chat panels, tables and screens. Use wavy/squiggly lines selectively for emotional accents, NOT as a repeated border style on every container.",
     "paper": "White or very light blue square graph notebook paper, subtle grid.",
     "colors": "Flexible pastel pink, pale yellow, sky blue, soft green and lavender accents; do not use a rigid palette per channel.",
-    "composition": "Scene-led comedy. Characters and props interacting or reacting; speech/thought clouds used only when joke needs them. No repetitive three-panel boxes or uniform rectangles.",
-    "typography": "Vietnamese handwritten comic lettering, sparse readable captions. Correct Vietnamese accents; a short setup and a sharp payoff.",
+    "composition": "Content-first composition with clear focal point and visual storytelling. Choose scene-led character acting, faux chat/app interface, or practical step illustration to match the actual post; vary per slot. Fake chat UI may use clean rectangles with lightly hand-drawn edges and distinct message bubbles. Avoid repeated scalloped/wavy banners, crowded decorative callouts, and the same headline/bottom pink strip layout in every image.",
+    "typography": "Short legible Vietnamese hand-lettered comic text, correctly accented. For simulated chat/screen use clear UI labels and a realistic hierarchy, not a dense comic poster; allow captions to remain outside the image. Preserve generous negative space.",
     "humor": "Office-life irony, escalating urgent tasks, deadline panic, lost stationery, work trip mishaps, practical tips with an unexpected twist. Image must deliver part of the joke, not just decorate copy.",
     "photo_exception": "Keep effective authentic animal/cat reaction photos photographic; do not redraw them in cartoon style.",
     "provenance": "Create original drawings and original jokes; do not copy branded characters, creators' meme graphics, actual private chat screenshots or unlicensed photos."
@@ -33,7 +33,11 @@
     "excessive text",
     "lifeless symbols without character acting",
     "copy-pasted composition across posts",
-    "repetitive cards with identical layouts across the week"
+    "repetitive cards with identical layouts across the week",
+    "identical pink scalloped bottom caption strip",
+    "wavy or cloud border around every UI element",
+    "decorative arrows and sparkle overload",
+    "overused thick curly line work that competes with text"
   ],
   "delivery": {
     "aspect_ratio": "4:5",
@@ -56,7 +60,7 @@
   ],
   "deprecated_generator": "scripts/enna_doodle_batch.py",
   "deprecated_reason": "Prior 14-image batch was framed/repetitive and rejected as the brand's primary style.",
-  "preferred_creative_workflow": "Concept and Vietnamese joke -> consistent roundhead character illustration -> visual human review -> match an existing scheduled slot -> provider verification -> performance tracking",
+  "preferred_creative_workflow": "Verified content claim + post-specific scene -> select scene_doodle/clean_chat/practical_ui_tip -> render consistent yellow roundhead original illustration -> check text/accuracy/style and visual variation -> only after approval match the correct existing scheduled Metricool slot -> read back provider media and track performance",
   "approved_visual_reference": {
     "confirmed_by_owner_on": "2026-11-06",
     "status": "confirmed",
@@ -74,6 +78,47 @@
       }
     ],
     "creative_rule": "Use the approved images as visual source of truth for future Người Tròn drawings; preserve character design, hand-marker line quality, graph-paper texture, pastel accents and Vietnamese comic typography. Vary scenes, acting and punchlines rather than cloning composition. Do not replace this with web search inspirations, generic stock art or the deprecated 14-image batch.",
-    "caution": "Only metadata is stored here; the Library images have not been checked into this repository."
+    "caution": "Only metadata is stored here; the Library images have not been checked into this repository.",
+    "additional_confirmed_examples": [
+      {
+        "source": "owner-uploaded chat illustration shown in conversation",
+        "confirmed_on": "2026-11-06",
+        "notes": "Office chat with short 08:30 and 08:35 messages; mostly straight chat-window edges, sparse lively handmade elements, concise punchline; user wants less use of curved/wavy outlines."
+      },
+      {
+        "source": "assistant-generated AI email follow-up illustration accepted by owner",
+        "confirmed_on": "2026-11-06",
+        "notes": "Clean mock app/email window, hand-drawn black outlines and pastel on graph-paper; use as layout reference for AI & productivity topics, not as a fixed template."
+      }
+    ]
+  },
+  "style_revision": "v4.1_clean_chat_balance",
+  "style_revision_owner_confirmed_on": "2026-11-06",
+  "approved_composition_modes": {
+    "scene_doodle": {
+      "use_for": "Office stories, relatable workplace humor, everyday problems",
+      "layout": "Yellow round-head character performs the action in a concrete setting; handmade marks on grid paper. Keep prose short.",
+      "decorative_border_limit": "At most one accent bubble or loose contour when needed, never full repetitive top/bottom scalloped banners."
+    },
+    "clean_chat": {
+      "use_for": "Fictional office chat exchanges, conversation humor, situations around emails or task assignments",
+      "layout": "One readable chat/app window with mostly straight gently imperfect black outlines, sparing lavender/blue/pink/green highlights, expressive small avatars, one sharp reaction. CLEARLY LABEL the chat fictional when it could look real.",
+      "decorative_border_limit": "No scalloped border around each message; only one organic highlight if necessary.",
+      "reference": "User-supplied visual 2026-11-06: faux office group chat with 08:30 colleague, 08:35 boss and short reaction punchline. Exact image is a chat attachment; not stored as a public URL."
+    },
+    "practical_ui_tip": {
+      "use_for": "Windows shortcuts, Excel, prompt-writing, responsible AI office use, quick workflows",
+      "layout": "Use clear hand-drawn application window, keyboard or step callout; one actionable verified technique with one humorous reaction; readable labels over decoration.",
+      "decorative_border_limit": "Do not decorate every line, key, table or panel with scalloped clouds.",
+      "reference": "Owner-approved sample AI drafting a polite follow-up email in simple UI/office doodle layout, 2026-11-06."
+    }
+  },
+  "visual_rules": {
+    "nonnegotiable": "Do not change the approved yellow round-head character and the hand-drawn notebook-paper visual language.",
+    "composition_strategy": "Alternate scene_doodle, clean_chat and practical_ui_tip based on content; do not make all posts faux chats.",
+    "no_repeated_frame": "Do not repeat an identical headline banner / giant lower quote strip / identical wavy boxes from one post to the next.",
+    "chat_safety": "Fictional conversation must be marked as fictional; never imitate a real person's private conversation or use actual identifying details.",
+    "practical_accuracy": "Every Windows/Excel/AI tip visible in the image must be verified and consistent with its caption; no misleading screenshots or AI promises.",
+    "social_change_gate": "Visual drafts may be prepared automatically but do not overwrite booked Metricool posts, media or publish until the actual new image and mapping are reviewed."
   }
 }
