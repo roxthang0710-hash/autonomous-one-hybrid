@@ -2,6 +2,8 @@
 
 **Ngày đối chiếu:** 06/11/2026 (Asia/Ho_Chi_Minh). **Nguồn đầu vào:** danh sách 50 tên do chủ dự án gửi, không kèm URL của từng video, file khóa học hoặc toàn văn sách. Không xem kết quả tìm kiếm là đã học hết một khóa học hoặc đọc hết sách.
 
+> **Cập nhật kiểm chứng nguồn 06/11/2026:** Sau khi đọc và đối chiếu thêm các trang công khai, danh mục hiện có **38 nguồn với đường dẫn đã xác định**, **9 mục chưa rõ URL gốc**, **1 video Stanford chỉ có tài liệu liên quan** và **2 mục trùng tạm gộp**. Các mục #25, #37, #43, #45, #48 đã được bổ sung link chính thức. #15, #17, #27 có link ứng viên cần chủ dự án xác nhận. Mức truy cập từng tài nguyên được ghi trong [Reading Audit](ENNA_SOURCE_READING_AUDIT_2026_11_06.md); không coi README, đề cương khóa học hay trang sách là đã đọc toàn văn. Bảng 50 mục bên dưới là bản ảnh chụp gốc, hãy dùng [catalog JSON](../../config/enna_agent_learning_50_resources_2026_11_06.json) để xem đường dẫn cập nhật.
+
 ## 1. Kết luận kỹ thuật có thể áp dụng ngay
 
 1. **Agent không đồng nghĩa với chuỗi cron.** Anthropic phân biệt workflow có đường thực thi định trước và agent chủ động chọn cách làm; dùng một bộ điều phối rõ quyền và bằng chứng, không phải nhiều bot tùy tiện.
