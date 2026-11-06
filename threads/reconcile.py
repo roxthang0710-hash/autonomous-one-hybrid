@@ -54,7 +54,7 @@ def find_matches(drafts, meta_rows):
     } for draft, entry, when in candidates
        if per_meta[str(entry["id"])] == 1]
 
-def reconcile(db=None, *, now=None, read=thread_request):
+def reconcile(db=None, *, now=None, read=None):
     """Read-only Meta verification; writes ONLY evidence to our own database.
 
     Crucially, this must not activate a publishing channel, which the old
@@ -62,6 +62,7 @@ def reconcile(db=None, *, now=None, read=thread_request):
     """
     db = db or Database()
     now = now or datetime.now(timezone.utc)
+    read = read or thread_request
     credentials = load_credentials(db, refresh=False)
     if credentials is None:
         return "waiting_for_owner_meta_oauth"
