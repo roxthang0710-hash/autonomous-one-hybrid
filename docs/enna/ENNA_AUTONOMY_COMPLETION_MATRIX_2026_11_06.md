@@ -91,3 +91,6 @@ Official Meta Threads OAuth permission reference (checked 2026-11-06): https://w
 7. **A8.1:** verify one approved affiliate account/product, then trial only with disclosure; no sale/commission claim until evidence exists.
 
 **Control rule:** no automatic posting, comment/reply to unrelated users, rescheduling, deleting media, buying services, or changing permissions solely to satisfy an autonomy milestone. Require provider identity, authorization and publication evidence.
+
+
+**2026-11-06 OWNER SOURCE UPDATE (16 URLs)**: Owner provided 16 links; 50/50 IDs have references, 1 exact GitHub duplicate #9/#13. Study notes at `docs/enna/ENNA_OWNER_16_SOURCE_REVIEW_2026_11_06.md`. **E3 CODE/CI VERIFIED:** merged PR #90 `cad565b7a95fef93f3847e7d4687771f8f6c7a85` adds `growth/agent_failure_reflection.py` and read-history gate to `growth/agent_goal_cycle.py`: hard permission/identity failures wait up to 72h unless newer official source evidence; internal readback failures pause 12h; bounded alternative Meta GET allowed. 15 new tests passed, 536 full suite green (PR run `42246082538`). Live post-merge worker `42246315036` SUCCESS with 15/15 E3 tests; E2 returned `already_processed` from same 2h idempotency slot, no social writes. **E3 real recovery remains OPEN**, as no fresh cross-cycle OAuth failure/alternative verified provider action was performed in that run.
