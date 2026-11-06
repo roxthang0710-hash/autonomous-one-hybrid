@@ -1,0 +1,64 @@
+name: Enna — Official Threads Publication Proof (No Social Writes)
+
+on:
+  schedule:
+    # Read-only verification checkpoint every six hours (best effort).
+    - cron: '19 0,6,12,18 * * *'
+  workflow_dispatch:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  # Uses only GET on Meta and uniquely matched, conditional, internal DB PATCH.
+  group: enna-threads-provider-proof
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    if: >-
+      github.event_name != 'issues' ||
+      (github.event.issue.user.login == github.repository_owner &&
+       startsWith(github.event.issue.title, 'provider-proof:'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      DB_SERVICE_KEY: ${{ secrets.DB_SERVICE_KEY }}
+      THREADS_PUBLISH_ENABLED: "false"
+      THREADS_EXPECTED_USERNAME: ${{ secrets.THREADS_EXPECTED_USERNAME }}
+      THREADS_TOKEN_KEY: ${{ secrets.THREADS_TOKEN_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Test the reconciler and double-post guards
+        run: python -m unittest discover -s tests -p 'test_threads_reconcile.py' -v
+      - name: Verify owner identity and reconcile ONLY uniquely matched existing Meta posts
+        run: |
+          python - <<'PY'
+          import os
+          from threads.reconcile import reconcile
+          state = reconcile()
+          print('ENNA_OFFICIAL_POST_PROOF=' + state)
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a',encoding='utf-8') as f:
+              f.write('## Official Threads publication proof\n')
+              f.write('Result: '+state+'\n')
+              f.write('No Meta POST, social publish, calendar change, or paid action.\n')
+          if state in ('scheduled_ledger_unavailable','meta_listing_unavailable',
+                       'meta_match_write_unverified','meta_identity_mismatch',
+                       'meta_identity_unavailable'):
+              raise SystemExit('Provider proof unavailable or unverified; no publication claimed')
+          PY
+      - name: Preserve source boundary
+        if: always()
+        run: |
+          echo 'Scope: Threads exact original post text + unique official Meta ID and time window.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No Facebook/Instagram provider truth and no independent Metricool API claimed.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'If owner Meta OAuth is unavailable, this remains blocked; missing proof never means not published.' >> "$GITHUB_STEP_SUMMARY"
