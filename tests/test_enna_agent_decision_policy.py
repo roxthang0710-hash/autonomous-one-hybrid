@@ -33,7 +33,7 @@ class AgentBehaviorTests(unittest.TestCase):
         article=self.resources["items"][21]
         self.assertNotEqual(video["reference_url"],article["reference_url"])
         for idx in (37,43,45,48):
-            self.assertIn("affiliate_redirect_url",self.resources["items"][idx-1])
+            self.assertIn("owner_supplied_affiliate_redirect_url",self.resources["items"][idx-1])
             self.assertIn("coursera.org",self.resources["items"][idx-1]["reference_url"])
         self.assertTrue(all(x["reference_url"] is None
           for x in resources if x["identity_status"]=="exact_source_unresolved"))
