@@ -21,6 +21,7 @@ def good():
         "articulated_motion_verified": True,
         "story_setup_action_payoff_verified": True,
         "rights_verified": True,
+        "original_copy_check_passed": True,
         "owner_visual_approved": True,
         "new_spend": 0,
         "published": False
