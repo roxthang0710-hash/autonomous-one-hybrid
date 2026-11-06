@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "project": "Enna Animation",
+  "series": {
+    "main": {
+      "id": "khoa_linh_miu",
+      "status": "owner_approved",
+      "reference_canva_asset": "MAHaKiERmRk",
+      "roles": [
+        "Khoa",
+        "Linh",
+        "Miu"
+      ]
+    },
+    "senior": {
+      "id": "ong_ba_ba_tu",
+      "status": "owner_approved",
+      "reference_canva_asset": "MAHaKjcgNCw",
+      "roles": [
+        "Ong Ba",
+        "Ba Tu"
+      ]
+    }
+  },
+  "production": {
+    "preference": "quality_over_quantity",
+    "default_generator": "google_flow",
+    "fallback_generator": "owner_approval_required",
+    "free_only": true,
+    "max_generations_per_approved_episode": 1,
+    "autopublish": false,
+    "auto_purchase": false,
+    "use_fixed_character_reference": true,
+    "no_slide_motion": true
+  },
+  "release_gate": {
+    "min_duration_seconds": 7,
+    "max_duration_seconds": 10,
+    "aspect_ratio": "9:16",
+    "min_width": 480,
+    "min_height": 854,
+    "require_verified_mp4": true,
+    "require_character_reference_check": true,
+    "require_actual_articulated_motion": true,
+    "require_setup_action_payoff": true,
+    "require_human_visual_approval": true,
+    "require_original_assets": true,
+    "require_copy_check": true
+  },
+  "ep04": {
+    "title": "Ong khong nghe thay",
+    "approved_script": true,
+    "storyline": [
+      "Grandma calls, Grandpa reads and ignores",
+      "Grandma rustles snack wrapper",
+      "Grandpa eagerly turns",
+      "Grandma shows broom; Grandpa returns to newspaper"
+    ],
+    "production_status": "blocked_google_flow_automation",
+    "confirmed_rendered_approved_mp4": false,
+    "draft_canva_folder": "https://www.canva.com/folder/FAHaKFJQFA0",
+    "existing_trial": {
+      "generator": "ltx_video_2_3",
+      "duration_seconds": 5,
+      "orientation": "landscape",
+      "canva_asset": "VAHaK538_Zg",
+      "quality_status": "rejected_for_release"
+    },
+    "blocker": "Google Flow browser UI flagged automated interaction; do not attempt anti-bot bypass. No verified zero-cost official API for this account.",
+    "next_safe_action": "Resume only with compliant product-supported control or owner-authorized manual handoff; no forced inferior provider switch."
+  }
+}
