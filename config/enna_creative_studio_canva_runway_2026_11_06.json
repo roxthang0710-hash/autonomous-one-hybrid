@@ -150,5 +150,35 @@
     "limits": "Do not automate authenticated sites before the owner signs in through protected TinyFish browser setup; never request passwords in chat.",
     "suggestion": "No additional browser extension required."
   },
-  "provider_tools_additional_installation_needed": false
+  "provider_tools_additional_installation_needed": false,
+  "micro_reel_experiment": {
+    "source_reel": "https://www.instagram.com/reel/DfVfdVARQxb/",
+    "original_reference_playback_verified": false,
+    "reference_metadata_verified": true,
+    "source_analysis": "docs/enna/ENNA_MICRO_REELS_REFERENCE_LAB_2026_11_06.md",
+    "original_briefs": "config/enna_micro_reels_lab_2026_11_06.json",
+    "qa_and_metric_validator": "scripts/enna_micro_reels_lab.py",
+    "tests": "tests/test_enna_micro_reels_lab.py",
+    "production_state": "three_review_only_storyboards_no_mp4_yet",
+    "count": 3,
+    "recommended_seconds_range": [
+      6,
+      10
+    ],
+    "canva_destination_folder_id": "FAHaKOeBiEk",
+    "rights_and_visual_approval_required": true,
+    "publishing_allowed_automatically": false,
+    "metricool_reels_organic_metric_ids": [
+      "IGRE11",
+      "IGRE21",
+      "IGRE23",
+      "IGRE24",
+      "IGRE27",
+      "IGRE10",
+      "IGRE07",
+      "IGRE12"
+    ],
+    "organic_reel_baseline": "none_returned_2026_10_01_to_2026_11_06",
+    "note": "Do not claim original Reel timing/twist is known. User-supplied link metadata only. Do not auto-post without actual MP4 and human QA."
+  }
 }
