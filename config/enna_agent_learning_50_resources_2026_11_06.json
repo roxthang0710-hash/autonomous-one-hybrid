@@ -5,8 +5,7 @@
   "scope_warning": "Catalog and publicly verified landing pages only. This is NOT evidence all 50 materials were fully read, watched, enrolled in, or licensed. Do not copy paid books/video or import third-party code without license review.",
   "interpretation": "Title identity is uncertain for generic video and repo names. Related sources are not represented as identical originals.",
   "duplicate_resource_ids": {
-    "13": 9,
-    "22": 5
+    "13": 9
   },
   "implementation_principles": [
     "Goal -> observe with source timestamp -> plan with alternatives -> authorize tool -> act -> verify independent readback -> reflect",
@@ -22,9 +21,9 @@
       "id": 1,
       "category": "Video",
       "title": "LLM Introduction",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=zjkBMFhNj_g",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "full_public_transcript_available_not_av_playback",
       "application": "foundations",
       "priority": "later"
     },
@@ -32,9 +31,9 @@
       "id": 2,
       "category": "Video",
       "title": "LLMs from Scratch",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=9vM4p9NN0Ts",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "full_public_transcript_available_not_av_playback",
       "application": "foundations",
       "priority": "later"
     },
@@ -42,9 +41,9 @@
       "id": 3,
       "category": "Video",
       "title": "Agentic AI Overview (Stanford)",
-      "reference_url": null,
-      "identity_status": "related_source_only",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=kJLiOGle3Lw",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "title_and_reliable_summary_only_transcript_not_verified",
       "application": "agent_architecture",
       "priority": "high"
     },
@@ -52,9 +51,9 @@
       "id": 4,
       "category": "Video",
       "title": "Building & Evaluating Agents",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=d5EltXhbcfA",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "title_and_reliable_summary_only_transcript_not_verified",
       "application": "evaluation",
       "priority": "high"
     },
@@ -62,19 +61,20 @@
       "id": 5,
       "category": "Video",
       "title": "Building Effective Agents",
-      "reference_url": "https://www.anthropic.com/research/building-effective-agents",
-      "identity_status": "verified_public_landing",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=D7_ipDqhtwk",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "title_and_reliable_summary_only_transcript_not_verified",
       "application": "agent_architecture",
-      "priority": "high"
+      "priority": "high",
+      "supplementary_article_url": "https://www.anthropic.com/research/building-effective-agents"
     },
     {
       "id": 6,
       "category": "Video",
       "title": "Building Agents with MCP",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=kQmXtrmQ5Zg",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "full_public_transcript_available_not_av_playback",
       "application": "tools_security",
       "priority": "high"
     },
@@ -82,9 +82,9 @@
       "id": 7,
       "category": "Video",
       "title": "Building an Agent from Scratch",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/watch?v=xzXdLRUyjUg",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "title_and_reliable_summary_only_transcript_not_verified",
       "application": "agent_architecture",
       "priority": "high"
     },
@@ -92,9 +92,9 @@
       "id": 8,
       "category": "Video",
       "title": "Philo Agents",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "video_not_verified_or_viewed",
+      "reference_url": "https://www.youtube.com/playlist?list=PLacQJwuclt_sV-tfZmpT1Ov6jldHl30NR",
+      "identity_status": "owner_link_verified_video_id",
+      "access_scope": "playlist_url_received_contents_not_verified",
       "application": "agent_architecture",
       "priority": "later"
     },
@@ -162,13 +162,13 @@
       "id": 15,
       "category": "GitHub",
       "title": "Hands-On AI Engineering",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "repository_overview_only",
+      "reference_url": "https://github.com/Sumanth077/Hands-On-AI-Engineering",
+      "identity_status": "owner_link_verified_landing",
+      "access_scope": "github_repo_readme_and_linked_summaries_not_all_files",
       "application": "reliability",
       "priority": "medium",
       "candidate_url": "https://github.com/Sumanth077/Hands-On-AI-Engineering",
-      "source_validation": "plausible_match_needs_owner_confirmation"
+      "source_validation": "owner_confirmed_public_examples_repository; license check before copying any code"
     },
     {
       "id": 16,
@@ -184,13 +184,13 @@
       "id": 17,
       "category": "GitHub",
       "title": "Designing Machine Learning Systems",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "repository_overview_only",
+      "reference_url": "https://github.com/chiphuyen/dmls-book",
+      "identity_status": "owner_link_verified_landing",
+      "access_scope": "github_repo_readme_and_linked_summaries_not_all_files",
       "application": "reliability",
       "priority": "later",
       "candidate_url": "https://github.com/chiphuyen/dmls-book",
-      "source_validation": "plausible_match_needs_owner_confirmation"
+      "source_validation": "owner_confirmed_companion_repository; author says summarizes book but does not reproduce full text"
     },
     {
       "id": 18,
@@ -237,10 +237,11 @@
       "category": "Guide",
       "title": "Building Effective Agents by Anthropic",
       "reference_url": "https://www.anthropic.com/research/building-effective-agents",
-      "identity_status": "duplicate_of_5",
-      "access_scope": "public_guide_landing_only",
+      "identity_status": "verified_public_landing",
+      "access_scope": "anthropic_public_article_distinct_medium_from_video_5",
       "application": "agent_architecture",
-      "priority": "high"
+      "priority": "high",
+      "source_validation": "same theme as video 5 but separately authored article (distinct medium)"
     },
     {
       "id": 23,
@@ -266,12 +267,13 @@
       "id": 25,
       "category": "Book",
       "title": "Understanding Deep Learning",
-      "reference_url": "https://mitpress.mit.edu/9780262377102/understanding-deep-learning/",
-      "identity_status": "verified_public_landing",
-      "access_scope": "publisher_preview_only",
+      "reference_url": "https://udlbook.github.io/udlbook/",
+      "identity_status": "owner_link_verified_landing",
+      "access_scope": "public_book_site_chapters_available_not_all_read",
       "application": "foundations",
       "priority": "later",
-      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06",
+      "publisher_catalog_url": "https://mitpress.mit.edu/9780262377102/understanding-deep-learning/"
     },
     {
       "id": 26,
@@ -287,9 +289,9 @@
       "id": 27,
       "category": "Book",
       "title": "The LLM Engineering Handbook",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
-      "access_scope": "publisher_preview_only",
+      "reference_url": "https://www.oreilly.com/library/view/llm-engineers-handbook/9781836200079/",
+      "identity_status": "owner_link_verified_landing",
+      "access_scope": "publisher_toc_and_preview_not_book_full_text",
       "application": "reliability",
       "priority": "medium",
       "candidate_url": "https://github.com/PacktPublishing/LLM-Engineers-Handbook",
@@ -394,7 +396,8 @@
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "analytics",
       "priority": "medium",
-      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
+      "source_validation": "official_course_page_previously_matched; external affiliate redirect unavailable, not trusted as content or login",
+      "owner_supplied_affiliate_redirect_url": "https://imp.i384100.net/jR67bn"
     },
     {
       "id": 38,
@@ -455,7 +458,8 @@
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "foundations",
       "priority": "later",
-      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
+      "source_validation": "official_course_page_previously_matched; external affiliate redirect unavailable, not trusted as content or login",
+      "owner_supplied_affiliate_redirect_url": "https://imp.i384100.net/qW6KMO"
     },
     {
       "id": 44,
@@ -476,7 +480,8 @@
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "engineering",
       "priority": "medium",
-      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
+      "source_validation": "official_course_page_previously_matched; external affiliate redirect unavailable, not trusted as content or login",
+      "owner_supplied_affiliate_redirect_url": "https://imp.i384100.net/9Vd6kQ"
     },
     {
       "id": 46,
@@ -507,7 +512,8 @@
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "analytics",
       "priority": "later",
-      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
+      "source_validation": "official_course_page_previously_matched; external affiliate redirect unavailable, not trusted as content or login",
+      "owner_supplied_affiliate_redirect_url": "https://imp.i384100.net/PzdQxq"
     },
     {
       "id": 49,
@@ -531,5 +537,6 @@
     }
   ],
   "updated_at": "2026-11-06",
-  "audit_revision_note": "Five precise formerly missing books/course sources recovered by current web verification. Three ambiguously titled sources have suggested candidate URLs for owner confirmation. Original 50 IDs unchanged. Public course syllabus is not enrolled lesson content, book preview is not full book."
+  "audit_revision_note": "Owner supplied 16 links: 8 video/playlist, 2 GitHub, 2 books/sites, 4 affiliate course redirects. Distinguish original YouTube sources from available transcripts, course official pages from affiliate redirects, and article #22 distinct from video #5. Do not claim watching inaccessible videos or reading paid full books.",
+  "owner_source_submission_count": 16
 }
