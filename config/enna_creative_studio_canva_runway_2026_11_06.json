@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Enna social creative studio, non-publishing content production workflow",
+  "brand": "Đồ Hay Đi Làm",
+  "handle": "@dohay_dilam",
+  "setup_verified_date": "2026-11-06",
+  "canva": {
+    "connection_state": "connected_confirmed",
+    "studio_folder": {
+      "id": "FAHaKG-ANls",
+      "url": "https://www.canva.com/folder/FAHaKG-ANls",
+      "children": {
+        "brief": {
+          "id": "FAHaKJJ0Zb4",
+          "url": "https://www.canva.com/folder/FAHaKJJ0Zb4"
+        },
+        "draft": {
+          "id": "FAHaKFJQFA0",
+          "url": "https://www.canva.com/folder/FAHaKFJQFA0"
+        },
+        "approved": {
+          "id": "FAHaKGbBzcA",
+          "url": "https://www.canva.com/folder/FAHaKGbBzcA"
+        },
+        "video_storyboard": {
+          "id": "FAHaKOeBiEk",
+          "url": "https://www.canva.com/folder/FAHaKOeBiEk"
+        }
+      }
+    },
+    "existing_designs_review": "No Enna titled designs were found in search; unrelated personal designs deliberately untouched",
+    "brand_kit": "One Canva brand kit ID appeared, but channel ownership/brand alignment is not verified; do not apply automatically",
+    "standalone_media_generation_state": "not_started_no_ai_credits_used"
+  },
+  "runway": {
+    "connection_state": "connected_confirmed_by_user",
+    "direct_action_access_in_current_agent_runtime": "not_exposed_at_verification",
+    "independent_github_worker_access": "not_verified",
+    "credit_balance": "not_checked",
+    "generated_video_state": "none_generated",
+    "note": "ChatGPT connection is not proof of a callable API in Enna Desk, Cron or GitHub Actions."
+  },
+  "editorial_policy": {
+    "language": "vi-VN",
+    "voice": "Tự nhiên, sắc, dí dỏm kiểu dân công sở; tránh dài dòng, gượng gạo, rập khuôn",
+    "visual_style": "Tình huống thật, biểu cảm gần đời thường, ảnh/photo-led + nét vẽ phác tay và thoại ngắn",
+    "avoid": [
+      "meme sao chép không rõ quyền",
+      "ảnh stock cảm giác quảng cáo",
+      "AI bóng bẩy thiếu tình huống",
+      "CTA ép follow lặp lại máy móc",
+      "caption giả làm trải nghiệm cá nhân được kiểm chứng khi không có nguồn"
+    ],
+    "human_qa_criteria": [
+      {
+        "criterion": "specific_office_situation",
+        "minimum": "1 cảnh huống thật, có chi tiết quan sát"
+      },
+      {
+        "criterion": "natural_punchline",
+        "minimum": "Câu chốt có liên hệ với tình huống và không cringe"
+      },
+      {
+        "criterion": "share_or_save_value",
+        "minimum": "Có cảm xúc hoặc mẹo có thể dùng thật"
+      },
+      {
+        "criterion": "visual_quality",
+        "minimum": "Chữ đọc rõ trên điện thoại, nét vẽ tự do có chủ đích, không lạm dụng"
+      },
+      {
+        "criterion": "copyright",
+        "minimum": "Chỉ dùng tài sản tự tạo hoặc được cấp phép"
+      },
+      {
+        "criterion": "brand_consistency",
+        "minimum": "Đúng tông Đồ Hay Đi Làm, không sao chép kênh khác"
+      }
+    ]
+  },
+  "workflow": [
+    {
+      "step": "idea",
+      "destination": "brief",
+      "auto_allowed": true
+    },
+    {
+      "step": "writing_and_concept_review",
+      "destination": "brief",
+      "auto_allowed": true
+    },
+    {
+      "step": "image_draft",
+      "destination": "draft",
+      "auto_allowed": false,
+      "reason": "Owner has not approved credit-spending/generation in this connection event"
+    },
+    {
+      "step": "video_pilot",
+      "destination": "video_storyboard",
+      "auto_allowed": false,
+      "reason": "Runway credits, render limits, direct tool access and quality are unverified"
+    },
+    {
+      "step": "qa_and_human_approval",
+      "destination": "approved",
+      "auto_allowed": false,
+      "reason": "Human-approved style and media-rights gate"
+    },
+    {
+      "step": "schedule_or_publish",
+      "destination": "Metricool",
+      "auto_allowed": false,
+      "reason": "No approved asset or permission for unattended publication from newly connected providers"
+    }
+  ],
+  "evidence_required_before_marking_video_complete": [
+    "rendered_viewable_MP4_or_provider_asset_id",
+    "quality_check",
+    "rights_check",
+    "actual_export_or_download_readback"
+  ],
+  "guarantees": [
+    "No credentials or personal Canva designs included",
+    "No new posts or purchased services",
+    "No provider AI-credit spend by this config"
+  ]
+}
