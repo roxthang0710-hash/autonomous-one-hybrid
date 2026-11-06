@@ -26,8 +26,15 @@ class AgentBehaviorTests(unittest.TestCase):
         resources=self.resources["items"]
         self.assertEqual(len(resources),50)
         self.assertEqual({x["id"] for x in resources},set(range(1,51)))
-        self.assertEqual(self.resources["duplicate_resource_ids"],{"13":9,"22":5})
+        self.assertEqual(self.resources["duplicate_resource_ids"],{"13":9})
         self.assertTrue(all("fully" not in x["access_scope"] for x in resources))
+        self.assertTrue(all(x["reference_url"] for x in resources))
+        video=self.resources["items"][4]
+        article=self.resources["items"][21]
+        self.assertNotEqual(video["reference_url"],article["reference_url"])
+        for idx in (37,43,45,48):
+            self.assertIn("owner_supplied_affiliate_redirect_url",self.resources["items"][idx-1])
+            self.assertIn("coursera.org",self.resources["items"][idx-1]["reference_url"])
         self.assertTrue(all(x["reference_url"] is None
           for x in resources if x["identity_status"]=="exact_source_unresolved"))
 
