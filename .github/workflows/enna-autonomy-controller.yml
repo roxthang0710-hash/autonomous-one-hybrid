@@ -37,6 +37,10 @@ jobs:
           cache: pip
       - name: Install pinned project dependencies
         run: pip install -r requirements.txt
+      - name: Gate agent tool selection with 22 counterfactual behavior evals
+        run: |
+          python -m growth.agent_decision_policy
+          python -m unittest discover -s tests -p 'test_enna_agent_decision_policy.py' -v
       - name: Test autonomy proof, priority and safety
         run: python -m unittest discover -s tests -p 'test_autonomy_controller.py' -v
       - name: Test A1.2 private incident lifecycle and Meta proof
@@ -48,7 +52,7 @@ jobs:
       - name: State actual capability boundary
         if: always()
         run: |
-          echo '## Enna A1 autonomous incident controller' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Enna A1 autonomous incident controller — behavior eval gated' >> "$GITHUB_STEP_SUMMARY"
           echo 'Reads the cached Meta follower evidence, performs ONE authorized Meta GET if stale, then RE-READS Supabase to verify new evidence.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Ranks cached Facebook/Instagram incidents and writes private owner-scoped notifications plus RLS-protected incident lifecycle states.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Metricool states here are Supabase snapshots, NOT live Metricool confirmation.' >> "$GITHUB_STEP_SUMMARY"
