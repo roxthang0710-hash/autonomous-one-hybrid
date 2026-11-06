@@ -33,12 +33,29 @@
     "standalone_media_generation_state": "not_started_no_ai_credits_used"
   },
   "runway": {
-    "connection_state": "connected_confirmed_by_user",
-    "direct_action_access_in_current_agent_runtime": "not_exposed_at_verification",
+    "connection_state": "authenticated_confirmed_via_runway_whoami",
+    "direct_action_access_in_current_agent_runtime": "available_via_chatgpt_runway_connector",
     "independent_github_worker_access": "not_verified",
-    "credit_balance": "not_checked",
+    "credit_balance": "500 credits at last verification; do not imply video can be generated from this balance",
     "generated_video_state": "none_generated",
-    "note": "ChatGPT connection is not proof of a callable API in Enna Desk, Cron or GitHub Actions."
+    "note": "Connected and authenticated via ChatGPT; free-tier workspace has ZERO available video models. Do not attempt an unsupported paid video request or falsely claim MP4 generated. Canva video or deterministic FFmpeg pipeline can be tested separately with authorized assets. ChatGPT connector does not grant GitHub Actions independent API access.",
+    "available_image_models": [
+      "nano-banana-pro",
+      "nano-banana-2.1",
+      "nano-banana-2",
+      "nano-banana-2-lite",
+      "seedream-5-pro",
+      "p-image-ideogram",
+      "gen-4",
+      "gen-4-image-turbo"
+    ],
+    "available_video_models": [],
+    "video_generation_capability": "blocked_by_current_plan",
+    "credits_verified": {
+      "total": 500,
+      "plan": 500,
+      "purchased": 0
+    }
   },
   "editorial_policy": {
     "language": "vi-VN",
@@ -124,5 +141,14 @@
     "No credentials or personal Canva designs included",
     "No new posts or purchased services",
     "No provider AI-credit spend by this config"
-  ]
+  ],
+  "tinyfish": {
+    "connection_state": "installed_and_connected_confirmed",
+    "browser_profile_exists": true,
+    "signed_in_sites": [],
+    "independent_worker_access": "not_verified",
+    "limits": "Do not automate authenticated sites before the owner signs in through protected TinyFish browser setup; never request passwords in chat.",
+    "suggestion": "No additional browser extension required."
+  },
+  "provider_tools_additional_installation_needed": false
 }
