@@ -40,6 +40,11 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test the reconciler and double-post guards
         run: python -m unittest discover -s tests -p 'test_threads_reconcile.py' -v
+      - name: Test provider feed provenance and private readback
+        run: python -m unittest discover -s tests -p 'test_official_threads_observations.py' -v
+      - name: Capture official owner Threads post IDs independent of Metricool captions
+        run: |
+          python -m growth.official_threads_observations
       - name: Verify owner identity and reconcile ONLY uniquely matched existing Meta posts
         run: |
           python - <<'PY'
@@ -59,6 +64,6 @@ jobs:
       - name: Preserve source boundary
         if: always()
         run: |
-          echo 'Scope: Threads exact original post text + unique official Meta ID and time window.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Scope: verified own-account Meta post IDs and optional exact caption/time reconciliation, without social writes.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No Facebook/Instagram provider truth and no independent Metricool API claimed.' >> "$GITHUB_STEP_SUMMARY"
           echo 'If owner Meta OAuth is unavailable, this remains blocked; missing proof never means not published.' >> "$GITHUB_STEP_SUMMARY"
