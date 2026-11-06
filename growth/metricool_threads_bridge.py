@@ -28,7 +28,7 @@ BRAND="do_hay_di_lam"
 TABLE="/enna_metricool_threads_links"
 UUID=re.compile(r"^-?[0-9]{5,25}$")
 POSTID=re.compile(r"^[0-9]{5,30}$")
-SLUG=re.compile(r"^/@dohay_dilam/post/([a-zA-Z0-9_-]{5,50})/?$")
+SLUG=re.compile(r"^/@dohay_dilam/post/([a-zA-Z0-9_-]{8,50})/?$")
 DAY_SECS=timedelta(minutes=10)
 
 
