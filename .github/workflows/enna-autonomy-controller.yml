@@ -39,14 +39,18 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test autonomy proof, priority and safety
         run: python -m unittest discover -s tests -p 'test_autonomy_controller.py' -v
+      - name: Test A1.2 private incident lifecycle and Meta proof
+        run: python -m unittest discover -s tests -p 'test_autonomy_incident_lifecycle.py' -v
       - name: Choose one bounded recovery and record three highest incidents
         run: python -m growth.autonomy_controller
+      - name: Persist incidents and verify transitions without provider writes
+        run: python -m growth.autonomy_incident_lifecycle
       - name: State actual capability boundary
         if: always()
         run: |
           echo '## Enna A1 autonomous incident controller' >> "$GITHUB_STEP_SUMMARY"
           echo 'Reads the cached Meta follower evidence, performs ONE authorized Meta GET if stale, then RE-READS Supabase to verify new evidence.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Ranks cached Facebook/Instagram incidents and writes private, owner-scoped, deduplicated notifications.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Ranks cached Facebook/Instagram incidents and writes private owner-scoped notifications plus RLS-protected incident lifecycle states.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Metricool states here are Supabase snapshots, NOT live Metricool confirmation.' >> "$GITHUB_STEP_SUMMARY"
           echo 'Never publishes, retries, modifies any scheduled post, buys a plan, or changes permissions.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'A1 is first autonomy milestone; A2 live provider integration, A4 external actions and A5 verified end-to-end execution remain separate.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A1.2 persists incident state and closes only verified newer official Meta evidence; cached Metricool errors stay blocked. A2 live provider integration remains separate.' >> "$GITHUB_STEP_SUMMARY"
