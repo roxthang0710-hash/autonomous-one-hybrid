@@ -46,7 +46,7 @@ def classify(history, *, action, observed_at, now):
         raise ValueError("untrusted_history")
     if len(history) > MAX_HISTORY:
         raise ValueError("history_too_large")
-    for entry in reversed(history):
+    for entry in sorted(history, key=lambda e: str(e.get('finished_at') or '') if isinstance(e, dict) else '', reverse=True):
         if not isinstance(entry, dict) or entry.get("selected_action") != action:
             continue
         if entry.get("status") not in ("blocked", "unverified"):
