@@ -235,6 +235,89 @@ def _repair_legacy(db, *, matched, bridge_row, now):
     return "ledger_repaired_verified"
 
 
+def overdue_diagnostics(bridge, official, *, now):
+    """Only fresh owner-Meta checks can justify an unverified-post alert.
+
+    This does NOT say the post failed or that reposting is safe. Meta results
+    can be paginated and the saved Metricool status may be stale.
+    """
+    now=date(now)
+    timestamps=[]
+    for item in official:
+        if item.get("source")!="meta_official":
+            continue
+        try:timestamps.append(date(item["last_observed_at"]))
+        except (KeyError,ValueError,TypeError):continue
+    if not timestamps or now-max(timestamps)>timedelta(minutes=20):
+        return []
+    alerts=[]
+    for row in bridge:
+        if row.get("brand_key")!=BRAND or row.get("meta_post_id"):
+            continue
+        if row.get("provider_status_last_seen")!="PENDING":
+            continue
+        try:due=date(row["scheduled_at"])
+        except (KeyError,ValueError,TypeError):continue
+        lag=now-due
+        if lag<timedelta(hours=2) or lag>timedelta(days=7):
+            continue
+        uuid=str(row.get("metricool_uuid") or "")
+        if not UUID.fullmatch(uuid):
+            continue
+        digest=row.get("expected_text_sha256")
+        possible=[]
+        for item in official:
+            if item.get("source")!="meta_official" or item.get("text_sha256")!=digest or not digest:
+                continue
+            try:when=date(item["published_at"])
+            except (KeyError,ValueError,TypeError):continue
+            if abs(when-due)<=timedelta(hours=6):
+                possible.append(item)
+        if possible:
+            reason="ambiguous_or_shifted_official_post"
+            description=("Meta có bài tương tự nhưng thời điểm hoặc độ duy nhất không đủ "
+                         "để xác nhận chính xác. Không ghi nhận hay đăng lại tự động.")
+        else:
+            reason="not_identified_in_recent_official_sample"
+            description=("Không tìm thấy bằng chứng khớp trong mẫu Meta đã đọc. "
+                         "Mẫu Meta có thể phân trang; đây KHÔNG phải bằng chứng bài chưa đăng.")
+        alerts.append({
+            "metricool_uuid":uuid,"reason":reason,
+            "details":("Bài Threads đến hạn "+due.isoformat()+
+                ", lịch Metricool chỉ là bản chụp trước đó. "+description),
+            "action":("Kiểm tra permalink và trạng thái thật trên Metricool, "
+                "đọc lại Meta bài chính chủ; không tự đăng bù cho đến khi xác định chắc chắn."),
+            "due":due.isoformat(),
+        })
+    return sorted(alerts,key=lambda x:x["due"])[:3]
+
+
+def notify_overdue(db, incidents):
+    if not incidents:
+        return 0
+    owners=db.request("GET","/enna_desk_owners",params={
+        "select":"user_id","limit":"5"})
+    if not isinstance(owners,list):
+        raise RuntimeError("unverified-owner-registry")
+    if not owners:
+        return 0
+    notices=[{
+        "owner_id":person["user_id"],
+        "source_key":"a22-metricool-unmatched:"+x["metricool_uuid"],
+        "category":"publisher","severity":"warning",
+        "title":"Enna: Threads đến hạn nhưng chưa đối soát được",
+        "details":x["details"],
+        "suggested_action":x["action"],
+    } for person in owners for x in incidents]
+    result=db.request("POST","/enna_desk_notifications",
+        params={"on_conflict":"owner_id,source_key"},
+        payload=notices,
+        prefer="resolution=ignore-duplicates,return=representation")
+    if not isinstance(result,list):
+        raise RuntimeError("unverified-private-owner-notification")
+    return len(result)
+
+
 def reconcile(db=None, *, now=None):
     db=db or Database()
     now=date(now or datetime.now(timezone.utc))
@@ -243,7 +326,7 @@ def reconcile(db=None, *, now=None):
                  "scheduled_at,provider_permalink,expected_text_sha256,meta_post_id",
         "brand_key":"eq."+BRAND,"limit":"120"})
     official=db.request("GET","/enna_official_threads_observations",params={
-        "select":"meta_post_id,published_at,permalink,text_sha256,source",
+        "select":"meta_post_id,published_at,permalink,text_sha256,source,last_observed_at",
         "brand_key":"eq."+BRAND,"order":"published_at.desc","limit":"120"})
     if not isinstance(bridge,list) or not isinstance(official,list):
         raise RuntimeError("required-provider-evidence-unavailable")
@@ -275,6 +358,8 @@ def reconcile(db=None, *, now=None):
         saved.append(item)
         if item["match_basis"]=="exact_verified_permalink":
             legacy[key]=_repair_legacy(db,matched=item,bridge_row=by_uuid[key],now=now)
+    diagnostics=overdue_diagnostics(bridge,official,now=now)
+    alerts_saved=notify_overdue(db,diagnostics)
     return {"state":"verified" if saved else "no_new_matches",
         "metricool_snapshot_rows":len(bridge),
         "official_meta_observations":len(official),
@@ -284,6 +369,8 @@ def reconcile(db=None, *, now=None):
         "hash_time_matches":sum(x["match_basis"]=="unique_caption_hash_and_time" for x in saved),
         "legacy_ledger_repaired":sum(s=="ledger_repaired_verified" for s in legacy.values()),
         "legacy_other_states":dict(Counter(legacy.values())),
+        "due_unmatched_needing_review":len(diagnostics),
+        "new_private_review_alerts":alerts_saved,
         "metricool_api_called":False,
         "social_posts_created":0,
         "safe_to_auto_retry_failed_posts":False}
