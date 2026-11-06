@@ -1,0 +1,61 @@
+name: Enna — Short Video Pilot Preproduction (No Publishing)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'config/enna_video_revenue_pilot_2026_11_06.json'
+      - 'scripts/enna_video_pilot.py'
+      - 'tests/test_enna_video_pilot.py'
+      - '.github/workflows/enna-video-pilot.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: enna-video-pilot-drafts
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check original-only monetization and review gates
+        run: python -m unittest discover -s tests -p 'test_enna_video_pilot.py' -v
+      - name: Produce episode storyboards and Vietnamese SRT files
+        run: python -m scripts.enna_video_pilot --output enna-video-preproduction
+      - name: Verify there are only reviewable, noncommercial files
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('enna-video-preproduction')
+          m=json.loads((path/'manifest.json').read_text(encoding='utf-8'))
+          assert m['episodes']==3 and m['video_files']==0
+          assert m['social_posts']==0 and m['affiliate_links']==0
+          assert len(list(path.glob('*.storyboard.json')))==3
+          assert len(list(path.glob('*.srt')))==3
+          for f in path.glob('*.storyboard.json'):
+              episode=json.loads(f.read_text(encoding='utf-8'))
+              assert episode['actually_published'] is False
+              assert episode['commercial'] is False
+              assert episode['actual_video_rendered'] is False
+          print('Verified three safe short-video PREPRODUCTION packages; no published videos.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: enna-short-video-storyboards-srt-review-only
+          path: enna-video-preproduction/
+          retention-days: 14
+      - name: Clearly report the release boundary
+        if: always()
+        run: |
+          echo 'This job creates three 20-second storyboards and timed Vietnamese subtitles ONLY.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No rendered MP4, generated voice/audio, media upload, affiliate link or social publication.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Human must approve correct brand art, readable copy, sound rights and disclosure before production.' >> "$GITHUB_STEP_SUMMARY"
