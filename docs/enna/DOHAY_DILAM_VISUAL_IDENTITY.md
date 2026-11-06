@@ -44,6 +44,21 @@ Ví dụ bản đã được chủ kênh chọn:
 
 **Negative:** rigid three-panel infographic, tiled cards, stock photo arrangement, corporate ad, generic smiling AI characters, identical composition to previous posts, unreadable text, wrong Vietnamese spelling, gratuitous icons, exaggerated clutter.
 
+## 3A. Cập nhật đã duyệt ngày 06/11 — *ít đường uốn lượn, tăng rõ ràng*
+
+**Đây là bổ sung cho phong cách Người Tròn đã chốt, KHÔNG thay đổi bộ nhận diện.** Chủ kênh đồng ý thêm kiểu **đoạn chat công sở giả lập** và mẫu **giao diện AI soạn email**, có viền đen nét bút tay, nền giấy ô ly, nhân vật tròn vàng nhỏ phản ứng. Chỉ giảm phần trang trí rối mắt.
+
+- **3 chế độ bố cục:** `scene_doodle` (hài tình huống), `clean_chat` (đoạn chat/giao diện giả lập), `practical_ui_tip` (mẹo Windows/Excel/AI có giao diện dễ hiểu).
+- **Line viền:** viền UI gần thẳng, hơi rung tự nhiên; viền uốn lượn chỉ là điểm nhấn, không ép tất cả bóng thoại, tựa đề và đoạn kết thành mây răng cưa.
+- **Số lượng chi tiết:** một hành động chính, một phản ứng, một chỗ nhấn; chữ ít hơn, giữ khoảng trắng. Không bắt buộc có thanh tiêu đề mây vàng và thanh kết mây hồng.
+- **Nội dung:** mẹo phải đúng thao tác; AI chỉ hỗ trợ soạn thảo, cần người dùng kiểm tra lại. Đoạn chat hư cấu phải phân biệt với hội thoại thật.
+- **Biến thể:** không biến mọi ảnh thành đoạn chat; chọn bố cục theo câu chuyện, luân phiên hợp lý.
+- **Bảo tồn:** không chỉnh ảnh mèo thật sang cartoon, không thay nhân vật chính hoặc lấy ảnh internet làm mẫu mới.
+
+**Nguồn xác nhận:** ảnh đoạn chat 08:30/08:35 do chủ kênh gửi trong cuộc trò chuyện ngày 06/11 và ảnh AI soạn mail được chủ kênh duyệt ngay sau đó. Giữ nguyên ảnh mẫu trước đó “BÀN GỌN 10/10” và “CHỦ NHẬT 18:30”.
+
+**Kỹ thuật:** `scripts/enna_roundhead_brief.py --layout clean_chat` hoặc `--layout practical_ui_tip` xuất *creative brief* cho mỗi ý tưởng, không tự sinh file PNG, không tự cập nhật lịch Metricool. Chỉ thay ảnh lịch đã đặt sau khi có tệp thật, kiểm tra đúng bài, duyệt chất lượng, và đọc lại trạng thái nhà cung cấp.
+
 ## 4. Bước duyệt bắt buộc
 
 - [ ] Có nét riêng của **Người Tròn** và giấy ô ly/nét bút tay hoặc một ngoại lệ ảnh mèo rõ ràng.
