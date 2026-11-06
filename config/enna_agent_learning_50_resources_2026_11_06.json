@@ -166,7 +166,9 @@
       "identity_status": "exact_source_unresolved",
       "access_scope": "repository_overview_only",
       "application": "reliability",
-      "priority": "medium"
+      "priority": "medium",
+      "candidate_url": "https://github.com/Sumanth077/Hands-On-AI-Engineering",
+      "source_validation": "plausible_match_needs_owner_confirmation"
     },
     {
       "id": 16,
@@ -186,7 +188,9 @@
       "identity_status": "exact_source_unresolved",
       "access_scope": "repository_overview_only",
       "application": "reliability",
-      "priority": "later"
+      "priority": "later",
+      "candidate_url": "https://github.com/chiphuyen/dmls-book",
+      "source_validation": "plausible_match_needs_owner_confirmation"
     },
     {
       "id": 18,
@@ -262,11 +266,12 @@
       "id": 25,
       "category": "Book",
       "title": "Understanding Deep Learning",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
+      "reference_url": "https://mitpress.mit.edu/9780262377102/understanding-deep-learning/",
+      "identity_status": "verified_public_landing",
       "access_scope": "publisher_preview_only",
       "application": "foundations",
-      "priority": "later"
+      "priority": "later",
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
     },
     {
       "id": 26,
@@ -286,7 +291,9 @@
       "identity_status": "exact_source_unresolved",
       "access_scope": "publisher_preview_only",
       "application": "reliability",
-      "priority": "medium"
+      "priority": "medium",
+      "candidate_url": "https://github.com/PacktPublishing/LLM-Engineers-Handbook",
+      "source_validation": "plausible_match_needs_owner_confirmation"
     },
     {
       "id": 28,
@@ -382,11 +389,12 @@
       "id": 37,
       "category": "Course",
       "title": "Google Advanced Data Analytics Professional Certificate",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
+      "reference_url": "https://www.coursera.org/professional-certificates/google-advanced-data-analytics",
+      "identity_status": "verified_public_landing",
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "analytics",
-      "priority": "medium"
+      "priority": "medium",
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
     },
     {
       "id": 38,
@@ -442,11 +450,12 @@
       "id": 43,
       "category": "Course",
       "title": "Deep Learning Specialization",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
+      "reference_url": "https://www.coursera.org/specializations/deep-learning",
+      "identity_status": "verified_public_landing",
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "foundations",
-      "priority": "later"
+      "priority": "later",
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
     },
     {
       "id": 44,
@@ -462,11 +471,12 @@
       "id": 45,
       "category": "Course",
       "title": "Python for Data Science, AI & Development",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
+      "reference_url": "https://www.coursera.org/learn/python-for-applied-data-science-ai",
+      "identity_status": "verified_public_landing",
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "engineering",
-      "priority": "medium"
+      "priority": "medium",
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
     },
     {
       "id": 46,
@@ -492,11 +502,12 @@
       "id": 48,
       "category": "Course",
       "title": "Microsoft Excel Professional Certificate",
-      "reference_url": null,
-      "identity_status": "exact_source_unresolved",
+      "reference_url": "https://www.coursera.org/professional-certificates/microsoft-excel-skills",
+      "identity_status": "verified_public_landing",
       "access_scope": "catalog_or_public_syllabus_only",
       "application": "analytics",
-      "priority": "later"
+      "priority": "later",
+      "source_validation": "title_and_publisher_or_course_provider_match_on_2026_11_06"
     },
     {
       "id": 49,
@@ -518,5 +529,7 @@
       "application": "analytics",
       "priority": "medium"
     }
-  ]
+  ],
+  "updated_at": "2026-11-06",
+  "audit_revision_note": "Five precise formerly missing books/course sources recovered by current web verification. Three ambiguously titled sources have suggested candidate URLs for owner confirmation. Original 50 IDs unchanged. Public course syllabus is not enrolled lesson content, book preview is not full book."
 }
