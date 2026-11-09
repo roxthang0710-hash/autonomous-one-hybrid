@@ -1,0 +1,35 @@
+name: Enna POD storefront (no TinyFish)
+on:
+  workflow_dispatch:
+    inputs:
+      checkout_dry_run:
+        description: 'Manually verify cart + checkout entry; never submit payment'
+        required: false
+        type: boolean
+        default: false
+  schedule:
+    - cron: '17 2 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: enna-pod-storefront-smoke
+  cancel-in-progress: true
+jobs:
+  storefront:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/enna-pod-browser"
+          npm install --prefix "$RUNNER_TEMP/enna-pod-browser" --no-save playwright@1.56.1
+          "$RUNNER_TEMP/enna-pod-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Smoke storefront and optional manual checkout entry
+        env:
+          PLAYWRIGHT_MODULE_PATH: ${{ runner.temp }}/enna-pod-browser/node_modules/playwright
+          CHECKOUT_DRY_RUN: ${{ inputs.checkout_dry_run || 'false' }}
+        run: node scripts/pod_storefront_smoke.cjs
