@@ -24,7 +24,31 @@ async function main() {
     await verify(page, COLLECTION, 'Start Here');
     const count = await page.locator('a[href*="/products/"]').count();
     ensure(count >= 5, 'Expected >=5 product links; found ' + count);
+    // Tracking instrumentation: verify the tag and the product-view event are
+    // present. A GA4 ID in HTML does not prove that GA4 receives events.
+    const homeTracking = await page.evaluate(() => ({
+      measurementId: window.creatorGa4Id || null,
+      hasDataLayer: Array.isArray(window.dataLayer),
+    }));
+    ensure(/^G-[A-Z0-9]{7,14}$/.test(homeTracking.measurementId || ''),
+      'GA4 measurement ID missing or malformed on storefront');
+    ensure(homeTracking.hasDataLayer, 'dataLayer missing from storefront');
+    console.log('PASS: GA4 Measurement ID and dataLayer present (delivery unverified)');
     await verify(page, PRODUCT, 'Master of the Tiny Gaps');
+    await page.waitForFunction(() => Array.isArray(window.dataLayer) &&
+      window.dataLayer.some(entry => entry && entry.event === 'view_item'),
+      { timeout: 20000 }).catch(() => {});
+    const ga4Product = await page.evaluate(() => ({
+      measurementId: window.creatorGa4Id || null,
+      viewEvent: Array.isArray(window.dataLayer) ?
+        window.dataLayer.find(e => e && e.event === 'view_item') : null,
+    }));
+    ensure(ga4Product.measurementId === homeTracking.measurementId,
+      'GA4 ID differs between homepage and product page');
+    ensure(ga4Product.viewEvent && ga4Product.viewEvent.ecommerce &&
+      Array.isArray(ga4Product.viewEvent.ecommerce.items),
+      'GA4 view_item event missing product ecommerce payload');
+    console.log('PASS: product view_item ecommerce payload present (GA4 reception unverified)');
     const body = await page.locator('body').innerText();
     ensure(body.includes('$19.95'), 'Mug price $19.95 not visible');
     console.log('PASS: storefront, featured collection, five links and product price');

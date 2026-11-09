@@ -1,5 +1,10 @@
 name: Enna POD storefront (no TinyFish)
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/pod_storefront_smoke.cjs'
+      - '.github/workflows/enna-pod-storefront-smoke.yml'
   workflow_dispatch:
     inputs:
       checkout_dry_run:
