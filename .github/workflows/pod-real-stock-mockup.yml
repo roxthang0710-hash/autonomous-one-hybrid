@@ -1,0 +1,32 @@
+name: POD real-photo mockup builder
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/pod_real_stock_mockup.py
+      - .github/workflows/pod-real-stock-mockup.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install image processing only
+        run: pip install --quiet "Pillow>=11,<13" requests
+      - name: Fetch real stock photography and prepare mockup assets
+        run: python scripts/pod_real_stock_mockup.py
+      - name: Commit resulting picture assets
+        run: |
+          git config user.name "Enna POD Design Bot"
+          git config user.email "enna-design-bot@users.noreply.github.com"
+          git add docs/pod/v4_real_stock_contact_sheet.jpg
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(pod): real-photo review contact sheet"
+            git push
+          fi
