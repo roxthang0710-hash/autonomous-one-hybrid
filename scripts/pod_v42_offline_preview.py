@@ -13,7 +13,7 @@ session.headers.update({"User-Agent":"Mozilla/5.0","Accept":"image/jpeg,image/pn
 cdn="https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/"
 shop="https://dohaydilam-shop.fourthwall.com"
 assets={
- "hero":"https://images.pexels.com/photos/10752094/pexels-photo-10752094.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=jpg",
+ "hero":"https://images.pexels.com/photos/10752096/pexels-photo-10752096.jpeg?auto=compress&cs=tinysrgb&w=1200&fm=jpg",
  "mug":cdn+"0310d641-c7ce-419e-acd5-06efa44684f2.webp",
  "note":cdn+"d56fe486-857e-4abb-9098-a5b7a5e9a0f6.webp",
  "tote":cdn+"054e722d-4a14-40f7-ae74-9a52348e586c.webp",
@@ -42,7 +42,7 @@ products=[
 ("note","Notebooks","Future Me Appreciates Present Me","21.95","future-me-appreciates-present-me-spiral-ruled-notebook"),
 ("tote","Tote bags","Still Making Progress","29.95","still-making-progress-organic-cotton-office-tote"),
 ("sticker","Stickers","Protect the Flow","7.95","protect-the-flow-die-cut-vinyl-workday-sticker")]
-cards="".join(f'<a class="product" href="{shop}/products/{slug}"><div class="product-img"><img src="{data[key]}" alt="{escape(title)} · actual Fourthwall listing image" width="480" height="480" loading="lazy"></div><div class="product-info"><span><small>{escape(category)}</small><strong>{escape(title)}</strong></span><b>\${price}</b></div></a>' for key,category,title,price,slug in products)
+cards="".join(f'<a class="product" href="{shop}/products/{slug}"><div class="product-img"><img src="{data[key]}" alt="{escape(title)} · actual Fourthwall listing image" width="480" height="480" loading="lazy"></div><div class="product-info"><span><small>{escape(category)}</small><strong>{escape(title)}</strong></span><b>${price}</b></div></a>' for key,category,title,price,slug in products)
 categories=[
 ("Mugs","coffee-break-mugs"),("Notebooks","workday-notebooks"),("Totes","everyday-office-totes"),
 ("Stickers","laptop-desk-stickers"),("Wall art","workday-wall-art")]
