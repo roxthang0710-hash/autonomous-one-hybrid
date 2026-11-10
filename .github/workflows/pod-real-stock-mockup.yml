@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - scripts/pod_real_stock_mockup.py
+      - scripts/pod_v42_offline_preview.py
       - .github/workflows/pod-real-stock-mockup.yml
   workflow_dispatch:
 permissions:
@@ -21,11 +22,13 @@ jobs:
         run: pip install --quiet "Pillow>=11,<13" requests numpy
       - name: Fetch real stock photography and prepare mockup assets
         run: python scripts/pod_real_stock_mockup.py
+      - name: Build self-contained V4.2 HTML preview
+        run: python scripts/pod_v42_offline_preview.py
       - name: Commit resulting picture assets
         run: |
           git config user.name "Enna POD Design Bot"
           git config user.email "enna-design-bot@users.noreply.github.com"
-          git add docs/pod/v4_real_stock_contact_sheet.jpg docs/pod/mug_artwork_inspection.jpg docs/pod/pexels_9031809_position_guide.jpg docs/pod/v4_mug_stock_mockup_portrait.jpg docs/pod/v4_mug_stock_mockup_office.jpg docs/pod/v4_mug_real_stock_mockups_comparison.jpg
+          git add docs/pod/DOHAYDILAM_V4_2_OFFLINE_PREVIEW.html docs/pod/v4_real_stock_contact_sheet.jpg docs/pod/mug_artwork_inspection.jpg docs/pod/pexels_9031809_position_guide.jpg docs/pod/v4_mug_stock_mockup_portrait.jpg docs/pod/v4_mug_stock_mockup_office.jpg docs/pod/v4_mug_real_stock_mockups_comparison.jpg
           if ! git diff --cached --quiet; then
             git commit -m "assets(pod): real-photo review contact sheet"
             git push
