@@ -1,0 +1,82 @@
+[
+  {
+    "slug": "holiday-lights",
+    "name": "OUR MERRY LITTLE MESS",
+    "subtitle": "TANGLED UP WITH YOU",
+    "theme": "Holiday",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-lights.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "holiday-secret-santa",
+    "name": "SECRET SANTA SURVIVOR",
+    "subtitle": "ANOTHER MYSTERY GIFT",
+    "theme": "Holiday",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-secret-santa.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "holiday-battery",
+    "name": "CHRISTMAS ON 2 BATTERY",
+    "subtitle": "COFFEE BEFORE CHAOS",
+    "theme": "Holiday",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-battery.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "holiday-cocoa",
+    "name": "COCOA FIRST CHAOS LATER",
+    "subtitle": "WINTER DATE NIGHT",
+    "theme": "Holiday",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-cocoa.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "holiday-first",
+    "name": "FIRST WEIRD CHRISTMAS",
+    "subtitle": "STILL MY PERSON",
+    "theme": "Holiday",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-first.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "couple-blanket",
+    "name": "BLANKET TERMS AND CONDITIONS",
+    "subtitle": "ONE BLANKET TWO OPINIONS",
+    "theme": "Couple",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-blanket.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "couple-snack",
+    "name": "WHO ATE MY SNACK",
+    "subtitle": "I HAVE QUESTIONS",
+    "theme": "Couple",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snack.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "couple-thinker",
+    "name": "3AM BIG QUESTIONS",
+    "subtitle": "LOVE YOU PLEASE SLEEP",
+    "theme": "Couple",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-thinker.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "couple-snore",
+    "name": "LOVE YOU EVEN IF YOU SNORE",
+    "subtitle": "SLEEP DEPARTMENT CLOSED",
+    "theme": "Couple",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snore.svg",
+    "status": "DESIGN_SOURCE_READY"
+  },
+  {
+    "slug": "couple-chaos",
+    "name": "OUR DAILY LITTLE DRAMA",
+    "subtitle": "STILL MY FAVORITE PERSON",
+    "theme": "Couple",
+    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-chaos.svg",
+    "status": "DESIGN_SOURCE_READY"
+  }
+]
