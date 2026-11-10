@@ -1,0 +1,134 @@
+[
+  {
+    "id": "retro-small-wins",
+    "theme": "retro",
+    "headline": "SMALL WINS / BIG ENERGY",
+    "subline": "A GOOD DAY IS BUILT IN PIECES",
+    "suggestedProduct": "tote",
+    "assetPath": "docs/pod/expansion-2026-11/retro-small-wins.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "retro-coffee-calendar",
+    "theme": "retro",
+    "headline": "CALENDAR FULL / CUP HALF FULL",
+    "subline": "WORKDAY SUNSHINE CLUB",
+    "suggestedProduct": "mug",
+    "assetPath": "docs/pod/expansion-2026-11/retro-coffee-calendar.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "retro-tabs-and-dreams",
+    "theme": "retro",
+    "headline": "LESS TAB HOPPING / MORE DAYDREAMING",
+    "subline": "THE AFTERNOON CLUB",
+    "suggestedProduct": "tee",
+    "assetPath": "docs/pod/expansion-2026-11/retro-tabs-and-dreams.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "creature-inbox-buddy",
+    "theme": "mascot",
+    "headline": "INBOX BUDDY / ON A BREAK",
+    "subline": "HUMAN FIRST • EMAIL SECOND",
+    "suggestedProduct": "sticker",
+    "assetPath": "docs/pod/expansion-2026-11/creature-inbox-buddy.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "creature-coffee-computer",
+    "theme": "mascot",
+    "headline": "CUTE BUT / BUFFERING",
+    "subline": "ONE SIP AT A TIME",
+    "suggestedProduct": "mug",
+    "assetPath": "docs/pod/expansion-2026-11/creature-coffee-computer.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "creature-notebook-nap",
+    "theme": "mascot",
+    "headline": "THE TO DO LIST / CAN WAIT 5",
+    "subline": "A MINI BREAK IS PRODUCTIVE TOO",
+    "suggestedProduct": "notebook",
+    "assetPath": "docs/pod/expansion-2026-11/creature-notebook-nap.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "data-formula-feels",
+    "theme": "data",
+    "headline": "FORMULAS / AND FEELINGS",
+    "subline": "VERY ORGANIZED • MOSTLY HUMAN",
+    "suggestedProduct": "tee",
+    "assetPath": "docs/pod/expansion-2026-11/data-formula-feels.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "data-progress-not-perfect",
+    "theme": "data",
+    "headline": "PROGRESS > / PERFECTION",
+    "subline": "VERSION 1.0 STILL COUNTS",
+    "suggestedProduct": "poster",
+    "assetPath": "docs/pod/expansion-2026-11/data-progress-not-perfect.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "data-cell-wizard",
+    "theme": "data",
+    "headline": "CELL WIZARD / AFTER HOURS",
+    "subline": "MAKING CHAOS LOOK LIKE A TABLE",
+    "suggestedProduct": "deskmat",
+    "assetPath": "docs/pod/expansion-2026-11/data-cell-wizard.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "cozy-soft-start",
+    "theme": "cozy",
+    "headline": "SOFT START / STEADY FINISH",
+    "subline": "A GENTLER WAY TO GET THINGS DONE",
+    "suggestedProduct": "notebook",
+    "assetPath": "docs/pod/expansion-2026-11/cozy-soft-start.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "cozy-ideas-brewing",
+    "theme": "cozy",
+    "headline": "IDEAS ARE / BREWING",
+    "subline": "NO NEED TO RUSH THE GOOD STUFF",
+    "suggestedProduct": "poster",
+    "assetPath": "docs/pod/expansion-2026-11/cozy-ideas-brewing.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  },
+  {
+    "id": "cozy-space-to-think",
+    "theme": "cozy",
+    "headline": "MAKE SPACE / TO THINK",
+    "subline": "THE QUIET PART MATTERS",
+    "suggestedProduct": "tote",
+    "assetPath": "docs/pod/expansion-2026-11/cozy-space-to-think.svg",
+    "shopStatus": "ARTWORK_SOURCE_ONLY",
+    "copyright": "Original work created for dohaydilam; not from stock assets",
+    "check": "Physical printing and IP screening required before public launch"
+  }
+]

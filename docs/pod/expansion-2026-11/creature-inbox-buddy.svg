@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="2800" viewBox="0 0 1200 1400" role="img" aria-label="INBOX BUDDY ON A BREAK"><title>INBOX BUDDY ON A BREAK</title>
+<rect x="92" y="122" width="1016" height="1135" rx="184" fill="#efd9ff"/>
+<circle cx="925" cy="370" r="134" fill="#f8b8dc"/>
+<path d="M142 487Q90 246 339 251Q467 80 639 294Q773 218 912 428Q1082 604 902 812Q772 1102 482 1035Q227 1013 142 805Z" fill="#b3e6d2"/>
+<g><ellipse cx="257.6" cy="340.0" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(0 257.6 340.0)"/><ellipse cx="240.7" cy="380.7" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(45 240.7 380.7)"/><ellipse cx="200.0" cy="397.6" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(90 200.0 397.6)"/><ellipse cx="159.3" cy="380.7" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(135 159.3 380.7)"/><ellipse cx="142.4" cy="340.0" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(180 142.4 340.0)"/><ellipse cx="159.3" cy="299.3" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(225 159.3 299.3)"/><ellipse cx="200.0" cy="282.4" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(270 200.0 282.4)"/><ellipse cx="240.7" cy="299.3" rx="30.96" ry="25.919999999999998" fill="#fff0e8" transform="rotate(315 240.7 299.3)"/><circle cx="200" cy="340" r="30.96" fill="#392b57"/></g><path d="M930 585 Q937.8 642.2 995 650 Q937.8 657.8 930 715 Q922.2 657.8 865 650 Q922.2 642.2 930 585Z" fill="#f8b8dc"/><path d="M280 729 Q285.52 769.48 326 775 Q285.52 780.52 280 821 Q274.48 780.52 234 775 Q274.48 769.48 280 729Z" fill="#f8b8dc"/>
+<g stroke="#392b57" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+<rect x="320" y="378" width="550" height="410" rx="70" fill="#fff9e9"/>
+<rect x="375" y="425" width="440" height="293" rx="38" fill="#b3e6d2"/>
+<path d="M455 565q34 -40 70 0 M660 565q34 -40 70 0" fill="none"/>
+<path d="M545 623q60 83 132 0" fill="none"/>
+<ellipse cx="445" cy="633" rx="31" ry="16" fill="#f8b8dc" stroke="none"/>
+<ellipse cx="744" cy="633" rx="31" ry="16" fill="#f8b8dc" stroke="none"/>
+<path d="M483 789v90 M717 789v90 M480 878l-42 23 M720 878l42 23" fill="none"/>
+<path d="M321 638q-105 0-98 -88 M871 638q105 0 98 -88" fill="none"/>
+</g>
+<text x="600" y="1023" text-anchor="middle" fill="#392b57" font-family="DejaVu Sans,Arial,sans-serif" font-weight="900" font-size="102" textLength="900" lengthAdjust="spacingAndGlyphs">INBOX BUDDY</text>
+<text x="600" y="1137" text-anchor="middle" fill="#392b57" font-family="DejaVu Sans,Arial,sans-serif" font-weight="900" font-size="108" textLength="900" lengthAdjust="spacingAndGlyphs">ON A BREAK</text>
+<text x="600" y="1228" text-anchor="middle" fill="#392b57" font-family="DejaVu Sans,Arial,sans-serif" font-weight="700" font-size="30" textLength="860" lengthAdjust="spacingAndGlyphs">HUMAN FIRST • EMAIL SECOND</text></svg>
