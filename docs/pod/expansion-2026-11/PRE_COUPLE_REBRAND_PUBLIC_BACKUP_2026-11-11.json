@@ -1,0 +1,619 @@
+{
+  "createdAt": "2026-11-11",
+  "shop": "dohaydilam-shop.fourthwall.com",
+  "note": "Rollback record of PUBLIC offer statuses, names, slugs, and collection membership prior to Couple-only rebrand. Archived offers can be restored; source product artwork NOT replaced by descriptive text.",
+  "publicOffers": [
+    {
+      "id": "ca6d2038-b9b4-4f08-86ad-88a576d60da3",
+      "name": "Christmas on 2% Battery — Funny Office Holiday Tee",
+      "slug": "christmas-on-2-battery-funny-office-holiday-tee",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "customizationId": "cud_X7SgYhAQSaeidQXKeFFbeQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+      "name": "Blanket Terms and Conditions — Funny Couple Poster",
+      "slug": "blanket-terms-and-conditions-funny-couple-poster",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_Tr9i4Wk8S0SQF2WMd4InBg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "d18b672e-aa61-46df-8fe4-cdeb6630dd55",
+      "name": "3AM Big Questions — Quirky Couple Graphic Tee",
+      "slug": "3am-big-questions-quirky-couple-graphic-tee",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "customizationId": "cud_nDkyARxsS-ekOK1G95BHQg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+      "name": "Who Ate My Snack? — Hand-Drawn Couple Mug",
+      "slug": "who-ate-my-snack-hand-drawn-couple-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_cwFoWhDuTvSmym3NLy6nJg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+      "name": "Love You Even If You Snore — Doodle Couple Sticker",
+      "slug": "love-you-even-if-you-snore-doodle-couple-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_t1G7bSFvRc2JbriSYgV0HQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "a34efb4d-7638-4480-8d86-5dd59e872651",
+      "name": "Our Daily Little Drama — Organic Cotton Couple Tote",
+      "slug": "our-daily-little-drama-organic-cotton-couple-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_tmmrpdr1SzWYo_NjOub1iw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "9174b684-fa48-42b8-80f9-c88efaec511b",
+      "name": "Cocoa First Chaos Later — Winter Date Night Art Print",
+      "slug": "cocoa-first-chaos-later-winter-date-night-art-print",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_8YrtoIOTTCWOZzVCAMq_XA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "b328659d-f381-47ab-9f1e-fd199a52704d",
+      "name": "Secret Santa Survivor — Funny Hand-Drawn Office Mug",
+      "slug": "secret-santa-survivor-funny-hand-drawn-office-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_oM0M1BplTAywBA_QwegLVA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "66658a91-3298-4e2f-a5d7-a202887c3091",
+      "name": "First Weird Christmas — Couple Doodle Notebook",
+      "slug": "first-weird-christmas-couple-doodle-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_frrOA5UqSrCOdGAqHi0OLw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+      "name": "Our Merry Little Mess — Hand-Drawn Christmas Tote",
+      "slug": "our-merry-little-mess-hand-drawn-christmas-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_OdkJzTFgS9eDocTg5vDoGg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "5d2398ca-efe2-4767-9a1b-7b8d53192bc4",
+      "name": "Ideas Are Brewing — Cozy Coffee Poster",
+      "slug": "ideas-are-brewing-cozy-coffee-poster",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_f1BjwEvgS0GbsGGyXiMrHQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "00d6c503-6f46-4c07-9cad-ae85b287ed5d",
+      "name": "Formulas and Feelings — Spreadsheet Graphic Tee",
+      "slug": "formulas-and-feelings-spreadsheet-graphic-tee",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "customizationId": "cud_ng7vmBECR2q9Mcj9VuMvSA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "78753b6c-4cc5-4cc3-8e9d-7545766825c4",
+      "name": "Soft Start Steady Finish — Cozy Office Notebook",
+      "slug": "soft-start-steady-finish-cozy-office-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_6Wm0AHqpQZu1xTsWhxElzg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "e2cb3c30-e665-4462-b294-ed2624bed505",
+      "name": "Make Space to Think — Botanical Office Tote",
+      "slug": "make-space-to-think-botanical-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_d0haOMcFQHCJD9DLiEVhjw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "92735f72-acb7-42ae-9ec7-715abe54210d",
+      "name": "Less Tab Hopping More Daydreaming — Retro Graphic Tee",
+      "slug": "less-tab-hopping-more-daydreaming-retro-graphic-tee",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "customizationId": "cud_nY3IdteVSZu2SiKalmGN_w",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "d5491837-3530-49a8-bbb8-26a0e6f04bc3",
+      "name": "Calendar Full Cup Half Full — Retro Coffee Mug",
+      "slug": "calendar-full-cup-half-full-retro-coffee-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_MrSjzag-Rj6oV4KN96WXmg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "847f499a-580f-4d42-8b63-e1da0e1c272e",
+      "name": "Inbox Buddy On A Break — Office Mascot Sticker",
+      "slug": "inbox-buddy-on-a-break-office-mascot-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_jrRmmDMfRciuyFZmEkjmWA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "2853e4de-528e-4c46-9aef-06c71f2292e9",
+      "name": "Cute But Buffering — Office Mascot Mug",
+      "slug": "cute-but-buffering-office-mascot-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_cU-6eWlEQ1-odo7w_cH9Gg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "d0d2ecf4-5141-48db-a08a-893606acecbd",
+      "name": "Small Wins Big Energy — Retro Office Tote",
+      "slug": "small-wins-big-energy-retro-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_EhqhgvHvQCWYn1vBgFTeSQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "759881c5-48df-49c1-8783-2c1b3379af5a",
+      "name": "Master of the Tiny Gaps | Minimalist Office Poster 12x16",
+      "slug": "master-of-the-tiny-gaps-minimalist-office-poster-12x16-2",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_zIuEloyuSAG82WZoHEVo6A",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "640f98d4-16c9-46f6-83a1-5151a5090de9",
+      "name": "Master of the Tiny Gaps | Spiral Ruled Notebook",
+      "slug": "master-of-the-tiny-gaps-spiral-ruled-notebook-2",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_egpMgLKBSM27C55llBGIaQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "eebe816b-6a46-4fc0-9dba-c37088d43fa8",
+      "name": "Master of the Tiny Gaps | Die-Cut Vinyl Workday Sticker",
+      "slug": "master-of-the-tiny-gaps-die-cut-vinyl-workday-sticker-2",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_J8zLChYxTQOttf0aKvad_A",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "5ae1319a-f632-499c-b325-cd6bc94ac26d",
+      "name": "Master of the Tiny Gaps | 11oz Office Coffee Mug",
+      "slug": "master-of-the-tiny-gaps-11oz-office-coffee-mug-2",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_gNKU0sZMSBKqNyneuV6yrw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "089a833c-cdb5-4b9c-84f1-5be902f8802f",
+      "name": "Master of the Tiny Gaps | Organic Cotton Office Tote",
+      "slug": "master-of-the-tiny-gaps-organic-cotton-office-tote-2",
+      "productId": "pro_367",
+      "customizationId": "cud_4hJXuc_zQV22TpgeHqhDvA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "a63e7325-4c15-4bf3-8f3c-2a33926d2e2a",
+      "name": "Future Me Appreciates Present Me | Minimalist Office Poster 12x16",
+      "slug": "future-me-appreciates-present-me-minimalist-office-poster-12x16",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_7GoyvWj7QdSOtNALYGDn_g",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "d51f7c68-ab10-4122-9685-b06b8b2ce66a",
+      "name": "Future Me Appreciates Present Me | Die-Cut Vinyl Workday Sticker",
+      "slug": "future-me-appreciates-present-me-die-cut-vinyl-workday-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_9ZL7FInbQa21WbKPXPo0oA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "5ccaf90a-8e15-4457-a9fd-3428834a0cc3",
+      "name": "Future Me Appreciates Present Me | Spiral Ruled Notebook",
+      "slug": "future-me-appreciates-present-me-spiral-ruled-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_Mp5gU2uWTi2bwaf7ojojCg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "49c7b43b-c8d8-42cd-b661-15dfd3d106b8",
+      "name": "Future Me Appreciates Present Me | 11oz Office Coffee Mug",
+      "slug": "future-me-appreciates-present-me-11oz-office-coffee-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_WBI6KAIaQQ6aiuYTb15g_Q",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "5282f6de-fa76-4446-bf15-d6de09062201",
+      "name": "Future Me Appreciates Present Me | Organic Cotton Office Tote",
+      "slug": "future-me-appreciates-present-me-organic-cotton-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_A7IS06UjT-yNJRBmy0okPg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "28c36b38-f160-4b5d-b86d-977a8cb47469",
+      "name": "Protect the Flow | Minimalist Office Poster 12x16",
+      "slug": "protect-the-flow-minimalist-office-poster-12x16",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_-3clqoNNQmmrBIEqwyROzg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "765755ec-012e-49e5-8198-448d8bb03542",
+      "name": "Protect the Flow | Spiral Ruled Notebook",
+      "slug": "protect-the-flow-spiral-ruled-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_9SPsX9hDQCijQkhC1ppZ6A",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "6e4543d2-c0fb-423a-a740-9716351cc103",
+      "name": "Protect the Flow | 11oz Office Coffee Mug",
+      "slug": "protect-the-flow-11oz-office-coffee-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_Ipidg3-xSBut_AcG4IYRog",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "2cc414ad-1f93-4af1-a263-ea2487664a2d",
+      "name": "Protect the Flow | Organic Cotton Office Tote",
+      "slug": "protect-the-flow-organic-cotton-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_mjegkaVWToitI99eTAw4kg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "65503d08-dd7a-4731-9f96-6c95277db527",
+      "name": "Protect the Flow | Die-Cut Vinyl Workday Sticker",
+      "slug": "protect-the-flow-die-cut-vinyl-workday-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_r2sI1K8oR7OjuUJ6V6FtgA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "e98d44af-4dc4-47ce-92c9-a14ab06413a9",
+      "name": "Still Making Progress | Minimalist Office Poster 12x16",
+      "slug": "still-making-progress-minimalist-office-poster-12x16",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_FdfTC2XzSnS-hTYa-zHNSw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "06b59226-66d2-4a64-b73b-da593cb9d6b1",
+      "name": "Still Making Progress | 11oz Office Coffee Mug",
+      "slug": "still-making-progress-11oz-office-coffee-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_i-d6USYsSyGwZpCzbgRmIw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "7e133e46-3abd-46ac-83a9-b59aae481078",
+      "name": "Still Making Progress | Spiral Ruled Notebook",
+      "slug": "still-making-progress-spiral-ruled-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_UrUovXU6SmSPRGwjti2gCQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "ba20dfb3-8439-4bd3-b728-b1322dc104d8",
+      "name": "Still Making Progress | Die-Cut Vinyl Workday Sticker",
+      "slug": "still-making-progress-die-cut-vinyl-workday-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_wjhHbcBPTMisFFw-zGcLZA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "74e2fea4-1fe6-43d6-a829-b94ce2026777",
+      "name": "Still Making Progress | Organic Cotton Office Tote",
+      "slug": "still-making-progress-organic-cotton-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_YE-2dbFTSjWkbxZgzYrzGw",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "519af9f5-dae2-4b62-9bbc-e054ea1bab32",
+      "name": "Make the Mess Make Sense | Workday Wall Art Poster",
+      "slug": "make-the-mess-make-sense-workday-wall-art-poster",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_5cnaofjsTTexsollYJ2GcA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "ce0cc7c8-df5c-4753-8470-23af1f66307d",
+      "name": "Make the Mess Make Sense | 11oz Office Coffee Mug",
+      "slug": "make-the-mess-make-sense-11oz-office-coffee-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_ebWvDEcOT_qEtpkuiQQxbA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "c0e94f0c-9109-4704-88a9-d68b92f42e3e",
+      "name": "Make the Mess Make Sense | Spiral Ruled Notebook",
+      "slug": "make-the-mess-make-sense-spiral-ruled-notebook",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "customizationId": "cud_jFg2UPGSRLKem_YCv48mqA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "a0b57bb1-fbd3-4336-bb8e-edd9f4185036",
+      "name": "Make the Mess Make Sense | Workday Vinyl Sticker",
+      "slug": "make-the-mess-make-sense-workday-vinyl-sticker",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "customizationId": "cud_liFtty7wTKua-GR27Y1hnQ",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "7919658b-b34b-4869-9756-fe74b24d6b49",
+      "name": "Make the Mess Make Sense | Organic Cotton Office Tote",
+      "slug": "make-the-mess-make-sense-organic-cotton-office-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_sEqT7eKlRfyv0UM5YQrqDA",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "453b40fd-fef6-45d2-9c31-037ce51633e7",
+      "name": "One Thing Then the Next | Minimalist Office Poster",
+      "slug": "one-thing-then-the-next-minimalist-office-poster",
+      "productId": "pro_15bc29bc8a324d449d",
+      "customizationId": "cud_yyo7CdDZQZSmHuOsjOG0Tg",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "07da4c41-5d58-4609-bc01-3d1d665de82f",
+      "name": "A Practical Amount of Chaos | Organic Cotton Tote",
+      "slug": "a-practical-amount-of-chaos-organic-cotton-tote",
+      "productId": "pro_367",
+      "customizationId": "cud_LC1IWXa3QX2nvG_baah86A",
+      "oldStatus": "PUBLIC"
+    },
+    {
+      "id": "6bb7b0e3-816c-48af-8980-3bd4510a4b86",
+      "name": "Coffee Decisions Pending | Office Mug",
+      "slug": "coffee-decisions-pending-office-mug",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "customizationId": "cud_2B8c_aamQ2ua4IKnK0wzxQ",
+      "oldStatus": "PUBLIC"
+    }
+  ],
+  "collections": [
+    {
+      "id": "col_5Fx0nO7KRpmSnewOogWUgQ",
+      "name": "Tiny Couple Chaos — Hand-Drawn Love Stories",
+      "slug": "tiny-couple-chaos-hand-drawn-love-stories",
+      "state": "PUBLIC",
+      "offerIds": [
+        "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+        "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+        "d18b672e-aa61-46df-8fe4-cdeb6630dd55",
+        "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+        "a34efb4d-7638-4480-8d86-5dd59e872651"
+      ]
+    },
+    {
+      "id": "col_8VwO9JGyQgKB4HnXE2jbrQ",
+      "name": "Christmas Doodles 2026 — Holiday Drop",
+      "slug": "christmas-doodles-2026-holiday-drop",
+      "state": "PUBLIC",
+      "offerIds": [
+        "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+        "b328659d-f381-47ab-9f1e-fd199a52704d",
+        "ca6d2038-b9b4-4f08-86ad-88a576d60da3",
+        "9174b684-fa48-42b8-80f9-c88efaec511b",
+        "66658a91-3298-4e2f-a5d7-a202887c3091"
+      ]
+    },
+    {
+      "id": "col_Xgtz_M3aRciV2BmUr2h3-A",
+      "name": "Office Secret Santa — Funny Gifts Under $25",
+      "slug": "office-secret-santa-funny-gifts-under-25",
+      "state": "PUBLIC",
+      "offerIds": [
+        "d5491837-3530-49a8-bbb8-26a0e6f04bc3",
+        "b328659d-f381-47ab-9f1e-fd199a52704d",
+        "ca6d2038-b9b4-4f08-86ad-88a576d60da3",
+        "66658a91-3298-4e2f-a5d7-a202887c3091",
+        "521eb795-ad2a-4a4b-96cf-789cc930ce07"
+      ]
+    },
+    {
+      "id": "col_gPoFjLdCQU--e2QYA_hBkQ",
+      "name": "Slow Desk Rituals — New Drop",
+      "slug": "slow-desk-rituals-new-drop",
+      "state": "PUBLIC",
+      "offerIds": [
+        "78753b6c-4cc5-4cc3-8e9d-7545766825c4",
+        "5d2398ca-efe2-4767-9a1b-7b8d53192bc4",
+        "e2cb3c30-e665-4462-b294-ed2624bed505"
+      ]
+    },
+    {
+      "id": "col_zvyTSsPtTr6L70SUhZwrQQ",
+      "name": "Spreadsheet Underground — New Drop",
+      "slug": "spreadsheet-underground-new-drop",
+      "state": "PUBLIC",
+      "offerIds": [
+        "00d6c503-6f46-4c07-9cad-ae85b287ed5d"
+      ]
+    },
+    {
+      "id": "col_BWCiysCeQ9Sv6TSAwOUpAQ",
+      "name": "Deadline Creatures — New Drop",
+      "slug": "deadline-creatures-new-drop",
+      "state": "PUBLIC",
+      "offerIds": [
+        "847f499a-580f-4d42-8b63-e1da0e1c272e",
+        "2853e4de-528e-4c46-9aef-06c71f2292e9"
+      ]
+    },
+    {
+      "id": "col_brXgMGBPSZmI4owm-9zxNA",
+      "name": "Retro Office Club — New Drop",
+      "slug": "retro-office-club-new-drop",
+      "state": "PUBLIC",
+      "offerIds": [
+        "d0d2ecf4-5141-48db-a08a-893606acecbd",
+        "d5491837-3530-49a8-bbb8-26a0e6f04bc3",
+        "92735f72-acb7-42ae-9ec7-715abe54210d"
+      ]
+    },
+    {
+      "id": "col_7BHdZTfXRqmEa2K92NcbvQ",
+      "name": "Little Gifts Under $20 — Mugs & Stickers",
+      "slug": "office-gifts-under-20",
+      "state": "PUBLIC",
+      "offerIds": [
+        "b328659d-f381-47ab-9f1e-fd199a52704d",
+        "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+        "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+        "66658a91-3298-4e2f-a5d7-a202887c3091",
+        "eebe816b-6a46-4fc0-9dba-c37088d43fa8",
+        "d51f7c68-ab10-4122-9685-b06b8b2ce66a",
+        "65503d08-dd7a-4731-9f96-6c95277db527",
+        "5ae1319a-f632-499c-b325-cd6bc94ac26d",
+        "49c7b43b-c8d8-42cd-b661-15dfd3d106b8",
+        "6e4543d2-c0fb-423a-a740-9716351cc103"
+      ]
+    },
+    {
+      "id": "col_RngVSz6zQ_OpWMQMOYkZVQ",
+      "name": "Start Here — Christmas & Couple Gift Picks",
+      "slug": "start-here-workday-gift-picks",
+      "state": "PUBLIC",
+      "offerIds": [
+        "b328659d-f381-47ab-9f1e-fd199a52704d",
+        "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+        "66658a91-3298-4e2f-a5d7-a202887c3091",
+        "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+        "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+        "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+        "ca6d2038-b9b4-4f08-86ad-88a576d60da3",
+        "a34efb4d-7638-4480-8d86-5dd59e872651"
+      ]
+    },
+    {
+      "id": "col_0Mq2C3AoS0eTvAPKGVjAVA",
+      "name": "Laptop & Desk Stickers — Little Gifts",
+      "slug": "laptop-desk-stickers",
+      "state": "PUBLIC",
+      "offerIds": [
+        "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+        "a0b57bb1-fbd3-4336-bb8e-edd9f4185036",
+        "ba20dfb3-8439-4bd3-b728-b1322dc104d8",
+        "eebe816b-6a46-4fc0-9dba-c37088d43fa8",
+        "65503d08-dd7a-4731-9f96-6c95277db527",
+        "d51f7c68-ab10-4122-9685-b06b8b2ce66a"
+      ]
+    },
+    {
+      "id": "col_UEoSOwM9Rka_oiBUiWh1QA",
+      "name": "Notebooks — Christmas & Everyday Ideas",
+      "slug": "workday-notebooks",
+      "state": "PUBLIC",
+      "offerIds": [
+        "66658a91-3298-4e2f-a5d7-a202887c3091",
+        "c0e94f0c-9109-4704-88a9-d68b92f42e3e",
+        "7e133e46-3abd-46ac-83a9-b59aae481078",
+        "640f98d4-16c9-46f6-83a1-5151a5090de9",
+        "765755ec-012e-49e5-8198-448d8bb03542",
+        "5ccaf90a-8e15-4457-a9fd-3428834a0cc3"
+      ]
+    },
+    {
+      "id": "col_J_I9YJ5jT8ieo3iFactA7Q",
+      "name": "Everyday Totes — Office & Couple Doodles",
+      "slug": "everyday-office-totes",
+      "state": "PUBLIC",
+      "offerIds": [
+        "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+        "a34efb4d-7638-4480-8d86-5dd59e872651",
+        "7919658b-b34b-4869-9756-fe74b24d6b49",
+        "74e2fea4-1fe6-43d6-a829-b94ce2026777",
+        "089a833c-cdb5-4b9c-84f1-5be902f8802f",
+        "2cc414ad-1f93-4af1-a263-ea2487664a2d",
+        "5282f6de-fa76-4446-bf15-d6de09062201",
+        "07da4c41-5d58-4609-bc01-3d1d665de82f"
+      ]
+    },
+    {
+      "id": "col_vSIUlo_GQ3SzOJIxh2TH_Q",
+      "name": "Wall Art & Couple Posters",
+      "slug": "workday-wall-art",
+      "state": "PUBLIC",
+      "offerIds": [
+        "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+        "9174b684-fa48-42b8-80f9-c88efaec511b",
+        "519af9f5-dae2-4b62-9bbc-e054ea1bab32",
+        "e98d44af-4dc4-47ce-92c9-a14ab06413a9",
+        "759881c5-48df-49c1-8783-2c1b3379af5a",
+        "28c36b38-f160-4b5d-b86d-977a8cb47469",
+        "a63e7325-4c15-4bf3-8f3c-2a33926d2e2a",
+        "453b40fd-fef6-45d2-9c31-037ce51633e7"
+      ]
+    },
+    {
+      "id": "col_O6nu3QrWTC6GldUiDDdudg",
+      "name": "Coffee Break Mugs — Office & Couple Gifts",
+      "slug": "coffee-break-mugs",
+      "state": "PUBLIC",
+      "offerIds": [
+        "b328659d-f381-47ab-9f1e-fd199a52704d",
+        "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+        "ce0cc7c8-df5c-4753-8470-23af1f66307d",
+        "06b59226-66d2-4a64-b73b-da593cb9d6b1",
+        "5ae1319a-f632-499c-b325-cd6bc94ac26d",
+        "6e4543d2-c0fb-423a-a740-9716351cc103",
+        "49c7b43b-c8d8-42cd-b661-15dfd3d106b8",
+        "6bb7b0e3-816c-48af-8980-3bd4510a4b86"
+      ]
+    },
+    {
+      "id": "col_0ZwrPzNsR1OesQqZkGiqsA",
+      "name": "Workday Objects — Series 01",
+      "slug": "workday-objects-series-01",
+      "state": "PUBLIC",
+      "offerIds": [
+        "ce0cc7c8-df5c-4753-8470-23af1f66307d",
+        "519af9f5-dae2-4b62-9bbc-e054ea1bab32",
+        "7919658b-b34b-4869-9756-fe74b24d6b49",
+        "c0e94f0c-9109-4704-88a9-d68b92f42e3e",
+        "a0b57bb1-fbd3-4336-bb8e-edd9f4185036",
+        "06b59226-66d2-4a64-b73b-da593cb9d6b1",
+        "e98d44af-4dc4-47ce-92c9-a14ab06413a9",
+        "74e2fea4-1fe6-43d6-a829-b94ce2026777",
+        "7e133e46-3abd-46ac-83a9-b59aae481078",
+        "ba20dfb3-8439-4bd3-b728-b1322dc104d8",
+        "5ae1319a-f632-499c-b325-cd6bc94ac26d",
+        "759881c5-48df-49c1-8783-2c1b3379af5a",
+        "089a833c-cdb5-4b9c-84f1-5be902f8802f",
+        "640f98d4-16c9-46f6-83a1-5151a5090de9",
+        "eebe816b-6a46-4fc0-9dba-c37088d43fa8",
+        "6e4543d2-c0fb-423a-a740-9716351cc103",
+        "28c36b38-f160-4b5d-b86d-977a8cb47469",
+        "2cc414ad-1f93-4af1-a263-ea2487664a2d",
+        "765755ec-012e-49e5-8198-448d8bb03542",
+        "65503d08-dd7a-4731-9f96-6c95277db527",
+        "49c7b43b-c8d8-42cd-b661-15dfd3d106b8",
+        "a63e7325-4c15-4bf3-8f3c-2a33926d2e2a",
+        "5282f6de-fa76-4446-bf15-d6de09062201",
+        "5ccaf90a-8e15-4457-a9fd-3428834a0cc3",
+        "d51f7c68-ab10-4122-9685-b06b8b2ce66a"
+      ]
+    },
+    {
+      "id": "col_RuRmL5w0RQ6xdOFIOBf-Bw",
+      "name": "Office Essentials — POD",
+      "slug": "office-essentials-pod",
+      "state": "PUBLIC",
+      "offerIds": [
+        "6bb7b0e3-816c-48af-8980-3bd4510a4b86",
+        "453b40fd-fef6-45d2-9c31-037ce51633e7",
+        "07da4c41-5d58-4609-bc01-3d1d665de82f"
+      ]
+    }
+  ]
+}
