@@ -110,7 +110,7 @@ def composite_photo(title,url,rect,outname):
     print("Wrote mockup",title,rect,output.size,flush=True)
 
 composite_photo("Real portrait / Kevin Malik",source_url,(200,1730,556,1890),"v4_mug_stock_mockup_portrait.jpg")
-composite_photo("Real office / Jopwell",ASSETS["02 · Pexels / Jopwell 2422287"],(643,576,870,675),"v4_mug_stock_mockup_office.jpg")
+composite_photo("Real office / Jopwell",ASSETS["02 · Pexels / Jopwell 2422287"],(852,550,961,598),"v4_mug_stock_mockup_office.jpg")
 
 # Side-by-side review: honest labels and true Fourthwall reference image.
 por=Image.open(HERE/"v4_mug_stock_mockup_portrait.jpg")
