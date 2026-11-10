@@ -39,3 +39,25 @@ for index,(title,url) in enumerate(ASSETS.items()):
         draw.text((cx*W+12,cy*H+80),"LOAD FAILED: "+str(e)[:45],font=font,fill="#cc3333")
 sheet.save(HERE/"v4_real_stock_contact_sheet.jpg",quality=85,optimize=True)
 print("Wrote",HERE/"v4_real_stock_contact_sheet.jpg",flush=True)
+
+# Detailed views to locate the EXACT live Fourthwall print artwork on mug and
+# the blank ceramic surface in the authentic Pexels portrait.
+original_url=ASSETS["05 · Actual Fourthwall mug"]
+original=Image.open(io.BytesIO(requests.get(original_url,timeout=30).content)).convert("RGBA")
+paper=Image.new("RGB",original.size,"#f3f2ef")
+paper.paste(original,mask=original.getchannel("A"))
+detail=paper.crop((360,620,1400,1450))
+detail.thumbnail((1140,900))
+detail.save(HERE/"mug_artwork_inspection.jpg",quality=90)
+source_url=ASSETS["03 · Pexels / Kevin Malik 9031809"]
+photo=Image.open(io.BytesIO(requests.get(source_url,timeout=30).content)).convert("RGB")
+photo.thumbnail((900,1400))
+mark=ImageDraw.Draw(photo)
+for xx in range(0,photo.width,100):
+    mark.line((xx,0,xx,photo.height),fill=(235,103,39),width=1)
+    mark.text((xx+3,4),str(xx),fill=(255,255,255),stroke_width=1,stroke_fill=(75,75,75))
+for yy in range(0,photo.height,100):
+    mark.line((0,yy,photo.width,yy),fill=(235,103,39),width=1)
+    mark.text((4,yy+3),str(yy),fill=(255,255,255),stroke_width=1,stroke_fill=(75,75,75))
+photo.save(HERE/"pexels_9031809_position_guide.jpg",quality=87)
+print("Wrote artwork detail and portrait position guide")
