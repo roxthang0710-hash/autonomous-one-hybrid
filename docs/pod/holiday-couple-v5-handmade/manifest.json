@@ -1,82 +1,159 @@
-[
-  {
-    "slug": "holiday-lights",
-    "name": "OUR MERRY LITTLE MESS",
-    "subtitle": "TANGLED UP WITH YOU",
-    "theme": "Holiday",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-lights.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "holiday-secret-santa",
-    "name": "SECRET SANTA SURVIVOR",
-    "subtitle": "ANOTHER MYSTERY GIFT",
-    "theme": "Holiday",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-secret-santa.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "holiday-battery",
-    "name": "CHRISTMAS ON 2 BATTERY",
-    "subtitle": "COFFEE BEFORE CHAOS",
-    "theme": "Holiday",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-battery.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "holiday-cocoa",
-    "name": "COCOA FIRST CHAOS LATER",
-    "subtitle": "WINTER DATE NIGHT",
-    "theme": "Holiday",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-cocoa.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "holiday-first",
-    "name": "FIRST WEIRD CHRISTMAS",
-    "subtitle": "STILL MY PERSON",
-    "theme": "Holiday",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-first.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "couple-blanket",
-    "name": "BLANKET TERMS AND CONDITIONS",
-    "subtitle": "ONE BLANKET TWO OPINIONS",
-    "theme": "Couple",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-blanket.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "couple-snack",
-    "name": "WHO ATE MY SNACK",
-    "subtitle": "I HAVE QUESTIONS",
-    "theme": "Couple",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snack.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "couple-thinker",
-    "name": "3AM BIG QUESTIONS",
-    "subtitle": "LOVE YOU PLEASE SLEEP",
-    "theme": "Couple",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-thinker.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "couple-snore",
-    "name": "LOVE YOU EVEN IF YOU SNORE",
-    "subtitle": "SLEEP DEPARTMENT CLOSED",
-    "theme": "Couple",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snore.svg",
-    "status": "DESIGN_SOURCE_READY"
-  },
-  {
-    "slug": "couple-chaos",
-    "name": "OUR DAILY LITTLE DRAMA",
-    "subtitle": "STILL MY FAVORITE PERSON",
-    "theme": "Couple",
-    "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-chaos.svg",
-    "status": "DESIGN_SOURCE_READY"
-  }
-]
+{
+  "project": "DOHAYDILAM POD",
+  "release": "HOLIDAY+COUPLE V5 — RAW DOODLE",
+  "date": "2026-11-10",
+  "shopURL": "https://dohaydilam-shop.fourthwall.com",
+  "collections": [
+    {
+      "name": "Christmas Doodles 2026",
+      "url": "https://dohaydilam-shop.fourthwall.com/collections/christmas-doodles-2026-holiday-drop",
+      "count": 5,
+      "state": "PUBLIC"
+    },
+    {
+      "name": "Tiny Couple Chaos",
+      "url": "https://dohaydilam-shop.fourthwall.com/collections/tiny-couple-chaos-hand-drawn-love-stories",
+      "count": 5,
+      "state": "PUBLIC"
+    }
+  ],
+  "productQuota": "50/50 in Free plan",
+  "archivedExistingProducts": 10,
+  "newPublicOffers": 10,
+  "artisticDirection": "Digitally authored rough-ink linework and intentionally uneven hand lettering, original characters; inspiration from reference video, not copies.",
+  "artworks": [
+    {
+      "slug": "holiday-lights",
+      "name": "OUR MERRY LITTLE MESS",
+      "subtitle": "TANGLED UP WITH YOU",
+      "theme": "Holiday",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-lights.svg",
+      "status": "PUBLIC",
+      "offerId": "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/our-merry-little-mess-hand-drawn-christmas-tote",
+      "priceUSD": 26.56,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/f016cc21-e750-4228-92cb-9da8caa0b299.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2aa85ec3-535e-4abe-88ab-06a72583d9fc.webp"
+    },
+    {
+      "slug": "holiday-secret-santa",
+      "name": "SECRET SANTA SURVIVOR",
+      "subtitle": "ANOTHER MYSTERY GIFT",
+      "theme": "Holiday",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-secret-santa.svg",
+      "status": "PUBLIC",
+      "offerId": "b328659d-f381-47ab-9f1e-fd199a52704d",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/secret-santa-survivor-funny-hand-drawn-office-mug",
+      "priceUSD": 15.95,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/b24dd852-d7cf-4e6b-85b7-25c5dfb31842.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/aa863829-b87f-4fbf-8fe1-8b5122a16b8a.webp"
+    },
+    {
+      "slug": "holiday-battery",
+      "name": "CHRISTMAS ON 2 BATTERY",
+      "subtitle": "COFFEE BEFORE CHAOS",
+      "theme": "Holiday",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-battery.svg",
+      "status": "PUBLIC",
+      "offerId": "ca6d2038-b9b4-4f08-86ad-88a576d60da3",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/christmas-on-2-battery-funny-office-holiday-tee",
+      "priceUSD": 23.75,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/93aca71d-c74d-4dfc-a8c0-a80df7685fcf.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/93b2ca88-697a-445f-8324-34ae5ac5228b.webp"
+    },
+    {
+      "slug": "holiday-cocoa",
+      "name": "COCOA FIRST CHAOS LATER",
+      "subtitle": "WINTER DATE NIGHT",
+      "theme": "Holiday",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-cocoa.svg",
+      "status": "PUBLIC",
+      "offerId": "9174b684-fa48-42b8-80f9-c88efaec511b",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/cocoa-first-chaos-later-winter-date-night-art-print",
+      "priceUSD": 21,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/ad32b6ec-2b2b-4ccf-86d3-283fb9d04840.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/d470f1bb-3e4c-4d94-8a60-078aa762739e.webp"
+    },
+    {
+      "slug": "holiday-first",
+      "name": "FIRST WEIRD CHRISTMAS",
+      "subtitle": "STILL MY PERSON",
+      "theme": "Holiday",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/holiday-first.svg",
+      "status": "PUBLIC",
+      "offerId": "66658a91-3298-4e2f-a5d7-a202887c3091",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/first-weird-christmas-couple-doodle-notebook",
+      "priceUSD": 19.95,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/5ac84ac7-597d-4663-99ef-14e28f27c8f8.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/34d63a1c-5269-449e-b303-08e1722dbb35.webp"
+    },
+    {
+      "slug": "couple-blanket",
+      "name": "BLANKET TERMS AND CONDITIONS",
+      "subtitle": "ONE BLANKET TWO OPINIONS",
+      "theme": "Couple",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-blanket.svg",
+      "status": "PUBLIC",
+      "offerId": "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/blanket-terms-and-conditions-funny-couple-poster",
+      "priceUSD": 21,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2960cb7d-4d92-4d7f-88cc-96082520ef81.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/243a8f65-d96d-46d7-8d6a-0f566d777e9f.webp"
+    },
+    {
+      "slug": "couple-snack",
+      "name": "WHO ATE MY SNACK",
+      "subtitle": "I HAVE QUESTIONS",
+      "theme": "Couple",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snack.svg",
+      "status": "PUBLIC",
+      "offerId": "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/who-ate-my-snack-hand-drawn-couple-mug",
+      "priceUSD": 15.95,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/af36e6a2-669c-42ef-a19c-3df457ada96e.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/cc19a6a8-11e2-4a37-8c9c-f37dc186b76d.webp"
+    },
+    {
+      "slug": "couple-thinker",
+      "name": "3AM BIG QUESTIONS",
+      "subtitle": "LOVE YOU PLEASE SLEEP",
+      "theme": "Couple",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-thinker.svg",
+      "status": "PUBLIC",
+      "offerId": "d18b672e-aa61-46df-8fe4-cdeb6630dd55",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/3am-big-questions-quirky-couple-graphic-tee",
+      "priceUSD": 23.75,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/7acb0aaa-b28a-4cf1-997c-010544ca6ea6.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/e4c5fcbd-83f5-4ec5-8182-22d2ff932757.webp"
+    },
+    {
+      "slug": "couple-snore",
+      "name": "LOVE YOU EVEN IF YOU SNORE",
+      "subtitle": "SLEEP DEPARTMENT CLOSED",
+      "theme": "Couple",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-snore.svg",
+      "status": "PUBLIC",
+      "offerId": "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/love-you-even-if-you-snore-doodle-couple-sticker",
+      "priceUSD": 8.27,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/18718f5f-4010-4d54-bea7-773129c4b6cd.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/06e40170-2bb6-4891-941a-18821c626e58.webp"
+    },
+    {
+      "slug": "couple-chaos",
+      "name": "OUR DAILY LITTLE DRAMA",
+      "subtitle": "STILL MY FAVORITE PERSON",
+      "theme": "Couple",
+      "artwork_url": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/holiday-couple-v5-handmade/couple-chaos.svg",
+      "status": "PUBLIC",
+      "offerId": "a34efb4d-7638-4480-8d86-5dd59e872651",
+      "productURL": "https://dohaydilam-shop.fourthwall.com/products/our-daily-little-drama-organic-cotton-couple-tote",
+      "priceUSD": 26.56,
+      "printPNG": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/b25cd633-8c1d-49e4-816b-9b13ee0640c4.png",
+      "mockup": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2e35bdd7-c4e3-42fd-b18d-b4b498a9c8d5.webp"
+    }
+  ],
+  "homepageCustomCode": "https://raw.githubusercontent.com/roxthang0710-hash/autonomous-one-hybrid/main/docs/pod/DOHAYDILAM_HOLIDAY_COUPLE_V5_FOURTHWALL_CUSTOM_CODE.html",
+  "homepagePublicationStatus": "PENDING_ADMIN_CUSTOM_CODE_PUBLISH",
+  "notes": "Listing visibility and collection public URLs were verified; homepage replacement is source-only until an authenticated Fourthwall admin publishes it. Mockups are digital; no physical sample ordered. Couple items are ready-made rather than made-for-you portraits."
+}
