@@ -1,0 +1,58 @@
+{
+  "hero-tote-still-making-progress.webp": {
+    "original": "tote-still-making-progress.png",
+    "native_pixels": [
+      1536,
+      1024
+    ],
+    "web_pixels": [
+      1536,
+      1024
+    ],
+    "web_bytes": 82782,
+    "sha256": "abbcd21a662ad8c646770865eb8ed0f4e463c6c9e1df2bcac865f9f29a2a703b",
+    "classification": "conceptual product-in-context mockup; not customer photo"
+  },
+  "mug-master-of-the-tiny-gaps.webp": {
+    "original": "mug-master-of-the-tiny-gaps.png",
+    "native_pixels": [
+      1448,
+      1086
+    ],
+    "web_pixels": [
+      1152,
+      864
+    ],
+    "web_bytes": 73278,
+    "sha256": "380b0e759a06290c0ae17ef1c5af9607042d186af8de3918cc1cf009bd6ad477",
+    "classification": "conceptual product-in-context mockup; not customer photo"
+  },
+  "notebook-future-me.webp": {
+    "original": "notebook-future-me.png",
+    "native_pixels": [
+      1448,
+      1086
+    ],
+    "web_pixels": [
+      1152,
+      864
+    ],
+    "web_bytes": 131666,
+    "sha256": "c71db7f77bc3428e33e897cb285b1a93fd86111adf61a76f1d481f4365917436",
+    "classification": "conceptual product-in-context mockup; not customer photo"
+  },
+  "sticker-protect-the-flow.webp": {
+    "original": "sticker-protect-the-flow.png",
+    "native_pixels": [
+      1448,
+      1086
+    ],
+    "web_pixels": [
+      1152,
+      864
+    ],
+    "web_bytes": 86938,
+    "sha256": "9cd5d6bcd508c5f2daf0e7d09c47bc9c7b37e1dd271c2ce9e2aeaaf14bcd3cbb",
+    "classification": "conceptual product-in-context mockup; not customer photo"
+  }
+}
