@@ -25,7 +25,7 @@ jobs:
         run: |
           git config user.name "Enna POD Design Bot"
           git config user.email "enna-design-bot@users.noreply.github.com"
-          git add docs/pod/v4_real_stock_contact_sheet.jpg
+          git add docs/pod/v4_real_stock_contact_sheet.jpg docs/pod/mug_artwork_inspection.jpg docs/pod/pexels_9031809_position_guide.jpg
           if ! git diff --cached --quiet; then
             git commit -m "assets(pod): real-photo review contact sheet"
             git push
