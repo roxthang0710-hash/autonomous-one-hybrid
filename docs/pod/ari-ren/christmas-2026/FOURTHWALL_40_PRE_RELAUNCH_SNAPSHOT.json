@@ -1,0 +1,367 @@
+{
+  "savedDate": "2026-11-11",
+  "shopStatus": "COMING_SOON",
+  "note": "Pre-relaunch archival snapshot; original product offers can be restored from ARCHIVED if necessary. The Who Ate My Snack mug had already been changed to one Ari and Ren asset during pilot.",
+  "offers": [
+    {
+      "offerId": "3bc0ba02-f2bd-4554-81c8-f826bdfc2903",
+      "customizationId": "cud_IN8M-nxxRhiiFA-XSZ22nA",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "name": "Blanket Terms and Conditions — Funny Couple T-Shirt",
+      "slug": "blanket-terms-and-conditions-funny-couple-t-shirt",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/5fbc608a-f866-45dd-ac0e-5820aeff6c3b.webp"
+    },
+    {
+      "offerId": "86c52e1c-7166-4ed1-ad72-6640d7f0126b",
+      "customizationId": "cud_kqWHhB9vSCa7BJxAyXqR_w",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "name": "Cocoa First Chaos Later — Funny Couple T-Shirt",
+      "slug": "cocoa-first-chaos-later-funny-couple-t-shirt",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/6f5e6acd-a224-47c0-8802-446ab6f17e77.webp"
+    },
+    {
+      "offerId": "05f7f986-916c-4df3-9685-106fc82cb1a5",
+      "customizationId": "cud_Ip1r7euiQFKowVCzqBMKWg",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Who Ate My Snack? — Couple Journal Notebook",
+      "slug": "who-ate-my-snack-couple-journal-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/cb1db3d6-53d4-4c9f-a7c4-55d279d7f7de.webp"
+    },
+    {
+      "offerId": "81455229-aead-4de8-9d53-4221c2d16fc5",
+      "customizationId": "cud_xp2RsAOSRH2kV-BszC2blQ",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Our Daily Little Drama — Couple Journal Notebook",
+      "slug": "our-daily-little-drama-couple-journal-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/70491075-38bd-40a3-a165-a46121a700e6.webp"
+    },
+    {
+      "offerId": "74e61162-70a4-4f4c-b869-cab90b5c2078",
+      "customizationId": "cud_1_GvL8LSSa-VB8JPacpRRg",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Love You Even If You Snore — Couple Journal Notebook",
+      "slug": "love-you-even-if-you-snore-couple-journal-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/3675fb24-8ad0-48f2-9a54-e8b010097c81.webp"
+    },
+    {
+      "offerId": "88bd73ff-e72b-4e55-9bca-603165fc68a9",
+      "customizationId": "cud_zfotYpRXThmbYYbYMztiGw",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "name": "First Weird Christmas — Cute Couple Sticker",
+      "slug": "first-weird-christmas-cute-couple-sticker",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/f8417a22-f0c7-44a9-849b-6b131bd3fbf8.webp"
+    },
+    {
+      "offerId": "f196cdad-88ad-4335-9dfe-3d285acd1208",
+      "customizationId": "cud_qcgMqu2jRSeWl4UL04XCwg",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "name": "Our Merry Little Mess — Cute Couple Sticker",
+      "slug": "our-merry-little-mess-cute-couple-sticker",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/70248c21-a872-4a29-a899-9109729df745.webp"
+    },
+    {
+      "offerId": "e8f92b10-409b-41e6-a3c3-0c6dd71ce7d2",
+      "customizationId": "cud_V0hWKWn4TfKv9fBqTX_qTA",
+      "productId": "pro_367",
+      "name": "3AM Big Questions — Couple Cotton Tote",
+      "slug": "3am-big-questions-couple-cotton-tote",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/db8376d0-3381-4df4-ac18-31ca4495df37.webp"
+    },
+    {
+      "offerId": "785dac9a-b7ce-4112-bd32-f2638027d6c2",
+      "customizationId": "cud_PdxWUJSXT5eJ2_x6Fw4Dng",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Our Merry Little Mess — Couple Wall Art Poster",
+      "slug": "our-merry-little-mess-couple-wall-art-poster",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/0a656dcd-a84d-48ad-a456-e353c22febfe.webp"
+    },
+    {
+      "offerId": "8ba5e1f0-5423-4322-8e78-ee6c4679a5f7",
+      "customizationId": "cud_b3hEmeckQUiP-5s7PTDISw",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "name": "Love You Even If You Snore — Couple Doodle Tee",
+      "slug": "love-you-even-if-you-snore-couple-doodle-tee",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/5074bebd-4d15-4fff-b3f9-e02441418c7a.webp"
+    },
+    {
+      "offerId": "affff092-c530-4bd4-aa18-55d25fd4f8ce",
+      "customizationId": "cud_BdELK4ssQNaRV-cL788JnQ",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Our Daily Little Drama — Couple Wall Art Poster",
+      "slug": "our-daily-little-drama-couple-wall-art-poster",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2e518f1e-f808-4e66-a934-51f8e76f76b0.webp"
+    },
+    {
+      "offerId": "6616e178-4699-4296-98fa-cf871c3989ce",
+      "customizationId": "cud_G8aG-ADhQZaLKchkh_--uQ",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Who Ate My Snack? — Couple Wall Art Poster",
+      "slug": "who-ate-my-snack-couple-wall-art-poster",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/da69622a-701a-4933-ac0d-060fc46b47f6.webp"
+    },
+    {
+      "offerId": "c5ca1990-126e-4c39-baac-71587d23cb27",
+      "customizationId": "cud_wG7dWc3cQOO_IB2pW6MSMg",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Cocoa First Chaos Later — Couple Doodle Notebook",
+      "slug": "cocoa-first-chaos-later-couple-doodle-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/491e6862-231c-4efe-a945-3ef1814f35b2.webp"
+    },
+    {
+      "offerId": "edb74399-d628-49d0-a446-7ac7a044234a",
+      "customizationId": "cud_BaeFldvkT4aynkmZALSqRQ",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "3AM Big Questions — Funny Couple Coffee Mug",
+      "slug": "3am-big-questions-funny-couple-coffee-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/b2403e16-03f8-4bf1-9d15-d7024dabd132.webp"
+    },
+    {
+      "offerId": "59b8d6df-9824-4654-bff4-c2e72eeec89c",
+      "customizationId": "cud_D7OnDTjsQ92AxeeUACxyvA",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "First Weird Christmas — Funny Couple Coffee Mug",
+      "slug": "first-weird-christmas-funny-couple-coffee-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/db7d56e6-68e1-4ce0-9bc6-8c2b8c771c54.webp"
+    },
+    {
+      "offerId": "e39f706e-40d1-403c-b061-3243369d48e7",
+      "customizationId": "cud_18QhbxQ5STKq2c3sS5caGA",
+      "productId": "pro_367",
+      "name": "Blanket Terms and Conditions — Hand-Drawn Couple Tote",
+      "slug": "blanket-terms-and-conditions-hand-drawn-couple-tote",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/fe755874-caf9-4639-9e3e-188e9bbbc800.webp"
+    },
+    {
+      "offerId": "6fd88263-463b-411d-9849-7c5e27797744",
+      "customizationId": "cud_HiAs5MDXTgervIwn4c0MVg",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Love You Even If You Snore — Couple Art Print",
+      "slug": "love-you-even-if-you-snore-couple-art-print",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/44b22a0f-a13c-4cf1-9ceb-709a6c4aeef4.webp"
+    },
+    {
+      "offerId": "81d9bed6-f34c-4e54-b926-60b26a50f684",
+      "customizationId": "cud__--8TbGZRHuatufmtisJQw",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "3AM Big Questions — Couple Journal Notebook",
+      "slug": "3am-big-questions-couple-journal-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/f565d1ff-360b-4b74-bb45-02974988e50b.webp"
+    },
+    {
+      "offerId": "461884b2-f51b-46d0-8c4a-0b2e25f8db1f",
+      "customizationId": "cud_ldcAXVmxQj2R1ATyNaNKaQ",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Our Merry Little Mess — Couple Journal Notebook",
+      "slug": "our-merry-little-mess-couple-journal-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/3d195353-784e-484f-8866-509034a09bf0.webp"
+    },
+    {
+      "offerId": "e130f077-7e1b-465e-b036-a2f0e9756d8b",
+      "customizationId": "cud_URFakrtjRTm-k_UmYqqNOw",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Blanket Terms and Conditions — Couple Mug",
+      "slug": "blanket-terms-and-conditions-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/c323c37e-cb81-4ea1-82e2-9866a55b6128.webp"
+    },
+    {
+      "offerId": "213f2c18-4e17-4eb2-8839-3e7de16e7eab",
+      "customizationId": "cud_Qg1Mkx47TyCTIhjxtuIgTQ",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Cocoa First Chaos Later — Couple Mug",
+      "slug": "cocoa-first-chaos-later-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/62ba5428-c5e7-4781-8a51-65c39f6cb1c7.webp"
+    },
+    {
+      "offerId": "3df617cf-3977-4947-a04b-8e1a78e7653c",
+      "customizationId": "cud_vRWkqzjXTlCoDuRCRWKc6w",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Our Daily Little Drama — Couple Mug",
+      "slug": "our-daily-little-drama-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/0ad18f95-4223-4281-93c7-fa65a3888081.webp"
+    },
+    {
+      "offerId": "fc3e21da-a17a-4397-ab39-ffd2408dcf96",
+      "customizationId": "cud_RA84i-p1StKMNPAd6lkJWw",
+      "productId": "pro_367",
+      "name": "Who Ate My Snack? — Couple Tote Bag",
+      "slug": "who-ate-my-snack-couple-tote-bag",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/9331f8be-2151-4568-aec3-2e3894f04547.webp"
+    },
+    {
+      "offerId": "9e9935f4-9662-436b-8106-1be841dfad98",
+      "customizationId": "cud_1XUONPt6Rx-MHh3J-IJPdg",
+      "productId": "pro_367",
+      "name": "First Weird Christmas — Couple Tote Bag",
+      "slug": "first-weird-christmas-couple-tote-bag",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/8e6b38d9-1df2-4fec-a009-d3296fa0555f.webp"
+    },
+    {
+      "offerId": "81202dfa-3324-463b-9666-81bfc37658d1",
+      "customizationId": "cud_1sltQ7F8SBOwWDHBYq1u0w",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "First Weird Christmas — Couple Art Print",
+      "slug": "first-weird-christmas-couple-art-print",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/e80e1065-8a6e-427a-ad99-499729f67fdf.webp"
+    },
+    {
+      "offerId": "ba1066e1-a923-4f26-9716-e0e01a824843",
+      "customizationId": "cud_81w6cbixTDCOYJZvJaZkLQ",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "3AM Big Questions — Couple Art Print",
+      "slug": "3am-big-questions-couple-art-print",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/879b734d-98ed-4e43-a566-cb47d9510575.webp"
+    },
+    {
+      "offerId": "ac2be883-b0e2-4937-b3be-1aa9cfba9dc1",
+      "customizationId": "cud__PXAt6fFTb6fcYEvixqV8w",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "name": "Our Daily Little Drama — Couple Graphic Tee",
+      "slug": "our-daily-little-drama-couple-graphic-tee",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/1ad30573-55d1-41ea-bb0d-e8a8e5fe1850.webp"
+    },
+    {
+      "offerId": "d464a9b4-39e6-43f5-b795-b75f9327a90c",
+      "customizationId": "cud_e59O3xW1S_6DZGXJeeprUQ",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Our Merry Little Mess — Ceramic Couple Mug",
+      "slug": "our-merry-little-mess-ceramic-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/0caed3c7-55fc-4efe-8500-340cfa89c1f2.webp"
+    },
+    {
+      "offerId": "f9720e80-69eb-42d2-82f2-d05b4c7bb6a0",
+      "customizationId": "cud_gqxPuAJzR_2nJx0CWPFT4w",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "name": "Who Ate My Snack? — Couple Vinyl Sticker",
+      "slug": "who-ate-my-snack-couple-vinyl-sticker",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/bb17f300-d986-47b7-afc1-940fea4ccad6.webp"
+    },
+    {
+      "offerId": "c08c4418-9964-42ec-a460-1ef994d41b05",
+      "customizationId": "cud_mUHmx6UsST6YIPv80pwpYg",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "Blanket Terms and Conditions — Couple Story Notebook",
+      "slug": "blanket-terms-and-conditions-couple-story-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/6bfe343b-8054-4203-8e14-5136977e1ca1.webp"
+    },
+    {
+      "offerId": "fc31b7a0-866e-4a30-a7ab-60c10fcc0055",
+      "customizationId": "cud_lySvwVmNQBeqJgjeOiQQ7g",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Love You Even If You Snore — Ceramic Couple Mug",
+      "slug": "love-you-even-if-you-snore-ceramic-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/284a72b2-c09c-45bd-8202-c90a08d56654.webp"
+    },
+    {
+      "offerId": "433bcbcc-b083-41b4-a3d8-3ace3e170a79",
+      "customizationId": "cud_D-FK9GHSReezIgui2fRoEw",
+      "productId": "pro_367",
+      "name": "Cocoa First Chaos Later — Organic Cotton Couple Tote",
+      "slug": "cocoa-first-chaos-later-organic-cotton-couple-tote",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/4b7b27e5-870a-4d5d-8315-c52027e972cc.webp"
+    },
+    {
+      "offerId": "2a8718df-286c-43a3-8c7b-b942a653b1f8",
+      "customizationId": "cud_Tr9i4Wk8S0SQF2WMd4InBg",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Blanket Terms and Conditions — Funny Couple Poster",
+      "slug": "blanket-terms-and-conditions-funny-couple-poster",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/243a8f65-d96d-46d7-8d6a-0f566d777e9f.webp"
+    },
+    {
+      "offerId": "d18b672e-aa61-46df-8fe4-cdeb6630dd55",
+      "customizationId": "cud_nDkyARxsS-ekOK1G95BHQg",
+      "productId": "pro_k66ZW4fsRm6c2def3itltA",
+      "name": "3AM Big Questions — Quirky Couple Graphic Tee",
+      "slug": "3am-big-questions-quirky-couple-graphic-tee",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/e4c5fcbd-83f5-4ec5-8182-22d2ff932757.webp"
+    },
+    {
+      "offerId": "521eb795-ad2a-4a4b-96cf-789cc930ce07",
+      "customizationId": "cud_cwFoWhDuTvSmym3NLy6nJg",
+      "productId": "pro_4v5OfYhyRx62KW5b7Oj6Uw",
+      "name": "Who Ate My Snack? — Hand-Drawn Couple Mug",
+      "slug": "who-ate-my-snack-hand-drawn-couple-mug",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/7565657f-0d2b-4474-ace0-b5671d956c90.webp"
+    },
+    {
+      "offerId": "ad8dde43-cf6b-4c8a-9120-856b871c2302",
+      "customizationId": "cud_t1G7bSFvRc2JbriSYgV0HQ",
+      "productId": "pro_Lb6UCK4GSZG78aY5iN4cFQ",
+      "name": "Love You Even If You Snore — Doodle Couple Sticker",
+      "slug": "love-you-even-if-you-snore-doodle-couple-sticker",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/06e40170-2bb6-4891-941a-18821c626e58.webp"
+    },
+    {
+      "offerId": "a34efb4d-7638-4480-8d86-5dd59e872651",
+      "customizationId": "cud_tmmrpdr1SzWYo_NjOub1iw",
+      "productId": "pro_367",
+      "name": "Our Daily Little Drama — Organic Cotton Couple Tote",
+      "slug": "our-daily-little-drama-organic-cotton-couple-tote",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2e35bdd7-c4e3-42fd-b18d-b4b498a9c8d5.webp"
+    },
+    {
+      "offerId": "9174b684-fa48-42b8-80f9-c88efaec511b",
+      "customizationId": "cud_8YrtoIOTTCWOZzVCAMq_XA",
+      "productId": "pro_15bc29bc8a324d449d",
+      "name": "Cocoa First Chaos Later — Winter Date Night Art Print",
+      "slug": "cocoa-first-chaos-later-winter-date-night-art-print",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/d470f1bb-3e4c-4d94-8a60-078aa762739e.webp"
+    },
+    {
+      "offerId": "66658a91-3298-4e2f-a5d7-a202887c3091",
+      "customizationId": "cud_frrOA5UqSrCOdGAqHi0OLw",
+      "productId": "pro_RjYh9Eq1SzGB--rAk3J7zA",
+      "name": "First Weird Christmas — Couple Doodle Notebook",
+      "slug": "first-weird-christmas-couple-doodle-notebook",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/34d63a1c-5269-449e-b303-08e1722dbb35.webp"
+    },
+    {
+      "offerId": "d4eff8d9-43f3-4a31-a023-fb939b540a64",
+      "customizationId": "cud_OdkJzTFgS9eDocTg5vDoGg",
+      "productId": "pro_367",
+      "name": "Our Merry Little Mess — Hand-Drawn Christmas Tote",
+      "slug": "our-merry-little-mess-hand-drawn-christmas-tote",
+      "status": "PUBLIC",
+      "primary": "https://cdn.fourthwall.com/customizations/sh_57a327d5-739d-483f-8764-df47410eb057/2aa85ec3-535e-4abe-88ab-06a72583d9fc.webp"
+    }
+  ]
+}
