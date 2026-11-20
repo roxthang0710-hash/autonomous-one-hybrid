@@ -2,6 +2,7 @@
 """AirPods printed-colorway preflight and ONE guarded unpublished draft."""
 import os
 import sys
+import copy
 from audit import get_json, choose_shop, fetch_products
 from stage_colorways import build_payload, create_product, PAL
 
@@ -27,7 +28,20 @@ def main():
               "placeholders", len(area.get("placeholders", [])),
               "layers", [len(x.get("images", [])) for x in area.get("placeholders", [])],
               "positions", [x.get("position") for x in area.get("placeholders", [])])
-    payload = build_payload(source, COLOR)
+    cleaned_source = copy.deepcopy(source)
+    cleaned_source["print_areas"] = []
+    for area in source.get("print_areas", []):
+        active_places = [p for p in area.get("placeholders", []) if p.get("images")]
+        if active_places:
+            kept = copy.deepcopy(area)
+            kept["placeholders"] = active_places
+            cleaned_source["print_areas"].append(kept)
+    # Blank back/all are intentionally not printed on the original product.
+    if len(cleaned_source["print_areas"]) != 1 or len(cleaned_source["print_areas"][0]["placeholders"]) != 1 or cleaned_source["print_areas"][0]["placeholders"][0].get("position") != "front":
+        print("UNEXPECTED_PRINT_AREA_COVERAGE")
+        return 1
+    payload = build_payload(cleaned_source, COLOR)
+    payload["description"] += "<p>Only the printed front artwork background is Blush Pink; the supplier's physical AirPods case remains white, including unprinted parts. Check mockups for exact coverage.</p>"
     if len(payload["variants"]) != 7 or not payload.get("print_areas"):
         print("WRONG_VARIANTS_OR_PRINT_AREAS")
         return 1
