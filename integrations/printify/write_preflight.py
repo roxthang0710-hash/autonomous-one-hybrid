@@ -16,15 +16,6 @@ def main():
     kinds = Counter((p.get("blueprint_id"),p.get("print_provider_id")) for p in products)
     print("WRITE_TOKEN_READ_PREFLIGHT_OK shop_id=%s products=%d" % (shop["id"], len(products)))
     print("Blueprints/providers:", dict(kinds))
-    for p in products:
-        variants = [v for v in p.get("variants",[]) if v.get("is_enabled")]
-        prices = [int(v.get("price") or 0) for v in variants]
-        costs = [int(v.get("cost") or 0) for v in variants]
-        backgrounds = sorted(set(a.get("background") for a in p.get("print_areas",[]) if a.get("background")))
-        art = sum(len(pl.get("images",[])) for a in p.get("print_areas",[]) for pl in a.get("placeholders",[]))
-        print("source_id=%s blueprint=%s provider=%s enabled=%d printed_bg=%s art_layers=%d min_price_cents=%s max_cost_cents=%s visible=%s" % (
-            p.get("id"),p.get("blueprint_id"),p.get("print_provider_id"),len(variants),
-            "|".join(backgrounds),art,min(prices) if prices else "none",max(costs) if costs else "none",p.get("visible")))
     staged=[p for p in products if " — Colorway: " in str(p.get("title",""))]
     for p in staged:
         external=p.get("external")
