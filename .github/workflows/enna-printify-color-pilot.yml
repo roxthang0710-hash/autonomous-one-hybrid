@@ -6,6 +6,8 @@ on:
     paths:
       - 'integrations/printify/draft_colorways.py'
       - '.github/workflows/enna-printify-color-pilot.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       create_draft:
