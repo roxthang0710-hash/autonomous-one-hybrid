@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only exhaustive structural and color-pixel QA of 16 AirPods front-printed drafts."""
+"""Read-only structural and color-pixel QA of 16 published AirPods colorways."""
 import os
 import sys
 from audit import get_json, fetch_products
@@ -45,7 +45,7 @@ def main():
                 d.get("blueprint_id")==1505 and d.get("print_provider_id")==23
                 and bgs=={PAL[color]} and layers==original_art
                 and enabled==original_enabled and len(enabled)==7
-                and not d.get("external") and bool(d.get("images"))
+                and bool(d.get("external")) and bool(d.get("images"))
                 and ("physical AirPods case and unprinted back/sides remain" in d.get("description","") or "supplier\'s physical AirPods case remains white" in d.get("description",""))
             )
             if not structure:
@@ -68,7 +68,7 @@ def main():
     for item in missing: print("MISSING",*item)
     for item in failures: print("FAILED",*item)
     if len(missing)==0 and len(failures)==0 and ok==16 and visual==16:
-        print("AIRPODS_DRAFTS_ALL_PASS_NO_SHOPIFY_PUBLISH")
+        print("AIRPODS_PUBLISHED_ALL_PASS")
         return 0
     return 1
 
