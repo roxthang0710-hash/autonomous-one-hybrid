@@ -14,6 +14,16 @@ API = "https://api.printify.com/v1"
 PAL = {"Blush Pink": "#EBC3D0", "Sage Green": "#B5C8BA", "Sky Blue": "#BDD8EF", "Lavender": "#D4CAE5", "Cream": "#EFE5D7"}
 # Pilot first: exactly one approved source, one color, unpublished.
 PILOT = [("6afb5733141ec60788085f34", "Blush Pink")]
+# Nine smartphone case models; AirPods white plastic cases require separate QA.
+PHONE_CASE_SOURCES = [
+    "6afb5733141ec60788085f34", "6afb579f2bd121e7b20aa7e3",
+    "6afb57a4a4a5022c1007ae4d", "6afb57aaa44fa49e570d0843",
+    "6afbd25f5d3c51e94d0c6ba2", "6afbd26a63e250153506caee",
+    "6afbd26d1e97b3cc9303ef04", "6afbd2702be6156d0902c8e1",
+    "6afbe2194770279e860d077d",
+]
+PHONE_COLORS = ["Blush Pink","Cream","Sage Green","Sky Blue"]
+PHONE_BATCH = [(source,color) for source in PHONE_CASE_SOURCES for color in PHONE_COLORS]
 
 def build_payload(source, color):
     if color not in PAL:
@@ -94,6 +104,8 @@ def stage(token, records, apply=False, specs=PILOT):
         key = payload["title"].strip().casefold()
         if key in titles:
             found = titles[key]
+            if {a.get("background") for a in found.get("print_areas",[])} != {PAL[color]}:
+                raise RuntimeError("Existing titled product has mismatched background")
             print("SKIPPED_EXISTING source=%s color=%s draft_id=%s visible=%s preview_count=%d" % (source_id,color,found.get("id"),found.get("visible"),len(found.get("images",[]))))
             if found.get("images"):
                 print("QA_PREVIEW_URL="+str(found["images"][0].get("src","")))
@@ -119,6 +131,7 @@ def stage(token, records, apply=False, specs=PILOT):
         if readback.get("images"):
             print("QA_PREVIEW_URL="+str(readback["images"][0].get("src","")))
         created.append((item_id,correct))
+        time.sleep(0.25)
         titles[key] = readback
         if not correct:
             raise RuntimeError("Created product failed readback; do not publish")
@@ -129,6 +142,7 @@ def main():
     arg = argparse.ArgumentParser()
     arg.add_argument("--apply",action="store_true")
     arg.add_argument("--pilot",action="store_true")
+    arg.add_argument("--all-phone-cases",action="store_true")
     ns=arg.parse_args()
     if ns.apply and os.getenv("ENNA_CONFIRM_DRAFT_CREATION") != "YES":
         print("Explicit staging guard missing",file=sys.stderr)
@@ -138,7 +152,7 @@ def main():
         print("Write token secret missing",file=sys.stderr)
         return 2
     try:
-        return stage(token, records=None, apply=ns.apply)
+        return stage(token, records=None, apply=ns.apply, specs=PHONE_BATCH if ns.all_phone_cases else PILOT)
     except (ValueError,RuntimeError,urllib.error.URLError) as exc:
         print("STAGING_STOPPED type=%s" % type(exc).__name__, file=sys.stderr)
         return 1
