@@ -1,21 +1,10 @@
 name: Enna - Printify API color audit (read-only)
 
 on:
-  push:
-    branches:
-      - enna/printify-api-no-tinyfish-20261120
-    paths:
-      - 'integrations/printify/**'
-      - '.github/workflows/enna-printify-audit.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'integrations/printify/**'
-      - '.github/workflows/enna-printify-audit.yml'
   workflow_dispatch:
     inputs:
       printify_shop_id:
-        description: "Exact shop ID if more than one connected Printify shop"
+        description: "Exact shop ID if more than one Printify shop"
         required: false
         type: string
 
@@ -35,11 +24,47 @@ jobs:
         run: python -m pip install Pillow==11.3.0
       - name: Offline safety tests
         run: python -m unittest discover -s integrations/printify -p 'test_*.py' -v
+      - name: Verify new write-token credential with GET-only requests
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/write_preflight.py
+      - name: Stage ONE pilot colorway in Printify only (never publish)
+        if: ${{ false }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_CONFIRM_DRAFT_CREATION: 'YES'
+        run: python integrations/printify/stage_colorways.py --apply --all-phone-cases
+      - name: Validate 36 smartphone case colorways against manufacturer previews
+        if: ${{ false }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/validate_colorways.py
+      - name: Publish one QA-approved Blush Pink case to Shopify
+        if: ${{ false }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_APPROVE_ONE_PUBLISH: 'YES'
+        run: python integrations/printify/publish_pilot.py
+      - name: Publish validated colorways in bounded Shopify batches
+        if: ${{ false }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_APPROVE_COLORWAY_PUBLISH: 'YES'
+        run: python integrations/printify/publish_all_colorways.py
+      - name: Verify Blush Pink visually in Printify generated mockup pixels
+        if: ${{ false }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/pilot_mockup_qa.py
       - name: Printify read-only audit
         env:
           PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
           PRINTIFY_SHOP_ID: ${{ inputs.printify_shop_id }}
         run: python integrations/printify/audit.py --include-unpublished --github-summary
+      - name: Printify shipping and pre-fee contribution audit
+        env:
+          PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
+        run: python integrations/printify/shipping_preflight.py
       - name: Inspect source artwork transparency (read-only)
         env:
           PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
