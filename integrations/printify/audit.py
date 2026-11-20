@@ -54,12 +54,12 @@ def choose_shop(shops, shop_id, hint):
 def fetch_products(shop_id, token, fetch=get_json):
     output = []
     for page in range(1, 101):
-        data = fetch("/shops/%d/products.json?limit=100&page=%d" % (int(shop_id), page), token)
+        data = fetch("/shops/%d/products.json?limit=50&page=%d" % (int(shop_id), page), token)
         if not isinstance(data, dict) or not isinstance(data.get("data"), list):
             raise PrintifyError("Unexpected product-page format")
         output.extend(data["data"])
         last_page = data.get("last_page")
-        if (last_page is not None and page >= int(last_page)) or (last_page is None and len(data["data"]) < 100):
+        if (last_page is not None and page >= int(last_page)) or (last_page is None and len(data["data"]) < 50):
             return output
     raise PrintifyError("Product pagination safety limit hit")
 
