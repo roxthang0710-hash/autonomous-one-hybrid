@@ -22,6 +22,11 @@ def main():
     if str(source.get("id")) != SOURCE_ID or (source.get("blueprint_id"), source.get("print_provider_id")) != (1505, 23):
         print("WRONG_BLUEPRINT_OR_PRODUCT")
         return 1
+    for index, area in enumerate(source.get("print_areas", [])):
+        print("SOURCE_AREA", index, "variant_count", len(area.get("variant_ids", [])),
+              "placeholders", len(area.get("placeholders", [])),
+              "layers", [len(x.get("images", [])) for x in area.get("placeholders", [])],
+              "positions", [x.get("position") for x in area.get("placeholders", [])])
     payload = build_payload(source, COLOR)
     if len(payload["variants"]) != 7 or not payload.get("print_areas"):
         print("WRONG_VARIANTS_OR_PRINT_AREAS")
