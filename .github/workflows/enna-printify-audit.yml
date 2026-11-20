@@ -1,6 +1,12 @@
 name: Enna - Printify API color audit (read-only)
 
 on:
+  push:
+    branches:
+      - enna/printify-api-no-tinyfish-20261120
+    paths:
+      - 'integrations/printify/**'
+      - '.github/workflows/enna-printify-audit.yml'
   workflow_dispatch:
     inputs:
       printify_shop_id:
