@@ -32,7 +32,7 @@ def source_urls(product):
 def permitted_source(url):
     parsed = urllib.parse.urlparse(url)
     host = (parsed.hostname or "").lower()
-    return parsed.scheme == "https" and (host == "printify.com" or host.endswith(".printify.com")) and not parsed.username and not parsed.password
+    return parsed.scheme == "https" and (host == "printify.com" or host.endswith(".printify.com") or host == "pfy-prod-image-storage.s3.us-east-2.amazonaws.com") and not parsed.username and not parsed.password
 
 
 def transparency_from_bytes(raw):
