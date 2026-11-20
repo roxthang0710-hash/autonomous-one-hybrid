@@ -34,7 +34,7 @@ class TestPrintifyAudit(unittest.TestCase):
         def fetch(path, token):
             if path == "/shops.json":
                 return [{"id": 2, "title": "Pie & Po", "sales_channel": "shopify"}]
-            if path == "/shops/2/products.json?limit=100&page=1":
+            if path == "/shops/2/products.json?limit=50&page=1":
                 return {"data": [PRODUCT], "last_page": 1}
             raise AssertionError(path)
         report = audit("fake-token", fetch=fetch)
