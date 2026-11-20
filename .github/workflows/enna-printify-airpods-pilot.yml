@@ -1,0 +1,31 @@
+name: Enna - AirPods printed-background color pilot
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/printify/airpods_pilot.py'
+      - '.github/workflows/enna-printify-airpods-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  airpods:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read-only AirPods printed-background pilot preflight
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/airpods_pilot.py
+      - name: Create one unpublished Printify-only AirPods pilot
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message,'[ENNA-CREATE-AIRPODS-DRAFT]') }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_CONFIRM_AIRPODS_DRAFT_CREATION: 'YES'
+        run: python integrations/printify/airpods_pilot.py --apply
