@@ -36,6 +36,15 @@ def main():
                 bad+=1
                 break
             print("PRINTIFY_MEDIA",pid,label,"sample",i,"url",url,"variant_ids",len(img.get("variant_ids",[])))
+    # Last AirPods colorway's device-specific image links for two Shopify variants without mockups.
+    pid="6b00977c35ad9f69ba0fb699"
+    p=get_json("/shops/%s/products/%s.json"%(SHOP,pid),token)
+    for v in p.get("variants",[]):
+        print("SOURCE_VARIANT",v.get("id"),v.get("title"),"sku",v.get("sku"))
+        candidates=[img for img in p.get("images",[]) if v.get("id") in (img.get("variant_ids") or []) and img.get("src")]
+        preferred=sorted(candidates,key=lambda im: (str(im.get("position",""))!="front",not bool(im.get("is_default"))))
+        if preferred:
+            print("SOURCE_VARIANT_MEDIA",v.get("id"),v.get("title"),"url",preferred[0]["src"])
     return int(bad>0)
 if __name__=="__main__":
     try:sys.exit(main())
