@@ -8,7 +8,7 @@ import sys
 import urllib.error
 import urllib.request
 
-from audit import get_json, PrintifyError
+from audit import get_json, fetch_products, PrintifyError
 
 API = "https://api.printify.com/v1"
 SHOP = 29780383
@@ -99,6 +99,10 @@ def main():
             print("DRY RUN only. No product created.")
             return 0
         # A draft is created only with this explicit gate. Do not invoke the publish endpoint.
+        existing = [p for p in fetch_products(SHOP, token) if p.get('title') == payload['title']]
+        if existing:
+            print('DRAFT ALREADY EXISTS (idempotent):', existing[0].get('id'))
+            return 0
         created = post_draft(token, payload)
         id_ = str(created.get("id", ""))
         if not id_ or id_ == SOURCE:
