@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Preflight Printify *write* credential, but only make GET requests."""
 import os
+import hashlib
 import sys
 from collections import Counter
 from audit import choose_shop, get_json, fetch_products
@@ -20,8 +21,9 @@ def main():
     for p in staged:
         external=p.get("external")
         external_id=external.get("id") if isinstance(external,dict) else None
-        print("SYNC_STATUS id=%s locked=%s external=%s external_id=%s visible=%s" % (
-            p.get("id"),p.get("is_locked"),bool(external_id),external_id or "-",p.get("visible")))
+        digest=hashlib.sha256(str(p.get("id","")).encode("utf-8")).hexdigest()[:12]
+        print("SYNC_STATUS hash=%s locked=%s external=%s visible=%s" % (
+            digest,p.get("is_locked"),bool(external_id),p.get("visible")))
     print("SYNC_TOTAL staged=%d external=%d locked_unlinked=%d unlocked_unlinked=%d" % (
         len(staged),sum(bool(p.get("external",{}).get("id")) for p in staged),
         sum(bool(p.get("is_locked")) and not bool(p.get("external",{}).get("id")) for p in staged),
