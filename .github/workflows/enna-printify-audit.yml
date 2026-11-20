@@ -44,7 +44,7 @@ jobs:
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
           ENNA_CONFIRM_DRAFT_CREATION: 'YES'
-        run: python integrations/printify/stage_colorways.py --apply --pilot
+        run: python integrations/printify/stage_colorways.py --apply --all-phone-cases
       - name: Verify Blush Pink visually in Printify generated mockup pixels
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
         env:
