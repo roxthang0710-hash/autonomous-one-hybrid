@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Enna POD: read-only Printify audit. No edits, orders, publishing, or charges."""
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -135,6 +136,14 @@ def main():
     print("One manufacturer color:", counts.get("single-color-manufacturer-variant", 0))
     print("No manufacturer color selector:", counts.get("no-color-option-check-printed-background", 0))
     print("No products or orders changed.")
+    print("Anonymized product matrix (SHA-256 prefix, not source IDs):")
+    for item in sorted(report["products"], key=lambda p: p["product_id"]):
+        short = hashlib.sha256(item["product_id"].encode("utf-8")).hexdigest()[:12]
+        print("PRODUCT_HASH", short, "visible", item["visible"],
+              "blueprint", item["blueprint_id"], "provider", item["print_provider_id"],
+              "enabled_variants", item["enabled_variants"],
+              "manufacturer_colors", "|".join(item["manufacturer_colors"]) or "(none)",
+              "printed_backgrounds", "|".join(item["printed_backgrounds"]) or "(none)")
     if args.output:
         Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     path = os.getenv("GITHUB_STEP_SUMMARY")
