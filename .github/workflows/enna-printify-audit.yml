@@ -37,4 +37,4 @@ jobs:
         env:
           PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
           PRINTIFY_SHOP_ID: ${{ inputs.printify_shop_id }}
-        run: python integrations/printify/audit.py --github-summary
+        run: python integrations/printify/audit.py --include-unpublished --github-summary
