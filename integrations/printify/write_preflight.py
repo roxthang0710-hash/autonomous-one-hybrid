@@ -25,6 +25,16 @@ def main():
         print("source_id=%s blueprint=%s provider=%s enabled=%d printed_bg=%s art_layers=%d min_price_cents=%s max_cost_cents=%s visible=%s" % (
             p.get("id"),p.get("blueprint_id"),p.get("print_provider_id"),len(variants),
             "|".join(backgrounds),art,min(prices) if prices else "none",max(costs) if costs else "none",p.get("visible")))
+    staged=[p for p in products if " — Colorway: " in str(p.get("title",""))]
+    for p in staged:
+        external=p.get("external")
+        external_id=external.get("id") if isinstance(external,dict) else None
+        print("SYNC_STATUS id=%s locked=%s external=%s external_id=%s visible=%s" % (
+            p.get("id"),p.get("is_locked"),bool(external_id),external_id or "-",p.get("visible")))
+    print("SYNC_TOTAL staged=%d external=%d locked_unlinked=%d unlocked_unlinked=%d" % (
+        len(staged),sum(bool(p.get("external",{}).get("id")) for p in staged),
+        sum(bool(p.get("is_locked")) and not bool(p.get("external",{}).get("id")) for p in staged),
+        sum(not bool(p.get("is_locked")) and not bool(p.get("external",{}).get("id")) for p in staged)))
     print("No products modified. GET-only calls.")
     return 0
 
