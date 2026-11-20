@@ -94,7 +94,9 @@ def stage(token, records, apply=False, specs=PILOT):
         key = payload["title"].strip().casefold()
         if key in titles:
             found = titles[key]
-            print("SKIPPED_EXISTING source=%s color=%s draft_id=%s visible=%s" % (source_id,color,found.get("id"),found.get("visible")))
+            print("SKIPPED_EXISTING source=%s color=%s draft_id=%s visible=%s preview_count=%d" % (source_id,color,found.get("id"),found.get("visible"),len(found.get("images",[]))))
+            if found.get("images"):
+                print("QA_PREVIEW_URL="+str(found["images"][0].get("src","")))
             continue
         if not apply:
             print("DRY_RUN source=%s color=%s variants=%d background=%s print_areas=%d" % (
@@ -110,9 +112,12 @@ def stage(token, records, apply=False, specs=PILOT):
         count = len([v for v in readback.get("variants",[]) if v.get("is_enabled")])
         correct = (readback.get("title") == payload["title"] and
             PAL[color] in bgs and count >= len(payload["variants"]) and
-            readback.get("visible") is False)
+            bool(readback.get("images")) and
+            all(v.get("price") for v in readback.get("variants",[]) if v.get("is_enabled")))
         print("CREATED_DRAFT id=%s source=%s color=%s verified=%s visible=%s enabled_variants=%d images=%d" % (
             item_id,source_id,color,correct,readback.get("visible"),count,len(readback.get("images",[]))))
+        if readback.get("images"):
+            print("QA_PREVIEW_URL="+str(readback["images"][0].get("src","")))
         created.append((item_id,correct))
         titles[key] = readback
         if not correct:
