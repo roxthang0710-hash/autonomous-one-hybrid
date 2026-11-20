@@ -33,7 +33,7 @@ jobs:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/draft_colorways.py
       - name: Create one QA-only draft
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.create_draft == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.create_draft == true) || (github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[ENNA-CREATE-ONE-DRAFT]')) }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/draft_colorways.py --color cream --create-draft
