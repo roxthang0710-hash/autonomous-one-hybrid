@@ -1,0 +1,30 @@
+name: Enna - AirPods colorway QA batch
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/printify/airpods_batch.py'
+      - '.github/workflows/enna-airpods-batch.yml'
+permissions:
+  contents: read
+jobs:
+  airpods:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate all four source artworks, margins and 16 draft payloads
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/airpods_batch.py
+      - name: Create 16 AirPods Printify-only QA drafts if explicitly marked
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message,'[ENNA-STAGE-AIRPODS-ALL]') }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_APPROVE_AIRPODS_DRAFT_BATCH: 'YES'
+        run: python integrations/printify/airpods_batch.py --apply
