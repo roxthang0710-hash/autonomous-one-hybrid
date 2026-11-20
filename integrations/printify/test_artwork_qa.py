@@ -27,6 +27,7 @@ class TestArtworkPreflight(unittest.TestCase):
         self.assertFalse(permitted_source("https://images.printify.com.evil.com/x.png"))
         self.assertFalse(permitted_source("https://localhost/secret"))
         self.assertTrue(permitted_source("https://images.printify.com/img.png"))
+        self.assertTrue(permitted_source("https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com/img.png"))
 
     def test_sources_deduplicated(self):
         product = {"print_areas": [
