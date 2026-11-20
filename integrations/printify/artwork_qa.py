@@ -99,6 +99,7 @@ def main():
             "other", sum(v for k, v in counts.items() if k not in ("transparent", "opaque", "external-source", "unavailable")),
         )
     print("Unique image sources:", len(cache))
+    print("Source hostnames:", ",".join(sorted({urllib.parse.urlparse(u).hostname or "(none)" for u in cache})))
     print("Aggregate:", " ".join("%s=%d" % (k, v) for k, v in sorted(aggregate.items())))
     print("No product, artwork, order, or SKU was changed.")
     return 0
