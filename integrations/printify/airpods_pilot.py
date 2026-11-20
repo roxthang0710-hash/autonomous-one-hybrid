@@ -60,5 +60,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except Exception as exc:
-        print("AIRPODS_PILOT_ABORTED", type(exc).__name__)
+        print("AIRPODS_PILOT_ABORTED", type(exc).__name__, str(exc) if isinstance(exc, ValueError) else "")
         sys.exit(1)
