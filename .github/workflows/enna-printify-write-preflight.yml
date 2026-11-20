@@ -6,6 +6,11 @@ on:
     paths:
       - 'integrations/printify/write_preflight.py'
       - '.github/workflows/enna-printify-write-preflight.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'integrations/printify/write_preflight.py'
+      - '.github/workflows/enna-printify-write-preflight.yml'
   workflow_dispatch:
 permissions:
   contents: read
