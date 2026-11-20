@@ -40,30 +40,30 @@ jobs:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/write_preflight.py
       - name: Stage ONE pilot colorway in Printify only (never publish)
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ false }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
           ENNA_CONFIRM_DRAFT_CREATION: 'YES'
         run: python integrations/printify/stage_colorways.py --apply --all-phone-cases
       - name: Validate 36 smartphone case colorways against manufacturer previews
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ false }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/validate_colorways.py
       - name: Publish one QA-approved Blush Pink case to Shopify
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ false }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
           ENNA_APPROVE_ONE_PUBLISH: 'YES'
         run: python integrations/printify/publish_pilot.py
       - name: Publish validated colorways in bounded Shopify batches
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ false }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
           ENNA_APPROVE_COLORWAY_PUBLISH: 'YES'
         run: python integrations/printify/publish_all_colorways.py
       - name: Verify Blush Pink visually in Printify generated mockup pixels
-        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        if: ${{ false }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/pilot_mockup_qa.py
