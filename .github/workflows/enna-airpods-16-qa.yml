@@ -1,0 +1,21 @@
+name: Enna - AirPods 16-draft QA
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image QA dependencies
+        run: python -m pip install Pillow==11.3.0
+      - name: Read-only compare source artwork, 7 device SKUs, prices and printed colors
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/airpods_batch_qa.py
