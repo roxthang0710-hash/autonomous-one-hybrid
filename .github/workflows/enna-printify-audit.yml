@@ -1,6 +1,11 @@
 name: Enna - Printify API color audit (read-only)
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/enna-printify-audit.yml'
+      - 'integrations/printify/**'
   workflow_dispatch:
     inputs:
       printify_shop_id:
@@ -35,7 +40,7 @@ jobs:
           ENNA_CONFIRM_DRAFT_CREATION: 'YES'
         run: python integrations/printify/stage_colorways.py --apply --all-phone-cases
       - name: Validate 36 smartphone case colorways against manufacturer previews
-        if: ${{ false }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/validate_colorways.py
@@ -52,7 +57,7 @@ jobs:
           ENNA_APPROVE_COLORWAY_PUBLISH: 'YES'
         run: python integrations/printify/publish_all_colorways.py
       - name: Verify Blush Pink visually in Printify generated mockup pixels
-        if: ${{ false }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/pilot_mockup_qa.py
