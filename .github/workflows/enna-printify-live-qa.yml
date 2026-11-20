@@ -1,0 +1,37 @@
+name: Enna - POD phone case catalog final QA
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install QA dependencies
+        run: python -m pip install Pillow==11.3.0
+      - name: Test Printify payload and artwork audit
+        run: python -m unittest discover -s integrations/printify -p 'test_*.py' -v
+      - name: Read-only validate all 36 Printify colorway mockups and SKUs
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/validate_colorways.py
+      - name: Evaluate Printify source shipping costs
+        if: always()
+        env:
+          PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
+        run: python integrations/printify/shipping_preflight.py
+      - name: Verify 49-product Printify sync counts
+        if: always()
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/write_preflight.py
