@@ -2,7 +2,7 @@ name: Enna - Printify color draft pilot
 
 on:
   push:
-    branches: [enna/printify-write-draft-colors-20261121]
+    branches: [main, enna/printify-write-draft-colors-20261121]
     paths:
       - 'integrations/printify/draft_colorways.py'
       - '.github/workflows/enna-printify-color-pilot.yml'
