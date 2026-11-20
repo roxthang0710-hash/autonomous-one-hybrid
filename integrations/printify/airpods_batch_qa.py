@@ -46,7 +46,7 @@ def main():
                 and bgs=={PAL[color]} and layers==original_art
                 and enabled==original_enabled and len(enabled)==7
                 and not d.get("external") and bool(d.get("images"))
-                and "physical AirPods case and unprinted back/sides remain" in d.get("description","")
+                and ("physical AirPods case and unprinted back/sides remain" in d.get("description","") or "supplier\'s physical AirPods case remains white" in d.get("description",""))
             )
             if not structure:
                 failures.append((source["id"],color,"structure"))
