@@ -47,6 +47,14 @@ def main():
         return 1
     print("AIRPODS_DRAFT_PREVIEW_OK", "color", COLOR, "background", PAL[COLOR],
           "variants", len(payload["variants"]), "print_areas", len(payload["print_areas"]))
+    found = [p for p in fetch_products(SHOP_ID, token) if str(p.get("title", "")).strip().casefold() == payload["title"].strip().casefold()]
+    print("AIRPODS_BLUSH_DRAFTS_FOUND", len(found))
+    for p in found:
+        current = get_json("/shops/%s/products/%s.json" % (SHOP_ID, p["id"]), token)
+        print("AIRPODS_BLUSH_DRAFT_READBACK id", current.get("id"),
+              "mockups", len(current.get("images", [])),
+              "backgrounds", [a.get("background") for a in current.get("print_areas", [])],
+              "source_link", bool(current.get("external")), "enabled", sum(bool(v.get("is_enabled")) for v in current.get("variants", [])))
     if "--apply" not in sys.argv:
         print("DRY_RUN_ONLY")
         return 0

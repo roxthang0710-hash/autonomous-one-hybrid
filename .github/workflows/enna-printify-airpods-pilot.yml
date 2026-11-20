@@ -19,10 +19,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install image QA dependencies
+        run: python -m pip install Pillow==11.3.0
       - name: Read-only AirPods printed-background pilot preflight
         env:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
         run: python integrations/printify/airpods_pilot.py
+      - name: Visually verify AirPods Blush Pink printed front mockup
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/airpods_image_qa.py
       - name: Create one unpublished Printify-only AirPods pilot
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message,'[ENNA-CREATE-AIRPODS-DRAFT]') }}
         env:
