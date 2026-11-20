@@ -55,6 +55,10 @@ jobs:
           PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
           PRINTIFY_SHOP_ID: ${{ inputs.printify_shop_id }}
         run: python integrations/printify/audit.py --include-unpublished --github-summary
+      - name: Printify shipping and pre-fee contribution audit
+        env:
+          PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
+        run: python integrations/printify/shipping_preflight.py
       - name: Inspect source artwork transparency (read-only)
         env:
           PRINTIFY_API_TOKEN: ${{ secrets.PRINTIFY_API_TOKEN }}
