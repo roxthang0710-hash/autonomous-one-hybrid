@@ -56,6 +56,12 @@ jobs:
           PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
           ENNA_APPROVE_ONE_PUBLISH: 'YES'
         run: python integrations/printify/publish_pilot.py
+      - name: Publish validated colorways in bounded Shopify batches
+        if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_APPROVE_COLORWAY_PUBLISH: 'YES'
+        run: python integrations/printify/publish_all_colorways.py
       - name: Verify Blush Pink visually in Printify generated mockup pixels
         if: ${{ github.event_name == 'pull_request' && github.head_ref == 'enna/printify-colorway-staging-20261120' && github.event.pull_request.head.repo.full_name == github.repository }}
         env:
