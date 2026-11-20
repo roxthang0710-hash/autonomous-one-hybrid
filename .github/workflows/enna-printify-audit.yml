@@ -7,6 +7,11 @@ on:
     paths:
       - 'integrations/printify/**'
       - '.github/workflows/enna-printify-audit.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'integrations/printify/**'
+      - '.github/workflows/enna-printify-audit.yml'
   workflow_dispatch:
     inputs:
       printify_shop_id:
