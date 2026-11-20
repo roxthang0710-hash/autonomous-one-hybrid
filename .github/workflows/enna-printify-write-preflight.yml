@@ -1,17 +1,8 @@
 name: Enna - Printify write token safe preflight
 on:
-  push:
-    branches:
-      - enna/printify-colorway-staging-20261120
-    paths:
-      - 'integrations/printify/write_preflight.py'
-      - '.github/workflows/enna-printify-write-preflight.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'integrations/printify/write_preflight.py'
-      - '.github/workflows/enna-printify-write-preflight.yml'
   workflow_dispatch:
+  schedule:
+    - cron: '19 */6 * * *'
 permissions:
   contents: read
 jobs:
