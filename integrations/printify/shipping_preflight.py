@@ -33,8 +33,9 @@ def main():
         # Conservative estimate if seller absorbs 100% of US shipping.
         # Shopify payment fees/tax are NOT verified and excluded from this estimate.
         gross_before_fees=lowprice-highcost-worstship if worstship is not None else None
-        print("COST_CHECK blueprint=%d provider=%d product_count=%d min_retail_cents=%d max_production_cents=%d us_first_shipping_cents=%s shipping_included_contribution_before_fees_cents=%s"%(
-            blueprint,provider,len(items),lowprice,highcost,worstship,gross_before_fees))
+        print("COST_CHECK blueprint=%d provider=%d product_count=%d US_SHIPPING_LOOKUP=%s PREFEE_CONTRIBUTION_AT_LEAST_5_USD=%s" % (
+            blueprint,provider,len(items),worstship is not None,
+            gross_before_fees is not None and gross_before_fees>=500))
     return 0
 if __name__=="__main__":
     try:sys.exit(main())
