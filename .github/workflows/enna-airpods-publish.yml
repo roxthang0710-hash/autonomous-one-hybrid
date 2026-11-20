@@ -1,0 +1,33 @@
+name: Enna - Publish 16 AirPods QA-approved colorways
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/printify/airpods_publish.py'
+      - '.github/workflows/enna-airpods-publish.yml'
+permissions:
+  contents: read
+jobs:
+  airpods:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Printify AirPods publish dry-run (no changes)
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+        run: python integrations/printify/airpods_publish.py
+      - name: Install visual QA library
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message,'[ENNA-PUBLISH-AIRPODS-16]') }}
+        run: python -m pip install Pillow==11.3.0
+      - name: Publish QA-approved AirPods colorways to connected Shopify
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message,'[ENNA-PUBLISH-AIRPODS-16]') }}
+        env:
+          PRINTIFY_API_TOKEN_WRITE: ${{ secrets.PRINTIFY_API_TOKEN_WRITE }}
+          ENNA_APPROVE_AIRPODS_PUBLISH: 'YES'
+        run: python integrations/printify/airpods_publish.py --apply
